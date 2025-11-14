@@ -1,0 +1,18 @@
+{
+    "name": "@myorg/shared",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc -b --force"
+    },
+    "dependencies": {
+        "zod": "^4.1.12"
+    },
+    "exports": {
+        ".": {
+            "import": "./src/index.ts",
+            "require": "./src/index.ts"
+        }
+    }
+}

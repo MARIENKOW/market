@@ -1,0 +1,19 @@
+{
+    "name": "market",
+    "private": true,
+    "packageManager": "npm@11.6.2",
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "build:shared": "turbo run build --filter=@myorg/shared",
+        "dev": "npm run build:shared && turbo run dev",
+        "start": "npm run build:shared turbo run start",
+        "build": "turbo run build"
+    },
+    "devDependencies": {
+        "turbo": "^2.1.0",
+        "typescript": "^5.9.3"
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ES2023",
+        "module": "NodeNext",
+        "strict": true,
+        "composite": true,
+        "baseUrl": ".",
+        "paths": {
+            "@myorg/shared": ["packages/shared/src/index.ts"],
+            "@myorg/shared/*": ["packages/shared/src/*"]
+        },
+        "skipLibCheck": true
+    },
+    "references": [
+        { "path": "./packages/shared" },
+        { "path": "./apps/api" },
+        { "path": "./apps/web" }
+    ]
+}
