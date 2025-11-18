@@ -1,5 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { LoginSchema } from "@myorg/shared";
+
+console.log(LoginSchema);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

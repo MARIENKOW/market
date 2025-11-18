@@ -9,7 +9,6 @@
             "@myorg/shared": ["packages/shared/src/index.ts"],
             "@myorg/shared/*": ["packages/shared/src/*"]
         },
-        "skipLibCheck": true
     },
     "references": [
         { "path": "./packages/shared" },
