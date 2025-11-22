@@ -1,30 +1,36 @@
 "use client";
-import {
-    InputAdornment,
-} from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useState } from "react";
+import React, { MouseEvent, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import { StyledFormControl } from "@/components/ui/StyledFormControl";
 import { StyledInputLabel } from "@/components/ui/StyledInputLabel";
 import { StyledFilledInput } from "@/components/ui/StyledFilledInput";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledFormHelperText } from "@/components/ui/StyledFormHelperText";
+import { FieldErrors, UseFormRegisterReturn } from "react-hook-form";
 
+type PasswordComponentProps = {
+    label: string;
+    error: boolean;
+    register: UseFormRegisterReturn;
+    helperText?: string;
+};
 
 export const PasswordComponent = ({
     label,
-    errors,
+    error,
     register,
-    errMessage = "incorrect data",
-}) => {
+    helperText,
+}: PasswordComponentProps) => {
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleMouseDownPassword = (event) => {
+    const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
+
     return (
-        <StyledFormControl error={!!errors[register.name]} variant="filled">
+        <StyledFormControl error={error} variant="filled">
             <StyledInputLabel
                 htmlFor={`outlined-adornment-password-${register.name}`}
             >
@@ -51,8 +57,7 @@ export const PasswordComponent = ({
                 }
             />
             <StyledFormHelperText>
-                {errors?.[register.name] &&
-                    (errors?.[register.name]?.message || errMessage)}
+                {helperText}
             </StyledFormHelperText>
         </StyledFormControl>
     );

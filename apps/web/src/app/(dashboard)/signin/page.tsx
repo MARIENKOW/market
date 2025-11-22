@@ -7,15 +7,24 @@ import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
 import { StyledLoadingButton } from "@/components/ui/StyledLoadingButton";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserSignUpSchema, UserSignUpDto } from "@myorg/shared";
+import { useTranslation } from "react-i18next";
 
 export default function SignIn() {
+    const {t} = useTranslation();
     const {
         handleSubmit,
         register,
         setError,
         clearErrors,
         formState: { errors, isValid, isSubmitting },
-    } = useForm({ mode: "onChange" });
+    } = useForm<UserSignUpDto>({
+        resolver: zodResolver(UserSignUpSchema),
+        mode: "onChange",
+    });
+
+    console.log(errors);
 
     const handleChange = () => {
         clearErrors("root");
@@ -24,9 +33,9 @@ export default function SignIn() {
     const onSubmit = async (data: any) => {
         try {
             // await signInAdmin(data);
-            await new Promise((res)=>{
-                setTimeout(res,3000)
-            })
+            await new Promise((res) => {
+                setTimeout(res, 3000);
+            });
             enqueueSnackbar(`Авторизация успешна!`, { variant: "success" });
         } catch (e) {
             // console.error(e);
@@ -66,15 +75,10 @@ export default function SignIn() {
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <PasswordComponent
-                    label={"Пароль"}
-                    errors={errors}
-                    register={register("password", {
-                        required: "обязательное поле",
-                        // maxLength: {
-                        //     value: ADMIN_PASSWORD_MAX_LENGTH,
-                        //     message: `максимум ${ADMIN_PASSWORD_MAX_LENGTH} символов`,
-                        // },
-                    })}
+                    label={t('form.password.label')}
+                    error={!!errors['password']}
+                    helperText={errors['password']?.message}
+                    register={register("password")}
                 />
                 {errors?.root?.server && (
                     <StyledAlert
@@ -88,7 +92,6 @@ export default function SignIn() {
                 <StyledLoadingButton
                     loading={isSubmitting}
                     endIcon={<DoubleArrowIcon />}
-                    disabled={!isValid}
                     type="submit"
                     sx={{ mt: errors?.root?.server ? 0 : 3 }}
                     variant="contained"
