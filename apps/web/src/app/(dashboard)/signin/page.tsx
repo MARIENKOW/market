@@ -1,23 +1,25 @@
 "use client";
 
 import { StyledAlert } from "@/components/ui/StyledAlert";
-import { Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Button, Typography } from "@mui/material";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
 import { StyledLoadingButton } from "@/components/ui/StyledLoadingButton";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { UserSignUpSchema, UserSignUpDto } from "@myorg/shared";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { errorFormHandler } from "@/app/helpers/errorFormHandler";
 
 export default function SignIn() {
-    const {t} = useTranslation();
+    const { t, i18n } = useTranslation();
+
     const {
         handleSubmit,
         register,
         setError,
-        clearErrors,
         formState: { errors, isValid, isSubmitting },
     } = useForm<UserSignUpDto>({
         resolver: zodResolver(UserSignUpSchema),
@@ -26,35 +28,27 @@ export default function SignIn() {
 
     console.log(errors);
 
-    const handleChange = () => {
-        clearErrors("root");
-    };
-
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: UserSignUpDto) => {
         try {
-            // await signInAdmin(data);
-            await new Promise((res) => {
-                setTimeout(res, 3000);
-            });
-            enqueueSnackbar(`Авторизация успешна!`, { variant: "success" });
+            await axios.get("https://sdsdc");
+            // await new Promise((res, rej) => {
+            //     setTimeout(rej, 3000);
+            // });
+            enqueueSnackbar(t("form.signup.success"), { variant: "success" });
         } catch (e) {
-            // console.error(e);
-            // if (e?.response?.status === 400) {
-            //     const errors = e?.response?.data || {};
-            //     for (let key in errors) {
-            //         setError(key, { type: "server", message: errors[key] });
-            //     }
-            //     return;
-            // }
-            setError("root.server", {
-                type: "server",
-                message: "Упс! Что-то пошло не так, попробуйте позже",
-            });
+            errorFormHandler(e, setError);
         }
     };
 
     return (
         <>
+            <Button
+                onClick={() =>
+                    i18n.changeLanguage(i18n.language == "en" ? "ru" : "en")
+                }
+            >
+                ааа
+            </Button>
             <Typography
                 fontWeight={600}
                 color={!isValid ? "secondary" : "primary"}
@@ -63,10 +57,9 @@ export default function SignIn() {
                 variant="h6"
                 component="h2"
             >
-                Авторизация
+                {t("form.signup.name")}
             </Typography>
             <form
-                onChange={handleChange}
                 style={{
                     display: "flex",
                     flexDirection: "column",
@@ -75,18 +68,18 @@ export default function SignIn() {
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <PasswordComponent
-                    label={t('form.password.label')}
-                    error={!!errors['password']}
-                    helperText={errors['password']?.message}
+                    label={t("form.password.label")}
+                    error={!!errors["password"]}
+                    helperText={
+                        errors["password"]?.message
+                            ? t(errors["password"].message)
+                            : undefined
+                    }
                     register={register("password")}
                 />
-                {errors?.root?.server && (
-                    <StyledAlert
-                        severity="error"
-                        variant="filled"
-                        hidden={true}
-                    >
-                        {errors?.root?.server?.message}
+                {errors?.root?.server?.message && (
+                    <StyledAlert severity="error">
+                        {t(errors.root.server.message)}
                     </StyledAlert>
                 )}
                 <StyledLoadingButton
@@ -96,7 +89,7 @@ export default function SignIn() {
                     sx={{ mt: errors?.root?.server ? 0 : 3 }}
                     variant="contained"
                 >
-                    Подтвердить
+                    {t("form.submit")}
                 </StyledLoadingButton>
             </form>
         </>
