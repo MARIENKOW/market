@@ -1,20 +1,20 @@
 "use client";
 
 import { StyledAlert } from "@/components/ui/StyledAlert";
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
 import { StyledLoadingButton } from "@/components/ui/StyledLoadingButton";
-import { UserSignUpSchema, UserSignUpDto } from "@myorg/shared";
-import { useTranslation } from "react-i18next";
+import { UserSignUpSchema, UserSignUpDto } from "../../../../../packages/shared/src/form";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandler } from "@/app/helpers/errorFormHandler";
+import { errorFormHandler } from "@/helpers/errorFormHandler";
+import { useTranslations } from "next-intl";
 
-export default function SignIn() {
-    const { t, i18n } = useTranslation();
+export default function UserSignUp() {
+    const t = useTranslations();
 
     const {
         handleSubmit,
@@ -42,13 +42,6 @@ export default function SignIn() {
 
     return (
         <>
-            <Button
-                onClick={() =>
-                    i18n.changeLanguage(i18n.language == "en" ? "ru" : "en")
-                }
-            >
-                ааа
-            </Button>
             <Typography
                 fontWeight={600}
                 color={!isValid ? "secondary" : "primary"}

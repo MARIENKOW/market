@@ -6,13 +6,12 @@
         "composite": true,
         "baseUrl": ".",
         "paths": {
-            "@myorg/shared": ["packages/shared/src/index.ts"],
             "@myorg/shared/*": ["packages/shared/src/*"]
-        },
+        }
     },
     "references": [
         { "path": "./packages/shared" },
-        { "path": "./apps/api" },
-        { "path": "./apps/web" }
+        { "path": "./apps/web" },
+        { "path": "./apps/api" }
     ]
 }

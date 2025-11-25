@@ -1,8 +1,8 @@
-import { LoadingButton } from "@mui/lab";
+"use client";
+
 import { Button, styled } from "@mui/material";
 
 export const StyledLoadingButton = styled(Button)(({ theme }) => ({
-    ...theme,
     "&.Mui-disabled": {
         background: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
