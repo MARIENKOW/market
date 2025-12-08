@@ -1,8 +1,5 @@
 import { defineRouting } from "next-intl/routing";
-import {
-    defaultLanguage,
-    languages,
-} from "../../../../packages/shared/src/i18n";
+import { defaultLanguage, languages } from "@myorg/shared/i18n";
 
 export const routing = defineRouting({
     locales: languages,

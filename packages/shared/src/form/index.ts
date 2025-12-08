@@ -1,4 +1,4 @@
-import { Password } from "@myorg/shared/form/fields";
+import { Password } from "./fields";
 import { z } from "zod";
 
 export const UserSignUpSchema = z.object({

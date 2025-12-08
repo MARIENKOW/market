@@ -8,7 +8,7 @@
     ],
     "scripts": {
         "build:shared": "turbo run build --filter=@myorg/shared",
-        "dev": "npm run build:shared && turbo run dev",
+        "dev": "turbo run dev",
         "start": "turbo run start --filter=api --filter=web",
         "build": "turbo run build"
     },

@@ -4,12 +4,24 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "tsc -b --force"
+        "build": "tsc -b --force",
+        "dev": "tsc -b --watch"
     },
     "dependencies": {
         "zod": "^4.1.12"
     },
     "exports": {
-        ".": "./src/index.ts"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./i18n": {
+            "types": "./dist/i18n/index.d.ts",
+            "default": "./dist/i18n/index.js"
+        },
+        "./form": {
+            "types": "./dist/form/index.d.ts",
+            "default": "./dist/form/index.js"
+        }
     }
 }

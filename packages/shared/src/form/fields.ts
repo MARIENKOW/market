@@ -1,7 +1,7 @@
 import {
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
-} from "@myorg/shared/form/validateConfig";
+} from "./validateConfig";
 import z from "zod";
 
 export const Password = z

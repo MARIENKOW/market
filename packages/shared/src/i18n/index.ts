@@ -1,12 +1,12 @@
-import { en } from "@myorg/shared/i18n/languages/en";
-import { ru } from "@myorg/shared/i18n/languages/ru";
-import { de } from "@myorg/shared/i18n/languages/de";
+import { en } from "./languages/en";
+import { ua } from "./languages/ua";
+import { de } from "./languages/de";
 
-export const messagesModules = { en, ru, de } as const;
+export const messagesModules = { en, ua, de } as const;
 export const languages = Object.keys(messagesModules) as Array<
     keyof typeof messagesModules
 >;
 export type AvailableLanguage = (typeof languages)[number];
-export const defaultLanguage: AvailableLanguage = "ru";
+export const defaultLanguage: AvailableLanguage = "ua";
 export const messagesMap: Record<AvailableLanguage, typeof en> =
     messagesModules;

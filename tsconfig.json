@@ -4,10 +4,7 @@
         "module": "NodeNext",
         "strict": true,
         "composite": true,
-        "baseUrl": ".",
-        "paths": {
-            "@myorg/shared/*": ["packages/shared/src/*"]
-        }
+        "baseUrl": "."
     },
     "references": [
         { "path": "./packages/shared" },
