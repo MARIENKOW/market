@@ -3,6 +3,8 @@ import { routing } from "@/i18n/routing";
 
 export default createMiddleware(routing);
 
-export const defineConfig = {
-    matcher: ["/", "/(ru|en)/:path*"],
+console.log('object');
+
+export const config = {
+    matcher: ["/((?!_next|.*\\..*).*)"],
 };

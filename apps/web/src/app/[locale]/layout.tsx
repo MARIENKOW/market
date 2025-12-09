@@ -39,10 +39,12 @@ export default async function RootLayout({
     if (!hasLocale(routing.locales, locale)) {
         notFound();
     }
+
+    const typedLocale = locale as AvailableLanguage;
     
 
     return (
-        <html lang={locale}>
+        <html lang={typedLocale}>
             <body
                 style={{
                     display: "flex",
@@ -52,8 +54,8 @@ export default async function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <NextIntlClientProvider
-                    messages={messagesMap[locale as AvailableLanguage]}
-                    locale={locale}
+                    messages={messagesMap[typedLocale]}
+                    locale={typedLocale}
                 >
                     <MainProvider>{children}</MainProvider>
                 </NextIntlClientProvider>

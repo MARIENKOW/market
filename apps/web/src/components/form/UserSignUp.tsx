@@ -6,7 +6,10 @@ import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
 import { StyledLoadingButton } from "@/components/ui/StyledLoadingButton";
-import { UserSignUpSchema, UserSignUpDto } from "../../../../../packages/shared/src/form";
+import {
+    UserSignUpSchema,
+    UserSignUpDto,
+} from "../../../../../packages/shared/src/form";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

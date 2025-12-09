@@ -9,11 +9,12 @@ import { cookies } from "next/headers";
 
 export default getRequestConfig(async () => {
     const store = await cookies();
-    const cookieValue = store.get("locale")?.value || defaultLanguage;
-    const locale: AvailableLanguage =
-        cookieValue && languages.includes(cookieValue as AvailableLanguage)
-            ? (cookieValue as AvailableLanguage)
-            : defaultLanguage;
+    const cookieValue = store.get("locale")?.value;
+    const locale: AvailableLanguage = languages.includes(
+        cookieValue as AvailableLanguage
+    )
+        ? (cookieValue as AvailableLanguage)
+        : defaultLanguage;
 
     return {
         locale,
