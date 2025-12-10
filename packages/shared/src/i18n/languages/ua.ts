@@ -10,8 +10,15 @@ export const ua = {
         required: "обязательное поле",
         submit: "Подтвердить",
         signup: {
-            name: "Регистрация",
             success: "Регистрация успешна!",
+        },
+    },
+    pages: {
+        main: {
+            name: "Главная",
+        },
+        signup: {
+            name: "Регистрация",
         },
     },
     api: {

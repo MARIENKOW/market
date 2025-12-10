@@ -11,8 +11,15 @@ export const en: MessageStructure = {
         required: "required field",
         submit: "Submit",
         signup: {
-            name: "SignUp",
-            success: "SignUp success!",
+            success: "Registration successful!",
+        },
+    },
+    pages: {
+        main: {
+            name: "Home",
+        },
+        signup: {
+            name: "Sign Up",
         },
     },
     api: {
@@ -20,4 +27,3 @@ export const en: MessageStructure = {
         FALLBACK_ERR: "Oops! Something went wrong, please try again later.",
     },
 };
-

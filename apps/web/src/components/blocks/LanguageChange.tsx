@@ -21,8 +21,6 @@ export function LanguageChange() {
         const lang = languages.includes(event.target.value as AvailableLanguage)
             ? (event.target.value as AvailableLanguage)
             : defaultLanguage;
-        document.cookie = `locale=${lang}; path=/; max-age=31536000`; // 1 год
-
         router.replace(pathname, { locale: lang });
     };
 

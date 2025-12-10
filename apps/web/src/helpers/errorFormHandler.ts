@@ -63,7 +63,7 @@ export function errorFormHandler<T extends FieldValues>(
     }
 
     // fallback
-    console.log('FALLBACK_ERR');
+    console.log("FALLBACK_ERR");
     setError("root.server" as const, {
         type: "server",
         message: "api.FALLBACK_ERR",

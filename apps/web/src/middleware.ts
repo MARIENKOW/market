@@ -3,8 +3,8 @@ import { routing } from "@/i18n/routing";
 
 export default createMiddleware(routing);
 
-console.log('object');
-
 export const config = {
-    matcher: ["/((?!_next|.*\\..*).*)"],
+    // matcher: ["/((?!_next|.*\\..*).*)"],
+    // matcher: ["/((?!api|_next/static|_next/public|favicon.ico|.*\\.png).*)"],
+    matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
 };

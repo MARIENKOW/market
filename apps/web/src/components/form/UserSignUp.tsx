@@ -29,14 +29,9 @@ export default function UserSignUp() {
         mode: "onChange",
     });
 
-    console.log(errors);
-
     const onSubmit = async (data: UserSignUpDto) => {
         try {
             await axios.get("https://sdsdc");
-            // await new Promise((res, rej) => {
-            //     setTimeout(rej, 3000);
-            // });
             enqueueSnackbar(t("form.signup.success"), { variant: "success" });
         } catch (e) {
             errorFormHandler(e, setError);
@@ -47,13 +42,13 @@ export default function UserSignUp() {
         <>
             <Typography
                 fontWeight={600}
-                color={!isValid ? "secondary" : "primary"}
+                color={"primary"}
                 sx={{ textAlign: "center", mb: 3 }}
                 id="transition-modal-title"
                 variant="h6"
                 component="h2"
             >
-                {t("form.signup.name")}
+                {t("pages.signup.name")}
             </Typography>
             <form
                 style={{

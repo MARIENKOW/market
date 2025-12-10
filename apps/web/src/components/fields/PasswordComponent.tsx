@@ -47,18 +47,12 @@ export const PasswordComponent = ({
                             onMouseDown={handleMouseDownPassword}
                             edge="end"
                         >
-                            {showPassword ? (
-                                <VisibilityOff color="secondary" />
-                            ) : (
-                                <Visibility color="secondary" />
-                            )}
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
                         </StyledIconButton>
                     </InputAdornment>
                 }
             />
-            <StyledFormHelperText>
-                {helperText}
-            </StyledFormHelperText>
+            <StyledFormHelperText>{helperText}</StyledFormHelperText>
         </StyledFormControl>
     );
 };

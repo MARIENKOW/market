@@ -1,9 +1,13 @@
 import UserSignUp from "@/components/form/UserSignUp";
 import { LanguageChange } from "@/components/blocks/LanguageChange";
 import { ContainerComponent } from "@/components/ui/Container";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { Link } from "@/i18n/navigation";
+import { route } from "@myorg/shared/route";
+import { getTranslations } from "next-intl/server";
 
-export default function Page() {
+export default async function Page() {
+    const t = await getTranslations();
     return (
         <ContainerComponent>
             <Box
@@ -16,7 +20,12 @@ export default function Page() {
                     flex={"0 1 350px"}
                     display={"flex"}
                     flexDirection={"column"}
+
+                    
                 >
+                    <Link href={route.public.main}>
+                        <Button>{t('pages.main.name')}</Button>
+                    </Link>
                     <LanguageChange />
                     <UserSignUp />
                 </Box>

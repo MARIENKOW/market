@@ -5,20 +5,27 @@ export const de: MessageStructure = {
     form: {
         password: {
             min: `mindestens ${PASSWORD_MIN_LENGTH} Zeichen`,
-            max: `höchstens ${PASSWORD_MAX_LENGTH} Zeichen`,
+            max: `maximal ${PASSWORD_MAX_LENGTH} Zeichen`,
             label: `Passwort`,
         },
         required: "Pflichtfeld",
-        submit: "Absenden",
+        submit: "Bestätigen",
         signup: {
-            name: "Registrieren",
             success: "Registrierung erfolgreich!",
+        },
+    },
+    pages: {
+        main: {
+            name: "Startseite",
+        },
+        signup: {
+            name: "Registrierung",
         },
     },
     api: {
         ERR_NETWORK:
             "Keine Netzwerkverbindung. Bitte versuchen Sie es später erneut.",
         FALLBACK_ERR:
-            "Hoppla! Etwas ist schiefgelaufen, bitte versuchen Sie es später erneut.",
+            "Ups! Etwas ist schiefgelaufen, bitte versuchen Sie es später erneut.",
     },
 };

@@ -22,6 +22,10 @@
         "./form": {
             "types": "./dist/form/index.d.ts",
             "default": "./dist/form/index.js"
+        },
+        "./route": {
+            "types": "./dist/route/index.d.ts",
+            "default": "./dist/route/index.js"
         }
     }
 }
