@@ -21,6 +21,9 @@ export const en: MessageStructure = {
         signup: {
             name: "Sign Up",
         },
+        notFound: {
+            name: "404",
+        },
     },
     api: {
         ERR_NETWORK: "No network connection. Please try again later.",

@@ -20,6 +20,9 @@ export const ua = {
         signup: {
             name: "Регистрация",
         },
+        notFound:{
+            name:'404'
+        }
     },
     api: {
         ERR_NETWORK: "Нет подключения к сети. Попробуйте позже.",

@@ -21,6 +21,9 @@ export const de: MessageStructure = {
         signup: {
             name: "Registrierung",
         },
+        notFound: {
+            name: "404",
+        },
     },
     api: {
         ERR_NETWORK:

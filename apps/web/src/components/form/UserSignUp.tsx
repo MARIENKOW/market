@@ -1,7 +1,7 @@
 "use client";
 
 import { StyledAlert } from "@/components/ui/StyledAlert";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
@@ -15,15 +15,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/errorFormHandler";
 import { useTranslations } from "next-intl";
+import { useThemeContext } from "@/theme/ThemeRegistry";
 
 export default function UserSignUp() {
     const t = useTranslations();
+
+    const { themeMode, toggleTheme } = useThemeContext();
 
     const {
         handleSubmit,
         register,
         setError,
-        formState: { errors, isValid, isSubmitting },
+        formState: { errors, isSubmitting },
     } = useForm<UserSignUpDto>({
         resolver: zodResolver(UserSignUpSchema),
         mode: "onChange",
@@ -50,6 +53,10 @@ export default function UserSignUp() {
             >
                 {t("pages.signup.name")}
             </Typography>
+
+            <Button variant="contained" color="primary" onClick={toggleTheme}>
+                {themeMode}
+            </Button>
             <form
                 style={{
                     display: "flex",

@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { MainProvider } from "@/app/[locale]/MainProvider";
+import { MainProvider } from "@/components/wrappers/ClientProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import ThemeRegistry from "@/theme/ThemeRegistry";
+import { createTheme, InitColorSchemeScript } from "@mui/material";
+import { getThemeMode } from "@/theme/themeMode";
+import { ThemeModeModules } from "@/theme/theme";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -33,22 +37,39 @@ export default async function RootLayout({
 }: RootLayoutProps) {
     const { locale } = await params;
 
-    console.log(locale);
+    const themeMode = await getThemeMode();
+
+    const themeConfig = ThemeModeModules[themeMode];
 
     setRequestLocale(locale);
 
     return (
-        <html lang={locale}>
+        <html
+            style={
+                {
+                    // backgroundColor: themeConfig.palette?.primary?.main,
+                }
+            }
+            lang={locale}
+            suppressHydrationWarning
+        >
             <body
                 style={{
                     display: "flex",
                     flexDirection: "column",
                     minHeight: "100vh",
+                    background: "transparent",
                 }}
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <NextIntlClientProvider>
-                    <MainProvider>{children}</MainProvider>
+                    {/* <InitColorSchemeScript attribute="data" /> */}
+                    <ThemeRegistry
+                        themeMode={themeMode}
+                        themeConfig={themeConfig}
+                    >
+                        <MainProvider>{children}</MainProvider>
+                    </ThemeRegistry>
                 </NextIntlClientProvider>
             </body>
         </html>
