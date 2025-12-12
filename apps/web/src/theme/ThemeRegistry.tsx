@@ -9,7 +9,6 @@ import { ThemeConfigStructure } from "@/theme/light";
 
 type ThemeRegistryType = {
     themeMode: AvailableMode;
-    themeConfig: ThemeConfigStructure;
     children: React.ReactNode;
 };
 
@@ -25,34 +24,25 @@ const ThemeContext = React.createContext<ThemeContextType | undefined>(
 export default function ThemeRegistry({
     themeMode,
     children,
-    themeConfig,
 }: ThemeRegistryType) {
     const [mode, setMode] = React.useState<AvailableMode>(themeMode);
-    const router = useRouter();
 
     const theme = React.useMemo(() => {
         return createTheme(ThemeModeModules[mode]);
     }, [mode]);
-    // const theme = React.useMemo(() => {
-    //     return createTheme(themeConfig);
-    // }, [themeConfig]);
 
     const toggleTheme = () => {
         const newMode: AvailableMode = mode === "light" ? "dark" : "light";
         document.cookie = `theme=${newMode}; path=/; max-age=${60 * 60 * 24 * 365}`;
-        // router.refresh();
         setMode(newMode);
     };
-    // const toggleTheme = () => {
-    //     const newMode: AvailableMode = themeMode === "light" ? "dark" : "light";
-    //     document.cookie = `theme=${newMode}; path=/; max-age=${60 * 60 * 24 * 365}`;
-    //     router.refresh();
-    // };
 
     return (
         <ThemeContext.Provider value={{ themeMode: mode, toggleTheme }}>
             <AppRouterCacheProvider>
-                <ThemeProvider theme={theme}>
+                <ThemeProvider 
+                // forceThemeRerender
+                theme={theme}>
                     <CssBaseline />
                     {children}
                 </ThemeProvider>

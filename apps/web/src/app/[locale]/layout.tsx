@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { MainProvider } from "@/components/wrappers/ClientProvider";
+import { ClientProvider } from "@/components/wrappers/ClientProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import ThemeRegistry from "@/theme/ThemeRegistry";
@@ -44,15 +44,7 @@ export default async function RootLayout({
     setRequestLocale(locale);
 
     return (
-        <html
-            style={
-                {
-                    // backgroundColor: themeConfig.palette?.primary?.main,
-                }
-            }
-            lang={locale}
-            suppressHydrationWarning
-        >
+        <html lang={locale}>
             <body
                 style={{
                     display: "flex",
@@ -63,12 +55,10 @@ export default async function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <NextIntlClientProvider>
-                    {/* <InitColorSchemeScript attribute="data" /> */}
-                    <ThemeRegistry
-                        themeMode={themeMode}
-                        themeConfig={themeConfig}
-                    >
-                        <MainProvider>{children}</MainProvider>
+                    <ThemeRegistry themeMode={themeMode}>
+                        <ClientProvider>
+                            {children}
+                        </ClientProvider>
                     </ThemeRegistry>
                 </NextIntlClientProvider>
             </body>
