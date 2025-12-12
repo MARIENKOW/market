@@ -1,7 +1,7 @@
 "use client";
 
 import { StyledAlert } from "@/components/ui/StyledAlert";
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, useColorScheme } from "@mui/material";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
@@ -15,12 +15,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/errorFormHandler";
 import { useTranslations } from "next-intl";
-import { useThemeContext } from "@/theme/ThemeRegistry";
 
 export default function UserSignUp() {
     const t = useTranslations();
+    const { setMode, mode } = useColorScheme();
 
-    const { themeMode, toggleTheme } = useThemeContext();
+
+    
+    const toggleTheme = () => {
+        const newMode = mode === "dark" ? "light" : "dark";
+        setMode(newMode);
+    };
+    // const { themeMode, toggleTheme } = useThemeContext();
 
     const {
         handleSubmit,
@@ -55,7 +61,7 @@ export default function UserSignUp() {
             </Typography>
 
             <Button variant="contained" color="primary" onClick={toggleTheme}>
-                {themeMode}
+                {mode}
             </Button>
             <form
                 style={{

@@ -1,4 +1,4 @@
-import { AvailableMode, defaultThemeMode, modeMap, modes } from "@/theme/theme";
+import { AvailableMode, defaultThemeMode, modes } from "@/theme/theme";
 import { cookies } from "next/headers";
 
 export async function getThemeMode() {

@@ -1,16 +1,19 @@
 import { dark } from "@/theme/dark";
 import { light, ThemeConfigStructure } from "@/theme/light";
 
-export const ThemeModeModules = {
-    dark,
-    light,
+export const themeConfig = {
+    cssVariables: {
+        colorSchemeSelector: "class",
+        disableCssColorScheme: true,
+    },
+    colorSchemes: {
+        light,
+        dark,
+    },
 };
 
-export type AvailableMode = keyof typeof ThemeModeModules;
+export type AvailableMode = "light" | "dark";
 
-export const modes = Object.keys(ThemeModeModules) as AvailableMode[];
+export const modes = ["light", "dark"] as AvailableMode[];
 
 export const defaultThemeMode: AvailableMode = "light";
-
-export const modeMap: Record<AvailableMode, ThemeConfigStructure> =
-    ThemeModeModules;

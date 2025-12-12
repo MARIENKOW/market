@@ -31,9 +31,9 @@ export const dark: ThemeConfigStructure = {
             contrastText: "#fff",
         },
         error: {
-            main: "#d32f2f",
-            dark: "#9a0007",
-            light: "#ff6659",
+            main: "#2e7d32",
+            dark: "#1b5e20",
+            light: "#60ad5e",
             contrastText: "#fff",
         },
         warning: {
