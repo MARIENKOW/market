@@ -41,15 +41,18 @@ export default async function RootLayout({
 
     setRequestLocale(locale);
 
+    console.log(themeMode);
+
     return (
         <html
+            className={themeMode}
             style={
                 {
                     // backgroundColor: themeConfig.palette?.primary?.main,
                 }
             }
             lang={locale}
-            suppressHydrationWarning
+            // suppressHydrationWarning
         >
             <body
                 style={{
@@ -60,13 +63,13 @@ export default async function RootLayout({
                 }}
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
+                {/* <InitColorSchemeScript
+                    defaultMode={themeMode}
+                    attribute="class"
+                /> */}
                 <NextIntlClientProvider>
-                    <AppRouterCacheProvider options={{ enableCssLayer: false }}>
+                    <AppRouterCacheProvider options={{ enableCssLayer: true }}>
                         <ThemeRegistry themeMode={themeMode}>
-                            <InitColorSchemeScript
-                                defaultMode={themeMode}
-                                attribute="class"
-                            />
                             <MainProvider>{children}</MainProvider>
                         </ThemeRegistry>
                     </AppRouterCacheProvider>

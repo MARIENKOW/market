@@ -1,3 +1,5 @@
+"use server";
+
 import { AvailableMode, defaultThemeMode, modes } from "@/theme/theme";
 import { cookies } from "next/headers";
 
@@ -11,4 +13,13 @@ export async function getThemeMode() {
         : defaultThemeMode;
 
     return mode;
+}
+
+export async function setThemeMode(theme: AvailableMode) {
+    const cookieStore = await cookies();
+
+    cookieStore.set("theme", theme, {
+        httpOnly: false, // Allow client to read it
+        maxAge: 60 * 60 * 24 * 365,
+    });
 }

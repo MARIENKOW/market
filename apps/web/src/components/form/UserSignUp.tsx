@@ -15,18 +15,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/errorFormHandler";
 import { useTranslations } from "next-intl";
+import { useThemeContext } from "@/theme/ThemeRegistry";
 
 export default function UserSignUp() {
     const t = useTranslations();
-    const { setMode, mode } = useColorScheme();
-
-
-    
-    const toggleTheme = () => {
-        const newMode = mode === "dark" ? "light" : "dark";
-        setMode(newMode);
-    };
-    // const { themeMode, toggleTheme } = useThemeContext();
+    const { themeMode, toggleTheme } = useThemeContext();
 
     const {
         handleSubmit,
@@ -61,7 +54,7 @@ export default function UserSignUp() {
             </Typography>
 
             <Button variant="contained" color="primary" onClick={toggleTheme}>
-                {mode}
+                {themeMode}
             </Button>
             <form
                 style={{

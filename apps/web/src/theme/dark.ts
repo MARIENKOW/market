@@ -1,4 +1,5 @@
 import { ThemeConfigStructure } from "@/theme/light";
+import { AvailableMode } from "@/theme/theme";
 export const dark: ThemeConfigStructure = {
     // colorSchemes: { light: true, dark: true },
     // cssVariables: {
@@ -11,7 +12,9 @@ export const dark: ThemeConfigStructure = {
             textTransform: "none", // кнопки без всех заглавных букв
         },
     },
+    mode: "dark" as AvailableMode,
     palette: {
+        mode: "dark" as AvailableMode,
         primary: {
             main: "#9c27b0",
             dark: "#6d1b7b",

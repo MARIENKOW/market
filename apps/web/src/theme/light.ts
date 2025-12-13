@@ -1,3 +1,5 @@
+import { AvailableMode } from "@/theme/theme";
+
 // import { ThemeOptions } from "@mui/material";
 export const light = {
     // colorSchemes: { light: true, dark: true },
@@ -11,7 +13,9 @@ export const light = {
             textTransform: "none", // кнопки без всех заглавных букв
         },
     },
+    mode:'light' as AvailableMode,
     palette: {
+        mode:'light' as AvailableMode,
         primary: {
             main: "#1976d2",
             dark: "#115293",

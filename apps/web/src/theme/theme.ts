@@ -1,7 +1,8 @@
 import { dark } from "@/theme/dark";
 import { light, ThemeConfigStructure } from "@/theme/light";
+import { createTheme } from "@mui/material";
 
-export const themeConfig = {
+export const theme = createTheme({
     cssVariables: {
         colorSchemeSelector: "class",
         disableCssColorScheme: true,
@@ -10,7 +11,7 @@ export const themeConfig = {
         light,
         dark,
     },
-};
+});
 
 export type AvailableMode = "light" | "dark";
 
