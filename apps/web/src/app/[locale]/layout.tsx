@@ -50,7 +50,7 @@ export default async function RootLayout({
                     display: "flex",
                     flexDirection: "column",
                     minHeight: "100vh",
-                    background: "transparent",
+                    // background: "#000",
                 }}
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
