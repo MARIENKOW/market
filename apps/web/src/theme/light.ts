@@ -1,9 +1,9 @@
-// import { ThemeOptions } from "@mui/material";
 export const light = {
     // colorSchemes: { light: true, dark: true },
     // cssVariables: {
     //     colorSchemeSelector: "class",
     // },
+    mode: "light",
     typography: {
         fontFamily: "Roboto, Arial, sans-serif",
         fontSize: 14,
@@ -62,5 +62,3 @@ export const light = {
 };
 
 export type ThemeConfigStructure = typeof light;
-
-

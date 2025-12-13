@@ -4,6 +4,8 @@ export const dark: ThemeConfigStructure = {
     // cssVariables: {
     //     colorSchemeSelector: "class",
     // },
+    mode: "dark",
+
     typography: {
         fontFamily: "Roboto, Arial, sans-serif",
         fontSize: 14,
