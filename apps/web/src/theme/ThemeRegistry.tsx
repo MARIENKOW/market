@@ -4,8 +4,7 @@ import * as React from "react";
 import { ThemeProvider, CssBaseline, createTheme } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { AvailableMode, ThemeModeModules } from "@/theme/theme";
-import { useRouter } from "@/i18n/navigation";
-import { ThemeConfigStructure } from "@/theme/light";
+import { setThemeMode } from "@/theme/themeMode";
 
 type ThemeRegistryType = {
     themeMode: AvailableMode;
@@ -31,18 +30,20 @@ export default function ThemeRegistry({
         return createTheme(ThemeModeModules[mode]);
     }, [mode]);
 
-    const toggleTheme = () => {
+    const toggleTheme = async () => {
         const newMode: AvailableMode = mode === "light" ? "dark" : "light";
-        document.cookie = `theme=${newMode}; path=/; max-age=${60 * 60 * 24 * 365}`;
+        // document.cookie = `theme=${newMode}; path=/; max-age=${60 * 60 * 24 * 365}`;
         setMode(newMode);
+        await setThemeMode(newMode);
     };
 
     return (
         <ThemeContext.Provider value={{ themeMode: mode, toggleTheme }}>
             <AppRouterCacheProvider>
-                <ThemeProvider 
-                // forceThemeRerender
-                theme={theme}>
+                <ThemeProvider
+                    // forceThemeRerender
+                    theme={theme}
+                >
                     <CssBaseline />
                     {children}
                 </ThemeProvider>

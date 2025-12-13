@@ -2,7 +2,7 @@
 export const light = {
     // colorSchemes: { light: true, dark: true },
     // cssVariables: {
-    //     colorSchemeSelector: "data",
+    //     colorSchemeSelector: "class",
     // },
     typography: {
         fontFamily: "Roboto, Arial, sans-serif",

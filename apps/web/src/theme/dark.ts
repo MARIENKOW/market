@@ -2,7 +2,7 @@ import { ThemeConfigStructure } from "@/theme/light";
 export const dark: ThemeConfigStructure = {
     // colorSchemes: { light: true, dark: true },
     // cssVariables: {
-    //     colorSchemeSelector: "data",
+    //     colorSchemeSelector: "class",
     // },
     typography: {
         fontFamily: "Roboto, Arial, sans-serif",
