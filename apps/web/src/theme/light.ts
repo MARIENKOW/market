@@ -1,70 +1,72 @@
 import { AvailableMode } from "@/theme/theme";
 
-// import { ThemeOptions } from "@mui/material";
 export const light = {
-    // colorSchemes: { light: true, dark: true },
-    // cssVariables: {
-    //     colorSchemeSelector: "data",
-    // },
-    typography: {
-        fontFamily: "Roboto, Arial, sans-serif",
-        fontSize: 14,
-        button: {
-            textTransform: "none", // кнопки без всех заглавных букв
-        },
-    },
-    mode:'light' as AvailableMode,
     palette: {
-        mode:'light' as AvailableMode,
+        mode: "light" as AvailableMode,
         primary: {
-            main: "#1976d2",
-            dark: "#115293",
-            light: "#63a4ff",
-            contrastText: "#fff",
+            main: "#6366f1", // Indigo 500
+            dark: "#4f46e5", // Indigo 600
+            light: "#818cf8", // Indigo 400
+            contrastText: "#ffffff",
         },
         secondary: {
-            main: "#9c27b0",
-            dark: "#6d1b7b",
-            light: "#d05ce3",
-            contrastText: "#fff",
+            main: "#ec4899", // Pink 500
+            dark: "#db2777", // Pink 600
+            light: "#f472b6", // Pink 400
+            contrastText: "#ffffff",
         },
         success: {
-            main: "#2e7d32",
-            dark: "#1b5e20",
-            light: "#60ad5e",
-            contrastText: "#fff",
+            main: "#10b981", // Emerald 500
+            dark: "#059669", // Emerald 600
+            light: "#34d399", // Emerald 400
+            contrastText: "#ffffff",
         },
         error: {
-            main: "#d32f2f",
-            dark: "#9a0007",
-            light: "#ff6659",
-            contrastText: "#fff",
+            main: "#ef4444", // Red 500
+            dark: "#dc2626", // Red 600
+            light: "#f87171", // Red 400
+            contrastText: "#ffffff",
         },
         warning: {
-            main: "#ed6c02",
-            dark: "#b53f00",
-            light: "#ff9800",
-            contrastText: "#fff",
+            main: "#f59e0b", // Amber 500
+            dark: "#d97706", // Amber 600
+            light: "#fbbf24", // Amber 400
+            contrastText: "#ffffff",
         },
         info: {
-            main: "#0288d1",
-            dark: "#01579b",
-            light: "#03a9f4",
-            contrastText: "#fff",
+            main: "#3b82f6", // Blue 500
+            dark: "#2563eb", // Blue 600
+            light: "#60a5fa", // Blue 400
+            contrastText: "#ffffff",
         },
         background: {
-            default: "#fafafa",
-            paper: "#fff",
+            default: "#f8fafc", // Slate 50
+            paper: "#ffffff", // White
         },
         text: {
-            primary: "#000",
-            secondary: "#555",
-            disabled: "#999",
+            primary: "#0f172a", // Slate 900
+            secondary: "#475569", // Slate 600
+            disabled: "#94a3b8", // Slate 400
         },
-        divider: "#e0e0e0",
+        divider: "#e2e8f0", // Slate 200
+        action: {
+            active: "#1e293b", // Slate 800
+            hover: "rgba(0,0,0,0.04)",
+            selected: "rgba(0,0,0,0.08)",
+            disabled: "#64748b", // Slate 500
+            disabledBackground: "rgba(0,0,0,0.12)",
+        },
+        common: {
+            black: "#0f172a", // Slate 900
+            white: "#ffffff", // White
+            onBackgroundChanel: "#f1f5f9",
+        },
+        hoverOpacity: 0.08,
+        disabledOpacity: 0.38,
+        focus: "rgba(99,102,241,0.12)",
+        focusOpacity: 0.12,
+        activatedOpacity: 0.12,
     },
 };
 
 export type ThemeConfigStructure = typeof light;
-
-

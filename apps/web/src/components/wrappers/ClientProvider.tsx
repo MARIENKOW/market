@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { IconButton } from "@mui/material";
 import { closeSnackbar } from "notistack";
 
-export const MainProvider = ({ children }: { children: React.ReactNode }) => {
+export const ClientProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <SnackbarProvider
             action={(snackbarId) => (

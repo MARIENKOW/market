@@ -7,6 +7,13 @@ export const theme = createTheme({
         colorSchemeSelector: "class",
         disableCssColorScheme: true,
     },
+    typography: {
+        fontFamily: "Roboto, Arial, sans-serif",
+        fontSize: 14,
+        button: {
+            textTransform: "none", // кнопки без всех заглавных букв
+        },
+    },
     colorSchemes: {
         light,
         dark,
