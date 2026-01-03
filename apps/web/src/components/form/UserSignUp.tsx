@@ -1,7 +1,7 @@
 "use client";
 
 import { StyledAlert } from "@/components/ui/StyledAlert";
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, useColorScheme } from "@mui/material";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
@@ -19,7 +19,6 @@ import { useThemeContext } from "@/theme/ThemeRegistry";
 
 export default function UserSignUp() {
     const t = useTranslations();
-
     const { themeMode, toggleTheme } = useThemeContext();
 
     const {

@@ -1,60 +1,57 @@
 "use client";
 
 import * as React from "react";
-import { ThemeProvider, CssBaseline, createTheme } from "@mui/material";
+import {
+    ThemeProvider,
+    CssBaseline,
+    createTheme,
+    useColorScheme,
+} from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { AvailableMode, ThemeModeModules } from "@/theme/theme";
+import { AvailableMode, theme } from "@/theme/theme";
+import { useRouter } from "@/i18n/navigation";
+import { ThemeConfigStructure } from "@/theme/light";
 import { setThemeMode } from "@/theme/themeMode";
+// import { experimental_extendTheme as extendTheme } from "@mui/material";
 
 type ThemeRegistryType = {
     themeMode: AvailableMode;
     children: React.ReactNode;
 };
 
-interface ThemeContextType {
-    themeMode: AvailableMode;
-    toggleTheme: () => void;
-}
-
-const ThemeContext = React.createContext<ThemeContextType | undefined>(
-    undefined
-);
-
 export default function ThemeRegistry({
     themeMode,
     children,
 }: ThemeRegistryType) {
-    const [mode, setMode] = React.useState<AvailableMode>(themeMode);
+    // const { mode, setMode } = useColorScheme();
 
-    const theme = React.useMemo(() => {
-        return createTheme(ThemeModeModules[mode]);
-    }, [mode]);
+    // const [mode, setMode] = React.useState<AvailableMode>(themeMode);
 
-    const toggleTheme = async () => {
-        const newMode: AvailableMode = mode === "light" ? "dark" : "light";
-        // document.cookie = `theme=${newMode}; path=/; max-age=${60 * 60 * 24 * 365}`;
-        setMode(newMode);
-        await setThemeMode(newMode);
-    };
+    // const toggleTheme = () => {
+    //     console.log(mode);
+    //     setMode("light");
+    // };
 
     return (
-        <ThemeContext.Provider value={{ themeMode: mode, toggleTheme }}>
-            <AppRouterCacheProvider>
-                <ThemeProvider
-                    // forceThemeRerender
-                    theme={theme}
-                >
-                    <CssBaseline />
-                    {children}
-                </ThemeProvider>
-            </AppRouterCacheProvider>
-        </ThemeContext.Provider>
+        <ThemeProvider
+            storageManager={null}
+            defaultMode={themeMode}
+            theme={theme}
+            disableTransitionOnChange
+        >
+            <CssBaseline enableColorScheme />
+            {children}
+        </ThemeProvider>
     );
 }
 
-export const useThemeContext = () => {
-    const ctx = React.useContext(ThemeContext);
-    if (!ctx)
-        throw new Error("useThemeContext must be used inside ThemeProvider");
-    return ctx;
-};
+export function useThemeContext() {
+    const { mode, systemMode, setMode } = useColorScheme();
+
+    const toggleTheme = async () => {
+        const newMode = mode === "dark" ? "light" : "dark";
+        setMode(newMode);
+        await setThemeMode(newMode);
+    };
+    return { themeMode: mode, toggleTheme };
+}
