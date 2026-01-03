@@ -28,7 +28,6 @@ export function LanguageChange() {
         <StyledFormControl
             size="small"
             sx={{ display: "inline-block", minWidth: 70 }}
-            fullWidth
         >
             <StyledSelect
                 sx={{ width: "100%" }}

@@ -37,7 +37,7 @@ export default function ThemeRegistry({
             storageManager={null}
             defaultMode={themeMode}
             theme={theme}
-            disableTransitionOnChange
+            // disableTransitionOnChange
         >
             <CssBaseline enableColorScheme />
             {children}

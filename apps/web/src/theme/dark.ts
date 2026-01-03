@@ -16,6 +16,12 @@ export const dark: ThemeConfigStructure = {
             light: "#f472b6", // Pink 400
             contrastText: "#ffffff",
         },
+        default: {
+            main: "#dfdfdfff",  // Pink 500
+            dark: "#ffffffff",  // Pink 600
+            light: "#9a9a9aff", // Pink 400
+            contrastText: "#000000ff",
+        },
         success: {
             main: "#10b981",  // Emerald 500
             dark: "#059669",  // Emerald 600

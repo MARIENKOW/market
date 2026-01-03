@@ -6,10 +6,7 @@ import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { enqueueSnackbar } from "notistack";
 import { PasswordComponent } from "@/components/fields/PasswordComponent";
 import { StyledLoadingButton } from "@/components/ui/StyledLoadingButton";
-import {
-    UserSignUpSchema,
-    UserSignUpDto,
-} from "../../../../../packages/shared/src/form";
+import { UserSignUpSchema, UserSignUpDto } from "@myorg/shared/form";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,9 +14,8 @@ import { errorFormHandler } from "@/helpers/errorFormHandler";
 import { useTranslations } from "next-intl";
 import { useThemeContext } from "@/theme/ThemeRegistry";
 
-export default function UserSignUp() {
+export default function UserSignUpForm() {
     const t = useTranslations();
-    const { themeMode, toggleTheme } = useThemeContext();
 
     const {
         handleSubmit,
@@ -42,20 +38,6 @@ export default function UserSignUp() {
 
     return (
         <>
-            <Typography
-                fontWeight={600}
-                color={"primary"}
-                sx={{ textAlign: "center", mb: 3 }}
-                id="transition-modal-title"
-                variant="h6"
-                component="h2"
-            >
-                {t("pages.signup.name")}
-            </Typography>
-
-            <Button variant="contained" color="primary" onClick={toggleTheme}>
-                {themeMode}
-            </Button>
             <form
                 style={{
                     display: "flex",

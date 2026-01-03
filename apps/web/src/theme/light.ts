@@ -15,6 +15,12 @@ export const light = {
             light: "#f472b6", // Pink 400
             contrastText: "#ffffff",
         },
+        default: {
+            main: "#1c1c1cff", // Pink 500
+            dark: "#000000ff", // Pink 600
+            light: "#393939ff", // Pink 400
+            contrastText: "#ffffff",
+        },
         success: {
             main: "#10b981", // Emerald 500
             dark: "#059669", // Emerald 600

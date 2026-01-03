@@ -1,9 +1,6 @@
-import UserSignUp from "@/components/form/UserSignUp";
-import { LanguageChange } from "@/components/blocks/LanguageChange";
+import UserSignUpForm from "@/components/form/UserSignUpForm";
 import { ContainerComponent } from "@/components/ui/Container";
-import { Box, Button, Typography } from "@mui/material";
-import { Link } from "@/i18n/navigation";
-import { route } from "@myorg/shared/route";
+import { Box, Typography } from "@mui/material";
 import { getTranslations } from "next-intl/server";
 
 export default async function Page() {
@@ -21,9 +18,6 @@ export default async function Page() {
                     display={"flex"}
                     flexDirection={"column"}
                 >
-                    <Link href={route.public.main}>
-                        <Button>{t("pages.main.name")}</Button>
-                    </Link>
                     <Typography
                         fontWeight={600}
                         color={"primary"}
@@ -33,8 +27,7 @@ export default async function Page() {
                     >
                         {t("pages.signup.name")}
                     </Typography>
-                    <LanguageChange />
-                    <UserSignUp />
+                    <UserSignUpForm />
                 </Box>
             </Box>
         </ContainerComponent>

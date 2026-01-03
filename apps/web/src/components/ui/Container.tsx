@@ -13,7 +13,10 @@ export const ContainerComponent = ({
                 display: "flex",
                 flexDirection: "column",
                 flex: 1,
-                p: { xs: 2 },
+                pt: { xs: 0 },
+                pb: { xs: 0 },
+                pl: { xs: 1, md: 2 },
+                pr: { xs: 1, md: 2 },
             }}
         >
             {children}

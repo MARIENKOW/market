@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     //         exclude: ["error", "warn"], // оставить error и warn, удалить log, info и т.д.
     //     },
     // },
+    
 };
 
 const withNextIntl = createNextIntlPlugin();
