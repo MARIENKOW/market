@@ -1,14 +1,10 @@
-import EmptyElement from "@/components/feedback/EmptyElement";
 import UserSignUpForm from "@/components/form/UserSignUpForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { Box, Typography } from "@mui/material";
-import { languages } from "@myorg/shared/i18n";
 import { getTranslations } from "next-intl/server";
 
 export default async function Page() {
     const t = await getTranslations();
-
-
 
     return (
         <ContainerComponent>
