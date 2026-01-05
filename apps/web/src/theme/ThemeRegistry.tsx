@@ -1,18 +1,9 @@
 "use client";
 
 import * as React from "react";
-import {
-    ThemeProvider,
-    CssBaseline,
-    createTheme,
-    useColorScheme,
-} from "@mui/material";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { ThemeProvider, CssBaseline, useColorScheme } from "@mui/material";
 import { AvailableMode, theme } from "@/theme/theme";
-import { useRouter } from "@/i18n/navigation";
-import { ThemeConfigStructure } from "@/theme/light";
 import { setThemeMode } from "@/theme/themeMode";
-// import { experimental_extendTheme as extendTheme } from "@mui/material";
 
 type ThemeRegistryType = {
     themeMode: AvailableMode;
@@ -23,15 +14,6 @@ export default function ThemeRegistry({
     themeMode,
     children,
 }: ThemeRegistryType) {
-    // const { mode, setMode } = useColorScheme();
-
-    // const [mode, setMode] = React.useState<AvailableMode>(themeMode);
-
-    // const toggleTheme = () => {
-    //     console.log(mode);
-    //     setMode("light");
-    // };
-
     return (
         <ThemeProvider
             storageManager={null}
@@ -45,13 +27,13 @@ export default function ThemeRegistry({
     );
 }
 
-export function useThemeContext() {
-    const { mode, systemMode, setMode } = useColorScheme();
-
+export function useThemeContext(serverMode: AvailableMode) {
+    const { mode, setMode } = useColorScheme();
+    const themeMode = mode !== undefined ? mode : serverMode;
     const toggleTheme = async () => {
-        const newMode = mode === "dark" ? "light" : "dark";
+        const newMode = themeMode === "dark" ? "light" : "dark";
         setMode(newMode);
         await setThemeMode(newMode);
     };
-    return { themeMode: mode, toggleTheme };
+    return { themeMode, toggleTheme };
 }

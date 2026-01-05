@@ -18,11 +18,12 @@ export function LanguageChange() {
     const pathname = usePathname();
 
     const handleChange = (event: SelectChangeEvent<unknown>) => {
-        const lang = languages.includes(event.target.value as AvailableLanguage)
-            ? (event.target.value as AvailableLanguage)
-            : defaultLanguage;
+        const value = event.target.value as AvailableLanguage;
+        const lang = languages.includes(value) ? value : defaultLanguage;
         router.replace(pathname, { locale: lang });
     };
+
+    if (languages.length <= 1) return null;
 
     return (
         <StyledFormControl
@@ -34,7 +35,7 @@ export function LanguageChange() {
                 defaultValue={locale}
                 onChange={handleChange}
             >
-                {languages.map((lang: AvailableLanguage) => (
+                {languages.map((lang:string) => (
                     <StyledMenuItem key={lang} value={lang}>
                         <ReactCountryFlag
                             svg

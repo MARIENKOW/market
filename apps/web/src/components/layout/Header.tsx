@@ -2,12 +2,14 @@ import { LanguageChange } from "@/components/blocks/LanguageChange";
 import ThemeChange from "@/components/blocks/ThemeChange";
 import { ContainerComponent } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
+import { getThemeMode } from "@/theme/themeMode";
 import { Box, Button, Toolbar } from "@mui/material";
 import { route } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 
 export default async function Header() {
     const t = await getTranslations();
+    const mode = await getThemeMode();
     return (
         <Box
         //  position={"fixed"} top={0} left={0}
@@ -27,8 +29,8 @@ export default async function Header() {
                     <Link href={route.public.main}>
                         <Button>{t("pages.main.name")}</Button>
                     </Link>
-                    <Box alignItems={'center'} display={"flex"} gap={1}>
-                        <ThemeChange />
+                    <Box alignItems={"center"} display={"flex"} gap={1}>
+                        <ThemeChange serverMode={mode} />
                         <LanguageChange />
                     </Box>
                 </Box>

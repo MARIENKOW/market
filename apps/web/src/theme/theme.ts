@@ -10,9 +10,6 @@ export const theme = createTheme({
     typography: {
         fontFamily: "Roboto, Arial, sans-serif",
         fontSize: 14,
-        button: {
-            textTransform: "none", // кнопки без всех заглавных букв
-        },
     },
     colorSchemes: {
         light,

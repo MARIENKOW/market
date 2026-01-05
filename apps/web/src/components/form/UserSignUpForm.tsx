@@ -12,7 +12,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/errorFormHandler";
 import { useTranslations } from "next-intl";
-import { useThemeContext } from "@/theme/ThemeRegistry";
+import { AxiosError } from "axios";
+import { StyledTextField } from "@/components/ui/StyledTextField";
+import { MessageKeyType } from "@myorg/shared/i18n";
 
 export default function UserSignUpForm() {
     const t = useTranslations();
@@ -29,6 +31,7 @@ export default function UserSignUpForm() {
 
     const onSubmit = async (data: UserSignUpDto) => {
         try {
+            console.log(data);
             await axios.get("https://sdsdc");
             enqueueSnackbar(t("form.signup.success"), { variant: "success" });
         } catch (e) {
@@ -46,19 +49,40 @@ export default function UserSignUpForm() {
                 }}
                 onSubmit={handleSubmit(onSubmit)}
             >
+                <StyledTextField
+                    variant="filled"
+                    label={t("form.email.label")}
+                    error={!!errors["email"]}
+                    helperText={
+                        errors["email"]?.message
+                            ? t(errors["email"].message as MessageKeyType)
+                            : undefined
+                    }
+                    {...register("email")}
+                />
                 <PasswordComponent
                     label={t("form.password.label")}
                     error={!!errors["password"]}
                     helperText={
                         errors["password"]?.message
-                            ? t(errors["password"].message)
+                            ? t(errors["password"].message as MessageKeyType)
                             : undefined
                     }
                     register={register("password")}
                 />
+                <PasswordComponent
+                    label={t("form.rePassword.label")}
+                    error={!!errors["rePassword"]}
+                    helperText={
+                        errors["rePassword"]?.message
+                            ? t(errors["rePassword"].message as MessageKeyType)
+                            : undefined
+                    }
+                    register={register("rePassword")}
+                />
                 {errors?.root?.server?.message && (
                     <StyledAlert severity="error">
-                        {t(errors.root.server.message)}
+                        {t(errors.root.server.message as MessageKeyType)}
                     </StyledAlert>
                 )}
                 <StyledLoadingButton

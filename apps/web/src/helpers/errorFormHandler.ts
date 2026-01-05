@@ -19,6 +19,7 @@
 //     });
 // };
 
+import { getMessageKey } from "@myorg/shared/i18n";
 import { AxiosError } from "axios";
 import { FieldValues, Path, UseFormSetError } from "react-hook-form";
 
@@ -62,10 +63,8 @@ export function errorFormHandler<T extends FieldValues>(
         }
     }
 
-    // fallback
-    console.log("FALLBACK_ERR");
-    setError("root.server" as const, {
+    setError("root.server", {
         type: "server",
-        message: "api.FALLBACK_ERR",
+        message: getMessageKey("api.FALLBACK_ERR"),
     });
 }

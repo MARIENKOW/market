@@ -1,5 +1,5 @@
 import { defineRouting } from "next-intl/routing";
-import { defaultLanguage, languages } from "@myorg/shared/i18n";
+import { defaultLanguage, languages, MessageStructure } from "@myorg/shared/i18n";
 
 export const routing = defineRouting({
     locales: languages,
@@ -7,3 +7,10 @@ export const routing = defineRouting({
     localePrefix: "as-needed",
     // localeDetection:false
 });
+
+declare module "next-intl" {
+    interface AppConfig {
+        Locale: (typeof routing.locales)[number];
+        Messages: MessageStructure;
+    }
+}

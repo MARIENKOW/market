@@ -1,10 +1,10 @@
 "use client";
-import { useTransition } from "react";
 import { Box, styled, Switch } from "@mui/material";
 import { useThemeContext } from "@/theme/ThemeRegistry";
 import ModeNightIcon from "@mui/icons-material/ModeNight";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import { AvailableMode } from "@/theme/theme";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     // width: 80,
@@ -37,8 +37,12 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     },
 }));
 
-export default function ThemeChange() {
-    const { themeMode, toggleTheme } = useThemeContext();
+export default function ThemeChange({
+    serverMode,
+}: {
+    serverMode: AvailableMode;
+}) {
+    const { themeMode, toggleTheme } = useThemeContext(serverMode);
 
     return (
         <MaterialUISwitch
