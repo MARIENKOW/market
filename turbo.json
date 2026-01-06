@@ -11,5 +11,42 @@
         "start": {
             "dependsOn": ["build"]
         }
-    }
+    },
+    "globalEnv": [
+        "FOLDER",
+        "IMG_FOLDER",
+        "VIDEO_FOLDER",
+        "DOCUMENT_FOLDER",
+
+        "DB_HOST",
+        "DB_USER",
+        "DB_DATABASE",
+        "DB_PASSWORD",
+        "DB_CONNECT_TIMEOUT",
+        "DB_PORT",
+
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USER",
+        "SMTP_PASSWORD",
+
+        "JWT_ACCESS_SECRET",
+        "JWT_ACCESS_MINUTES",
+        "JWT_REFRESH_SECRET",
+        "JWT_REFRESH_DAYS",
+
+        "TELEGRAM_BOT_TOKEN",
+        "TELEGRAM_CHAT_ID",
+        
+        "SERVER_PORT",
+
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+
+        "AUTH_SECRET",
+
+        "CLIENT_API",
+        "NEXT_PUBLIC_SERVER_API"
+    ],
+    "globalDependencies": ["**/.env.*"]
 }

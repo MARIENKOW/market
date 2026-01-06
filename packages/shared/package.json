@@ -27,9 +27,9 @@
             "types": "./dist/route/index.d.ts",
             "default": "./dist/route/index.js"
         },
-        "./config": {
-            "types": "./dist/config/index.d.ts",
-            "default": "./dist/config/index.js"
+        "./env": {
+            "types": "./dist/env/index.d.ts",
+            "default": "./dist/env/index.js"
         }
     }
 }

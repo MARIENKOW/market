@@ -1,4 +1,4 @@
-import { getMessageKey } from "../../src/i18n";
+import { getMessageKey } from "../i18n";
 import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,

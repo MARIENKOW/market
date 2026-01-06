@@ -1,4 +1,4 @@
-import { getMessageKey } from "../../src/i18n";
+import { getMessageKey } from "../i18n";
 import { Email, Password } from "./fields";
 import { z } from "zod";
 

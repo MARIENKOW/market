@@ -1,13 +1,13 @@
 import NextAuth from "next-auth";
 import type { NextAuthConfig, NextAuthResult } from "next-auth";
 import Google from "next-auth/providers/google";
-import { GOOGLE } from "@myorg/shared/config";
 
 const nextConfig: NextAuthConfig = {
+    secret: process.env.AUTH_SECRET,
     providers: [
         Google({
-            clientId: GOOGLE.clientId,
-            clientSecret: GOOGLE.clientSecret,
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
     ],
     callbacks: {
