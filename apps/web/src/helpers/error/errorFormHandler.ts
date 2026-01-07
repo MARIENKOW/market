@@ -1,24 +1,3 @@
-// export const errorFormHandler = (e, setError) => {
-//     console.error(e);
-//     if (
-//         (e?.response?.status === 400 || e?.response?.status === 500) &&
-//         e?.response?.data
-//     ) {
-//         const errors = e.response.data;
-//         for (let key in errors) {
-//             setError(key, {
-//                 type: "server",
-//                 message: errors[key],
-//             });
-//         }
-//         return;
-//     }
-//     setError("root.server", {
-//         type: "server",
-//         message: "api.FALLBACK_ERR",
-//     });
-// };
-
 import { getMessageKey } from "@myorg/shared/i18n";
 import { AxiosError } from "axios";
 import { FieldValues, Path, UseFormSetError } from "react-hook-form";
