@@ -4,7 +4,6 @@
         "module": "NodeNext",
         "strict": true,
         "composite": true,
-        "baseUrl": "."
     },
     "references": [
         { "path": "./packages/shared" },

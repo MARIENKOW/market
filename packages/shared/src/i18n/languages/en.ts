@@ -5,6 +5,8 @@ import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
+    USERNAME_MAX_LENGTH,
+    USERNAME_MIN_LENGTH,
 } from "../../form/constants";
 
 export const en: MessageStructure = {
@@ -16,12 +18,17 @@ export const en: MessageStructure = {
         },
         email: {
             max: `maximum ${EMAIL_MAX_LENGTH} characters`,
-            invalid: "invalid email format",
-            label: `Mail`,
+            invalid: `invalid email format`,
+            label: `Email`,
         },
         rePassword: {
-            label: "Confirm password",
+            label: `Repeat password`,
             same: "Passwords do not match",
+        },
+        username: {
+            min: `minimum ${USERNAME_MIN_LENGTH} characters`,
+            max: `maximum ${USERNAME_MAX_LENGTH} characters`,
+            label: `Username`,
         },
         required: "required field",
         submit: "Submit",
@@ -46,7 +53,7 @@ export const en: MessageStructure = {
     },
     feedback: {
         empty: {
-            title: "It's empty here for now",
+            title: "Nothing here yet",
         },
         error: {
             title: "Oops!",

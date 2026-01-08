@@ -1,4 +1,4 @@
-import FormControll from "@/components/fields/FormControll";
+import FieldControll from "@/components/fields/FieldControll";
 import { FormFieldProps } from "@/components/fields/FormTypes";
 import { StyledTextField } from "@/components/ui/StyledTextField";
 import { MessageKeyType } from "@myorg/shared/i18n";
@@ -12,7 +12,7 @@ export default function FormFilledTextField<TFieldValues extends FieldValues>({
     const t = useTranslations();
 
     return (
-        <FormControll name={name}>
+        <FieldControll name={name}>
             {({ field, fieldState: { error } }) => (
                 <StyledTextField
                     variant="filled"
@@ -26,6 +26,6 @@ export default function FormFilledTextField<TFieldValues extends FieldValues>({
                     }
                 />
             )}
-        </FormControll>
+        </FieldControll>
     );
 }

@@ -7,6 +7,7 @@ import {
     PASSWORD_MIN_LENGTH,
 } from "./constants";
 import z, { trim } from "zod";
+
 export const Password = z
     .string()
     .nonempty(getMessageKey("form.required"))

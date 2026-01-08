@@ -1,11 +1,10 @@
-import { ua } from "./languages/ua";
-import { type MessageStructure } from "./languages/ua";
+import { en } from "./languages/en";
+import { ua, type MessageStructure } from "./languages/ua";
 export { type MessageStructure } from "./languages/ua";
 
 const messagesModules = {
-    //первый - defaultLanguage
+    en,
     ua,
-    // en,
 } as const;
 
 export type AvailableLanguage = keyof typeof messagesModules;
