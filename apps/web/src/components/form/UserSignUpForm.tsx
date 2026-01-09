@@ -74,7 +74,7 @@ export default function UserSignUpForm() {
                 register={register("rePassword")}
             /> */}
             <FormAlert />
-            <SubmitButton />
+            <SubmitButton  />
         </SimpleForm>
     );
 }

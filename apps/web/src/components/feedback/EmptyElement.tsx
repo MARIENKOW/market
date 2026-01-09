@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
+import { languages } from "@myorg/shared/i18n";
 
 export default function EmptyElement() {
     const t = useTranslations();
@@ -10,7 +11,7 @@ export default function EmptyElement() {
             justifyContent={"center"}
             alignItems={"center"}
             display={"flex"}
-            flexDirection={'column'}
+            flexDirection={"column"}
             gap={2}
         >
             <InfoOutlineIcon sx={{ width: 50, height: 50 }} />

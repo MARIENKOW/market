@@ -6,7 +6,7 @@ import { useFormContext, useFormState } from "react-hook-form";
 export default function FormAlert() {
     const t = useTranslations();
     const { control } = useFormContext();
-
+    
     const { errors } = useFormState({
         control,
     });
