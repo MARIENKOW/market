@@ -6,7 +6,7 @@ import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
 import { FieldValues, Path, RegisterOptions } from "react-hook-form";
 
-export default function FormFilledTextField<TFieldValues extends FieldValues>({
+export default function FormTextField<TFieldValues extends FieldValues>({
     name,
     label,
     variant,
@@ -24,6 +24,7 @@ export default function FormFilledTextField<TFieldValues extends FieldValues>({
                 <StyledTextField
                     variant={finalVariant}
                     label={t(label)}
+                    
                     error={!!error}
                     {...field}
                     helperText={

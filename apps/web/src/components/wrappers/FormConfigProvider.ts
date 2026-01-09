@@ -16,7 +16,7 @@ export type FormConfigPartial = Partial<FormConfigType>;
 
 export const DEFAULT_FORM_CONFIG: FormConfigType = {
     fields: {
-        variant: "outlined",
+        variant: "filled",
     },
     submit: {
         variant: "contained",

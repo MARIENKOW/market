@@ -10,20 +10,26 @@ import useForm from "@/hooks/useForm";
 import React from "react";
 import { FieldValues, UseFormProps } from "react-hook-form";
 
-export interface SimpleFormProps<TFieldValues extends FieldValues> {
+export interface SimpleFormProps<
+    TFieldValues extends FieldValues,
+    TOutputFieldValues extends FieldValues,
+> {
     children: React.ReactNode;
-    params: UseFormProps<TFieldValues>;
-    onSubmit: CustomSubmitHandler<TFieldValues>;
+    params: UseFormProps<TFieldValues, any, TOutputFieldValues>;
+    onSubmit: CustomSubmitHandler<TFieldValues, TOutputFieldValues>;
     formConfig?: FormConfigPartial;
 }
 
-export default function SimpleForm<TFieldValues extends FieldValues>({
+export default function SimpleForm<
+    TFieldValues extends FieldValues,
+    TOutputFieldValues extends FieldValues = TFieldValues,
+>({
     children,
     params,
     onSubmit,
     formConfig,
-}: SimpleFormProps<TFieldValues>) {
-    const form = useForm<TFieldValues>(params);
+}: SimpleFormProps<TFieldValues, TOutputFieldValues>) {
+    const form = useForm<TFieldValues, TOutputFieldValues>(params);
 
     const mergedConfig: FormConfigType = {
         fields: { ...DEFAULT_FORM_CONFIG.fields, ...formConfig?.fields },
@@ -32,7 +38,7 @@ export default function SimpleForm<TFieldValues extends FieldValues>({
 
     return (
         <FormConfigProvider value={mergedConfig}>
-            <FormProvider<TFieldValues> form={form}>
+            <FormProvider<TFieldValues, TOutputFieldValues> form={form}>
                 <Form form={form} onSubmit={onSubmit}>
                     {children}
                 </Form>

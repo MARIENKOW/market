@@ -4,6 +4,7 @@ import {
     FieldValues,
     Path,
     RegisterOptions,
+    UseControllerProps,
     UseControllerReturn,
     UseFormReturn,
 } from "react-hook-form";

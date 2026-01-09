@@ -1,5 +1,5 @@
 "use client";
-import { InputAdornment } from "@mui/material";
+import { InputAdornment, TextFieldProps } from "@mui/material";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import React, { MouseEvent, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
@@ -8,20 +8,25 @@ import { StyledInputLabel } from "@/components/ui/StyledInputLabel";
 import { StyledFilledInput } from "@/components/ui/StyledFilledInput";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledFormHelperText } from "@/components/ui/StyledFormHelperText";
-import { FieldErrors, UseFormRegisterReturn } from "react-hook-form";
+import InputComponent from "@/components/fields/uncontrolled/InputComponent";
+import { FieldValue, FieldValues } from "react-hook-form";
 
 type PasswordComponentProps = {
     label: string;
-    error: boolean;
-    register: UseFormRegisterReturn;
+    error?: boolean;
     helperText?: string;
+    variant?: TextFieldProps["variant"];
+    value?: string;
+    onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 };
 
 export const PasswordComponent = ({
     label,
     error,
-    register,
     helperText,
+    variant,
+    value,
+    onChange,
 }: PasswordComponentProps) => {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -30,16 +35,14 @@ export const PasswordComponent = ({
     };
 
     return (
-        <StyledFormControl error={error} variant="filled">
-            <StyledInputLabel
-                htmlFor={`outlined-adornment-password-${register.name}`}
-            >
-                {label}
-            </StyledInputLabel>
-            <StyledFilledInput
-                {...register}
+        <StyledFormControl error={error} variant={variant}>
+            <StyledInputLabel>{label}</StyledInputLabel>
+            <InputComponent
+                label={label}
+                variant={variant}
                 type={showPassword ? "text" : "password"}
-                id={`outlined-adornment-password-${register.name}`}
+                value={value}
+                onChange={onChange}
                 endAdornment={
                     <InputAdornment position="end">
                         <StyledIconButton

@@ -8,6 +8,7 @@ import { Controller, FieldValues, useFormContext } from "react-hook-form";
 export default function FieldControll<TFieldValues extends FieldValues>({
     name,
     children,
+    // rules,
 }: FormControlProps<TFieldValues>) {
     const t = useTranslations();
     const { control } = useFormContext<TFieldValues>();
