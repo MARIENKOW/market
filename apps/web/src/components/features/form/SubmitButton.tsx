@@ -1,8 +1,8 @@
-import { StyledLoadingButton } from "@/components/ui/StyledLoadingButton";
+import { StyledButton } from "@/components/ui/StyledButton";
 import { useFormContext, useFormState } from "react-hook-form";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { useTranslations } from "next-intl";
-import { useFormConfig } from "@/components/wrappers/FormConfigProvider";
+import { useFormConfig } from "@/components/wrappers/form/FormConfigProvider";
 import { ButtonProps } from "@mui/material";
 import { MessageKeyType } from "@myorg/shared/i18n";
 
@@ -26,7 +26,7 @@ export default function SubmitButton({ variant, text }: SubmitButtonParams) {
     const finalText = text || configText;
 
     return (
-        <StyledLoadingButton
+        <StyledButton
             loading={isSubmitting}
             endIcon={<DoubleArrowIcon />}
             type="submit"
@@ -34,6 +34,6 @@ export default function SubmitButton({ variant, text }: SubmitButtonParams) {
             variant={finalVariant}
         >
             {t(finalText)}
-        </StyledLoadingButton>
+        </StyledButton>
     );
 }

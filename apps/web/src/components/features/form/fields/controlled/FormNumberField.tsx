@@ -1,9 +1,9 @@
-import { FormFieldProps } from "@/components/fields/FormTypes";
-import { NumberFieldCommponent } from "@/components/fields/uncontrolled/NumberFieldCommponent";
-import { PasswordComponent } from "@/components/fields/uncontrolled/PasswordComponent";
+import { FormFieldProps } from "@/components/features/form/fields/types";
+import { NumberFieldCommponent } from "@/components/features/form/fields/uncontrolled/NumberFieldCommponent";
+import { PasswordComponent } from "@/components/features/form/fields/uncontrolled/PasswordComponent";
 import { StyledTextField } from "@/components/ui/StyledTextField";
-import FieldControll from "@/components/wrappers/FieldControll";
-import { useFormConfig } from "@/components/wrappers/FormConfigProvider";
+import FieldControll from "@/components/wrappers/form/FieldControll";
+import { useFormConfig } from "@/components/wrappers/form/FormConfigProvider";
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
 import { FieldValues, Path, RegisterOptions } from "react-hook-form";

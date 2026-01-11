@@ -43,6 +43,9 @@ export const en: MessageStructure = {
         signup: {
             name: "Sign Up",
         },
+        signin: {
+            name: "Sign In",
+        },
         notFound: {
             name: "404",
         },
@@ -59,6 +62,11 @@ export const en: MessageStructure = {
             title: "Oops!",
             subtitle: "Something went wrong",
             reload: "reload",
+        },
+    },
+    features: {
+        signOut: {
+            name: "Sign out",
         },
     },
 };

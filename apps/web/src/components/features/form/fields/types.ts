@@ -1,13 +1,6 @@
 import { TextFieldProps } from "@mui/material";
 import { MessageKeyType } from "@myorg/shared/i18n";
-import {
-    FieldValues,
-    Path,
-    RegisterOptions,
-    UseControllerProps,
-    UseControllerReturn,
-    UseFormReturn,
-} from "react-hook-form";
+import { FieldValues, Path, UseControllerReturn } from "react-hook-form";
 
 type FormBaseProps<TFieldValues extends FieldValues> = {
     name: Path<TFieldValues>;
@@ -16,7 +9,7 @@ type FormBaseProps<TFieldValues extends FieldValues> = {
 // TextField (с label)
 export interface FormFieldProps<TFieldValues extends FieldValues>
     extends FormBaseProps<TFieldValues> {
-    label: MessageKeyType;
+    label?: MessageKeyType;
     variant?: TextFieldProps["variant"];
 }
 

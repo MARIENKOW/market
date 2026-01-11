@@ -4,6 +4,7 @@ export const route = {
         main: "/",
         signin: "/signin",
         signup: "/signup",
+        profile: "/profile",
     },
     admin: {
         main: "/admin",
@@ -13,9 +14,11 @@ export const route = {
     },
 } as const;
 
-export type PublicRoute = (typeof route.public)[keyof typeof route.public];
+export const AUTH_PRIVATE_ROUTE = [route.public.signup, route.public.signin];
+export const PUBLIC_PRIVATE_ROUTE = [route.public.profile];
 
-export type AdminRoute = (typeof route.admin)[keyof typeof route.admin];
+type Paths<T> = T extends object
+    ? { [K in keyof T]: T[K] extends string ? T[K] : Paths<T[K]> }[keyof T]
+    : never;
 
-export type SuperadminRoute =
-    (typeof route.superadmin)[keyof typeof route.superadmin];
+export type RoutePaths = Paths<typeof route>; // '/' | '/signin' | ... | '/admin'

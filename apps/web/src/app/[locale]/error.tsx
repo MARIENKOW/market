@@ -12,5 +12,5 @@ export default function ErrorPage({
 }) {
     console.dir(error);
     console.log(reload);
-    return <ErrorElement  />;
+    return <ErrorElement />;
 }

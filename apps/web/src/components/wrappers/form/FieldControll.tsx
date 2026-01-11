@@ -1,4 +1,4 @@
-import { FormControlProps } from "@/components/fields/FormTypes";
+import { FormControlProps } from "@/components/features/form/fields/types";
 import { StyledTextField } from "@/components/ui/StyledTextField";
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";

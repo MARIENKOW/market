@@ -1,11 +1,11 @@
-import Form, { CustomSubmitHandler } from "@/components/wrappers/Form";
+import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
 import {
     DEFAULT_FORM_CONFIG,
     FormConfigPartial,
     FormConfigProvider,
     FormConfigType,
-} from "@/components/wrappers/FormConfigProvider";
-import FormProvider from "@/components/wrappers/FormProvider";
+} from "@/components/wrappers/form/FormConfigProvider";
+import FormProvider from "@/components/wrappers/form/FormProvider";
 import useForm from "@/hooks/useForm";
 import React from "react";
 import { FieldValues, UseFormProps } from "react-hook-form";

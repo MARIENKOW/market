@@ -40,6 +40,9 @@ export const ua = {
         signup: {
             name: "Регистрация",
         },
+        signin: {
+            name: "Авторизация",
+        },
         notFound: {
             name: "404",
         },
@@ -56,6 +59,11 @@ export const ua = {
             title: "Упс!",
             subtitle: "Что-то пошло не так",
             reload: "перезагрузить",
+        },
+    },
+    features: {
+        signOut: {
+            name: "Выйти",
         },
     },
 };

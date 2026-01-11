@@ -1,7 +1,7 @@
-import { FormFieldProps } from "@/components/fields/FormTypes";
+import { FormFieldProps } from "@/components/features/form/fields/types";
 import { StyledTextField } from "@/components/ui/StyledTextField";
-import FieldControll from "@/components/wrappers/FieldControll";
-import { useFormConfig } from "@/components/wrappers/FormConfigProvider";
+import FieldControll from "@/components/wrappers/form/FieldControll";
+import { useFormConfig } from "@/components/wrappers/form/FormConfigProvider";
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
 import { FieldValues, Path, RegisterOptions } from "react-hook-form";
@@ -23,8 +23,7 @@ export default function FormTextField<TFieldValues extends FieldValues>({
             {({ field, fieldState: { error } }) => (
                 <StyledTextField
                     variant={finalVariant}
-                    label={t(label)}
-                    
+                    label={label ? t(label) : ""}
                     error={!!error}
                     {...field}
                     helperText={

@@ -7,7 +7,7 @@ import { StyledInputLabel } from "@/components/ui/StyledInputLabel";
 import { StyledFilledInput } from "@/components/ui/StyledFilledInput";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledFormHelperText } from "@/components/ui/StyledFormHelperText";
-import InputComponent from "@/components/fields/uncontrolled/InputComponent";
+import InputComponent from "@/components/features/form/fields/uncontrolled/InputComponent";
 import { FieldValue, FieldValues } from "react-hook-form";
 
 type PasswordComponentProps = {

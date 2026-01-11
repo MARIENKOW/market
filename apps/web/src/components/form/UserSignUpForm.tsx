@@ -6,21 +6,17 @@ import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/error/errorFormHandler";
 import { useTranslations } from "next-intl";
-import { PasswordComponent } from "@/components/fields/uncontrolled/PasswordComponent";
-import FormFilledTextField from "@/components/fields/controlled/FormTextField";
-import Form, { CustomSubmitHandler } from "@/components/wrappers/Form";
-import SimpleForm from "@/components/wrappers/SimpleForm";
-import SubmitButton from "@/components/fields/SubmitButton";
-import FormAlert from "@/components/fields/FormAlert";
-import { Input, TextField } from "@mui/material";
-import FormPassword from "@/components/fields/controlled/FormPassword";
-import { NumberFieldCommponent } from "@/components/fields/uncontrolled/NumberFieldCommponent";
-import FormNumberField from "@/components/fields/controlled/FormNumberField";
+import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
+import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
+import SubmitButton from "@/components/features/form/SubmitButton";
+import FormAlert from "@/components/features/form/FormAlert";
+import FormPassword from "@/components/features/form/fields/controlled/FormPassword";
 import useForm from "@/hooks/useForm";
-import { FormConfigProvider } from "@/components/wrappers/FormConfigProvider";
-import FormProvider from "@/components/wrappers/FormProvider";
+import FormProvider from "@/components/wrappers/form/FormProvider";
 import { useEffect } from "react";
-import { useFormContext, useFormState, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
+import { StyledDivider } from "@/components/ui/StyledDivider";
+import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
 
 export default function UserSignUpForm() {
     const t = useTranslations();
@@ -48,7 +44,7 @@ export default function UserSignUpForm() {
     useEffect(() => {
         if (!password || !rePassword) return;
         trigger("rePassword");
-    }, [password, trigger]);
+    }, [password, trigger, rePassword]);
 
     const onSubmit: CustomSubmitHandler<UserSignUpDtoInput> = async (
         data,
@@ -80,6 +76,8 @@ export default function UserSignUpForm() {
                 />
                 <FormAlert />
                 <SubmitButton />
+                <StyledDivider />
+                <GoogleAuthButton />
             </Form>
         </FormProvider>
     );
