@@ -1,5 +1,6 @@
 "use client";
 
+import SignOutButton from "@/components/features/auth/SignOutButton";
 import LoadingElement from "@/components/feedback/LoadingElement";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { Link } from "@/i18n/navigation";
@@ -25,9 +26,5 @@ export default function AuthNavigation() {
                 </Link>
             </Box>
         );
-    return (
-        <StyledButton onClick={() => signOut()}>
-            {t("features.signOut.name")}
-        </StyledButton>
-    );
+    return <SignOutButton />;
 }

@@ -4,8 +4,6 @@ import type { NextAuthConfig, NextAuthResult } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { NextRequest } from "next/server";
-import { UserSignUpSchema } from "@myorg/shared/form";
-import { email } from "zod";
 
 declare module "next-auth" {
     interface NextAuthRequest extends NextRequest {}
@@ -28,7 +26,7 @@ export const nextConfig: NextAuthConfig = {
                     type: "password",
                 },
             },
-            async authorize(credentials, request) {
+            async authorize(credentials) {
                 if (!credentials.email || !credentials.password) return null;
                 return { email: "csdc@dasd.da" };
             },

@@ -2,12 +2,11 @@
 
 import { enqueueSnackbar } from "notistack";
 import { UserSignInSchema, UserSignInDtoInput } from "@myorg/shared/form";
-import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/error/errorFormHandler";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
-import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
+import { CustomSubmitHandler } from "@/components/wrappers/form/Form";
 import SubmitButton from "@/components/features/form/SubmitButton";
 import FormAlert from "@/components/features/form/FormAlert";
 import FormPassword from "@/components/features/form/fields/controlled/FormPassword";
@@ -15,9 +14,11 @@ import SimpleForm from "@/components/wrappers/form/SimpleForm";
 import { signIn } from "next-auth/react";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
+import { useRouter } from "@/i18n/navigation";
 import { route } from "@myorg/shared/route";
 
 export default function UserSignInForm() {
+    const router = useRouter();
     const t = useTranslations();
 
     const onSubmit: CustomSubmitHandler<UserSignInDtoInput> = async (
@@ -25,8 +26,9 @@ export default function UserSignInForm() {
         { setError }
     ) => {
         try {
-            await signIn("credentials", data);
+            await signIn("credentials", { ...data, redirect: false });
             enqueueSnackbar(t("form.signup.success"), { variant: "success" });
+            router.push(route.public.main);
         } catch (e) {
             errorFormHandler(e, setError);
         }

@@ -3,6 +3,7 @@ dist
 node_modules
 /build
 .turbo
+generated
 
 # Logs
 logs
