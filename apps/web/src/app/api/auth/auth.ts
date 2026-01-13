@@ -4,6 +4,7 @@ import type { NextAuthConfig, NextAuthResult } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { NextRequest } from "next/server";
+import { $BaseApi } from "@/lib/axios";
 
 declare module "next-auth" {
     interface NextAuthRequest extends NextRequest {}
@@ -28,6 +29,16 @@ export const nextConfig: NextAuthConfig = {
             },
             async authorize(credentials) {
                 if (!credentials.email || !credentials.password) return null;
+                console.log($BaseApi);
+                try {
+                    const { data } = await $BaseApi.post("/login", credentials);
+                    console.log(data);
+                } catch (error) {
+                    console.log(error);
+                    return null;
+                }
+
+                return null;
                 return { email: "csdc@dasd.da" };
             },
         }),

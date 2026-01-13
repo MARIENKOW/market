@@ -6,24 +6,30 @@ import {
   UserSignUpDtoInput,
   UserSignUpSchema,
 } from '@myorg/shared/form';
-import { ZodValidationPipe } from './common/pipe/zod-validation';
+import { ZodValidationPipe } from '../../common/pipe/zod-validation';
+import { UserService } from '@/models/user/user.service';
+import { PrismaService } from '@/models/prisma/prisma.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   @Post('register')
   register(
     @Body(new ZodValidationPipe(UserSignUpSchema)) body: UserSignInDtoInput,
   ) {
-    // return this.authService.register(body);
+    // return this.appService.getHello();
   }
 
   @Post('login')
-  login(
+  async login(
     @Body(new ZodValidationPipe(UserSignInSchema)) body: UserSignUpDtoInput,
     @Res({ passthrough: true }) res: Response,
   ) {
-    // return this.authService.login(body, res);
+
+    console.log(this.prisma);
+    return await this.prisma.user.create({
+      data: { email: 'dasd@das.asd' },
+    });
   }
 }

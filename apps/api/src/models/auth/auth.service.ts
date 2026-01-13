@@ -1,6 +1,7 @@
+import { UserService } from '@/models/user/user.service';
 import { UserSignInDtoInput, UserSignUpDtoInput } from '@myorg/shared/form';
 import { Injectable } from '@nestjs/common';
-import { UserService } from 'src/user.service';
+
 
 
 @Injectable()

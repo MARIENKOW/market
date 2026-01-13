@@ -1,12 +1,10 @@
-import { PrismaService } from '@/prisma/prisma.service';
+import { User } from '@/generated/prisma';
+import { PrismaService } from '@/models/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
-
-
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
   findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
@@ -20,7 +18,7 @@ export class UserService {
     });
   }
 
-  findById(id: string): Promise<User | null> {
+  findById(id: number): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { id },
     });

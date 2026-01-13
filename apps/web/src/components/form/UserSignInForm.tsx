@@ -16,19 +16,22 @@ import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
 import { useRouter } from "@/i18n/navigation";
 import { route } from "@myorg/shared/route";
+import { $BaseApi } from "@/lib/axios";
 
 export default function UserSignInForm() {
     const router = useRouter();
     const t = useTranslations();
 
     const onSubmit: CustomSubmitHandler<UserSignInDtoInput> = async (
-        data,
+        values,
         { setError }
     ) => {
         try {
-            await signIn("credentials", { ...data, redirect: false });
+            // await signIn("credentials", { ...data, redirect: false });
+            const { data  } = await $BaseApi.post("/login", values);
+            console.log(data);
             enqueueSnackbar(t("form.signup.success"), { variant: "success" });
-            router.push(route.public.main);
+            // router.push(route.public.main);
         } catch (e) {
             errorFormHandler(e, setError);
         }

@@ -1,5 +1,10 @@
-import 'dotenv/config';
-import { defineConfig, env } from 'prisma/config';
+import { defineConfig } from 'prisma/config';
+
+import path from 'path';
+import { config } from 'dotenv';
+
+config({ path: path.resolve(process.cwd(), '../../.env') }); // root .env
+
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
@@ -7,6 +12,6 @@ export default defineConfig({
     path: 'prisma/migrations',
   },
   datasource: {
-    url: "postgresql://postgres:@PostgreSQL-17:5432/market",
+    url: `${process.env.DB_PROVIDER}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`,
   },
 });

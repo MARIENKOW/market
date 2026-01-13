@@ -25,7 +25,7 @@ export default function FormNumberField<TFieldValues extends FieldValues>({
             {({ field: { value, onChange }, fieldState: { error } }) => (
                 <StyledTextField
                     variant={finalVariant}
-                    label={t(label)}
+                    label={label?t(label):''}
                     error={!!error}
                     inputMode="numeric"
                     value={value}

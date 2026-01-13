@@ -26,6 +26,9 @@ function getPathnameWithoutLocale(pathname: string): {
     return { pathname, locale: null }; // Без изменений
 }
 
+console.log(process.env.NEXT_PUBLIC_SERVER_API);
+
+
 export default auth((req) => {
     const isAuth = !!req.auth;
     const { pathname, locale } = getPathnameWithoutLocale(req.nextUrl.pathname);

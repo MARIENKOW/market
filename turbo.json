@@ -37,7 +37,7 @@
 
         "TELEGRAM_BOT_TOKEN",
         "TELEGRAM_CHAT_ID",
-        
+
         "SERVER_PORT",
 
         "GOOGLE_CLIENT_ID",
@@ -46,7 +46,8 @@
         "AUTH_SECRET",
 
         "CLIENT_API",
-        "NEXT_PUBLIC_SERVER_API"
+        "NEXT_PUBLIC_SERVER_API",
+        "DB_PROVIDER"
     ],
     "globalDependencies": ["**/.env.*"]
 }
