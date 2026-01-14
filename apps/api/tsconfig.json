@@ -3,41 +3,29 @@
   "references": [{ "path": "../../packages/shared" }],
   "include": ["src"],
   "compilerOptions": {
-    // "module": "commonjs",
-    // "moduleResolution": "node",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "target": "ES2023",
-    // "target": "ES2023",
-    // "lib": ["ES2023"],
-    // "outDir": "./dist",
-    // "rootDir": "./src",
-    // "sourceMap": true,
-    "resolvePackageJsonExports": true,
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "target": "ES2021",
+
+    "strict": true,
     "esModuleInterop": true,
-    "isolatedModules": false,
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": false,
-    // "strict": true,
-    // "strictNullChecks": true,
-    // "esModuleInterop": true,
-    "experimentalDecorators": true,
-    // "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": ".",
+
     "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["src/*"]
+      //   "@myorg/shared": ["../../packages/shared/src"],
+      //   "@myorg/shared/*": ["../../packages/shared/src/*"]
+    },
+
+    "incremental": true,
+    "skipLibCheck": true
   }
 }

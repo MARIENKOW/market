@@ -1,6 +1,7 @@
+
+
 import { AppModule } from '@/modules/app/app.module';
 import { NestFactory } from '@nestjs/core';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
@@ -14,5 +15,10 @@ async function bootstrap() {
   });
   await app.listen(process.env.SERVER_PORT || 5000);
 }
+
+
+
+
+
 
 bootstrap();

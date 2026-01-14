@@ -1,27 +1,29 @@
-import { User } from '@/generated/prisma';
-import { PrismaService } from '@/modules/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
+// import { User } from '@/generated/prisma';
+// import { PrismaService } from '@/modules/prisma/prisma.service';
+// import { PASSWORD_MAX_LENGTH } from '@myorg/shared/form';
+// import { Injectable } from '@nestjs/common';
 
 
-@Injectable()
-export class UserService {
-  constructor(private prisma: PrismaService) {}
 
-  findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: { email },
-    });
-  }
+// @Injectable()
+// export class UserService {
+//   constructor(private prisma: PrismaService) {}
 
-  create(data: { email: string; passwordHash: string }): Promise<User> {
-    return this.prisma.user.create({
-      data,
-    });
-  }
+//   findByEmail(email: string): Promise<User | null> {
+//     return this.prisma.user.findUnique({
+//       where: { email },
+//     });
+//   }
 
-  findById(id: number): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: { id },
-    });
-  }
-}
+//   create(data: { email: string; passwordHash: string }): Promise<User> {
+//     return this.prisma.user.create({
+//       data,
+//     });
+//   }
+
+//   findById(id: number): Promise<User | null> {
+//     return this.prisma.user.findUnique({
+//       where: { id },
+//     });
+//   }
+// }

@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
+        "module": "commonjs",
         "target": "ES2023",
-        "module": "NodeNext",
         "strict": true,
-        "composite": true,
+        "composite": true
     },
     "references": [
         { "path": "./packages/shared" },

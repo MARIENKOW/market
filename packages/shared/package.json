@@ -5,19 +5,15 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "tsc -b --force",
-        "dev": "tsc -b --watch"
+        "dev": "tsc -b --force && tsc -b --watch"
     },
     "dependencies": {
         "zod": "^4.1.12"
     },
     "exports": {
         ".": {
-            "types": [
-                "./dist/index.d.ts"
-            ],
-            "default": [
-                "./dist/index.js"
-            ]
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
         },
         "./form": {
             "types": "./dist/form/index.d.ts",
