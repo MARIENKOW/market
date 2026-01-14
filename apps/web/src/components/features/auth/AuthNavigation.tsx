@@ -15,7 +15,7 @@ export default function AuthNavigation() {
     if (session.status === "loading") return <LoadingElement />;
     if (session.status === "unauthenticated")
         return (
-            <Box>
+            <Box display={'flex'} gap={1} >
                 <Link href={route.public.signin}>
                     <StyledButton variant="contained">
                         {t("pages.signin.name")}

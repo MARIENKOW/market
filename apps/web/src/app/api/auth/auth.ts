@@ -41,6 +41,28 @@ export const nextConfig: NextAuthConfig = {
             },
         }),
     ],
+    callbacks: {
+        async signIn({ user, account }) {
+            if (account?.provider === "google") {
+                // проверяем есть ли user с user.email в базе
+                // const res = await $BaseApi.post("/auth/google-signin", { email: user.email });
+                // return res.data.success;
+            }
+            return true;
+        },
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.email = user.email;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            session.user.id = token.id as string;
+            session.user.email = token.email as string;
+            return session;
+        },
+    },
     pages: {
         signIn: route.public.signin,
     },

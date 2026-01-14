@@ -1,0 +1,11 @@
+model Account {
+  id                 String  @id @default(cuid())
+  user               User    @relation(fields: [userId], references: [id])
+  userId             String
+  provider           String
+  providerAccountId  String
+  access_token       String?
+  refresh_token      String?
+  expires_at         Int?
+  createdAt          DateTime @default(now())
+}

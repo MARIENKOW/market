@@ -1,22 +1,52 @@
-// import { UserService } from '@/modules/user/user.service';
-// import { UserSignInDtoInput, UserSignUpDtoInput } from '@myorg/shared/form';
-// import { Injectable } from '@nestjs/common';
+// src/modules/auth/auth.service.ts
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
+@Injectable()
 
-// @Injectable()
-// export class AuthService {
-//   constructor(private readonly userService: UserService) {}
-//   async register(data: UserSignUpDtoInput) {
-//     // const hash = await .hash(data.password, 10);
 
-//     return this.userService.create({
-//       email: data.email,
-//       passwordHash: 'hash',
-//     });
-//   }
+export class AuthService {
+  constructor(private prisma: PrismaService) {}
 
-//   async login(data: UserSignInDtoInput, res: Response) {
-//     const user = await this.userService.findByEmail(data.email);
-//     // password check
-//     // issue tokens
-//   }
-// }
+  async register(email: string, password: string, name?: string) {
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing) throw new Error('User already exists');
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+      },
+    });
+    return user;
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user || !user.password) return null;
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return null;
+
+    const session = await this.prisma.session.create({
+      data: {
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24h
+      },
+    });
+
+    return { user, session };
+  }
+
+  async getUserBySession(sessionId: string) {
+    const session = await this.prisma.session.findUnique({
+      where: { id: sessionId },
+      include: { user: true },
+    });
+    if (!session || session.expiresAt < new Date()) return null;
+    return session.user;
+  }
+}

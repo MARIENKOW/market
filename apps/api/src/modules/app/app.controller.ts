@@ -13,18 +13,19 @@ export class AppController {
 
   @Post('register')
   register(
-    @Body(new ZodValidationPipe(UserSignUpSchema)) body: UserSignInDtoInput,
+    // @Body(new ZodValidationPipe(UserSignUpSchema)) body: UserSignInDtoInput,
   ) {
     // return this.appService.getHello();
   }
 
   @Post('login')
   async login(
-    @Body(new ZodValidationPipe(UserSignInSchema)) body: UserSignInDtoInput,
+    // @Body(new ZodValidationPipe(UserSignInSchema)) body: UserSignInDtoInput,
     @Res({ passthrough: true }) res: Response,
   ) {
     return await this.prisma.user.create({
-      data: body,
+      data:{email:'dasd',password:'dasd'}
+    //    body,
     });
   }
 }
