@@ -9,7 +9,7 @@
     "build": "prisma generate && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/src/main",
-    "dev": "nest start --watch",
+    "dev": "prisma generate && nest start --watch",
     "dev:tsnode": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
