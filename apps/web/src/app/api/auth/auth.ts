@@ -33,13 +33,11 @@ export const nextConfig: NextAuthConfig = {
                 try {
                     const { data } = await $BaseApi.post("/login", credentials);
                     console.log(data);
+                    return data;
                 } catch (error) {
                     console.log(error);
                     return null;
                 }
-
-                return null;
-                return { email: "csdc@dasd.da" };
             },
         }),
     ],

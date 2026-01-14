@@ -1,5 +1,9 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
-import { UserSignInDtoInput, UserSignInSchema, UserSignUpSchema } from '@myorg/shared/form';
+import {
+  UserSignInDtoInput,
+  UserSignInSchema,
+  UserSignUpSchema,
+} from '@myorg/shared/form';
 import { ZodValidationPipe } from '@/common/pipe/zod-validation';
 import { PrismaService } from '@/modules/prisma/prisma.service';
 
@@ -20,10 +24,7 @@ export class AppController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return await this.prisma.user.create({
-      data: { email: 'dasd@das.asd' },
+      data: body,
     });
   }
-
-
-  
 }

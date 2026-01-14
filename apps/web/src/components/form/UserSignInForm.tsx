@@ -1,7 +1,11 @@
 "use client";
 
 import { enqueueSnackbar } from "notistack";
-import { UserSignInSchema, UserSignInDtoInput } from "@myorg/shared/form";
+import {
+    UserSignInSchema,
+    UserSignInDtoInput,
+    PASSWORD_MAX_LENGTH,
+} from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/error/errorFormHandler";
 import { useTranslations } from "next-intl";
@@ -16,22 +20,23 @@ import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
 import { useRouter } from "@/i18n/navigation";
 import { route } from "@myorg/shared/route";
-import { $BaseApi } from "@/lib/axios";
 
 export default function UserSignInForm() {
     const router = useRouter();
     const t = useTranslations();
 
     const onSubmit: CustomSubmitHandler<UserSignInDtoInput> = async (
-        values,
+        data,
         { setError }
     ) => {
         try {
-            // await signIn("credentials", { ...data, redirect: false });
-            const { data  } = await $BaseApi.post("/login", values);
-            console.log(data);
+            const body = await signIn("credentials", {
+                ...data,
+                redirect: false,
+            });
+            console.log(body);
             enqueueSnackbar(t("form.signup.success"), { variant: "success" });
-            // router.push(route.public.main);
+            router.push(route.public.main);
         } catch (e) {
             errorFormHandler(e, setError);
         }
