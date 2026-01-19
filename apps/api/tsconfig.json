@@ -3,9 +3,9 @@
   "references": [{ "path": "../../packages/shared" }],
   "include": ["src"],
   "compilerOptions": {
-    "module": "Node16",
+    "module": "node16",
     "moduleResolution": "node16",
-    "target": "ES2021",
+    "target": "ES2023",
 
     "strict": true,
     "esModuleInterop": true,
@@ -21,7 +21,7 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-      //   "@myorg/shared": ["../../packages/shared/src"],
+    //   "@myorg/shared": ["../../packages/shared/src"]
       //   "@myorg/shared/*": ["../../packages/shared/src/*"]
     },
 

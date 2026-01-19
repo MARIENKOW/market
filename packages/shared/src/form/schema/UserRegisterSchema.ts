@@ -2,7 +2,7 @@ import { Email, NumberBase, Password } from "../fields";
 import { getMessageKey } from "../../i18n";
 import z from "zod";
 
-export const UserSignUpSchema = z
+export const UserRegisterSchema = z
     .object({
         password: Password,
         rePassword: Password,
@@ -14,5 +14,5 @@ export const UserSignUpSchema = z
         path: ["rePassword"],
     });
 
-export type UserSignUpDtoInput = z.input<typeof UserSignUpSchema>;
-export type UserSignUpDtoOutput = z.infer<typeof UserSignUpSchema>;
+export type UserRegisterDtoInput = z.input<typeof UserRegisterSchema>;
+export type UserRegisterDtoOutput = z.infer<typeof UserRegisterSchema>;

@@ -1,31 +1,5 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
-import {
-  UserSignInDtoInput,
-  UserSignInSchema,
-  UserSignUpSchema,
-} from '@myorg/shared/form';
-import { ZodValidationPipe } from '@/common/pipe/zod-validation';
-import { PrismaService } from '@/modules/prisma/prisma.service';
+import { Controller } from '@nestjs/common';
+
 
 @Controller()
-export class AppController {
-  constructor(private readonly prisma: PrismaService) {}
-
-  @Post('register')
-  register(
-    // @Body(new ZodValidationPipe(UserSignUpSchema)) body: UserSignInDtoInput,
-  ) {
-    // return this.appService.getHello();
-  }
-
-  @Post('login')
-  async login(
-    // @Body(new ZodValidationPipe(UserSignInSchema)) body: UserSignInDtoInput,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    return await this.prisma.user.create({
-      data:{email:'dasd',password:'dasd'}
-    //    body,
-    });
-  }
-}
+export class AppController {}

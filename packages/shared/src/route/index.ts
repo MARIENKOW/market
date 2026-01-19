@@ -1,24 +1,23 @@
-// packages/shared/src/routing/routes.ts
-export const route = {
-    public: {
-        main: "/",
-        signin: "/signin",
-        signup: "/signup",
-        profile: "/profile",
-    },
+import { buildFullPaths } from "../endpoints";
+
+export const ROUTE = {
+    path: "",
+    login: { path: "login" },
+    register: { path: "register" },
     admin: {
-        main: "/admin",
+        path: "admin",
     },
     superadmin: {
-        main: "/superadmin",
+        path: "superadmin",
     },
 } as const;
-
-export const AUTH_PRIVATE_ROUTE = [route.public.signup, route.public.signin];
-export const PUBLIC_PRIVATE_ROUTE = [route.public.profile];
 
 type Paths<T> = T extends object
     ? { [K in keyof T]: T[K] extends string ? T[K] : Paths<T[K]> }[keyof T]
     : never;
 
-export type RoutePaths = Paths<typeof route>; // '/' | '/signin' | ... | '/admin'
+type Route = typeof ROUTE;
+
+export type RouteKeys = Paths<Route>; // '/' | '/signin' | ... | '/admin'
+
+export const FULL_PATH_ROUTE = buildFullPaths<Route>(ROUTE);

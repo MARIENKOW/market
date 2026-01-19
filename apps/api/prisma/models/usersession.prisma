@@ -1,0 +1,13 @@
+model UserSession {
+  id         String   @id @default(cuid())
+  userId     String   @unique // 1:1 или 1:N сессий на юзера
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userAgent  String?
+  ip         String?
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime?
+
+  @@map("sessions")
+  @@index([userId])
+}

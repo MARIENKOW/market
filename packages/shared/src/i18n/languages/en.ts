@@ -14,11 +14,14 @@ export const en: MessageStructure = {
         password: {
             min: `minimum ${PASSWORD_MIN_LENGTH} characters`,
             max: `maximum ${PASSWORD_MAX_LENGTH} characters`,
+            invalid: `password is not correct`,
             label: `Password`,
         },
         email: {
             max: `maximum ${EMAIL_MAX_LENGTH} characters`,
             invalid: `invalid email format`,
+            notFound: `Email not found`,
+            unique: `email need to be unique`,
             label: `Email`,
         },
         rePassword: {
@@ -32,19 +35,22 @@ export const en: MessageStructure = {
         },
         required: "required field",
         submit: "Submit",
-        signup: {
+        register: {
             success: "Registration successful!",
+        },
+        login: {
+            success: "login successful!",
         },
     },
     pages: {
         main: {
             name: "Home",
         },
-        signup: {
-            name: "Sign Up",
+        register: {
+            name: "Register",
         },
-        signin: {
-            name: "Sign In",
+        login: {
+            name: "Login",
         },
         notFound: {
             name: "404",
@@ -65,8 +71,8 @@ export const en: MessageStructure = {
         },
     },
     features: {
-        signOut: {
-            name: "Sign out",
+        logout: {
+            name: "Logout",
         },
     },
 };

@@ -1,11 +1,7 @@
 "use client";
 
 import { enqueueSnackbar } from "notistack";
-import {
-    UserSignInSchema,
-    UserSignInDtoInput,
-    PASSWORD_MAX_LENGTH,
-} from "@myorg/shared/form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/error/errorFormHandler";
 import { useTranslations } from "next-intl";
@@ -15,37 +11,37 @@ import SubmitButton from "@/components/features/form/SubmitButton";
 import FormAlert from "@/components/features/form/FormAlert";
 import FormPassword from "@/components/features/form/fields/controlled/FormPassword";
 import SimpleForm from "@/components/wrappers/form/SimpleForm";
-import { signIn } from "next-auth/react";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
 import { useRouter } from "@/i18n/navigation";
-import { route } from "@myorg/shared/route";
+import AuthUserService from "@/services/auth/user/auth.user.service";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
 
-export default function UserSignInForm() {
+const authUser = new AuthUserService();
+
+export default function UserLoginForm() {
     const router = useRouter();
     const t = useTranslations();
 
-    const onSubmit: CustomSubmitHandler<UserSignInDtoInput> = async (
-        data,
-        { setError }
+    const onSubmit: CustomSubmitHandler<UserLoginDtoInput> = async (
+        body,
+        { setError },
     ) => {
         try {
-            const body = await signIn("credentials", {
-                ...data,
-                redirect: false,
-            });
-            console.log(body);
-            enqueueSnackbar(t("form.signup.success"), { variant: "success" });
-            router.push(route.public.main);
+            const { data } = await authUser.login(body);
+            console.log(data);
+            enqueueSnackbar(t("form.login.success"), { variant: "success" });
+            router.push(FULL_PATH_ROUTE.path);
         } catch (e) {
             errorFormHandler(e, setError);
         }
     };
 
     return (
-        <SimpleForm<UserSignInDtoInput>
+        <SimpleForm<UserLoginDtoInput>
             params={{
-                resolver: zodResolver(UserSignInSchema),
+                resolver: zodResolver(UserLoginSchema),
                 defaultValues: {
                     email: "",
                     password: "",
@@ -53,11 +49,11 @@ export default function UserSignInForm() {
             }}
             onSubmit={onSubmit}
         >
-            <FormFilledTextField<UserSignInDtoInput>
+            <FormFilledTextField<UserLoginDtoInput>
                 label={"form.email.label"}
                 name={"email"}
             />
-            <FormPassword<UserSignInDtoInput>
+            <FormPassword<UserLoginDtoInput>
                 name="password"
                 label="form.password.label"
             />

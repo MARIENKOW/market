@@ -4,9 +4,9 @@ import { ContainerComponent } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { getThemeMode } from "@/theme/themeMode";
 import { Box, Button, Toolbar } from "@mui/material";
-import { route } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 import AuthNavigation from "@/components/features/auth/AuthNavigation";
+import { FULL_PATH_ROUTE, ROUTE } from "@myorg/shared/route";
 
 export default async function Header() {
     const t = await getTranslations();
@@ -28,7 +28,7 @@ export default async function Header() {
                         pb: 1,
                     }}
                 >
-                    <Link href={route.public.main}>
+                    <Link href={FULL_PATH_ROUTE.path}>
                         <Button>{t("pages.main.name")}</Button>
                     </Link>
                     <Box alignItems={"center"} display={"flex"} gap={1}>

@@ -8,9 +8,7 @@ import ThemeRegistry from "@/theme/ThemeRegistry";
 import { createTheme, InitColorSchemeScript } from "@mui/material";
 import { getThemeMode } from "@/theme/themeMode";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { auth } from "@/app/api/auth/auth";
 import { AvailableLanguage } from "@myorg/shared/i18n";
-import SessionProvider from "@/components/wrappers/SessionProvider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -40,8 +38,6 @@ export default async function RootLayout({
 
     const themeMode = await getThemeMode();
 
-    const session = await auth();
-
     setRequestLocale(locale as AvailableLanguage); //!check corret
 
     return (
@@ -54,17 +50,13 @@ export default async function RootLayout({
                 }}
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <SessionProvider session={session}>
-                    <NextIntlClientProvider>
-                        <AppRouterCacheProvider
-                            options={{ enableCssLayer: true }}
-                        >
-                            <ThemeRegistry themeMode={themeMode}>
-                                <ClientProvider>{children}</ClientProvider>
-                            </ThemeRegistry>
-                        </AppRouterCacheProvider>
-                    </NextIntlClientProvider>
-                </SessionProvider>
+                <NextIntlClientProvider>
+                    <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+                        <ThemeRegistry themeMode={themeMode}>
+                            <ClientProvider>{children}</ClientProvider>
+                        </ThemeRegistry>
+                    </AppRouterCacheProvider>
+                </NextIntlClientProvider>
             </body>
         </html>
     );

@@ -1,4 +1,4 @@
-import UserSignInForm from "@/components/form/UserSignInForm";
+import UserSignUpForm from "@/components/form/UserRegisterForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { Box, Typography } from "@mui/material";
 import { getTranslations } from "next-intl/server";
@@ -26,9 +26,9 @@ export default async function Page() {
                         variant="h6"
                         component="h2"
                     >
-                        {t("pages.signin.name")}
+                        {t("pages.register.name")}
                     </Typography>
-                    <UserSignInForm />
+                    <UserSignUpForm />
                 </Box>
             </Box>
         </ContainerComponent>

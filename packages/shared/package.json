@@ -15,10 +15,6 @@
             "types": "./dist/index.d.ts",
             "default": "./dist/index.js"
         },
-        "./form": {
-            "types": "./dist/form/index.d.ts",
-            "default": "./dist/form/index.js"
-        },
         "./*": {
             "types": "./dist/*/index.d.ts",
             "default": "./dist/*/index.js"

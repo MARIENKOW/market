@@ -1,8 +1,11 @@
 "use client";
 
 import { enqueueSnackbar } from "notistack";
-import { UserSignUpSchema, UserSignUpDtoInput } from "@myorg/shared/form";
-import axios from "axios";
+import {
+    UserRegisterDtoInput,
+    UserRegisterDtoOutput,
+    UserRegisterSchema,
+} from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandler } from "@/helpers/error/errorFormHandler";
 import { useTranslations } from "next-intl";
@@ -17,12 +20,19 @@ import { useEffect } from "react";
 import { useWatch } from "react-hook-form";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
+import { useRouter } from "@/i18n/navigation";
 
-export default function UserSignUpForm() {
+import AuthUserService from "@/services/auth/user/auth.user.service";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+
+const authUser = new AuthUserService();
+
+export default function UserRegisterForm() {
     const t = useTranslations();
+    const router = useRouter();
 
-    const form = useForm<UserSignUpDtoInput>({
-        resolver: zodResolver(UserSignUpSchema),
+    const form = useForm<UserRegisterDtoInput>({
+        resolver: zodResolver(UserRegisterSchema),
         defaultValues: {
             email: "",
             password: "",
@@ -32,11 +42,11 @@ export default function UserSignUpForm() {
 
     const { trigger, control } = form;
 
-    const password = useWatch<UserSignUpDtoInput>({
+    const password = useWatch<UserRegisterDtoInput>({
         name: "password",
         control,
     });
-    const rePassword = useWatch<UserSignUpDtoInput>({
+    const rePassword = useWatch<UserRegisterDtoInput>({
         name: "rePassword",
         control,
     });
@@ -46,31 +56,31 @@ export default function UserSignUpForm() {
         trigger("rePassword");
     }, [password, trigger, rePassword]);
 
-    const onSubmit: CustomSubmitHandler<UserSignUpDtoInput> = async (
+    const onSubmit: CustomSubmitHandler<UserRegisterDtoOutput> = async (
         data,
-        { setError }
+        { setError },
     ) => {
         try {
-            console.log(data);
-            await axios.get("https://sdsdc");
-            enqueueSnackbar(t("form.signup.success"), { variant: "success" });
+            await authUser.register(data);
+            enqueueSnackbar(t("form.register.success"), { variant: "success" });
+            router.push(FULL_PATH_ROUTE.login.path);
         } catch (e) {
             errorFormHandler(e, setError);
         }
     };
 
     return (
-        <FormProvider<UserSignUpDtoInput> form={form}>
-            <Form<UserSignUpDtoInput> form={form} onSubmit={onSubmit}>
-                <FormFilledTextField<UserSignUpDtoInput>
+        <FormProvider<UserRegisterDtoInput> form={form}>
+            <Form<UserRegisterDtoInput> form={form} onSubmit={onSubmit}>
+                <FormFilledTextField<UserRegisterDtoInput>
                     label={"form.email.label"}
                     name={"email"}
                 />
-                <FormPassword<UserSignUpDtoInput>
+                <FormPassword<UserRegisterDtoInput>
                     name="password"
                     label="form.password.label"
                 />
-                <FormPassword<UserSignUpDtoInput>
+                <FormPassword<UserRegisterDtoInput>
                     name="rePassword"
                     label="form.rePassword.label"
                 />

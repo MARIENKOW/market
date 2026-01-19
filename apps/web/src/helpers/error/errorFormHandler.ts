@@ -22,8 +22,10 @@ export function errorFormHandler<T extends FieldValues>(
         const data = axiosError.response?.data;
 
         if ((status === 400 || status === 500) && data) {
+            console.log(data);
             for (const key in data) {
                 if (key !== "root") {
+                    console.log(key);
                     setError(key as Path<T>, {
                         type: "server",
                         message: data[key],

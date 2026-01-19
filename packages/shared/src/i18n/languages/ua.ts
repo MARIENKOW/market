@@ -11,11 +11,14 @@ export const ua = {
         password: {
             min: `минимум ${PASSWORD_MIN_LENGTH} символов`,
             max: `максимум ${PASSWORD_MAX_LENGTH} символов`,
+            invalid: `Неправильный пароль`,
             label: `Пароль`,
         },
         email: {
             max: `максимум ${EMAIL_MAX_LENGTH} символов`,
             invalid: `некорректный формат почты`,
+            notFound: `почта не найдена`,
+            unique: `email должен быть уникальным`,
             label: `Почта`,
         },
         rePassword: {
@@ -29,18 +32,21 @@ export const ua = {
         },
         required: "обязательное поле",
         submit: "Подтвердить",
-        signup: {
+        register: {
             success: "Регистрация успешна!",
+        },
+        login: {
+            success: "Авторизация успешна!",
         },
     },
     pages: {
         main: {
             name: "Главная",
         },
-        signup: {
+        register: {
             name: "Регистрация",
         },
-        signin: {
+        login: {
             name: "Авторизация",
         },
         notFound: {
@@ -62,10 +68,10 @@ export const ua = {
         },
     },
     features: {
-        signOut: {
+        logout: {
             name: "Выйти",
         },
     },
-};
+} as const;
 
 export type MessageStructure = typeof ua;

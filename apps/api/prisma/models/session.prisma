@@ -1,7 +1,0 @@
-model Session {
-  id           String   @id @default(cuid())
-  user         User     @relation(fields: [userId], references: [id])
-  userId       String
-  expiresAt    DateTime
-  createdAt    DateTime @default(now())
-}

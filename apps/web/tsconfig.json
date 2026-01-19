@@ -22,8 +22,7 @@
             }
         ],
         "paths": {
-            "@/*": ["./src/*"],
-            "@myorg/shared/*": ["../../packages/shared/src/*"]
+            "@/*": ["./src/*"]
         }
     },
     "include": [
