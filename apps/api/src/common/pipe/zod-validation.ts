@@ -22,8 +22,8 @@ export function zodIssuesToFieldErrors(error: ZodError) {
   return fieldErrors;
 }
 
-export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema: ZodType) {}
+export class ZodValidationPipe<S extends ZodType> implements PipeTransform {
+  constructor(private schema: S) {}
 
   transform(value: unknown) {
     const result = this.schema.safeParse(value);

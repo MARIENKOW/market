@@ -42,9 +42,6 @@ export class AuthUserController {
     @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
     @Res({ passthrough: true }) res: Response,
   ) {
-    throw new ValidationException({
-      email: 'sdasd',
-    });
     const { id } = await this.authUser.login(body);
     res.cookie('sessionId', id, {
       httpOnly: true,

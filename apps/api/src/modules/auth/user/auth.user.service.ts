@@ -9,7 +9,8 @@ import { UserService } from '@/modules/user/user.service';
 import { getMessageKey } from '@myorg/shared/i18n';
 import { UserLoginDtoOutput, UserRegisterDtoOutput } from '@myorg/shared/form';
 import { SessionUserService } from '@/modules/session/user/session.user.service';
-import { UserSession } from '@/generated/prisma';
+import { PrismaPromise, UserSession } from '@/generated/prisma';
+import { ValidationException } from '@/common/exception/validation.exception';
 @Injectable()
 export class AuthUserService {
   constructor(
@@ -39,18 +40,18 @@ export class AuthUserService {
     const { email, password } = body;
     const user = await this.user.findByEmail(email);
     if (!user)
-      throw new BadRequestException({
-        email: getMessageKey('form.email.notFound'),
+      throw new ValidationException<UserLoginDtoOutput>({
+        email: ['form.email.notFound'],
       });
 
     if (!user.passwordHash)
-      throw new BadRequestException({
-        'root.server': getMessageKey('form.password.invalid'),
+      throw new ValidationException<UserLoginDtoOutput>({
+        'root.server': ['form.password.invalid'],
       });
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid)
-      throw new BadRequestException({
-        password: getMessageKey('form.password.invalid'),
+      throw new ValidationException<UserLoginDtoOutput>({
+        password: ['form.password.invalid'],
       });
     return this.sessionUser.create(user.id);
   }
