@@ -16,6 +16,12 @@ export const ENDPOINT = {
             },
         },
     },
+    user: {
+        path: "user",
+        me: {
+            path: "me",
+        },
+    },
 } as const;
 
 type EdpointConfigType = typeof ENDPOINT;

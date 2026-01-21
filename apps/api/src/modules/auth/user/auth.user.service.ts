@@ -5,16 +5,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from '@/modules/prisma/prisma.service';
-import crypto from 'crypto';
 import { UserService } from '@/modules/user/user.service';
 import { getMessageKey } from '@myorg/shared/i18n';
 import { UserLoginDtoOutput, UserRegisterDtoOutput } from '@myorg/shared/form';
+import { SessionUserService } from '@/modules/session/user/session.user.service';
+import { UserSession } from '@/generated/prisma';
 @Injectable()
 export class AuthUserService {
   constructor(
-    private prisma: PrismaService,
     private user: UserService,
+    private sessionUser: SessionUserService,
   ) {}
 
   async register(body: UserRegisterDtoOutput) {
@@ -35,7 +35,7 @@ export class AuthUserService {
     return user;
   }
 
-  async login(body: UserLoginDtoOutput) {
+  async login(body: UserLoginDtoOutput): Promise<UserSession> {
     const { email, password } = body;
     const user = await this.user.findByEmail(email);
     if (!user)
@@ -52,23 +52,10 @@ export class AuthUserService {
       throw new BadRequestException({
         password: getMessageKey('form.password.invalid'),
       });
-
-    return this.createSession(user.id);
-  }
-
-  async createSession(userId: string) {
-    const id = crypto.randomBytes(32).toString('hex');
-
-    const data = await this.prisma.userSession.create({
-      data: { userId, id },
-    });
-
-    console.log(data);
-
-    return id;
+    return this.sessionUser.create(user.id);
   }
 
   async logout(sessionId: string) {
-    await this.prisma.userSession.delete({ where: { id: sessionId } });
+    return this.sessionUser.delete(sessionId);
   }
 }

@@ -59,6 +59,7 @@ export const en: MessageStructure = {
     api: {
         ERR_NETWORK: "No network connection. Please try again later.",
         FALLBACK_ERR: "Oops! Something went wrong, please try again later.",
+        FORBIDDEN: "Not enough rights",
     },
     feedback: {
         empty: {

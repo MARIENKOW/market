@@ -47,9 +47,7 @@
 
         "CLIENT_API",
         "NEXT_PUBLIC_SERVER_API",
-        "DB_PROVIDER",
-        "NEXTAUTH_URL",
-        "AUTH_TRUST_HOST"
+        "DB_PROVIDER"
     ],
     "globalDependencies": ["**/.env.*"]
 }

@@ -1,18 +1,17 @@
 // src/modules/auth/auth.module.ts
+import { RouterModule } from '@nestjs/core';
+import { ENDPOINT } from '@myorg/shared/endpoints';
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthUserModule } from '@/modules/auth/user/auth.user.module';
+import { AuthService } from '@/modules/auth/auth.service';
 
 @Module({
   imports: [AuthUserModule],
-  providers: [],
+  providers: [AuthService],
   controllers: [AuthController],
-  exports: [],
 })
 export class AuthModule {}
-
-import { RouterModule } from '@nestjs/core';
-import { ENDPOINT } from '@myorg/shared/endpoints';
 
 export const AuthRegisterModule = RouterModule.register([
   {

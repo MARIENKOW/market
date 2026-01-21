@@ -56,6 +56,7 @@ export const ua = {
     api: {
         ERR_NETWORK: "Нет подключения к сети. Попробуйте позже.",
         FALLBACK_ERR: "Упс! Что-то пошло не так, попробуйте позже",
+        FORBIDDEN: "Недостаточно прав",
     },
     feedback: {
         empty: {

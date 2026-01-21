@@ -1,3 +1,4 @@
+import { GlobalExceptionFilter } from '@/common/filters/global.exception.filter';
 import { AppModule } from '@/modules/app/app.module';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
@@ -5,6 +6,7 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.useGlobalFilters(new GlobalExceptionFilter());
   app.use(cookieParser());
   app.enableCors({
     origin: [process.env.CLIENT_API],

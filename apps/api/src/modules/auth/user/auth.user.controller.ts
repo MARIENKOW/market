@@ -1,5 +1,13 @@
 // src/modules/auth/auth.controller.ts
-import { Controller, Post, Body, Get, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Res,
+  UseGuards,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthUserService } from '@/modules/auth/user/auth.user.service';
 import { ENDPOINT } from '@myorg/shared/endpoints';
 import {
@@ -10,10 +18,12 @@ import {
 } from '@myorg/shared/form';
 import { ZodValidationPipe } from '@/common/pipe/zod-validation';
 import { Response } from 'express';
+import { AuthGuard } from '@/modules/auth/auth.guard';
+import { Auth } from '@/modules/auth/auth.decorator';
+import { ValidationException } from '@/common/exception/validation.exception';
+import { getMessageKey } from '@myorg/shared/i18n';
 
-const { path, register, login, logout } = ENDPOINT.auth.user;
-
-console.log(path);
+const { register, login, logout } = ENDPOINT.auth.user;
 
 @Controller()
 export class AuthUserController {
@@ -32,12 +42,15 @@ export class AuthUserController {
     @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const sessionId = await this.authUser.login(body);
-    res.cookie('sessionId', sessionId, {
+    throw new ValidationException({
+      email: 'sdasd',
+    });
+    const { id } = await this.authUser.login(body);
+    res.cookie('sessionId', id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 7 дней для refresh
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней для refresh
       path: '/',
     });
     return true;
