@@ -1,5 +1,7 @@
 import { Prisma, UserSession } from '@/generated/prisma';
 import { PrismaService } from '@/modules/prisma/prisma.service';
+import { mapUserSession } from '@/modules/session/user/session.user.mapper';
+import { UserSessionDto } from '@myorg/shared/dto';
 import { Injectable } from '@nestjs/common';
 import crypto from 'crypto';
 
@@ -7,30 +9,33 @@ import crypto from 'crypto';
 export class SessionUserService {
   constructor(private prisma: PrismaService) {}
 
-  async findById(id: string): Promise<any> {
+  findById(id: string): Promise<UserSession | null> {
     return this.prisma.userSession.findUnique({
       where: { id },
-      include: {
-        user: true,
-      },
     });
   }
-  async touch(id: string): Promise<any> {
-    return this.prisma.userSession.update({
+  async touch(id: string): Promise<Date> {
+    const lastUsedAt = new Date();
+    await this.prisma.userSession.update({
       where: { id },
-      data: { lastUsedAt: new Date() },
+      data: { lastUsedAt },
     });
+    return lastUsedAt;
+  }
+  private createId(): string {
+    return crypto.randomBytes(32).toString('hex');
   }
   async create(userId: string): Promise<UserSession> {
-    const id = crypto.randomBytes(32).toString('hex');
+    const id = this.createId();
 
     const data = await this.prisma.userSession.create({
-      data: { userId, id },
+      data: { userId, id, lastUsedAt: new Date() },
     });
 
     return data;
   }
-  async delete(sessionId: string): Promise<any> {
-    return this.prisma.userSession.delete({ where: { id: sessionId } });
+  async delete(sessionId: string): Promise<true> {
+    await this.prisma.userSession.delete({ where: { id: sessionId } });
+    return true;
   }
 }

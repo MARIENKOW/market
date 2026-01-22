@@ -1,4 +1,4 @@
-import { ApiErrorResponse } from "@myorg/shared/types";
+import { ApiErrorResponse } from "@myorg/shared/dto";
 
 export interface FetchBaseOptions extends Omit<RequestInit, "body"> {
     method?: "POST" | "GET" | "PUT" | "DELETE";

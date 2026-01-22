@@ -1,47 +1,3 @@
-// import {
-//   ExceptionFilter,
-//   Catch,
-//   ArgumentsHost,
-//   HttpException,
-//   HttpStatus,
-// } from '@nestjs/common';
-// import { Request, Response } from 'express';
-
-// @Catch()
-// export class GlobalHttpExceptionFilter implements ExceptionFilter {
-//   catch(exception: unknown, host: ArgumentsHost) {
-//     const ctx = host.switchToHttp();
-//     const res = ctx.getResponse<Response>();
-//     const req = ctx.getRequest<Request>();
-
-//     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-//     let message = 'Internal server error';
-//     let code = 'INTERNAL_ERROR';
-//     let data = null;
-
-//     if (exception instanceof HttpException) {
-//       status = exception.getStatus();
-//       const response = exception.getResponse();
-//       message =
-//         typeof response === 'string' ? response : (response as any).message;
-//       data = (response as any).data || (response as any).fieldErrors;
-//       code = (response as any).code || (response as any).statusCode?.toString();
-//     }
-
-//     const error: any = {
-//       status,
-//       message,
-//       code,
-//       data,
-//       timestamp: new Date().toISOString(),
-//       path: req.url,
-//     };
-
-//     res.status(status).json(error);
-//   }
-// }
-
-// src/common/filters/global-exception.filter.ts
 import {
   ExceptionFilter,
   Catch,
@@ -51,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import type { ApiErrorResponse } from '@myorg/shared/types';
+import type { ApiErrorResponse } from '@myorg/shared/dto';
 
 @Catch() // Ловит ВСЁ
 export class GlobalExceptionFilter implements ExceptionFilter {

@@ -6,7 +6,7 @@ model UserSession {
   userAgent  String?
   ip         String?
   createdAt  DateTime @default(now())
-  lastUsedAt DateTime?
+  lastUsedAt DateTime
 
   @@map("sessions")
   @@index([userId])

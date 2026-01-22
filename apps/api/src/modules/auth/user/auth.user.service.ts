@@ -1,16 +1,14 @@
-// src/modules/auth/auth.service.ts
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '@/modules/user/user.service';
 import { getMessageKey } from '@myorg/shared/i18n';
 import { UserLoginDtoOutput, UserRegisterDtoOutput } from '@myorg/shared/form';
 import { SessionUserService } from '@/modules/session/user/session.user.service';
-import { PrismaPromise, UserSession } from '@/generated/prisma';
+import { User, UserSession } from '@/generated/prisma';
 import { ValidationException } from '@/common/exception/validation.exception';
+import { mapUser } from '@/modules/user/user.mapper';
+import { UserDto } from '@myorg/shared/dto';
+
 @Injectable()
 export class AuthUserService {
   constructor(
@@ -18,7 +16,7 @@ export class AuthUserService {
     private sessionUser: SessionUserService,
   ) {}
 
-  async register(body: UserRegisterDtoOutput) {
+  async register(body: UserRegisterDtoOutput): Promise<User> {
     const { password, email } = body;
 
     const emailUnique = await this.user.findByEmail(email);
@@ -29,11 +27,15 @@ export class AuthUserService {
       });
 
     const hashed = await bcrypt.hash(password, 12);
-    const user = await this.user.create({
+
+    return this.user.create({
+      id: 'dasd',
+      status: 'NOACTIVE',
+      createdAt: new Date(),
+      updatedAt: new Date(),
       email,
       passwordHash: hashed,
     });
-    return user;
   }
 
   async login(body: UserLoginDtoOutput): Promise<UserSession> {
@@ -56,7 +58,7 @@ export class AuthUserService {
     return this.sessionUser.create(user.id);
   }
 
-  async logout(sessionId: string) {
+  async logout(sessionId: string): Promise<true> {
     return this.sessionUser.delete(sessionId);
   }
 }

@@ -1,12 +1,12 @@
 import { FetchCustom } from "@/lib/api";
 import { $api } from "@/lib/api/fetch";
-import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
-import axios, { AxiosInstance } from "axios";
+import { UserDto } from "@myorg/shared/dto";
+import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 
 const { me } = FULL_PATH_ENDPOINT.user;
 
 export default class UserService {
-    me: () => Promise<any>;
+    me: () => Promise<UserDto>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom = $api) {
         this.me = async () => {

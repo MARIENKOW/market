@@ -12,12 +12,14 @@ import { AUTH_TYPE_KEY, Auth } from '@/modules/auth/auth.decorator';
 import { AuthType } from '@/modules/auth/auth.actor.type';
 import { SessionUserService } from '@/modules/session/user/session.user.service';
 import { getMessageKey } from '@myorg/shared/i18n';
+import { UserService } from '@/modules/user/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly sessionUser: SessionUserService,
+    private readonly user: UserService,
     // private readonly sessionAdmin: SessionAdminService,
   ) {}
 
@@ -37,8 +39,10 @@ export class AuthGuard implements CanActivate {
       if (role === 'user' && cookies.sessionId) {
         const session = await this.sessionUser.findById(cookies.sessionId);
         if (!session) continue;
+        const user = await this.user.findById(session.userId);
+        if (!user) continue;
 
-        req.actor = { type: 'user', user: session.user, sessionId: session.id };
+        req.actor = { type: 'user', user: user, sessionId: session.id };
         await this.sessionUser.touch(session.id);
         return true;
       }

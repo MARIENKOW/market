@@ -1,5 +1,5 @@
 import { getMessageKey } from "@myorg/shared/i18n";
-import { ApiErrorResponse } from "@myorg/shared/types";
+import { ApiErrorResponse } from "@myorg/shared/dto";
 import { FieldValues, Path, UseFormSetError } from "react-hook-form";
 
 export function errorFormHandler<T extends FieldValues>(
