@@ -3,11 +3,11 @@ import {
     Catch,
     ArgumentsHost,
     HttpException,
-    HttpStatus,
     Logger,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import type { ApiErrorResponse } from "@myorg/shared/dto";
+import { HTTP_STATUSES } from "@myorg/shared/http";
 
 @Catch() // Ловит ВСЁ
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -34,10 +34,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         if (exception instanceof Error && "status" in (exception as any)) {
             return (
                 Number((exception as any).status) ||
-                HttpStatus.INTERNAL_SERVER_ERROR
+                HTTP_STATUSES.InternalServerError.status
             );
         }
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+        return HTTP_STATUSES.InternalServerError.status;
     }
 
     private formatError(
@@ -56,14 +56,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             const response = exception.getResponse();
             const exceptionResponse =
                 typeof response === "string" ? response : (response as any);
-            console.log(exceptionResponse);
 
-            message = exceptionResponse.message || exception.message || "Error";
+            message =
+                exceptionResponse.message ||
+                exception.message ||
+                "Server Error";
             code =
                 exceptionResponse.code ||
                 exceptionResponse.statusCode ||
                 this.getStatusCode(status);
-            data = exceptionResponse;
+            data = exceptionResponse.data || exceptionResponse;
         }
 
         return {
@@ -73,17 +75,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             data,
             timestamp: new Date().toISOString(),
             path: req.url,
+            context: "NEXT",
         };
     }
 
     private getStatusCode(status: number): string {
-        const codes = {
-            400: "BAD_REQUEST",
-            401: "UNAUTHORIZED",
-            403: "FORBIDDEN",
-            404: "NOT_FOUND",
-            422: "VALIDATION_ERROR",
-        };
-        return codes[status as keyof typeof codes] || "ERROR";
+        const entry = Object.values(HTTP_STATUSES).find(
+            (s) => s.status === status,
+        );
+        return entry?.code || "SERVER ERROR";
     }
 }

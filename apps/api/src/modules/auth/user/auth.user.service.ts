@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+    BadRequestException,
+    Injectable,
+    UnauthorizedException,
+} from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { UserService } from "@/modules/user/user.service";
 import { getMessageKey } from "@myorg/shared/i18n";
@@ -20,8 +24,10 @@ export class AuthUserService {
         const { password, email } = body;
 
         const emailUnique = await this.user.findByEmail(email);
-
-        if (emailUnique) throw new BadRequestException('d');
+        if (emailUnique)
+            throw new ValidationException<UserRegisterDtoOutput>({
+                email: ["form.email.unique"],
+            });
 
         const hashed = await bcrypt.hash(password, 12);
 

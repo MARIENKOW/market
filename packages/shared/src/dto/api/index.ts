@@ -7,6 +7,7 @@ export interface ApiErrorResponse {
     data: any; // fieldErrors, details
     timestamp: string;
     path: string;
+    context: "NEXT" | "API" | "NETWORK";
 }
 
 export type FieldsErrors<T extends Record<string, any>> = {

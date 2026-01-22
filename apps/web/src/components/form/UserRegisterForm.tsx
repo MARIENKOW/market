@@ -66,7 +66,7 @@ export default function UserRegisterForm() {
             enqueueSnackbar(t("form.register.success"), { variant: "success" });
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (e) {
-            errorFormHandler(e, setError);
+            errorFormHandler<UserRegisterDtoOutput>(e, setError);
         }
     };
 

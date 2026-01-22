@@ -17,37 +17,55 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
 
     const init: RequestInit = {
         ...rest,
-
-        // body:
-        //     body instanceof FormData ||
-        //     body instanceof Blob ||
-        //     typeof body === "string"
-        //         ? body
-        //         : body && typeof body === "object"
-        //           ? JSON.stringify(body)
-        //           : body,
     };
 
     await onRequest?.(init);
 
-    const res = await fetch(path, init);
+    let res;
+    try {
+        res = await fetch(path, init);
+    } catch (e) {
+        throw {
+            status: 0,
+            code: "NETWORK_ERROR",
+            message: e instanceof Error ? e.message : "Network error",
+            data: undefined,
+            timestamp: new Date().toISOString(),
+            path,
+            context: "NETWORK",
+        } satisfies ApiErrorResponse;
+    }
 
     await onResponse?.(res);
 
     if (!res.ok) {
-        let data: any = null;
+        let data: any = {};
         try {
             data = await res.json();
         } catch {}
 
-        throw {
-            status: res.status,
-            code: data?.code,
-            data: data?.data,
-            timestamp: data?.timestamp,
-            path: data?.path,
-            message: data?.message ?? res.statusText,
-        } satisfies ApiErrorResponse;
+        if (data.context === "NEXT") {
+            throw {
+                status: res.status,
+                code: data.code,
+                data: data.data,
+                timestamp: data.timestamp,
+                path: data.path,
+                message: data.message,
+                context: "NEXT",
+            } satisfies ApiErrorResponse;
+        } else {
+            throw {
+                status: res.status,
+                code: data?.code ?? data?.error ?? `HTTP_${res.status}`,
+                message: data?.message ?? res.statusText ?? "Request failed",
+                data:
+                    data?.data ?? (typeof data === "object" ? data : undefined),
+                timestamp: data?.timestamp ?? new Date().toISOString(),
+                path: data?.path ?? res.url,
+                context: "API",
+            } satisfies ApiErrorResponse;
+        }
     }
     const text = await res.text();
 
