@@ -1,3 +1,5 @@
+import { MessageKeyType } from "../../i18n";
+
 export interface ApiErrorResponse {
     status: number;
     message: string;
@@ -6,3 +8,9 @@ export interface ApiErrorResponse {
     timestamp: string;
     path: string;
 }
+
+export type FieldsErrors<T extends Record<string, any>> = {
+    [K in keyof T]?: MessageKeyType[];
+} & {
+    "root.server"?: MessageKeyType[];
+};

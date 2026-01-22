@@ -1,8 +1,8 @@
 import { ApiErrorResponse } from "@myorg/shared/dto";
 
-export interface FetchBaseOptions extends Omit<RequestInit, "body"> {
+export interface FetchBaseOptions extends RequestInit {
     method?: "POST" | "GET" | "PUT" | "DELETE";
-    body?: BodyInit | object | null;
+    body?: BodyInit | null;
     onRequest?: (init: RequestInit) => void | Promise<any>;
     onResponse?: (res: Response) => void | Promise<any>;
 }
@@ -13,21 +13,19 @@ export type FetchCustom = (
 ) => Promise<any>;
 
 export const fetchCustom: FetchCustom = async (path, options = {}) => {
-    const { headers, body, onRequest, onResponse, ...rest } = options;
+    const { onRequest, onResponse, ...rest } = options;
 
     const init: RequestInit = {
         ...rest,
-        headers: {
-            ...headers,
-        },
-        body:
-            body instanceof FormData ||
-            body instanceof Blob ||
-            typeof body === "string"
-                ? body
-                : body && typeof body === "object"
-                  ? JSON.stringify(body)
-                  : body,
+
+        // body:
+        //     body instanceof FormData ||
+        //     body instanceof Blob ||
+        //     typeof body === "string"
+        //         ? body
+        //         : body && typeof body === "object"
+        //           ? JSON.stringify(body)
+        //           : body,
     };
 
     await onRequest?.(init);
