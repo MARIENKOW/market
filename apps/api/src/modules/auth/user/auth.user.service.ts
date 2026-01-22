@@ -21,10 +21,7 @@ export class AuthUserService {
 
         const emailUnique = await this.user.findByEmail(email);
 
-        if (emailUnique)
-            throw new BadRequestException({
-                email: getMessageKey("form.email.unique"),
-            });
+        if (emailUnique) throw new BadRequestException('d');
 
         const hashed = await bcrypt.hash(password, 12);
 

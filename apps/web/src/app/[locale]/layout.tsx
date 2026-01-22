@@ -10,7 +10,7 @@ import { getThemeMode } from "@/theme/themeMode";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { AvailableLanguage } from "@myorg/shared/i18n";
 import UserService from "@/services/user/user.service";
-import { $apiUser } from "@/lib/api/fetch.user";
+import { $apiUserServer } from "@/lib/api/fetch.user.server";
 const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
@@ -31,7 +31,7 @@ type RootLayoutProps = {
     params: Promise<{ locale: string }>; // как даёт Next.js
 };
 
-const user = new UserService($apiUser);
+const user = new UserService($apiUserServer);
 
 export default async function RootLayout({
     children,

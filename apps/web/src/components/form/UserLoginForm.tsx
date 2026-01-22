@@ -17,8 +17,9 @@ import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
+import { $apiClient } from "@/lib/api/fetch.client";
 
-const authUser = new AuthUserService();
+const authUser = new AuthUserService($apiClient);
 
 export default function UserLoginForm() {
     const router = useRouter();

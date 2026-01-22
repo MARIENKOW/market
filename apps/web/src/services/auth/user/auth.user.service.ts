@@ -1,5 +1,4 @@
 import { FetchCustom } from "@/lib/api";
-import { $api } from "@/lib/api/fetch";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import { UserLoginDtoOutput, UserRegisterDtoOutput } from "@myorg/shared/form";
 
@@ -10,7 +9,7 @@ export default class AuthUserService {
     register: (body: UserRegisterDtoOutput) => Promise<any>;
     abortController: AbortController | null = null;
 
-    constructor(api: FetchCustom = $api) {
+    constructor(api: FetchCustom) {
         this.login = async (body) => {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
@@ -18,7 +17,7 @@ export default class AuthUserService {
             const res = await api(login.path, {
                 signal: controller.signal,
                 method: "POST",
-                body,
+                body: JSON.stringify(body),
             });
             return res;
         };
@@ -29,7 +28,7 @@ export default class AuthUserService {
             const res = await api(register.path, {
                 signal: controller.signal,
                 method: "POST",
-                body,
+                body: JSON.stringify(body),
             });
             return res;
         };
