@@ -14,6 +14,9 @@ export class UserController {
     @UseGuards(AuthGuard)
     @Auth("user")
     async me(@Req() req: Request): Promise<UserDto> {
+        console.log('useruseruseruseruseruseruseruser');
         return mapUser(req.actor.user);
+        
+
     }
 }

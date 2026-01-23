@@ -5,12 +5,11 @@ import { ClientProvider } from "@/components/wrappers/ClientProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import ThemeRegistry from "@/theme/ThemeRegistry";
-import { createTheme, InitColorSchemeScript } from "@mui/material";
 import { getThemeMode } from "@/theme/themeMode";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { AvailableLanguage } from "@myorg/shared/i18n";
-import UserService from "@/services/user/user.service";
-import { $apiUserServer } from "@/lib/api/fetch.user.server";
+import UserAuthProvider from "@/components/wrappers/auth/UserAuthProvider";
+import { getUserAuth } from "@/utils/cache/user.cache.me";
 const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
@@ -31,8 +30,6 @@ type RootLayoutProps = {
     params: Promise<{ locale: string }>; // как даёт Next.js
 };
 
-const user = new UserService($apiUserServer);
-
 export default async function RootLayout({
     children,
     params,
@@ -41,14 +38,9 @@ export default async function RootLayout({
 
     const themeMode = await getThemeMode();
 
-    try {
-        const data = await user.me();
-        console.log(data);
-    } catch (error) {
-        console.log(error);
-    }
+    const { user, error } = await getUserAuth();
 
-    setRequestLocale(locale as AvailableLanguage); //!check corret
+    setRequestLocale(locale as AvailableLanguage);
 
     return (
         <html className={themeMode} lang={locale}>
@@ -63,7 +55,9 @@ export default async function RootLayout({
                 <NextIntlClientProvider>
                     <AppRouterCacheProvider options={{ enableCssLayer: true }}>
                         <ThemeRegistry themeMode={themeMode}>
-                            <ClientProvider>{children}</ClientProvider>
+                            <UserAuthProvider error={error} user={user}>
+                                <ClientProvider>{children}</ClientProvider>
+                            </UserAuthProvider>
                         </ThemeRegistry>
                     </AppRouterCacheProvider>
                 </NextIntlClientProvider>

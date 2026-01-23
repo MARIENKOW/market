@@ -7,11 +7,12 @@ import { Box, Button, Toolbar } from "@mui/material";
 import { getTranslations } from "next-intl/server";
 import AuthNavigation from "@/components/features/auth/AuthNavigation";
 import { FULL_PATH_ROUTE, ROUTE } from "@myorg/shared/route";
+import { getUserAuth } from "@/utils/cache/user.cache.me";
 
 export default async function Header() {
     const t = await getTranslations();
     const mode = await getThemeMode();
-
+    const { user } = await getUserAuth();
     return (
         <Box
         //  position={"fixed"} top={0} left={0}
@@ -34,7 +35,7 @@ export default async function Header() {
                     <Box alignItems={"center"} display={"flex"} gap={1}>
                         <ThemeChange serverMode={mode} />
                         <LanguageChange />
-                        <AuthNavigation />
+                        <AuthNavigation user={user} />
                     </Box>
                 </Box>
             </ContainerComponent>

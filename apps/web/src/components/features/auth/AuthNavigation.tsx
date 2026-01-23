@@ -1,16 +1,18 @@
 "use client";
 
-import SignOutButton from "@/components/features/auth/SignOutButton";
+import LogoutButton from "@/components/features/auth/LogoutButton";
+import SignOutButton from "@/components/features/auth/LogoutButton";
 import LoadingElement from "@/components/feedback/LoadingElement";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { Link } from "@/i18n/navigation";
 import { Box } from "@mui/material";
+import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { useTranslations } from "next-intl";
 
-
-export default function AuthNavigation() {
+export default function AuthNavigation({ user }: { user: UserDto | null }) {
     const t = useTranslations();
+    if (!!user) return <LogoutButton />;
 
     return (
         <Box display={"flex"} gap={1}>

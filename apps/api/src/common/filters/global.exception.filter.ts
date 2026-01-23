@@ -21,10 +21,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         const status = this.extractStatus(exception);
         const errorResponse = this.formatError(exception, req, status);
 
-        this.logger.error(
-            `${req.method} ${req.url} - ${errorResponse.status} ${errorResponse.message}`,
-            exception instanceof Error ? exception.stack : "",
-        );
+        // this.logger.error(
+        //     `${req.method} ${req.url} - ${errorResponse.status} ${errorResponse.message}`,
+        //     exception instanceof Error ? exception.stack : "",
+        // );
 
         res.status(status).json(errorResponse);
     }
@@ -76,6 +76,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             timestamp: new Date().toISOString(),
             path: req.url,
             context: "NEXT",
+            errorType: "ApiErrorResponse",
         };
     }
 

@@ -14,6 +14,7 @@ export default class UserService {
             this.abortController = controller;
             const res = await api(me.path, {
                 signal: controller.signal,
+                cache: "no-store",
             });
             return res;
         };

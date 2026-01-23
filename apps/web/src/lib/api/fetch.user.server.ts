@@ -1,7 +1,7 @@
 "use server";
 
 import {
-    getAllCookieToClient,
+    // getAllCookieToClient,
     getUserSessionId,
 } from "@/actions/cookies.actions";
 import { FetchBaseOptions } from "@/lib/api";
@@ -21,6 +21,9 @@ export const $apiUserServer = async (
     return $apiServer(path, {
         ...defaultOptions,
         ...options,
-        headers: { ...defaultOptions.headers, ...newHeaders },
+        headers: {
+            ...defaultOptions.headers,
+            ...newHeaders,
+        },
     });
 };

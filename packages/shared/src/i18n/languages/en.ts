@@ -60,6 +60,7 @@ export const en: MessageStructure = {
         ERR_NETWORK: "No network connection. Please try again later.",
         FALLBACK_ERR: "Oops! Something went wrong, please try again later.",
         FORBIDDEN: "Not enough rights",
+        auth: "Authentication error, please reload the page or sign in again",
     },
     feedback: {
         empty: {
@@ -74,6 +75,8 @@ export const en: MessageStructure = {
     features: {
         logout: {
             name: "Logout",
+            success: "Log out success",
+            error: "Failed to log out! Please try again later",
         },
     },
 };

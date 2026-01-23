@@ -33,6 +33,7 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
             timestamp: new Date().toISOString(),
             path,
             context: "NETWORK",
+            errorType: "ApiErrorResponse",
         } satisfies ApiErrorResponse;
     }
 
@@ -53,6 +54,7 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
                 path: data.path,
                 message: data.message,
                 context: "NEXT",
+                errorType: "ApiErrorResponse",
             } satisfies ApiErrorResponse;
         } else {
             throw {
@@ -64,6 +66,7 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
                 timestamp: data?.timestamp ?? new Date().toISOString(),
                 path: data?.path ?? res.url,
                 context: "API",
+                errorType: "ApiErrorResponse",
             } satisfies ApiErrorResponse;
         }
     }

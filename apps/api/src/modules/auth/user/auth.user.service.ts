@@ -62,6 +62,6 @@ export class AuthUserService {
     }
 
     async logout(sessionId: string): Promise<true> {
-        return this.sessionUser.delete(sessionId);
+        return await this.sessionUser.delete(sessionId);
     }
 }

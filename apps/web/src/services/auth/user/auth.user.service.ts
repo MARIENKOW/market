@@ -6,6 +6,7 @@ const { login, register, logout } = FULL_PATH_ENDPOINT.auth.user;
 
 export default class AuthUserService {
     login: (body: UserLoginDtoOutput) => Promise<any>;
+    logout: () => Promise<true>;
     register: (body: UserRegisterDtoOutput) => Promise<any>;
     abortController: AbortController | null = null;
 
@@ -18,6 +19,16 @@ export default class AuthUserService {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
+            });
+            return res;
+        };
+        this.logout = async () => {
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api(logout.path, {
+                signal: controller.signal,
+                method: "POST",
             });
             return res;
         };

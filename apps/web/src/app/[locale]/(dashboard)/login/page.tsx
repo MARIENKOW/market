@@ -2,8 +2,14 @@ import UserSignInForm from "@/components/form/UserLoginForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { Box, Typography } from "@mui/material";
 import { getTranslations } from "next-intl/server";
+import { SearchParams } from "next/dist/server/request/search-params";
 
-export default async function Page() {
+export default async function Page({
+    searchParams,
+}: {
+    searchParams: Promise<any>;
+}) {
+    const { callback } = await searchParams;
     const t = await getTranslations();
 
     return (
@@ -28,7 +34,7 @@ export default async function Page() {
                     >
                         {t("pages.login.name")}
                     </Typography>
-                    <UserSignInForm />
+                    <UserSignInForm redirectTo={callback} />
                 </Box>
             </Box>
         </ContainerComponent>

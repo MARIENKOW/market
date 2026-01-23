@@ -26,11 +26,17 @@ export const ENDPOINT = {
 
 type EdpointConfigType = typeof ENDPOINT;
 
+type WithStringPath<T> = {
+    [K in keyof T]: T[K] extends { path: any }
+        ? { path: string } & WithStringPath<Omit<T[K], "path">>
+        : T[K];
+};
+
 export function buildFullPaths<T extends Record<string, any>>(
     obj: T,
     result: any = {},
     parentPath: string = "",
-): T {
+): WithStringPath<T> {
     const currentPath =
         parentPath === "/"
             ? `${parentPath}${obj.path}`

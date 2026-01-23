@@ -1,4 +1,5 @@
-// form-config.ts
+"use client";
+
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { createContext, useContext } from "react";
 

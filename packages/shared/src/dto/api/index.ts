@@ -8,6 +8,7 @@ export interface ApiErrorResponse {
     timestamp: string;
     path: string;
     context: "NEXT" | "API" | "NETWORK";
+    errorType: "ApiErrorResponse";
 }
 
 export type FieldsErrors<T extends Record<string, any>> = {

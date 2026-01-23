@@ -4,6 +4,7 @@ export const ROUTE = {
     path: "",
     login: { path: "login" },
     register: { path: "register" },
+    profile: { path: "profile" },
     admin: {
         path: "admin",
     },
@@ -12,12 +13,12 @@ export const ROUTE = {
     },
 } as const;
 
-type Paths<T> = T extends object
-    ? { [K in keyof T]: T[K] extends string ? T[K] : Paths<T[K]> }[keyof T]
-    : never;
-
 type Route = typeof ROUTE;
 
-export type RouteKeys = Paths<Route>; // '/' | '/signin' | ... | '/admin'
-
 export const FULL_PATH_ROUTE = buildFullPaths<Route>(ROUTE);
+
+export const PRIVATE_USER_PATH: string[] = [FULL_PATH_ROUTE.profile.path];
+
+export const USER_PRIVATE_FALLBACK_ROUTE: string = FULL_PATH_ROUTE.login.path;
+
+export const USER_PUBLIC_FALLBACK_ROUTE: string = FULL_PATH_ROUTE.profile.path;

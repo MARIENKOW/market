@@ -4,6 +4,7 @@ import {
     ExecutionContext,
     ForbiddenException,
     Injectable,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
@@ -34,25 +35,24 @@ export class AuthGuard implements CanActivate {
             throw new ForbiddenException("Auth type not specified on route");
         }
 
-        for (const role of allowedRoles) {
-            if (role === "user" && cookies.sessionId) {
-                const session = await this.sessionUser.findById(
-                    cookies.sessionId,
-                );
-                if (!session) continue;
-                const user = await this.user.findById(session.userId);
-                if (!user) continue;
+        // for (const role of allowedRoles) {
+        // if (role === "user" && cookies.sessionId) {
 
-                req.actor = { type: "user", user: user, sessionId: session.id };
-                await this.sessionUser.touch(session.id);
-                return true;
-            }
+        if (allowedRoles.includes("user")) {
+            if (!cookies.sessionId) throw new UnauthorizedException();
+            const session = await this.sessionUser.findById(cookies.sessionId);
+            // if (!session) continue;
+            if (!session) throw new UnauthorizedException();
+            const user = await this.user.findById(session.userId);
+            // if (!user) continue;
+            if (!user) throw new UnauthorizedException();
+
+            req.actor = { type: "user", user: user, sessionId: session.id };
+            await this.sessionUser.touch(session.id);
+            return true;
         }
+        // }
 
-        throw new ForbiddenException({
-            root: {
-                server: getMessageKey("api.FORBIDDEN"),
-            },
-        });
+        throw new ForbiddenException();
     }
 }

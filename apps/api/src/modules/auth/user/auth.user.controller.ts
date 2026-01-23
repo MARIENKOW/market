@@ -1,5 +1,5 @@
 // src/modules/auth/auth.controller.ts
-import { Controller, Post, Body, Res } from "@nestjs/common";
+import { Controller, Post, Body, Res, UseGuards, Req } from "@nestjs/common";
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
 import { ENDPOINT } from "@myorg/shared/endpoints";
 import {
@@ -11,8 +11,13 @@ import {
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
 import { Response } from "express";
 import { UserDto } from "@myorg/shared/dto";
+import { AuthGuard } from "@/modules/auth/auth.guard";
+import { Auth } from "@/modules/auth/auth.decorator";
+import { Request } from "express";
+
 
 const { register, login, logout } = ENDPOINT.auth.user;
+
 
 @Controller()
 export class AuthUserController {
@@ -30,6 +35,8 @@ export class AuthUserController {
     async login(
         @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
         @Res({ passthrough: true }) res: Response,
+
+
     ): Promise<true> {
         const { id } = await this.authUser.login(body);
         res.cookie("sessionId", id, {
@@ -43,11 +50,14 @@ export class AuthUserController {
     }
 
     @Post(logout.path)
+
+    @UseGuards(AuthGuard)
+    @Auth("user")
     async logout(
-        @Body() { sessionId }: { sessionId: string },
-        @Res() res: Response,
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
-        this.authUser.logout(sessionId);
+        await this.authUser.logout(req.actor.sessionId);
 
         res.cookie("sessionId", "", {
             httpOnly: true,

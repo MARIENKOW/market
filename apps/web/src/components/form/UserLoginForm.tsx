@@ -15,13 +15,17 @@ import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
 import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
-import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
 import { $apiClient } from "@/lib/api/fetch.client";
+import { USER_PUBLIC_FALLBACK_ROUTE } from "@myorg/shared/route";
 
 const authUser = new AuthUserService($apiClient);
 
-export default function UserLoginForm() {
+export default function UserLoginForm({
+    redirectTo = USER_PUBLIC_FALLBACK_ROUTE,
+}: {
+    redirectTo?: string;
+}) {
     const router = useRouter();
     const t = useTranslations();
 
@@ -33,7 +37,8 @@ export default function UserLoginForm() {
             const { data } = await authUser.login(body);
             console.log(data);
             enqueueSnackbar(t("form.login.success"), { variant: "success" });
-            router.push(FULL_PATH_ROUTE.path);
+            router.push(redirectTo);
+            router.refresh();
         } catch (e) {
             errorFormHandler(e, setError);
         }
