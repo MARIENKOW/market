@@ -1,9 +1,11 @@
 // auth/auth.guard.ts
 import {
+    BadRequestException,
     CanActivate,
     ExecutionContext,
     ForbiddenException,
     Injectable,
+    NotFoundException,
     UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";

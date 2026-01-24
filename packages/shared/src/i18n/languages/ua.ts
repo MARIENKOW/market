@@ -64,9 +64,16 @@ export const ua = {
             title: "Тут пока что пусто",
         },
         error: {
-            title: "Упс!",
-            subtitle: "Что-то пошло не так",
-            reload: "перезагрузить",
+            fallback: {
+                title: "Упс!",
+                subtitle: "Что-то пошло не так",
+                reload: "перезагрузить",
+            },
+            auth: {
+                title: "Упс!",
+                subtitle: "Не удалось провести аутентификацию",
+                reload: "Запросить данные заново",
+            },
         },
     },
     features: {
@@ -75,7 +82,12 @@ export const ua = {
             error: "Не удалось выйти с аккаунта! Попробуйте позже",
             success: "Вы удачно вышли с аккаунта",
         },
+        logoutErr: {
+            name: "Сбросить сессию",
+            error: "Не удалось сбросить сессию! Попробуйте позже",
+            success: "Вы удачно сбросили сессию",
+        },
     },
-} as const;
+};
 
 export type MessageStructure = typeof ua;

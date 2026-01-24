@@ -1,3 +1,6 @@
-export default async function Page(){
-    return 'profile'
+import { getUserAuth } from "@/utils/cache/user.cache.me";
+
+export default async function Page() {
+    const { user } = await getUserAuth();
+    return user?.email;
 }

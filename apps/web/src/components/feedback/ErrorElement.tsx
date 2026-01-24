@@ -1,11 +1,16 @@
 "use client";
 
+import { StyledButton } from "@/components/ui/StyledButton";
+import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { useRouter } from "@/i18n/navigation";
 import { Box, Button, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 
 type MessageProp = { message?: string; reset?: () => void };
 
 export default function ErrorElement({ message, reset }: MessageProp) {
+    const route = useRouter();
+    const resetFn = reset || route.refresh;
     const t = useTranslations();
     return (
         <Box
@@ -14,27 +19,36 @@ export default function ErrorElement({ message, reset }: MessageProp) {
             alignItems={"center"}
             display={"flex"}
             flexDirection={"column"}
-            gap={2}
+            gap={5}
         >
-            <Typography variant={"h2"}>{t("feedback.error.title")}</Typography>
-            <Typography variant={"h5"}>
-                {t("feedback.error.subtitle")}
-            </Typography>
-            {message && (
-                <Typography variant={"body1"} color="text.secondary">
-                    {message || ""}
-                </Typography>
-            )}
-            {reset && (
-                <Button
-                    onClick={() => {
-                        console.log("object");
-                        reset();
-                    }}
-                    variant="contained"
+            <Box display={"flex"} gap={1} flexDirection={"column"}>
+                <StyledTypography textAlign={"center"} variant={"h2"}>
+                    {t("feedback.error.fallback.title")}
+                </StyledTypography>
+                <StyledTypography
+                    textAlign={"center"}
+                    maxWidth={700}
+                    margin={"0px auto"}
+                    variant={"h6"}
                 >
-                    {t("feedback.error.reload")}
-                </Button>
+                    {t("feedback.error.fallback.subtitle")}
+                </StyledTypography>
+                {message && (
+                    <StyledTypography
+                        textAlign={"center"}
+                        variant={"body1"}
+                        color="text.secondary"
+                        maxWidth={700}
+                        margin={"0px auto"}
+                    >
+                        {message || ""}
+                    </StyledTypography>
+                )}
+            </Box>
+            {resetFn && (
+                <StyledButton onClick={resetFn} variant="contained">
+                    {t("feedback.error.fallback.reload")}
+                </StyledButton>
             )}
         </Box>
     );

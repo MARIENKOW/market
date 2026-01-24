@@ -3,7 +3,7 @@
 import { enqueueSnackbar } from "notistack";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandler } from "@/helpers/error/errorFormHandler";
+import { errorFormHandler } from "@/helpers/error/error.form.helper";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
 import { CustomSubmitHandler } from "@/components/wrappers/form/Form";

@@ -1,3 +1,4 @@
+import AuthErrorElement from "@/components/feedback/AuthErrorElement";
 import { redirect } from "@/i18n/navigation";
 import { getUserAuth } from "@/utils/cache/user.cache.me";
 import { USER_PRIVATE_FALLBACK_ROUTE } from "@myorg/shared/route";
@@ -10,7 +11,9 @@ export default async function UserPrivateWrapper({
     children: React.ReactNode;
 }) {
     const locale = await getLocale();
-    const { user } = await getUserAuth();
+    const { user, error } = await getUserAuth();
+
+    if (error) return <AuthErrorElement />;
 
     if (!user) redirect({ href: USER_PRIVATE_FALLBACK_ROUTE, locale: locale });
     return children;

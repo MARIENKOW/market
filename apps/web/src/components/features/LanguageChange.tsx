@@ -28,20 +28,34 @@ export function LanguageChange() {
     return (
         <StyledFormControl
             size="small"
-            sx={{ display: "inline-block", minWidth: 70 }}
+            sx={{ display: "inline-block", minWidth: 0 }}
         >
             <StyledSelect
-                sx={{ width: "100%" }}
+                sx={{
+                    width: "100%",
+                    "& .MuiSelect-select": {
+                        paddingTop: 0.5,
+                        paddingBottom: 0.5,
+                        paddingLeft: "8px !important",
+                        paddingRight: "27x !important",
+                    },
+                    "& fieldset": { p: 0 },
+                    "& svg": {
+                        right: 3,
+                    },
+                }}
                 defaultValue={locale}
                 onChange={handleChange}
             >
-                {languages.map((lang:string) => (
+                {languages.map((lang: string) => (
                     <StyledMenuItem key={lang} value={lang}>
                         <ReactCountryFlag
                             svg
+                            alt={lang}
                             style={{ width: "1.5em", height: "1.5em" }}
                             countryCode={lang === "en" ? "us" : lang}
                         />
+                        {/* {lang} */}
                     </StyledMenuItem>
                 ))}
             </StyledSelect>

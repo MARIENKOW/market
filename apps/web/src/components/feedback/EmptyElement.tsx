@@ -2,6 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
 import { languages } from "@myorg/shared/i18n";
+import { StyledTypography } from "@/components/ui/StyledTypograpty";
 
 export default function EmptyElement() {
     const t = useTranslations();
@@ -15,9 +16,9 @@ export default function EmptyElement() {
             gap={2}
         >
             <InfoOutlineIcon sx={{ width: 50, height: 50 }} />
-            <Typography variant="h5" fontWeight={600} textAlign={"center"}>
+            <StyledTypography variant="h5" fontWeight={600} textAlign={"center"}>
                 {t("feedback.empty.title")}
-            </Typography>
+            </StyledTypography>
         </Box>
     );
 }

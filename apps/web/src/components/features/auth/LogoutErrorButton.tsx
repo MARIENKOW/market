@@ -11,7 +11,7 @@ import { $apiClient } from "@/lib/api/fetch.client";
 
 const user = new AuthUserService($apiClient);
 
-export default function LogoutButton() {
+export default function LogoutErrorButton() {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -21,17 +21,17 @@ export default function LogoutButton() {
         try {
             await user.logout();
             router.refresh();
-            snackbarSuccess(t("features.logout.success"));
+            snackbarSuccess(t("features.logoutErr.success"));
         } catch (error) {
             console.log(error);
-            snackbarError(t("features.logout.error"));
+            snackbarError(t("features.logoutErr.error"));
         } finally {
             setLoading(false);
         }
     };
     return (
-        <StyledButton loading={loading} onClick={handleClick}>
-            {t("features.logout.name")}
+        <StyledButton variant='outlined' loading={loading} onClick={handleClick}>
+            {t("features.logoutErr.name")}
         </StyledButton>
     );
 }

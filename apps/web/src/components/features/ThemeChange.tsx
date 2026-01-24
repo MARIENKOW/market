@@ -3,24 +3,18 @@ import { Box, styled, Switch } from "@mui/material";
 import { useThemeContext } from "@/theme/ThemeRegistry";
 import ModeNightIcon from "@mui/icons-material/ModeNight";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
-import LightModeIcon from "@mui/icons-material/LightMode";
 import { AvailableMode } from "@/theme/theme";
-import { useState } from "react";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-    // width: 80,
-    // height: 50,
-    // // padding: 7,
-
-    width: 60,
-    height: 30,
+    width: 45,
+    height: 25,
     padding: 0,
     "& .MuiSwitch-switchBase": {
         top: "50%",
         transform: "translate(-3px,-50%)",
         // transform: "translate(8px,-50%)",
         "&.Mui-checked": {
-            transform: "translate(27px,-50%)",
+            transform: "translate(17px,-50%)",
             // transform: "translate(37px,-50%)",
 
             "& + .MuiSwitch-track": {
@@ -44,7 +38,6 @@ export default function ThemeChange({
     serverMode: AvailableMode;
 }) {
     const { themeMode, toggleTheme } = useThemeContext(serverMode);
-    const [s, setS] = useState(false);
 
     return (
         <>
@@ -59,7 +52,11 @@ export default function ThemeChange({
                     >
                         <LightModeOutlinedIcon
                             fontSize="small"
-                            sx={{ color: "text.primary" }}
+                            sx={{
+                                color: "text.primary",
+                                width: 15,
+                                height: 15,
+                            }}
                         />
                     </Box>
                 }
@@ -72,17 +69,17 @@ export default function ThemeChange({
                     >
                         <ModeNightIcon
                             fontSize="small"
-                            sx={{ color: "text.primary" }}
+                            sx={{
+                                color: "text.primary",
+                                width: 15,
+                                height: 15,
+                            }}
                         />
                     </Box>
                 }
                 size="medium"
-                onChange={() => {
-                    setS(true);
-                    toggleTheme();
-                }}
+                onChange={toggleTheme}
             />
-            {s&&'ssssssssssss'}
         </>
     );
 }

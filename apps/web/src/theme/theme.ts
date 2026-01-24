@@ -1,21 +1,26 @@
 import { dark } from "@/theme/dark";
 import { light, ThemeConfigStructure } from "@/theme/light";
-import { createTheme } from "@mui/material";
+import { createTheme, ThemeOptions } from "@mui/material";
 
-export const theme = createTheme({
+const THEME_CONFIG: ThemeOptions = {
     cssVariables: {
         colorSchemeSelector: "class",
         disableCssColorScheme: true,
     },
     typography: {
         fontFamily: "Roboto, Arial, sans-serif",
-        fontSize: 14,
+        fontSize: 13,
+        allVariants: {
+            letterSpacing: 1.5,
+        },
     },
     colorSchemes: {
         light,
         dark,
     },
-});
+};
+
+export const theme = createTheme(THEME_CONFIG);
 
 export type AvailableMode = "light" | "dark";
 

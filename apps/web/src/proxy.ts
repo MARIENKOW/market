@@ -5,31 +5,10 @@ import {
     USER_PRIVATE_FALLBACK_ROUTE,
 } from "@myorg/shared/route";
 import { NextRequest, NextResponse } from "next/server";
-import { AvailableLanguage, languages } from "@myorg/shared/i18n";
-
-function isEqualPath(PRIVATE_PATHS: string[], pathname: string) {
-    return PRIVATE_PATHS.some(
-        (path) => pathname === path || pathname.startsWith(`${path}`),
-    );
-}
-
-function getPathnameWithoutLocale(pathnameDirty: string): {
-    pathname: string;
-    locale: AvailableLanguage | null;
-} {
-    for (const locale of languages) {
-        if (
-            pathnameDirty === `/${locale}` ||
-            pathnameDirty.startsWith(`/${locale}`)
-        ) {
-            return {
-                pathname: pathnameDirty.slice(locale.length + 1),
-                locale,
-            }; // Убираем /en/
-        }
-    }
-    return { pathname: pathnameDirty, locale: null };
-}
+import {
+    getPathnameWithoutLocale,
+    isEqualPath,
+} from "@/helpers/proxy/proxy.path.helper";
 
 export default function Mid(req: NextRequest) {
     const sessionId = req.cookies.get("sessionId")?.value;

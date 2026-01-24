@@ -2,19 +2,17 @@
 
 import { UserDto } from "@myorg/shared/dto";
 import { useTranslations } from "next-intl";
-import { createContext, useContext, useEffect, useState } from "react";
-import { ApiErrorResponse } from "@myorg/shared/dto";
-import { HTTP_STATUSES } from "@myorg/shared/http";
-import { snackbarError } from "@/helpers/snackbar/snackbar.error";
+import { createContext, useContext, useEffect } from "react";
+import { snackbarError } from "@/utils/snackbar/snackbar.error";
 
 type UserAuthContext = {
     user: UserDto | null;
-    error: unknown | null;
+    error: boolean;
 };
 
 const UserAuthContext = createContext<UserAuthContext>({
     user: null,
-    error: null,
+    error: false,
 });
 
 export default function UserAuthProvider({
@@ -22,30 +20,17 @@ export default function UserAuthProvider({
     user,
     error,
 }: {
-    error: unknown | null;
+    error: boolean;
     user: UserDto | null;
     children: React.ReactNode;
 }) {
-    const t = useTranslations();
-    useEffect(() => {
-        function isUnuthorized() {
-            if (
-                error &&
-                typeof error === "object" &&
-                "errorType" in error &&
-                error.errorType === "ApiErrorResponse"
-            ) {
-                if (
-                    (error as ApiErrorResponse).status ===
-                    HTTP_STATUSES.Unauthorized.status
-                )
-                    return true;
-            }
-        }
-        if (error && !isUnuthorized()) {
-            snackbarError(t("api.auth"));
-        }
-    }, [error]);
+    // const t = useTranslations();
+    // useEffect(() => {
+    //     console.log(error);
+    //     if (error) {
+    //         snackbarError(t("api.auth"));
+    //     }
+    // }, [error]);
     return (
         <UserAuthContext.Provider value={{ user, error }}>
             {children}

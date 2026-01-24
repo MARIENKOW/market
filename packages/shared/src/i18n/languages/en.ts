@@ -67,9 +67,16 @@ export const en: MessageStructure = {
             title: "Nothing here yet",
         },
         error: {
-            title: "Oops!",
-            subtitle: "Something went wrong",
-            reload: "reload",
+            fallback: {
+                title: "Oops!",
+                subtitle: "Something went wrong",
+                reload: "reload",
+            },
+            auth: {
+                title: "Oops!",
+                subtitle: "Authentication failed",
+                reload: "Refresh data",
+            },
         },
     },
     features: {
@@ -77,6 +84,11 @@ export const en: MessageStructure = {
             name: "Logout",
             success: "Log out success",
             error: "Failed to log out! Please try again later",
+        },
+        logoutErr: {
+            name: "Reset session",
+            error: "Failed to reset session! Try again later",
+            success: "Session successfully reset",
         },
     },
 };
