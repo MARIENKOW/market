@@ -43,8 +43,6 @@
 
         "AUTH_SECRET",
 
-        "NODE_ENV",
-
         "CLIENT_API",
         "NEXT_PUBLIC_SERVER_API",
         "DB_PROVIDER"

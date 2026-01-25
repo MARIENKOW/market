@@ -1,4 +1,5 @@
 import { ApiErrorResponse } from "@myorg/shared/dto";
+import { HTTP_STATUSES } from "@myorg/shared/http";
 
 export interface FetchBaseOptions extends RequestInit {
     method?: "POST" | "GET" | "PUT" | "DELETE";
@@ -26,9 +27,12 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
         res = await fetch(path, init);
     } catch (e) {
         throw {
-            status: 0,
-            code: "NETWORK_ERROR",
-            message: e instanceof Error ? e.message : "Network error",
+            status: HTTP_STATUSES.NetworkError.status,
+            code: HTTP_STATUSES.NetworkError.code,
+            message:
+                e instanceof Error
+                    ? e.message
+                    : HTTP_STATUSES.NetworkError.statusText,
             data: undefined,
             timestamp: new Date().toISOString(),
             path,

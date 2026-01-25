@@ -15,9 +15,7 @@ import { AuthGuard } from "@/modules/auth/auth.guard";
 import { Auth } from "@/modules/auth/auth.decorator";
 import { Request } from "express";
 
-
 const { register, login, logout } = ENDPOINT.auth.user;
-
 
 @Controller()
 export class AuthUserController {
@@ -35,8 +33,6 @@ export class AuthUserController {
     async login(
         @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
         @Res({ passthrough: true }) res: Response,
-
-
     ): Promise<true> {
         const { id } = await this.authUser.login(body);
         res.cookie("sessionId", id, {
@@ -50,7 +46,6 @@ export class AuthUserController {
     }
 
     @Post(logout.path)
-
     @UseGuards(AuthGuard)
     @Auth("user")
     async logout(

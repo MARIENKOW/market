@@ -28,7 +28,9 @@ export class ZodValidationPipe<S extends ZodType> implements PipeTransform {
     transform(value: unknown) {
         const result = this.schema.safeParse(value);
         if (!result.success) {
-            throw new ValidationException(zodIssuesToFieldErrors(result.error));
+            throw new ValidationException({
+                fields: zodIssuesToFieldErrors(result.error),
+            });
         }
         return result.data;
     }

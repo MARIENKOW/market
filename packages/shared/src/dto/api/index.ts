@@ -11,8 +11,11 @@ export interface ApiErrorResponse {
     errorType: "ApiErrorResponse";
 }
 
-export type FieldsErrors<T extends Record<string, any>> = {
+export type FieldMap<T = Record<string, unknown>> = {
     [K in keyof T]?: MessageKeyType[];
-} & {
-    "root.server"?: MessageKeyType[];
+};
+
+export type FieldsErrors<T extends Record<string, unknown> | never = never> = {
+    fields?: FieldMap<T>;
+    root?: MessageKeyType[];
 };

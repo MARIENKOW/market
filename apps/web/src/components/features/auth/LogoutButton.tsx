@@ -8,6 +8,7 @@ import AuthUserService from "@/services/auth/user/auth.user.service";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { $apiClient } from "@/lib/api/fetch.client";
+import { errorHandlerSnackbar } from "@/helpers/error/error.form.helper";
 
 const user = new AuthUserService($apiClient);
 
@@ -23,8 +24,11 @@ export default function LogoutButton() {
             router.refresh();
             snackbarSuccess(t("features.logout.success"));
         } catch (error) {
-            console.log(error);
-            snackbarError(t("features.logout.error"));
+            errorHandlerSnackbar({
+                error,
+                t,
+                fallback: { root: "features.logout.error" },
+            });
         } finally {
             setLoading(false);
         }

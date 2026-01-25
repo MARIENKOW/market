@@ -26,7 +26,9 @@ export class AuthUserService {
         const emailUnique = await this.user.findByEmail(email);
         if (emailUnique)
             throw new ValidationException<UserRegisterDtoOutput>({
-                email: ["form.email.unique"],
+                fields: {
+                    email: ["form.email.unique"],
+                },
             });
 
         const hashed = await bcrypt.hash(password, 12);
@@ -46,17 +48,24 @@ export class AuthUserService {
         const user = await this.user.findByEmail(email);
         if (!user)
             throw new ValidationException<UserLoginDtoOutput>({
-                email: ["form.email.notFound"],
+                fields: { email: ["form.email.invalid"] },
             });
 
+        // fields: {
+        //     email: ["form.email.notFound"],
+        // },
         if (!user.passwordHash)
             throw new ValidationException<UserLoginDtoOutput>({
-                "root.server": ["form.password.invalid"],
+                fields: {
+                    password: ["form.password.invalid"],
+                },
             });
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid)
             throw new ValidationException<UserLoginDtoOutput>({
-                password: ["form.password.invalid"],
+                fields: {
+                    password: ["form.password.invalid"],
+                },
             });
         return this.sessionUser.create(user.id);
     }

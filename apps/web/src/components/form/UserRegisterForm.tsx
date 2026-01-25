@@ -1,13 +1,15 @@
 "use client";
 
-import { enqueueSnackbar } from "notistack";
 import {
     UserRegisterDtoInput,
     UserRegisterDtoOutput,
     UserRegisterSchema,
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandler } from "@/helpers/error/error.form.helper";
+import {
+    errorFormHandler,
+    errorFormHandlerWithAlert,
+} from "@/helpers/error/error.form.helper";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
 import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -25,6 +27,7 @@ import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { $apiClient } from "@/lib/api/fetch.client";
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 
 const authUser = new AuthUserService($apiClient);
 
@@ -63,10 +66,10 @@ export default function UserRegisterForm() {
     ) => {
         try {
             await authUser.register(data);
-            enqueueSnackbar(t("form.register.success"), { variant: "success" });
+            snackbarSuccess(t("form.register.success"));
             router.push(FULL_PATH_ROUTE.login.path);
-        } catch (e) {
-            errorFormHandler<UserRegisterDtoOutput>(e, setError);
+        } catch (error) {
+            errorFormHandlerWithAlert({ error, setError });
         }
     };
 

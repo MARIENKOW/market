@@ -1,4 +1,10 @@
 export const HTTP_STATUSES = {
+    NetworkError: {
+        status: 0,
+        statusText: "Network Error",
+        code: "NETWORK_ERROR",
+    },
+
     OK: { status: 200, statusText: "OK", code: "OK" },
     Created: { status: 201, statusText: "Created", code: "CREATED" },
     Accepted: { status: 202, statusText: "Accepted", code: "ACCEPTED" },
@@ -26,6 +32,11 @@ export const HTTP_STATUSES = {
         status: 400,
         statusText: "Validation failed",
         code: "VALIDATION_ERROR",
+    },
+    BadRequest: {
+        status: 400,
+        statusText: "Bad request",
+        code: "BAD_REQUEST",
     },
     Unauthorized: {
         status: 401,
@@ -76,4 +87,3 @@ export const HTTP_STATUSES = {
     string,
     { status: number; statusText: string; code: string }
 >;
-

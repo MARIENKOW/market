@@ -3,7 +3,7 @@ import { FieldsErrors } from "@myorg/shared/dto";
 import { BadRequestException } from "@nestjs/common";
 
 export class ValidationException<
-    T extends Record<string, any>,
+    T extends Record<string, unknown> | never,
 > extends BadRequestException {
     constructor(data: FieldsErrors<T>) {
         super({

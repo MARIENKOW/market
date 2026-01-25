@@ -1,9 +1,7 @@
 "use client";
 
-import { enqueueSnackbar } from "notistack";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandler } from "@/helpers/error/error.form.helper";
+import { errorFormHandlerWithAlert } from "@/helpers/error/error.form.helper";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
 import { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -18,6 +16,7 @@ import AuthUserService from "@/services/auth/user/auth.user.service";
 import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
 import { $apiClient } from "@/lib/api/fetch.client";
 import { USER_PUBLIC_FALLBACK_ROUTE } from "@myorg/shared/route";
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 
 const authUser = new AuthUserService($apiClient);
 
@@ -36,11 +35,11 @@ export default function UserLoginForm({
         try {
             const { data } = await authUser.login(body);
             console.log(data);
-            enqueueSnackbar(t("form.login.success"), { variant: "success" });
+            snackbarSuccess(t("form.login.success"));
             router.push(redirectTo);
             router.refresh();
-        } catch (e) {
-            errorFormHandler(e, setError);
+        } catch (error) {
+            errorFormHandlerWithAlert({ error, setError });
         }
     };
 
