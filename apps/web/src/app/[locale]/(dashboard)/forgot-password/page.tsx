@@ -1,19 +1,10 @@
-import UserLoginForm from "@/components/form/UserLoginForm";
+import UserSignInForm from "@/components/form/UserLoginForm";
+import UserRememberPasswordForm from "@/components/form/UserRememberPasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { Box, Typography } from "@mui/material";
-import {
-    USER_PRIVATE_FALLBACK_ROUTE,
-    USER_PUBLIC_FALLBACK_ROUTE,
-} from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
-import { SearchParams } from "next/dist/server/request/search-params";
 
-export default async function Page({
-    searchParams,
-}: {
-    searchParams: Promise<any>;
-}) {
-    const { callback } = await searchParams;
+export default async function Page() {
     const t = await getTranslations();
 
     return (
@@ -36,11 +27,9 @@ export default async function Page({
                         variant="h6"
                         component="h2"
                     >
-                        {t("pages.login.name")}
+                        {t("pages.forgotPasssword.name")}
                     </Typography>
-                    <UserLoginForm
-                        redirectTo={callback || USER_PUBLIC_FALLBACK_ROUTE}
-                    />
+                    <UserRememberPasswordForm />
                 </Box>
             </Box>
         </ContainerComponent>

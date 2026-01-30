@@ -22,7 +22,7 @@ export default function AuthErrorElement({ message }: MessageProp) {
             flexDirection={"column"}
             gap={5}
         >
-            <Box display={'flex'} flexDirection={'column'} gap={1} >
+            <Box display={"flex"} flexDirection={"column"} gap={1}>
                 <StyledTypography textAlign={"center"} variant={"h3"}>
                     {t("feedback.error.auth.title")}
                 </StyledTypography>
@@ -41,12 +41,13 @@ export default function AuthErrorElement({ message }: MessageProp) {
                     variant={"body1"}
                     color="text.secondary"
                     maxWidth={700}
+                    overflow={"hidden"}
                     margin={"0px auto"}
                 >
                     {message || ""}
                 </StyledTypography>
             )}
-            <Box display={'flex'} gap={1} flexDirection={'column'} >
+            <Box display={"flex"} gap={1} flexDirection={"column"}>
                 <StyledButton onClick={router.refresh} variant="contained">
                     {t("feedback.error.auth.reload")}
                 </StyledButton>

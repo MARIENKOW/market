@@ -1,4 +1,4 @@
-import AuthErrorElement from "@/components/feedback/AuthErrorElement";
+import AuthErrorElement from "@/components/feedback/error/AuthErrorElement";
 import { redirect } from "@/i18n/navigation";
 import { getUserAuth } from "@/utils/cache/user.cache.me";
 import { USER_PUBLIC_FALLBACK_ROUTE } from "@myorg/shared/route";

@@ -1,15 +1,7 @@
 "use client";
 
-import ErrorElement from "@/components/feedback/ErrorElement";
-import { useTransition } from "react";
+import ErrorElement from "@/components/feedback/error/ErrorElement";
 
-export default function ErrorPage({
-    error,
-    reset,
-}: {
-    error: Error;
-    reset: () => void;
-}) {
-    // const [isPending, startTransition] = useTransition();
-    return <ErrorElement message={error.message} />;
+export default function ErrorPage({ error }: { error: Error }) {
+    return <ErrorElement message={error?.message} />;
 }

@@ -1,8 +1,21 @@
 // src/modules/auth/auth.controller.ts
-import { Controller, Post, Body, Res, UseGuards, Req } from "@nestjs/common";
+import {
+    Controller,
+    Post,
+    Body,
+    Res,
+    UseGuards,
+    Req,
+    Param,
+    Query,
+} from "@nestjs/common";
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
 import { ENDPOINT } from "@myorg/shared/endpoints";
 import {
+    UserChangePasswordDtoOutput,
+    UserChangePasswordSchema,
+    UserForgotPasswordDtoOutput,
+    UserForgotPasswordSchema,
     UserLoginDtoOutput,
     UserLoginSchema,
     UserRegisterDtoOutput,
@@ -15,8 +28,8 @@ import { AuthGuard } from "@/modules/auth/auth.guard";
 import { Auth } from "@/modules/auth/auth.decorator";
 import { Request } from "express";
 
-const { register, login, logout } = ENDPOINT.auth.user;
-
+const { register, login, logout, forgotPassword, changePassword } =
+    ENDPOINT.auth.user;
 @Controller()
 export class AuthUserController {
     constructor(private authUser: AuthUserService) {}
@@ -43,6 +56,25 @@ export class AuthUserController {
             path: "/",
         });
         return true;
+    }
+
+    @Post(forgotPassword.path)
+    async forgotPassword(
+        @Body(new ZodValidationPipe(UserForgotPasswordSchema))
+        body: UserForgotPasswordDtoOutput,
+        @Req() req: Request,
+    ): Promise<Date> {
+        return await this.authUser.forgotPassword(req,body);
+    }
+
+    @Post(forgotPassword.path + "/:token")
+    async changePassword(
+        @Body(new ZodValidationPipe(UserChangePasswordSchema))
+        body: UserChangePasswordDtoOutput,
+        @Param("token") token: string,
+        @Query("email") email: string,
+    ): Promise<true> {
+        return await this.authUser.changePassword(body, { email, token });
     }
 
     @Post(logout.path)

@@ -1,16 +1,7 @@
 "use client";
 
-import ErrorElement from "@/components/feedback/ErrorElement";
-import Error from "next/error";
+import ErrorElement from "@/components/feedback/error/ErrorElement";
 
-export default function ErrorPage({
-    error,
-    reload,
-}: {
-    error: Error;
-    reload: () => void;
-}) {
-    console.dir(error);
-    console.log(reload);
-    return <ErrorElement />;
+export default function ErrorPage({ error }: { error: Error }) {
+    return <ErrorElement message={error?.message} />;
 }

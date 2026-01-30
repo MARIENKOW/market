@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { MessageStructure } from "./ua";
 import {
     EMAIL_MAX_LENGTH,
@@ -52,6 +50,28 @@ export const en: MessageStructure = {
         login: {
             name: "Login",
         },
+        forgotPasssword: {
+            changePassword: {
+                name: "Enter new password",
+                feedback: {
+                    errors: {
+                        timeout:
+                            "The reset link has expired! Please request a new one.",
+                        notFound:
+                            "The link is invalid! Please request a new one.",
+                    },
+                },
+            },
+            name: "Forgot password?",
+            feedback: {
+                errors: {
+                    alreadySent:
+                        "A password reset link has already been sent. Please check your spam folder or wait for the link to expire and try again.",
+                },
+                success:
+                    "A password reset link has been sent. Please check your spam folder.",
+            },
+        },
         notFound: {
             name: "404",
         },
@@ -70,6 +90,16 @@ export const en: MessageStructure = {
             fallback: {
                 title: "Oops!",
                 subtitle: "Something went wrong",
+                reload: "reload",
+            },
+            network: {
+                title: "Oops!",
+                subtitle: "No network connection",
+                reload: "reload",
+            },
+            forbidden: {
+                title: "Oops!",
+                subtitle: "Insufficient permissions",
                 reload: "reload",
             },
             auth: {

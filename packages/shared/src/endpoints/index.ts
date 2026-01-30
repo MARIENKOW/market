@@ -1,3 +1,5 @@
+import { check } from "zod";
+
 // packages/shared/src/routing/routes.ts
 export const ENDPOINT = {
     path: "",
@@ -7,6 +9,12 @@ export const ENDPOINT = {
             path: "user",
             login: {
                 path: "login",
+            },
+            forgotPassword: {
+                path: "forgot-password",
+            },
+            changePassword: {
+                path: "change-password",
             },
             register: {
                 path: "register",
@@ -20,6 +28,13 @@ export const ENDPOINT = {
         path: "user",
         me: {
             path: "me",
+        },
+    },
+    resetPasswordToken: {
+        path: "reset-password-token",
+        user: {
+            check: { path: "check" },
+            path: "user",
         },
     },
 } as const;

@@ -8,9 +8,7 @@ import { useTranslations } from "next-intl";
 
 type MessageProp = { message?: string; reset?: () => void };
 
-export default function ErrorElement({ message, reset }: MessageProp) {
-    const route = useRouter();
-    const resetFn = reset || route.refresh;
+export default function ForbiddenErrorElement({ message }: MessageProp) {
     const t = useTranslations();
     return (
         <Box
@@ -23,7 +21,7 @@ export default function ErrorElement({ message, reset }: MessageProp) {
         >
             <Box display={"flex"} gap={1} flexDirection={"column"}>
                 <StyledTypography textAlign={"center"} variant={"h2"}>
-                    {t("feedback.error.fallback.title")}
+                    {t("feedback.error.forbidden.title")}
                 </StyledTypography>
                 <StyledTypography
                     textAlign={"center"}
@@ -31,10 +29,11 @@ export default function ErrorElement({ message, reset }: MessageProp) {
                     margin={"0px auto"}
                     variant={"h6"}
                 >
-                    {t("feedback.error.fallback.subtitle")}
+                    {t("feedback.error.forbidden.subtitle")}
                 </StyledTypography>
                 {message && (
                     <StyledTypography
+                        overflow={"hidden"}
                         textAlign={"center"}
                         variant={"body1"}
                         color="text.secondary"
@@ -45,11 +44,6 @@ export default function ErrorElement({ message, reset }: MessageProp) {
                     </StyledTypography>
                 )}
             </Box>
-            {resetFn && (
-                <StyledButton onClick={resetFn} variant="contained">
-                    {t("feedback.error.fallback.reload")}
-                </StyledButton>
-            )}
         </Box>
     );
 }

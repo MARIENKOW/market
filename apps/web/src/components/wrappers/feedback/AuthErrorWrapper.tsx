@@ -1,4 +1,4 @@
-import AuthErrorElement from "@/components/feedback/AuthErrorElement";
+import AuthErrorElement from "@/components/feedback/error/AuthErrorElement";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledDialog } from "@/components/ui/StyledDialog";
 import { Box } from "@mui/material";

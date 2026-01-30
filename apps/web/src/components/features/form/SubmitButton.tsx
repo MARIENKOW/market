@@ -30,7 +30,6 @@ export default function SubmitButton({ variant, text }: SubmitButtonParams) {
             loading={isSubmitting}
             endIcon={<DoubleArrowIcon />}
             type="submit"
-            sx={{ mt: errors?.root?.server ? 0 : 3 }}
             variant={finalVariant}
         >
             {t(finalText)}

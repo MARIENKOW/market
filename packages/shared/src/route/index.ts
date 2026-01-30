@@ -3,6 +3,7 @@ import { buildFullPaths } from "../endpoints";
 export const ROUTE = {
     path: "",
     login: { path: "login" },
+    forgotPasssword: { path: "forgot-password" },
     register: { path: "register" },
     profile: { path: "profile" },
     admin: {

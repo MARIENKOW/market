@@ -7,13 +7,14 @@ import FormFilledTextField from "@/components/features/form/fields/controlled/Fo
 import { CustomSubmitHandler } from "@/components/wrappers/form/Form";
 import SubmitButton from "@/components/features/form/SubmitButton";
 import FormAlert from "@/components/features/form/FormAlert";
-import FormPassword from "@/components/features/form/fields/controlled/FormPassword";
 import SimpleForm from "@/components/wrappers/form/SimpleForm";
-import { StyledDivider } from "@/components/ui/StyledDivider";
-import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
 import { Link, useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
-import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
+import {
+    UserForgotPasswordDtoInput,
+    UserForgotPasswordDtoOutput,
+    UserForgotPasswordSchema,
+} from "@myorg/shared/form";
 import { $apiClient } from "@/lib/api/fetch.client";
 import {
     FULL_PATH_ROUTE,
@@ -27,45 +28,38 @@ import { StyledTypography } from "@/components/ui/StyledTypograpty";
 
 const authUser = new AuthUserService($apiClient);
 
-export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
+export default function UserRememberPasswordForm() {
     const router = useRouter();
     const t = useTranslations();
 
-    const onSubmit: CustomSubmitHandler<UserLoginDtoInput> = async (
+    const onSubmit: CustomSubmitHandler<UserForgotPasswordDtoOutput> = async (
         body,
         { setError },
     ) => {
         try {
-            await authUser.login(body);
-            snackbarSuccess(t("form.login.success"));
-            if (redirectTo) router.push(redirectTo);
-            router.refresh();
+            await authUser.forgotPassword(body);
+            snackbarSuccess(t("pages.forgotPasssword.feedback.success"));
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError });
         }
     };
 
     return (
-        <SimpleForm<UserLoginDtoInput>
+        <SimpleForm<UserForgotPasswordDtoInput>
             params={{
-                resolver: zodResolver(UserLoginSchema),
+                resolver: zodResolver(UserForgotPasswordSchema),
                 defaultValues: {
                     email: "",
-                    password: "",
                 },
             }}
             onSubmit={onSubmit}
         >
-            <FormFilledTextField<UserLoginDtoInput>
+            <FormFilledTextField<UserForgotPasswordDtoInput>
                 label={"form.email.label"}
                 name={"email"}
             />
-            <FormPassword<UserLoginDtoInput>
-                name="password"
-                label="form.password.label"
-            />
             <Box display={"flex"} gap={2} justifyContent={"space-between"}>
-                <Link href={FULL_PATH_ROUTE.forgotPasssword.path}>
+                <Link href={FULL_PATH_ROUTE.register.path}>
                     <Box alignItems={"center"} display={"inline-flex"}>
                         <ArrowLeftIcon color="primary" />
                         <StyledTypography
@@ -73,18 +67,18 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
                             variant="body2"
                             color="primary"
                         >
-                            {t("pages.forgotPasssword.name")}
+                            {t("pages.register.name")}
                         </StyledTypography>
                     </Box>
                 </Link>
-                <Link href={FULL_PATH_ROUTE.register.path}>
+                <Link href={FULL_PATH_ROUTE.login.path}>
                     <Box alignItems={"center"} display={"inline-flex"}>
                         <StyledTypography
                             lineHeight={"100%"}
                             variant="body2"
                             color="primary"
                         >
-                            {t("pages.register.name")}
+                            {t("pages.login.name")}
                         </StyledTypography>
                         <ArrowRightIcon color="primary" />
                     </Box>
@@ -94,8 +88,6 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
                 <FormAlert />
                 <SubmitButton />
             </Box>
-            {/* <StyledDivider />
-            <GoogleAuthButton /> */}
         </SimpleForm>
     );
 }

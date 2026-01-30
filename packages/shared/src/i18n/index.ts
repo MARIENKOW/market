@@ -1,8 +1,9 @@
 import { en } from "./languages/en";
 import { ua, type MessageStructure } from "./languages/ua";
 export { type MessageStructure } from "./languages/ua";
+import path from "path";
 
-const messagesModules = {
+export const messagesModules = {
     en,
     ua,
 } as const;
@@ -25,3 +26,5 @@ type RecursiveKeys<T, Prefix extends string = ""> = {
 export type MessageKeyType = RecursiveKeys<MessageStructure>;
 
 export const getMessageKey = <T extends MessageKeyType>(key: T) => key;
+
+export const I18N_PATH = path.resolve(__dirname);

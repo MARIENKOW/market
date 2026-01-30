@@ -1,7 +1,12 @@
 import { Box } from "@mui/material";
+import { MessageKeyType } from "@myorg/shared/i18n";
 import { getTranslations } from "next-intl/server";
 
-export default async function NotFoundElement() {
+export default async function NotFoundElement({
+    message,
+}: {
+    message?: MessageKeyType;
+}) {
     const t = await getTranslations();
     return (
         <Box
