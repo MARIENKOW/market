@@ -121,4 +121,12 @@ export const en: MessageStructure = {
             success: "Session successfully reset",
         },
     },
+    mail: {
+        resetPassword: {
+            title: "Password recovery",
+            text: "Password recovery",
+            button: "Reset password",
+            exsited: "Link expiration time: {time}",
+        },
+    },
 };

@@ -71,10 +71,7 @@ export class AuthUserService {
             });
         return this.sessionUser.create(user.id);
     }
-    async forgotPassword(
-        @Req() req: Request,
-        body: UserForgotPasswordDtoOutput,
-    ): Promise<Date> {
+    async forgotPassword(body: UserForgotPasswordDtoOutput): Promise<Date> {
         const { email } = body;
         const user = await this.user.findByEmail(email);
         if (!user)
@@ -90,11 +87,14 @@ export class AuthUserService {
                 });
             await this.resetToken.delete(resetTokenData.id);
         }
-        const { token, id, expiresAt } = await this.resetToken.create(user.id);
+        const { token, id, expiresAt, expires } = await this.resetToken.create(
+            user.id,
+        );
         try {
-            await this.mailerService.sendForgotPassword(req, {
+            await this.mailerService.sendForgotPassword({
                 to: user.email,
                 token,
+                expires
             });
         } catch (error) {
             await this.resetToken.delete(id);

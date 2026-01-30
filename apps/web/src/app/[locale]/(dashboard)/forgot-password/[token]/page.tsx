@@ -26,6 +26,7 @@ export default async function Page({
     try {
         await resetPassword.check({ token, email });
     } catch (error) {
+        console.log(error);
         return (
             <ErrorHandlerElement
                 fallback={{

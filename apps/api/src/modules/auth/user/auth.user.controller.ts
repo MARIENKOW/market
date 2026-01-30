@@ -62,9 +62,8 @@ export class AuthUserController {
     async forgotPassword(
         @Body(new ZodValidationPipe(UserForgotPasswordSchema))
         body: UserForgotPasswordDtoOutput,
-        @Req() req: Request,
     ): Promise<Date> {
-        return await this.authUser.forgotPassword(req,body);
+        return await this.authUser.forgotPassword(body);
     }
 
     @Post(forgotPassword.path + "/:token")

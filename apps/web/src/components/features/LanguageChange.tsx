@@ -49,13 +49,13 @@ export function LanguageChange() {
             >
                 {languages.map((lang: string) => (
                     <StyledMenuItem key={lang} value={lang}>
-                        <ReactCountryFlag
+                        {/* <ReactCountryFlag
                             svg
                             alt={lang}
                             style={{ width: "1.5em", height: "1.5em" }}
                             countryCode={lang === "en" ? "us" : lang}
-                        />
-                        {/* {lang} */}
+                        /> */}
+                        {lang}
                     </StyledMenuItem>
                 ))}
             </StyledSelect>

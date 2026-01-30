@@ -120,6 +120,14 @@ export const ua = {
             success: "Вы удачно сбросили сессию",
         },
     },
+    mail: {
+        resetPassword: {
+            title: "Восстановление пароля",
+            text: "Восстановление пароля",
+            button: "Восстановить пароль",
+            exsited: "Время действия ссылки: {time}",
+        },
+    },
 };
 
 export type MessageStructure = typeof ua;

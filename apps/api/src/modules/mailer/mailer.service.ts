@@ -8,15 +8,15 @@ import {
 } from "@nestjs/common";
 import nodemailer, { Transporter } from "nodemailer";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
-// import { I18nService } from "@/lib/i18n/i18n.service";
-import { Request } from "express";
-import { defaultLanguage, getMessageKey } from "@myorg/shared/i18n";
-import { I18nContext, I18nService } from "nestjs-i18n";
+import { I18nService } from "nestjs-i18n";
+import { MessageKeyType } from "@myorg/shared/i18n";
+import humanizeDuration from "humanize-duration";
+import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
 
 export interface SendForgotPasswordOptions {
     to: string;
     token: string;
-    name?: string;
+    expires: number;
 }
 
 @Injectable()
@@ -53,32 +53,30 @@ export class MailerService implements OnModuleInit {
         );
     }
 
-    async sendForgotPassword(
-        @Req() req: Request,
-        { to, token, name }: SendForgotPasswordOptions,
-    ) {
+    async sendForgotPassword({
+        to,
+        token,
+        expires,
+    }: SendForgotPasswordOptions) {
         const resetUrl = `${process.env.CLIENT_API}${FULL_PATH_ROUTE.forgotPasssword.path}/${token}?email=${to}`;
-        const locale = "en";
-        // const locale = this.i18n.getLocale(req.cookies?.["NEXT_LOCALE"]);
-        console.log(this.i18n.t(getMessageKey("api.ERR_NETWORK")));
 
         const html = `
-            <!DOCTYPE html lang="${locale}">
+            <!DOCTYPE html >
             <html>
             <head><meta charset="UTF-8"></head>
             <body style="font-family: Arial;">
-            <h2>Сброс пароля</h2>
-            <p><a href="${resetUrl}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Скинути пароль</a></p>
+            <h2>${this.i18n.t("mail.resetPassword.title")}</h2>
+            <p><a href="${resetUrl}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.resetPassword.button")}</a></p>
             <hr>
-            <p>Посилання діє 1 годину.</p>
+            <p>${this.i18n.t("mail.resetPassword.exsited", { args: { time: i18nFormatDuration(expires) } })}</p>
             </body>
             </html>`;
         await this.transporter.sendMail({
             from: process.env.SMTP_USER,
             to,
-            subject: "Сброс пароля",
+            subject: this.i18n.t("mail.resetPassword.text"),
             html,
-            text: `Скинь пароль: ${resetUrl}`,
+            text: `${this.i18n.t("mail.resetPassword.button")}: ${resetUrl}`,
         });
     }
 }

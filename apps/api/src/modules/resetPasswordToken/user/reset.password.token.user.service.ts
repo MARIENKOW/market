@@ -58,31 +58,41 @@ export class ResetPassswordTokenUserService {
                     "pages.forgotPasssword.changePassword.feedback.errors.notFound",
                 ],
             });
+
         const resetTokenData = userData.resetPasswordToken;
+        const isValid = await this.isTokenEqualHash(
+            token,
+            resetTokenData.tokenHash,
+        );
+        console.log(isValid);
+        if (!isValid) {
+            console.log("object1");
+            throw new ValidationException({
+                root: [
+                    "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                ],
+            });
+        }
+        console.log("object");
         if (this.isExpireToken(resetTokenData))
             throw new ValidationException({
                 root: [
                     "pages.forgotPasssword.changePassword.feedback.errors.timeout",
                 ],
             });
-        const isValid = this.isTokenEqualHash(token, resetTokenData.tokenHash);
-        if (!isValid)
-            throw new ValidationException({
-                root: [
-                    "pages.forgotPasssword.changePassword.feedback.errors.notFound",
-                ],
-            });
+
         return userData;
     }
     private async isTokenEqualHash(
         token: string,
         hash: string,
     ): Promise<boolean> {
-        return await bcrypt.compare(token, hash);
+        const data = await bcrypt.compare(token, hash);
+        return data;
     }
     async create(
         userId: string,
-    ): Promise<ResetPasswordTokenUser & { token: string }> {
+    ): Promise<ResetPasswordTokenUser & { token: string; expires: number }> {
         const token = this.createToken();
         const tokenHash = await bcrypt.hash(token, 12);
         const data = await this.prisma.resetPasswordTokenUser.create({
@@ -93,7 +103,7 @@ export class ResetPassswordTokenUserService {
             },
         });
 
-        return { ...data, token };
+        return { ...data, token, expires: this.expires };
     }
     async delete(id: string): Promise<true> {
         await this.prisma.resetPasswordTokenUser.delete({ where: { id } });

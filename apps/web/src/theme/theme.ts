@@ -11,7 +11,7 @@ const THEME_CONFIG: ThemeOptions = {
         fontFamily: "Roboto, Arial, sans-serif",
         fontSize: 13,
         allVariants: {
-            letterSpacing: 1.5,
+            letterSpacing: 1.2,
         },
     },
     colorSchemes: {
