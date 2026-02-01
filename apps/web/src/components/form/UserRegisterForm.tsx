@@ -70,7 +70,7 @@ export default function UserRegisterForm() {
             snackbarSuccess(t("form.register.success"));
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (error) {
-            errorFormHandlerWithAlert({ error, setError });
+            errorFormHandlerWithAlert({ error, setError, t });
         }
     };
 

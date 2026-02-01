@@ -19,7 +19,7 @@ import { useTranslations } from "next-intl";
 
 type FallbackElement = {
     element?: React.ComponentType;
-    message?: MessageKeyType;
+    message?: string;
 };
 type Fallback = {
     root?: FallbackElement;
@@ -57,7 +57,7 @@ export default function ErrorHandlerElement({
             const message =
                 fallback?.validation?.message || fieldsErrors?.root?.[0];
             const Component = fallback?.validation?.element ?? ErrorElement;
-            return <Component message={message ? t(message) : ""} />;
+            return <Component message={message} />;
         }
     }
     if (isUnuathorizedError(apiError)) {

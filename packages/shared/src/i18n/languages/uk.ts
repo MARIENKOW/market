@@ -6,7 +6,7 @@ import {
     USERNAME_MIN_LENGTH,
 } from "../../form/constants";
 
-export const ua = {
+export const uk = {
     form: {
         password: {
             min: `минимум ${PASSWORD_MIN_LENGTH} символов`,
@@ -65,7 +65,7 @@ export const ua = {
             feedback: {
                 errors: {
                     alreadySent:
-                        "Письмо с ссылкой на восстановление уже было отправлено. Проверьте папку спам или подождите окончания срока действия ссылки и отправьте запрос еще раз",
+                        "Письмо с ссылкой на восстановление уже было отправлено. Время действия ссылки: {time}",
                 },
                 success:
                     "Письмо с ссылкой на восстановление отправлено. Проверьте папку спам",
@@ -130,4 +130,4 @@ export const ua = {
     },
 };
 
-export type MessageStructure = typeof ua;
+export type MessageStructure = typeof uk;

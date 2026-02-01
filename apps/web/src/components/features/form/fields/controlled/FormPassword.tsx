@@ -7,7 +7,6 @@ import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
 import { FieldValues, Path, RegisterOptions } from "react-hook-form";
 
-
 export default function FormPassword<TFieldValues extends FieldValues>({
     name,
     label,
@@ -25,7 +24,7 @@ export default function FormPassword<TFieldValues extends FieldValues>({
             {({ field: { value, onChange }, fieldState: { error } }) => (
                 <PasswordComponent
                     variant={finalVariant}
-                    label={label?t(label):''}
+                    label={label ? t(label) : ""}
                     error={!!error}
                     value={value}
                     onChange={onChange}

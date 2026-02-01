@@ -26,10 +26,6 @@ export const Email = z
     .normalize()
     .pipe(z.email(getMessageKey("form.email.invalid")));
 
-export const NumberBase = z.preprocess(
-    (val) => 2,
-    z.number().min(1, "Минимум 1").max(10000, "Максимум 10000")
-);
 
 export const Username = z
     .string()

@@ -37,28 +37,37 @@ export function isValidationFailedError(error: ApiErrorResponse) {
     );
 }
 
-export type FallbackType = { root?: MessageKeyType };
+export type FallbackType = {
+    root?: MessageKeyType;
+    forbidden?: MessageKeyType;
+    network?: MessageKeyType;
+};
 
 export function normalizeError<T extends Record<string, any> | never = never>({
     error,
+    t,
     fallback = {},
 }: {
     error: unknown;
+    t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: FallbackType;
 }): FieldsErrors<T> {
     if (!isApiErrorResponse(error))
-        return { root: [fallback.root || "api.FALLBACK_ERR"] };
+        return { root: [fallback.root || t("api.FALLBACK_ERR")] };
 
     const apiError = error as ApiErrorResponse;
-    if (isNetworkError(apiError)) return { root: ["api.ERR_NETWORK"] };
-    if (isForbiddenError(apiError)) return { root: ["api.FORBIDDEN"] };
+    if (isNetworkError(apiError))
+        return { root: [fallback.network || t("api.ERR_NETWORK")] };
+    if (isForbiddenError(apiError))
+        return { root: [fallback.forbidden || t("api.FORBIDDEN")] };
     if (isInternalServerError(apiError))
-        return { root: [fallback.root || "api.FALLBACK_ERR"] };
+        return { root: [fallback.root || t("api.FALLBACK_ERR")] };
+
     if (isBadRequestError(apiError)) {
         if (isValidationFailedError(apiError)) {
             return apiError.data as FieldsErrors<T>;
         }
     }
 
-    return { root: [fallback.root || "api.FALLBACK_ERR"] };
+    return { root: [fallback.root || t("api.FALLBACK_ERR")] };
 }

@@ -1,4 +1,4 @@
-import { MessageStructure } from "./ua";
+import { MessageStructure } from "./uk";
 import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
@@ -66,7 +66,7 @@ export const en: MessageStructure = {
             feedback: {
                 errors: {
                     alreadySent:
-                        "A password reset link has already been sent. Please check your spam folder or wait for the link to expire and try again.",
+                        "The recovery link email has already been sent. Link expiration time: {time}",
                 },
                 success:
                     "A password reset link has been sent. Please check your spam folder.",

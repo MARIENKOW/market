@@ -1,6 +1,6 @@
 import { ValidationException } from "@/common/exception/validation.exception";
 import { MessageKeyType } from "@myorg/shared/i18n";
-import { PipeTransform, BadRequestException } from "@nestjs/common";
+import { PipeTransform } from "@nestjs/common";
 import { ZodType } from "zod";
 
 import { ZodError } from "zod";

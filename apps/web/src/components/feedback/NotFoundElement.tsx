@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 export default async function NotFoundElement({
     message,
 }: {
-    message?: MessageKeyType;
+    message?: string;
 }) {
     const t = await getTranslations();
     return (

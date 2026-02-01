@@ -40,7 +40,7 @@ export default function UserRememberPasswordForm() {
             await authUser.forgotPassword(body);
             snackbarSuccess(t("pages.forgotPasssword.feedback.success"));
         } catch (error) {
-            errorFormHandlerWithAlert({ error, setError });
+            errorFormHandlerWithAlert({ error, setError, t });
         }
     };
 

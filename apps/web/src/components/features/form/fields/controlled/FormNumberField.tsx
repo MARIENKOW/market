@@ -1,12 +1,10 @@
 import { FormFieldProps } from "@/components/features/form/fields/types";
-import { NumberFieldCommponent } from "@/components/features/form/fields/uncontrolled/NumberFieldCommponent";
-import { PasswordComponent } from "@/components/features/form/fields/uncontrolled/PasswordComponent";
 import { StyledTextField } from "@/components/ui/StyledTextField";
 import FieldControll from "@/components/wrappers/form/FieldControll";
 import { useFormConfig } from "@/components/wrappers/form/FormConfigProvider";
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
-import { FieldValues, Path, RegisterOptions } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 
 export default function FormNumberField<TFieldValues extends FieldValues>({
     name,
@@ -25,7 +23,7 @@ export default function FormNumberField<TFieldValues extends FieldValues>({
             {({ field: { value, onChange }, fieldState: { error } }) => (
                 <StyledTextField
                     variant={finalVariant}
-                    label={label?t(label):''}
+                    label={label ? t(label) : ""}
                     error={!!error}
                     inputMode="numeric"
                     value={value}

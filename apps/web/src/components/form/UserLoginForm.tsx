@@ -41,7 +41,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
             if (redirectTo) router.push(redirectTo);
             router.refresh();
         } catch (error) {
-            errorFormHandlerWithAlert({ error, setError });
+            errorFormHandlerWithAlert({ error, setError, t });
         }
     };
 

@@ -1,4 +1,4 @@
-import { Email, NumberBase, Password } from "../fields";
+import { Email, Password } from "../fields";
 import { getMessageKey } from "../../i18n";
 import z from "zod";
 

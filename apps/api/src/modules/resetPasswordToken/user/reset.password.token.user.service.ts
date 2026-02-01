@@ -12,12 +12,14 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { UserService } from "@/modules/user/user.service";
 import { ValidationException } from "@/common/exception/validation.exception";
+import { I18nService } from "nestjs-i18n";
 
 @Injectable()
 export class ResetPassswordTokenUserService {
     constructor(
         private prisma: PrismaService,
         private user: UserService,
+        private i18n: I18nService,
     ) {}
     private expires = 15 * 60 * 1000; //15 мин
     findByUserId(userId: string): Promise<ResetPasswordTokenUser | null> {
@@ -48,14 +50,18 @@ export class ResetPassswordTokenUserService {
         if (!email)
             throw new ValidationException({
                 root: [
-                    "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                    this.i18n.t(
+                        "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                    ),
                 ],
             });
         const userData = await this.user.findByEmailWithResetToken(email);
         if (!userData || !userData.resetPasswordToken)
             throw new ValidationException({
                 root: [
-                    "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                    this.i18n.t(
+                        "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                    ),
                 ],
             });
 
@@ -69,7 +75,9 @@ export class ResetPassswordTokenUserService {
             console.log("object1");
             throw new ValidationException({
                 root: [
-                    "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                    this.i18n.t(
+                        "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                    ),
                 ],
             });
         }
@@ -77,7 +85,9 @@ export class ResetPassswordTokenUserService {
         if (this.isExpireToken(resetTokenData))
             throw new ValidationException({
                 root: [
-                    "pages.forgotPasssword.changePassword.feedback.errors.timeout",
+                    this.i18n.t(
+                        "pages.forgotPasssword.changePassword.feedback.errors.timeout",
+                    ),
                 ],
             });
 

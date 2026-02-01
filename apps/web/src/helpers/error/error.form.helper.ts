@@ -14,32 +14,34 @@ export function errorHandlerSnackbar({
     fallback,
 }: {
     error: unknown;
-    t: (key: MessageKeyType) => string;
+    t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: FallbackType;
 }) {
-    const errors = normalizeError({ error, fallback });
+    const errors = normalizeError({ error, fallback, t });
     const rootMsg = errors?.root?.[0];
 
     if (rootMsg) {
-        snackbarError(t(rootMsg));
+        snackbarError(rootMsg);
     }
 }
 
 export function errorFormHandlerWithAlert<T extends FieldValues>({
     error,
     setError,
+    t,
     fallback,
 }: {
     error: unknown;
     setError: UseFormSetError<T>;
+    t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: { root?: MessageKeyType };
 }) {
-    const errors = normalizeError<T>({ error, fallback });
+    const errors = normalizeError<T>({ error, fallback, t });
 
     if (errors.root?.[0]) {
         setError("root.server", {
             type: "server",
-            message: getMessageKey(errors.root[0]),
+            message: errors.root[0],
         });
     }
 
@@ -48,7 +50,7 @@ export function errorFormHandlerWithAlert<T extends FieldValues>({
         for (const key in fields) {
             setError(key as Path<T>, {
                 type: "server",
-                message: fields?.[key]?.[0],
+                message: fields[key]?.[0],
             });
         }
     }

@@ -13,6 +13,8 @@ import { ValidationException } from "@/common/exception/validation.exception";
 import { ResetPassswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
 import { MailerService } from "@/modules/mailer/mailer.service";
 import { Request } from "express";
+import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
+import { I18nService } from "nestjs-i18n";
 
 @Injectable()
 export class AuthUserService {
@@ -21,6 +23,7 @@ export class AuthUserService {
         private sessionUser: SessionUserService,
         private resetToken: ResetPassswordTokenUserService,
         private mailerService: MailerService,
+        private i18n: I18nService,
     ) {}
 
     async register(body: UserRegisterDtoOutput): Promise<User> {
@@ -81,10 +84,24 @@ export class AuthUserService {
         const resetTokenData = await this.resetToken.findByUserId(user.id);
         if (resetTokenData) {
             const isExpireToken = this.resetToken.isExpireToken(resetTokenData);
-            if (!isExpireToken)
+            if (!isExpireToken) {
+                const time = i18nFormatDuration(
+                    new Date(Date.now()).getTime() -
+                        resetTokenData.expiresAt.getTime(),
+                );
                 throw new ValidationException<UserForgotPasswordDtoOutput>({
-                    root: ["pages.forgotPasssword.feedback.errors.alreadySent"],
+                    root: [
+                        this.i18n.t(
+                            "pages.forgotPasssword.feedback.errors.alreadySent",
+                            {
+                                args: {
+                                    time,
+                                },
+                            },
+                        ),
+                    ],
                 });
+            }
             await this.resetToken.delete(resetTokenData.id);
         }
         const { token, id, expiresAt, expires } = await this.resetToken.create(
@@ -94,7 +111,7 @@ export class AuthUserService {
             await this.mailerService.sendForgotPassword({
                 to: user.email,
                 token,
-                expires
+                expires,
             });
         } catch (error) {
             await this.resetToken.delete(id);

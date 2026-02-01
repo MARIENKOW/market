@@ -17,5 +17,5 @@ export type FieldMap<T = Record<string, unknown>> = {
 
 export type FieldsErrors<T extends Record<string, unknown> | never = never> = {
     fields?: FieldMap<T>;
-    root?: MessageKeyType[];
+    root?: string[];
 };
