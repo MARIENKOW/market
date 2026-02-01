@@ -7,7 +7,7 @@ import AuthUserService from "@/services/auth/user/auth.user.service";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { $apiClient } from "@/lib/api/fetch.client";
-import { errorHandlerSnackbar } from "@/helpers/error/error.form.helper";
+import { errorHandler } from "@/helpers/error/error.form.helper";
 
 const user = new AuthUserService($apiClient);
 
@@ -24,10 +24,14 @@ export default function LogoutErrorButton() {
             snackbarSuccess(t("features.logoutErr.success"));
         } catch (error) {
             console.log(error);
-            errorHandlerSnackbar({
+            errorHandler({
                 error,
                 t,
-                fallback: { root: "features.logoutErr.error" },
+                fallback: {
+                    unknown: { message: t("features.logoutErr.error") },
+                    other: { message: t("features.logoutErr.error") },
+                    internal: { message: t("features.logoutErr.error") },
+                },
             });
         } finally {
             setLoading(false);

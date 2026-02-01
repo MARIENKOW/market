@@ -1,7 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandlerWithAlert } from "@/helpers/error/error.form.helper";
+import {
+    errorFormHandlerWithAlert,
+    errorHandler,
+} from "@/helpers/error/error.form.helper";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
 import { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -48,7 +51,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     return (
         <SimpleForm<UserLoginDtoInput>
             params={{
-                resolver: zodResolver(UserLoginSchema),
+                // resolver: zodResolver(UserLoginSchema),
                 defaultValues: {
                     email: "",
                     password: "",

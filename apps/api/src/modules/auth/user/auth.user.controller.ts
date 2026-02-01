@@ -62,7 +62,7 @@ export class AuthUserController {
     async forgotPassword(
         @Body(new ZodValidationPipe(UserForgotPasswordSchema))
         body: UserForgotPasswordDtoOutput,
-    ): Promise<Date> {
+    ): Promise<string> {
         return await this.authUser.forgotPassword(body);
     }
 

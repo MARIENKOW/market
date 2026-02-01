@@ -69,7 +69,7 @@ export const en: MessageStructure = {
                         "The recovery link email has already been sent. Link expiration time: {time}",
                 },
                 success:
-                    "A password reset link has been sent. Please check your spam folder.",
+                    "A password reset link has been sent. Link expiration time: {time}",
             },
         },
         notFound: {
@@ -80,6 +80,8 @@ export const en: MessageStructure = {
         ERR_NETWORK: "No network connection. Please try again later.",
         FALLBACK_ERR: "Oops! Something went wrong, please try again later.",
         FORBIDDEN: "Not enough rights",
+        UNAUTHORIZED: "You are not authorized! Please sign in",
+        NOT_FOUND: "Content not found",
         auth: "Authentication error, please reload the page or sign in again",
     },
     feedback: {

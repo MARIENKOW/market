@@ -2,13 +2,22 @@ import { getMessageKey, MessageKeyType } from "@myorg/shared/i18n";
 import { FieldMap } from "@myorg/shared/dto";
 import { FieldValues, Path, UseFormSetError } from "react-hook-form";
 import {
-    FallbackType,
+    ErrorNormalizeContext,
     normalizeError,
 } from "@/helpers/error/error.type.helper";
-
 import { snackbarError } from "@/utils/snackbar/snackbar.error";
 
-export function errorHandlerSnackbar({
+type FallbackOptions = {
+    message?: string;
+    callback?: () => void;
+    hideMessage?: boolean;
+};
+
+export type FallbackType = {
+    [K in ErrorNormalizeContext]?: FallbackOptions;
+};
+
+export function errorHandler({
     error,
     t,
     fallback,
@@ -17,11 +26,15 @@ export function errorHandlerSnackbar({
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: FallbackType;
 }) {
-    const errors = normalizeError({ error, fallback, t });
-    const rootMsg = errors?.root?.[0];
+    const { messages, context } = normalizeError({ error, t });
+    const rootMessages = messages.root || [];
 
-    if (rootMsg) {
-        snackbarError(rootMsg);
+    if (fallback?.[context]?.callback) fallback[context].callback();
+    if (fallback?.[context]?.hideMessage) return;
+    if (fallback?.[context]?.message) {
+        snackbarError(fallback[context].message);
+    } else {
+        rootMessages.forEach((msg) => snackbarError(msg));
     }
 }
 
@@ -36,17 +49,17 @@ export function errorFormHandlerWithAlert<T extends FieldValues>({
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: { root?: MessageKeyType };
 }) {
-    const errors = normalizeError<T>({ error, fallback, t });
+    const { messages } = normalizeError<T>({ error, t });
 
-    if (errors.root?.[0]) {
+    if (messages.root?.[0]) {
         setError("root.server", {
             type: "server",
-            message: errors.root[0],
+            message: messages.root[0],
         });
     }
 
-    if (errors.fields) {
-        const fields = errors.fields as FieldMap;
+    if (messages.fields) {
+        const fields = messages.fields as FieldMap;
         for (const key in fields) {
             setError(key as Path<T>, {
                 type: "server",

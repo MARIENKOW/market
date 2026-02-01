@@ -37,37 +37,71 @@ export function isValidationFailedError(error: ApiErrorResponse) {
     );
 }
 
-export type FallbackType = {
-    root?: MessageKeyType;
-    forbidden?: MessageKeyType;
-    network?: MessageKeyType;
-};
+export type ErrorNormalizeContext =
+    | "unknown"
+    | "network"
+    | "forbidden"
+    | "internal"
+    | "validation"
+    | "notfound"
+    | "unauthorized"
+    | "other";
 
+type NormilizeError<T extends Record<string, any> | never = never> = {
+    messages: FieldsErrors<T>;
+    context: ErrorNormalizeContext;
+};
 export function normalizeError<T extends Record<string, any> | never = never>({
     error,
     t,
-    fallback = {},
 }: {
     error: unknown;
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
-    fallback?: FallbackType;
-}): FieldsErrors<T> {
+}): NormilizeError<T> {
     if (!isApiErrorResponse(error))
-        return { root: [fallback.root || t("api.FALLBACK_ERR")] };
+        return {
+            messages: { root: [t("api.FALLBACK_ERR")] },
+            context: "unknown",
+        };
 
     const apiError = error as ApiErrorResponse;
     if (isNetworkError(apiError))
-        return { root: [fallback.network || t("api.ERR_NETWORK")] };
+        return {
+            messages: { root: [t("api.ERR_NETWORK")] },
+            context: "network",
+        };
     if (isForbiddenError(apiError))
-        return { root: [fallback.forbidden || t("api.FORBIDDEN")] };
+        return {
+            messages: { root: [t("api.FORBIDDEN")] },
+            context: "forbidden",
+        };
+    if (isUnuathorizedError(apiError))
+        return {
+            messages: { root: [t("api.UNAUTHORIZED")] },
+            context: "unauthorized",
+        };
+    if (isNotFoundError(apiError))
+        return {
+            messages: { root: [t("api.NOT_FOUND")] },
+            context: "notfound",
+        };
     if (isInternalServerError(apiError))
-        return { root: [fallback.root || t("api.FALLBACK_ERR")] };
+        return {
+            messages: { root: [t("api.FALLBACK_ERR")] },
+            context: "internal",
+        };
 
     if (isBadRequestError(apiError)) {
         if (isValidationFailedError(apiError)) {
-            return apiError.data as FieldsErrors<T>;
+            return {
+                messages: apiError.data as FieldsErrors<T>,
+                context: "validation",
+            };
         }
     }
 
-    return { root: [fallback.root || t("api.FALLBACK_ERR")] };
+    return {
+        messages: { root: [t("api.FALLBACK_ERR")] },
+        context: "other",
+    };
 }

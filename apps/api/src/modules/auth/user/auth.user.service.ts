@@ -74,7 +74,7 @@ export class AuthUserService {
             });
         return this.sessionUser.create(user.id);
     }
-    async forgotPassword(body: UserForgotPasswordDtoOutput): Promise<Date> {
+    async forgotPassword(body: UserForgotPasswordDtoOutput): Promise<string> {
         const { email } = body;
         const user = await this.user.findByEmail(email);
         if (!user)
@@ -117,7 +117,11 @@ export class AuthUserService {
             await this.resetToken.delete(id);
             throw error;
         }
-        return expiresAt;
+        return this.i18n.t("pages.forgotPasssword.feedback.success", {
+            args: {
+                time: i18nFormatDuration(expires),
+            },
+        });
     }
     async changePassword(
         { password }: UserChangePasswordDtoOutput,

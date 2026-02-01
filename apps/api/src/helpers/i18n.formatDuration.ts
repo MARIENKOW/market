@@ -14,6 +14,7 @@ console.log(ms);
     return humanizeDuration(ms, {
         language,
         largest: 2,
+        round:true,
         fallbacks: ["en"],
     });
 }

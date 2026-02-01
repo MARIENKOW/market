@@ -15,7 +15,7 @@ export default class AuthUserService {
     login: (body: UserLoginDtoOutput) => Promise<true>;
     logout: () => Promise<true>;
     register: (body: UserRegisterDtoOutput) => Promise<UserDto>;
-    forgotPassword: (body: UserForgotPasswordDtoOutput) => Promise<number>;
+    forgotPassword: (body: UserForgotPasswordDtoOutput) => Promise<string>;
     changePassword: (
         body: UserChangePasswordDtoOutput,
         { token, email }: { token: string; email: null | string },
