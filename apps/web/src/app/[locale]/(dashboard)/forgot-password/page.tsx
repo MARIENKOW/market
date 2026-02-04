@@ -27,7 +27,7 @@ export default async function Page() {
                         variant="h6"
                         component="h2"
                     >
-                        {t("pages.forgotPasssword.name")}
+                        {t("pages.forgotPassword.name")}
                     </Typography>
                     <UserRememberPasswordForm />
                 </Box>

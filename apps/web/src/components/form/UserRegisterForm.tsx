@@ -6,7 +6,7 @@ import {
     UserRegisterSchema,
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandlerWithAlert } from "@/helpers/error/error.form.helper";
+import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
 import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -29,6 +29,7 @@ import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Box } from "@mui/material";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { MessageKeyType } from "@myorg/shared/i18n";
 
 const authUser = new AuthUserService($apiClient);
 
@@ -66,8 +67,8 @@ export default function UserRegisterForm() {
         { setError },
     ) => {
         try {
-            await authUser.register(data);
-            snackbarSuccess(t("form.register.success"));
+            const message = await authUser.register(data);
+            snackbarSuccess(message);
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError, t });

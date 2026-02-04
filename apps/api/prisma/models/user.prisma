@@ -11,6 +11,7 @@ model User {
 
   sessions      UserSession[]
   resetPasswordToken      ResetPasswordTokenUser?
+  activateToken      ActivateTokenUser?
 
   @@map("users")
 }

@@ -8,7 +8,7 @@ import AuthUserService from "@/services/auth/user/auth.user.service";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { $apiClient } from "@/lib/api/fetch.client";
-import { errorHandler } from "@/helpers/error/error.form.helper";
+import { errorHandler } from "@/helpers/error/error.handler.helper";
 
 const user = new AuthUserService($apiClient);
 
@@ -38,7 +38,9 @@ export default function LogoutButton() {
         }
     };
     return (
-        <StyledButton loading={loading} onClick={handleClick}>
+        <StyledButton 
+        loading={loading}
+         onClick={handleClick}>
             {t("features.logout.name")}
         </StyledButton>
     );

@@ -1,11 +1,10 @@
+import { isAbort, isAbortError } from "@/helpers/error/error.type.helper";
 import { ApiErrorResponse } from "@myorg/shared/dto";
 import { HTTP_STATUSES } from "@myorg/shared/http";
 
 export interface FetchBaseOptions extends RequestInit {
     method?: "POST" | "GET" | "PUT" | "DELETE";
     body?: BodyInit | null;
-    onRequest?: (init: RequestInit) => void | Promise<any>;
-    onResponse?: (res: Response) => void | Promise<any>;
 }
 
 export type FetchCustom = (
@@ -14,18 +13,31 @@ export type FetchCustom = (
 ) => Promise<any>;
 
 export const fetchCustom: FetchCustom = async (path, options = {}) => {
-    const { onRequest, onResponse, ...rest } = options;
+    const { ...rest } = options;
 
     const init: RequestInit = {
         ...rest,
     };
 
-    await onRequest?.(init);
-
     let res;
     try {
         res = await fetch(path, init);
     } catch (e) {
+        if (isAbort(e)) {
+            throw {
+                status: HTTP_STATUSES.AbortError.status,
+                code: HTTP_STATUSES.AbortError.code,
+                message:
+                    e instanceof Error
+                        ? e.message
+                        : HTTP_STATUSES.AbortError.statusText,
+                data: undefined,
+                timestamp: new Date().toISOString(),
+                path,
+                context: "NETWORK",
+                errorType: "ApiErrorResponse",
+            } satisfies ApiErrorResponse;
+        }
         throw {
             status: HTTP_STATUSES.NetworkError.status,
             code: HTTP_STATUSES.NetworkError.code,
@@ -40,8 +52,6 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
             errorType: "ApiErrorResponse",
         } satisfies ApiErrorResponse;
     }
-
-    await onResponse?.(res);
 
     if (!res.ok) {
         let data: any = {};

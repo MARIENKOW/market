@@ -38,7 +38,7 @@ export class AuthUserController {
     async register(
         @Body(new ZodValidationPipe(UserRegisterSchema))
         body: UserRegisterDtoOutput,
-    ): Promise<UserDto> {
+    ): Promise<string> {
         return this.authUser.register(body);
     }
 

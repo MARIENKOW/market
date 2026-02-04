@@ -4,6 +4,11 @@ export const HTTP_STATUSES = {
         statusText: "Network Error",
         code: "NETWORK_ERROR",
     },
+    AbortError: {
+        status: 0,
+        statusText: "Request aborted",
+        code: "ABORT_ERROR",
+    },
 
     OK: { status: 200, statusText: "OK", code: "OK" },
     Created: { status: 201, statusText: "Created", code: "CREATED" },

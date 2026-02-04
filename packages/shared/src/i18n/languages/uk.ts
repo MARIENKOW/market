@@ -1,3 +1,4 @@
+import { success } from "zod";
 import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
@@ -32,12 +33,6 @@ export const uk = {
         },
         required: "обязательное поле",
         submit: "Подтвердить",
-        register: {
-            success: "Регистрация успешна!",
-        },
-        login: {
-            success: "Авторизация успешна!",
-        },
     },
     pages: {
         main: {
@@ -45,11 +40,42 @@ export const uk = {
         },
         register: {
             name: "Регистрация",
+            feedback: {
+                success: {
+                    registerSuccess: "Регистрация успешна!",
+                    mailSend:
+                        "Регистрация успешна!. Ссылка для активации была отправлена на почту. Время действия: {time}",
+                },
+            },
         },
         login: {
             name: "Авторизация",
+            feedback: {
+                success: {
+                    loginSuccess: "Авторизация успешна!",
+                },
+                errors: {
+                    mailSend:
+                        "Аккаунт не активирован. Письмо с ссылкой было отправлено на почту. Время действия ссылки: {time}",
+                    mailSendAgain:
+                        "Аккаунт не активирован. Письмо с ссылкой отправлено на почту. Время действия ссылки: {time}",
+                },
+            },
         },
-        forgotPasssword: {
+        activate: {
+            feedback: {
+                success: {
+                    accountActivate: "Аккаунт успешно активировано ",
+                },
+                errors: {
+                    timeout:
+                        "Закончился срок действия ссылки активации! пройдите еще раз процедуру отправки",
+                    notFound:
+                        "Ссылка недействительна! пройдите еще раз процедуру отправки",
+                },
+            },
+        },
+        forgotPassword: {
             changePassword: {
                 name: "Смена пароля",
                 feedback: {
@@ -80,7 +106,8 @@ export const uk = {
         FALLBACK_ERR: "Упс! Что-то пошло не так, попробуйте позже",
         FORBIDDEN: "Недостаточно прав",
         UNAUTHORIZED: "«Вы не авторизованы! войдите в аккаунт",
-        NOT_FOUND: "«Контент не найдено",
+        NOT_FOUND: "Контент не найдено",
+        ABORT_ERROR: "Запрос отменено",
         auth: "Ошибка аутентификации, перезагрузите страницу или войдите заново в аккаунт",
     },
     feedback: {
@@ -127,6 +154,12 @@ export const uk = {
             title: "Восстановление пароля",
             text: "Восстановление пароля",
             button: "Восстановить пароль",
+            exsited: "Время действия ссылки: {time}",
+        },
+        activate: {
+            title: "Активация аккаунта",
+            text: "Активация аккаунта",
+            button: "Активировать аккаунт",
             exsited: "Время действия ссылки: {time}",
         },
     },

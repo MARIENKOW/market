@@ -6,7 +6,7 @@ import {
     UserChangePasswordSchema,
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandlerWithAlert } from "@/helpers/error/error.form.helper";
+import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import { useTranslations } from "next-intl";
 import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
 import SubmitButton from "@/components/features/form/SubmitButton";
@@ -65,7 +65,9 @@ export default function UserChangePasswordForm() {
                 token: token as string,
                 email: searchParams.get("email"),
             });
-            snackbarSuccess(t("form.register.success"));
+            snackbarSuccess(
+                t("pages.register.feedback.success.registerSuccess"),
+            );
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError, t });

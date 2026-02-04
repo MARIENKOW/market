@@ -15,7 +15,7 @@ import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 
 @Injectable()
-export class ResetPassswordTokenUserService {
+export class ResetPasswordTokenUserService {
     constructor(
         private prisma: PrismaService,
         private user: UserService,
@@ -51,7 +51,7 @@ export class ResetPassswordTokenUserService {
             throw new ValidationException({
                 root: [
                     this.i18n.t(
-                        "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                        "pages.forgotPassword.changePassword.feedback.errors.notFound",
                     ),
                 ],
             });
@@ -60,7 +60,7 @@ export class ResetPassswordTokenUserService {
             throw new ValidationException({
                 root: [
                     this.i18n.t(
-                        "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                        "pages.forgotPassword.changePassword.feedback.errors.notFound",
                     ),
                 ],
             });
@@ -76,7 +76,7 @@ export class ResetPassswordTokenUserService {
             throw new ValidationException({
                 root: [
                     this.i18n.t(
-                        "pages.forgotPasssword.changePassword.feedback.errors.notFound",
+                        "pages.forgotPassword.changePassword.feedback.errors.notFound",
                     ),
                 ],
             });
@@ -86,7 +86,7 @@ export class ResetPassswordTokenUserService {
             throw new ValidationException({
                 root: [
                     this.i18n.t(
-                        "pages.forgotPasssword.changePassword.feedback.errors.timeout",
+                        "pages.forgotPassword.changePassword.feedback.errors.timeout",
                     ),
                 ],
             });

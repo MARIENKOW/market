@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { errorFormHandlerWithAlert } from "@/helpers/error/error.form.helper";
+import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
 import { CustomSubmitHandler } from "@/components/wrappers/form/Form";

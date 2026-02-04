@@ -62,7 +62,7 @@ export class UserService {
         return UserData;
     }
 
-    create(data: User): Promise<User> {
+    create(data: Prisma.UserCreateInput): Promise<User> {
         return this.prisma.user.create({ data });
     }
 }

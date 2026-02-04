@@ -1,7 +1,6 @@
 import { ApiErrorResponse, FieldMap, FieldsErrors } from "@myorg/shared/dto";
 import { HTTP_STATUSES } from "@myorg/shared/http";
 import { MessageKeyType } from "@myorg/shared/i18n";
-import { FieldValues } from "react-hook-form";
 
 export function isApiErrorResponse(error: unknown) {
     return (
@@ -9,6 +8,14 @@ export function isApiErrorResponse(error: unknown) {
         typeof error === "object" &&
         "errorType" in error &&
         error.errorType === "ApiErrorResponse"
+    );
+}
+export function isAbort(error: unknown) {
+    return (
+        error &&
+        typeof error === "object" &&
+        "name" in error &&
+        error.name === "AbortError"
     );
 }
 
@@ -19,7 +26,16 @@ export function isNotFoundError(error: ApiErrorResponse) {
     return error.status === HTTP_STATUSES.NotFound.status;
 }
 export function isNetworkError(error: ApiErrorResponse) {
-    return error.status === HTTP_STATUSES.NetworkError.status;
+    return (
+        error.status === HTTP_STATUSES.NetworkError.status &&
+        error.code === HTTP_STATUSES.NetworkError.code
+    );
+}
+export function isAbortError(error: ApiErrorResponse) {
+    return (
+        error.status === HTTP_STATUSES.AbortError.status &&
+        error.code === HTTP_STATUSES.AbortError.code
+    );
 }
 export function isInternalServerError(error: ApiErrorResponse) {
     return error.status === HTTP_STATUSES.InternalServerError.status;
@@ -39,6 +55,7 @@ export function isValidationFailedError(error: ApiErrorResponse) {
 
 export type ErrorNormalizeContext =
     | "unknown"
+    | "cancel"
     | "network"
     | "forbidden"
     | "internal"
@@ -58,6 +75,7 @@ export function normalizeError<T extends Record<string, any> | never = never>({
     error: unknown;
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
 }): NormilizeError<T> {
+    console.log(error);
     if (!isApiErrorResponse(error))
         return {
             messages: { root: [t("api.FALLBACK_ERR")] },
@@ -69,6 +87,11 @@ export function normalizeError<T extends Record<string, any> | never = never>({
         return {
             messages: { root: [t("api.ERR_NETWORK")] },
             context: "network",
+        };
+    if (isAbortError(apiError))
+        return {
+            messages: { root: [t("api.ABORT_ERROR")] },
+            context: "cancel",
         };
     if (isForbiddenError(apiError))
         return {

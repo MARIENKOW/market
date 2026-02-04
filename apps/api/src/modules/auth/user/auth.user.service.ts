@@ -10,23 +10,24 @@ import {
 import { SessionUserService } from "@/modules/session/user/session.user.service";
 import { User, UserSession } from "@/generated/prisma";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { ResetPassswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
+import { ResetPasswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
 import { MailerService } from "@/modules/mailer/mailer.service";
-import { Request } from "express";
 import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
 import { I18nService } from "nestjs-i18n";
+import { ActivateTokenUserService } from "../../activateToken/user/activate.token.user.service";
 
 @Injectable()
 export class AuthUserService {
     constructor(
         private user: UserService,
         private sessionUser: SessionUserService,
-        private resetToken: ResetPassswordTokenUserService,
+        private resetToken: ResetPasswordTokenUserService,
         private mailerService: MailerService,
+        private activateToken: ActivateTokenUserService,
         private i18n: I18nService,
     ) {}
 
-    async register(body: UserRegisterDtoOutput): Promise<User> {
+    async register(body: UserRegisterDtoOutput): Promise<string> {
         const { password, email } = body;
 
         const emailUnique = await this.user.findByEmail(email);
@@ -39,14 +40,37 @@ export class AuthUserService {
 
         const hashed = await bcrypt.hash(password, 12);
 
-        return this.user.create({
-            id: "dasd",
-            status: "NOACTIVE",
-            createdAt: new Date(),
+        const userData = await this.user.create({
             updatedAt: new Date(),
             email,
             passwordHash: hashed,
         });
+        if (userData.status === "ACTIVE") {
+            return this.i18n.t(
+                "pages.register.feedback.success.registerSuccess",
+            );
+        } else if (userData.status === "NOACTIVE") {
+            const { expires, token, id } = await this.activateToken.create(
+                userData.id,
+            );
+            try {
+                await this.mailerService.sendActivateToken({
+                    to: userData.email,
+                    expires,
+                    token,
+                });
+                return this.i18n.t("pages.register.feedback.success.mailSend", {
+                    args: { time: i18nFormatDuration(expires) },
+                });
+            } catch (error) {
+                await this.activateToken.delete(id);
+                throw error;
+            }
+        } else {
+            throw new ValidationException({
+                root: [this.i18n.t("api.FALLBACK_ERR")],
+            });
+        }
     }
     async login(body: UserLoginDtoOutput): Promise<UserSession> {
         const { email, password } = body;
@@ -56,9 +80,6 @@ export class AuthUserService {
                 fields: { email: ["form.email.notFound"] },
             });
 
-        // fields: {
-        //     email: ["form.email.notFound"],
-        // },
         if (!user.passwordHash)
             throw new ValidationException<UserLoginDtoOutput>({
                 fields: {
@@ -72,7 +93,12 @@ export class AuthUserService {
                     password: ["form.password.invalid"],
                 },
             });
-        return this.sessionUser.create(user.id);
+        // if (user.status === "NOACTIVE")
+        //     throw new ValidationException({
+        //         root: [this.i18n.t("pages.login.feedback.errors.mailSend",{args:{time:i18nFormatDuration(1000*60*15)}})],
+        //     });
+        const sessionUserData = await this.sessionUser.create(user.id);
+        return sessionUserData;
     }
     async forgotPassword(body: UserForgotPasswordDtoOutput): Promise<string> {
         const { email } = body;
@@ -86,13 +112,13 @@ export class AuthUserService {
             const isExpireToken = this.resetToken.isExpireToken(resetTokenData);
             if (!isExpireToken) {
                 const time = i18nFormatDuration(
-                    new Date(Date.now()).getTime() -
-                        resetTokenData.expiresAt.getTime(),
+                    resetTokenData.expiresAt.getTime() -
+                        new Date(Date.now()).getTime(),
                 );
                 throw new ValidationException<UserForgotPasswordDtoOutput>({
                     root: [
                         this.i18n.t(
-                            "pages.forgotPasssword.feedback.errors.alreadySent",
+                            "pages.forgotPassword.feedback.errors.alreadySent",
                             {
                                 args: {
                                     time,
@@ -104,9 +130,7 @@ export class AuthUserService {
             }
             await this.resetToken.delete(resetTokenData.id);
         }
-        const { token, id, expiresAt, expires } = await this.resetToken.create(
-            user.id,
-        );
+        const { token, id, expires } = await this.resetToken.create(user.id);
         try {
             await this.mailerService.sendForgotPassword({
                 to: user.email,
@@ -117,7 +141,7 @@ export class AuthUserService {
             await this.resetToken.delete(id);
             throw error;
         }
-        return this.i18n.t("pages.forgotPasssword.feedback.success", {
+        return this.i18n.t("pages.forgotPassword.feedback.success", {
             args: {
                 time: i18nFormatDuration(expires),
             },
@@ -132,8 +156,8 @@ export class AuthUserService {
             token,
         });
 
-        this.user.changePassword({ password, id });
-        this.resetToken.deleteByUserId(id);
+        await this.user.changePassword({ password, id });
+        await this.resetToken.deleteByUserId(id);
         return true;
     }
     async logout(sessionId: string): Promise<true> {

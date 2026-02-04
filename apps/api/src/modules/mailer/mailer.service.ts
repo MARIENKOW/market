@@ -79,4 +79,26 @@ export class MailerService implements OnModuleInit {
             text: `${this.i18n.t("mail.resetPassword.button")}: ${resetUrl}`,
         });
     }
+    async sendActivateToken({ to, token, expires }: SendForgotPasswordOptions) {
+        const resetUrl = `${process.env.CLIENT_API}${FULL_PATH_ROUTE.activate.path}/${token}?email=${to}`;
+
+        const html = `
+            <!DOCTYPE html >
+            <html>
+            <head><meta charset="UTF-8"></head>
+            <body style="font-family: Arial;">
+            <h2>${this.i18n.t("mail.activate.title")}</h2>
+            <p><a href="${resetUrl}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.activate.button")}</a></p>
+            <hr>
+            <p>${this.i18n.t("mail.activate.exsited", { args: { time: i18nFormatDuration(expires) } })}</p>
+            </body>
+            </html>`;
+        await this.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to,
+            subject: this.i18n.t("mail.activate.text"),
+            html,
+            text: `${this.i18n.t("mail.activate.button")}: ${resetUrl}`,
+        });
+    }
 }

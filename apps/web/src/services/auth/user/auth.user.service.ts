@@ -8,18 +8,25 @@ import {
     UserChangePasswordDtoOutput,
 } from "@myorg/shared/form";
 
-const { login, register, logout, forgotPassword } =
+const { login, register, logout, forgotPassword, activate } =
     FULL_PATH_ENDPOINT.auth.user;
 
 export default class AuthUserService {
     login: (body: UserLoginDtoOutput) => Promise<true>;
     logout: () => Promise<true>;
-    register: (body: UserRegisterDtoOutput) => Promise<UserDto>;
+    register: (body: UserRegisterDtoOutput) => Promise<string>;
     forgotPassword: (body: UserForgotPasswordDtoOutput) => Promise<string>;
     changePassword: (
         body: UserChangePasswordDtoOutput,
         { token, email }: { token: string; email: null | string },
     ) => Promise<true>;
+    activate: ({
+        email,
+        token,
+    }: {
+        email?: string;
+        token: string;
+    }) => Promise<true>;
     abortController: AbortController | null = null;
 
     constructor(api: FetchCustom) {
@@ -31,6 +38,18 @@ export default class AuthUserService {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
+            });
+            return res;
+        };
+        this.activate = async (data) => {
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api(activate.path, {
+                signal: controller.signal,
+                cache: "no-store",
+                method: "POST",
+                body: JSON.stringify(data),
             });
             return res;
         };

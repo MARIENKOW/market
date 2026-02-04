@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
     errorFormHandlerWithAlert,
     errorHandler,
-} from "@/helpers/error/error.form.helper";
+} from "@/helpers/error/error.handler.helper";
 import { useTranslations } from "next-intl";
 import FormFilledTextField from "@/components/features/form/fields/controlled/FormTextField";
 import { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -27,6 +27,7 @@ import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Box } from "@mui/material";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { MessageKeyType } from "@myorg/shared/i18n";
 
 const authUser = new AuthUserService($apiClient);
 
@@ -40,7 +41,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     ) => {
         try {
             await authUser.login(body);
-            snackbarSuccess(t("form.login.success"));
+            snackbarSuccess(t("pages.login.feedback.success.loginSuccess"));
             if (redirectTo) router.push(redirectTo);
             router.refresh();
         } catch (error) {
@@ -51,7 +52,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     return (
         <SimpleForm<UserLoginDtoInput>
             params={{
-                // resolver: zodResolver(UserLoginSchema),
+                resolver: zodResolver(UserLoginSchema),
                 defaultValues: {
                     email: "",
                     password: "",
@@ -76,7 +77,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
                             variant="body2"
                             color="primary"
                         >
-                            {t("pages.forgotPasssword.name")}
+                            {t("pages.forgotPassword.name")}
                         </StyledTypography>
                     </Box>
                 </Link>
