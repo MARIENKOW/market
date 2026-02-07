@@ -1,13 +1,10 @@
+"use client";
 import { Box } from "@mui/material";
-import { MessageKeyType } from "@myorg/shared/i18n";
+import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-export default async function NotFoundElement({
-    message,
-}: {
-    message?: string;
-}) {
-    const t = await getTranslations();
+export default function NotFoundElement({ message }: { message?: string }) {
+    const t = useTranslations();
     return (
         <Box
             flex={1}

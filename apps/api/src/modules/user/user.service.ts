@@ -30,6 +30,12 @@ export class UserService {
             data: { passwordHash: hashed },
         });
     }
+    async activate(id: string): Promise<User | null> {
+        return this.prisma.user.update({
+            where: { id },
+            data: { status: "ACTIVE" },
+        });
+    }
     findByEmail(email: string): Promise<User | null> {
         return this.find({ where: { email } });
     }
@@ -49,6 +55,20 @@ export class UserService {
             where: { email },
             include: {
                 resetPasswordToken: true,
+            },
+        });
+    }
+    async findByEmailWithActivateToken(
+        email: string,
+    ): Promise<Prisma.UserGetPayload<{
+        include: {
+            activateToken: true;
+        };
+    }> | null> {
+        return await this.prisma.user.findUnique({
+            where: { email },
+            include: {
+                activateToken: true,
             },
         });
     }

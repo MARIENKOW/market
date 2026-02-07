@@ -1,9 +1,7 @@
 "use client";
 
-import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
-import { useRouter } from "@/i18n/navigation";
-import { Box, Button, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 
 type MessageProp = { message?: string; reset?: () => void };

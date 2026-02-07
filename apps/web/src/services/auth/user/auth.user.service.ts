@@ -18,15 +18,16 @@ export default class AuthUserService {
     forgotPassword: (body: UserForgotPasswordDtoOutput) => Promise<string>;
     changePassword: (
         body: UserChangePasswordDtoOutput,
-        { token, email }: { token: string; email: null | string },
+        { token, email }: { token: string; email: string | null },
     ) => Promise<true>;
     activate: ({
         email,
         token,
     }: {
-        email?: string;
+        email: string;
         token: string;
     }) => Promise<true>;
+    sendActivate: ({ email }: { email?: string }) => Promise<string>;
     abortController: AbortController | null = null;
 
     constructor(api: FetchCustom) {
@@ -46,6 +47,18 @@ export default class AuthUserService {
             const controller = new AbortController();
             this.abortController = controller;
             const res = await api(activate.path, {
+                signal: controller.signal,
+                cache: "no-store",
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+            return res;
+        };
+        this.sendActivate = async (data) => {
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api(activate.send.path, {
                 signal: controller.signal,
                 cache: "no-store",
                 method: "POST",

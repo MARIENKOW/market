@@ -1,7 +1,7 @@
 import { getUserSessionId } from "@/actions/cookies.actions";
 import {
     isApiErrorResponse,
-    isUnuathorizedError,
+    isUnauthorizedError,
 } from "@/helpers/error/error.type.helper";
 import { $apiServer } from "@/lib/api/fetch.server";
 import UserService from "@/services/user/user.service";
@@ -24,7 +24,7 @@ export const getUserAuth: () => CachedUserMeReturn = cache(async () => {
     } catch (e) {
         if (
             !isApiErrorResponse(e) ||
-            !isUnuathorizedError(e as ApiErrorResponse)
+            !isUnauthorizedError(e as ApiErrorResponse)
         )
             error = true;
     }

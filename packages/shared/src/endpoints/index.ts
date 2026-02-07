@@ -14,6 +14,9 @@ export const ENDPOINT = {
                 path: "forgot-password",
             },
             activate: {
+                send: {
+                    path: "send",
+                },
                 path: "activate",
             },
             changePassword: {

@@ -1,26 +1,51 @@
 import { ActivateTokenUser, User } from "@/generated/prisma";
 import { PrismaService } from "@/modules/prisma/prisma.service";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { UserService } from "@/modules/user/user.service";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
+import { MailerService } from "@/modules/mailer/mailer.service";
+import { MessageStructure } from "@myorg/shared/i18n";
 
 @Injectable()
 export class ActivateTokenUserService {
     constructor(
         private prisma: PrismaService,
         private user: UserService,
-        private i18n: I18nService,
+        private i18n: I18nService<MessageStructure>,
+        private mailerService: MailerService,
     ) {}
     private expires = 30 * 60 * 1000; //15 мин
-    findByUserId(userId: string): Promise<ActivateTokenUser | null> {
+
+    async isHaveUserToken(userData: User): Promise<ActivateTokenUser | null> {
+        const activateToken = await this.findByUserId(userData.id);
+        if (!activateToken) return null;
+        const isExpire = await this.isExpireAndDelete(activateToken);
+        if (isExpire) return null;
+        return activateToken;
+    }
+    async createAndSend(userData: User): Promise<number> {
+        const { expires, token, id } = await this.create(userData.id);
+        try {
+            await this.mailerService.sendActivateToken({
+                to: userData.email,
+                expires,
+                token,
+            });
+            return expires;
+        } catch (error) {
+            await this.delete(id);
+            throw error;
+        }
+    }
+    async findByUserId(userId: string): Promise<ActivateTokenUser | null> {
         return this.prisma.activateTokenUser.findUnique({
             where: { userId },
         });
     }
-    findById(id: string): Promise<ActivateTokenUser | null> {
+    async findById(id: string): Promise<ActivateTokenUser | null> {
         return this.prisma.activateTokenUser.findUnique({
             where: { id },
         });
@@ -33,11 +58,16 @@ export class ActivateTokenUserService {
         if (time <= 0) return true;
         return false;
     }
-    activate() {}
-    private async isTokenEqualHash(
-        token: string,
-        hash: string,
+    async isExpireAndDelete(
+        activateToken: ActivateTokenUser,
     ): Promise<boolean> {
+        const isExpire = this.isExpireToken(activateToken);
+        if (isExpire) {
+            await this.delete(activateToken.id);
+        }
+        return isExpire;
+    }
+    async isTokenEqualHash(token: string, hash: string): Promise<boolean> {
         const data = await bcrypt.compare(token, hash);
         return data;
     }

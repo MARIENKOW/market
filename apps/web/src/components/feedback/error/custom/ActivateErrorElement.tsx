@@ -1,23 +1,29 @@
 "use client";
 
+import ActivateButton from "@/components/features/auth/ActivateButton";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { isApiErrorResponse } from "@/helpers/error/error.type.helper";
-import { Link } from "@/i18n/navigation";
 import { Box } from "@mui/material";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
-import { MessageKeyType } from "@myorg/shared/i18n";
-import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+
 import { useTranslations } from "next-intl";
 
-export default function ResetTokenErrorElement({ error }: { error: unknown }) {
-    const t = useTranslations();
+type ActivateErrorProp = { error: unknown; email: string };
+
+export default function ActivateErrorElement({
+    error,
+    email,
+}: ActivateErrorProp) {
     let message;
+    let isShowButton = false;
     if (isApiErrorResponse(error)) {
         const { data }: { data: ErrorsWithMessages } =
             error as ApiErrorResponse;
         message = data.root?.[0].message;
+        isShowButton = data.root?.[0].data?.isShowButton;
     }
+    const t = useTranslations();
     return (
         <Box
             flex={1}
@@ -29,7 +35,7 @@ export default function ResetTokenErrorElement({ error }: { error: unknown }) {
         >
             <Box display={"flex"} gap={1} flexDirection={"column"}>
                 <StyledTypography textAlign={"center"} variant={"h2"}>
-                    {t("feedback.error.resetToken.title")}
+                    {t("feedback.error.activate.title")}
                 </StyledTypography>
                 <StyledTypography
                     textAlign={"center"}
@@ -37,7 +43,7 @@ export default function ResetTokenErrorElement({ error }: { error: unknown }) {
                     margin={"0px auto"}
                     variant={"h6"}
                 >
-                    {t("feedback.error.resetToken.subtitle")}
+                    {t("feedback.error.activate.subtitle")}
                 </StyledTypography>
                 {message && (
                     <StyledTypography
@@ -52,11 +58,7 @@ export default function ResetTokenErrorElement({ error }: { error: unknown }) {
                     </StyledTypography>
                 )}
             </Box>
-            <Link href={FULL_PATH_ROUTE.forgotPasssword.path}>
-                <StyledButton variant="contained">
-                    {t("pages.forgotPassword.name")}
-                </StyledButton>
-            </Link>
+            {isShowButton && <ActivateButton email={email} />}
         </Box>
     );
 }

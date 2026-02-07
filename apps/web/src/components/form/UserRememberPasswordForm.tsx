@@ -33,14 +33,14 @@ export default function UserRememberPasswordForm() {
     const t = useTranslations();
 
     const onSubmit: CustomSubmitHandler<UserForgotPasswordDtoOutput> = async (
-        body,
+        formValues,
         { setError },
     ) => {
         try {
-            const success = await authUser.forgotPassword(body);
+            const success = await authUser.forgotPassword(formValues);
             snackbarSuccess(success);
         } catch (error) {
-            errorFormHandlerWithAlert({ error, setError, t });
+            errorFormHandlerWithAlert({ error, setError, t, formValues });
         }
     };
 

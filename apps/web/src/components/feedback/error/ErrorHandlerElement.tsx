@@ -1,33 +1,22 @@
-import AuthErrorElement from "@/components/feedback/error/AuthErrorElement";
+"use client";
+
 import ErrorElement from "@/components/feedback/error/ErrorElement";
 import ForbiddenErrorElement from "@/components/feedback/error/ForbiddenErrorElement";
 import NetworkErrorElement from "@/components/feedback/error/NetworkErrorElement";
+import UnauthorizedErrorElement from "@/components/feedback/error/UnauthorizedErrorElement";
 import NotFoundElement from "@/components/feedback/NotFoundElement";
 import {
-    isApiErrorResponse,
-    isBadRequestError,
-    isForbiddenError,
-    isInternalServerError,
-    isNetworkError,
-    isNotFoundError,
-    isUnuathorizedError,
-    isValidationFailedError,
+    ErrorNormalizeContext,
+    getErrorContext,
 } from "@/helpers/error/error.type.helper";
-import { ApiErrorResponse, FieldsErrors } from "@myorg/shared/dto";
-import { MessageKeyType } from "@myorg/shared/i18n";
-import { useTranslations } from "next-intl";
+import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 
 type FallbackElement = {
-    element?: React.ComponentType;
+    element?: React.ReactNode;
     message?: string;
 };
 type Fallback = {
-    root?: FallbackElement;
-    notFound?: FallbackElement;
-    forbidden?: FallbackElement;
-    network?: FallbackElement;
-    unauthorized?: FallbackElement;
-    validation?: FallbackElement;
+    [K in ErrorNormalizeContext]?: FallbackElement;
 };
 
 export default function ErrorHandlerElement({
@@ -36,49 +25,36 @@ export default function ErrorHandlerElement({
 }: {
     error: unknown;
     fallback?: Fallback;
-}) {
-    const t = useTranslations();
+}): React.ReactNode {
     console.log(error);
-    if (!isApiErrorResponse(error)) {
-        const Component = fallback?.root?.element ?? ErrorElement;
-        return <Component message={fallback?.root?.message} />;
+    const context = getErrorContext(error);
+    const options = fallback?.[context];
+    if (options?.element) return options.element;
+    const message = options?.message;
+    if (context === "cancel") {
+        return <ErrorElement message={message} />;
     }
-
-    const apiError = error as ApiErrorResponse;
-
-    if (isNetworkError(apiError)) {
-        const Component = fallback?.network?.element ?? NetworkErrorElement;
-        return <Component message={fallback?.network?.message} />;
+    if (context === "forbidden") {
+        return <ForbiddenErrorElement message={message} />;
     }
-
-    if (isBadRequestError(apiError)) {
-        if (isValidationFailedError(apiError)) {
-            const fieldsErrors = apiError.data as FieldsErrors;
-            const message =
-                fallback?.validation?.message || fieldsErrors?.root?.[0];
-            const Component = fallback?.validation?.element ?? ErrorElement;
-            return <Component message={message} />;
-        }
+    if (context === "internal") {
+        return <ErrorElement message={message} />;
     }
-    if (isUnuathorizedError(apiError)) {
-        const Component = fallback?.unauthorized?.element ?? AuthErrorElement;
-        return <Component message={fallback?.unauthorized?.message} />;
+    if (context === "network") {
+        return <NetworkErrorElement message={message} />;
     }
-    if (isForbiddenError(apiError)) {
-        const Component = fallback?.forbidden?.element ?? ForbiddenErrorElement;
-        return <Component message={fallback?.forbidden?.message} />;
+    if (context === "notfound") {
+        return <NotFoundElement message={message} />;
     }
-
-    if (isNotFoundError(apiError)) {
-        const Component = fallback?.notFound?.element ?? NotFoundElement;
-        return <Component message={fallback?.notFound?.message} />;
+    if (context === "unauthorized") {
+        return <UnauthorizedErrorElement message={message} />;
     }
-
-    if (isInternalServerError(apiError)) {
-        const Component = fallback?.root?.element ?? ErrorElement;
-        return <Component message={fallback?.root?.message} />;
+    if (context === "validation") {
+        const apiError = error as ApiErrorResponse;
+        const { root } = apiError.data as ErrorsWithMessages;
+        return <ErrorElement message={message || root?.[0]?.message} />;
     }
-
-    const Component = fallback?.root?.element ?? ErrorElement;
-    return <Component message={fallback?.root?.message} />;
+    if (context === "unknown") {
+        return <ErrorElement message={message} />;
+    }
 }

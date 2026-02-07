@@ -9,7 +9,7 @@ export default class ResetPasswordTokenService {
         email,
         token,
     }: {
-        email?: string;
+        email: string;
         token: string;
     }) => Promise<true>;
     abortController: AbortController | null = null;

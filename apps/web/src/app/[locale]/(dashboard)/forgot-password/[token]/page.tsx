@@ -4,10 +4,13 @@ import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement
 import UserChangePasswordForm from "@/components/form/UserChangePasswordForm";
 import UserRememberPasswordForm from "@/components/form/UserRememberPasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
+import { redirect } from "@/i18n/navigation";
 import { $apiServer } from "@/lib/api/fetch.server";
 import ResetPasswordTokenService from "@/services/resetPasswordToken/user/reset.password.token.service";
 import { Box, Typography } from "@mui/material";
-import { getTranslations } from "next-intl/server";
+import { ApiErrorResponse } from "@myorg/shared/dto";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Params } from "next/dist/server/request/params";
 import { SearchParams } from "next/dist/server/request/search-params";
 
@@ -22,15 +25,20 @@ export default async function Page({
 }) {
     const { token } = await params;
     const { email } = await searchParams;
+    if (!email) {
+        const locale = await getLocale();
+        redirect({ href: FULL_PATH_ROUTE.path, locale });
+    }
     const t = await getTranslations();
     try {
         await resetPassword.check({ token, email });
     } catch (error) {
-        console.log(error);
         return (
             <ErrorHandlerElement
                 fallback={{
-                    validation: { element: ResetTokenErrorElement },
+                    validation: {
+                        element: <ResetTokenErrorElement error={error} />,
+                    },
                 }}
                 error={error}
             />
@@ -56,7 +64,7 @@ export default async function Page({
                         variant="h6"
                         component="h2"
                     >
-                        {t("pages.forgotPasssword.changePassword.name")}
+                        {t("pages.forgotPassword.changePassword.name")}
                     </Typography>
                     <UserChangePasswordForm />
                 </Box>

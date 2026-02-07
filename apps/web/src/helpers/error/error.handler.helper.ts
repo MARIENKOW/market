@@ -1,16 +1,26 @@
-import { getMessageKey, MessageKeyType } from "@myorg/shared/i18n";
-import { FieldMap } from "@myorg/shared/dto";
+import { MessageKeyType } from "@myorg/shared/i18n";
 import { FieldValues, Path, UseFormSetError } from "react-hook-form";
 import {
     ErrorNormalizeContext,
+    getErrorContext,
     normalizeError,
 } from "@/helpers/error/error.type.helper";
 import { snackbarError } from "@/utils/snackbar/snackbar.error";
+import { FieldsMessages, RootErrorType } from "@myorg/shared/dto";
+import { snackbarInfo } from "@/utils/snackbar/snackbar.info";
+import { snackbarWarning } from "@/utils/snackbar/snackbar.warning";
 
 type FallbackOptions = {
-    message?: string;
+    message?: string[];
+    type?: RootErrorType;
     callback?: () => void;
     hideMessage?: boolean;
+};
+
+const SnackbarByErrorType: { [K in RootErrorType]: (value: string) => void } = {
+    error: snackbarError,
+    info: snackbarInfo,
+    warning: snackbarWarning,
 };
 
 export type FallbackType = {
@@ -26,45 +36,58 @@ export function errorHandler({
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: FallbackType;
 }) {
-    const { messages, context } = normalizeError({ error, t });
-    const rootMessages = messages.root || [];
+    const context = getErrorContext(error);
+    const { root } = normalizeError({ error, t });
 
-    if (fallback?.[context]?.callback) fallback[context].callback();
-    if (fallback?.[context]?.hideMessage) return;
-    if (fallback?.[context]?.message) {
-        snackbarError(fallback[context].message);
-    } else {
-        rootMessages.forEach((msg) => snackbarError(msg));
+    const options = fallback?.[context];
+
+    if (options?.hideMessage) {
+        options.callback?.();
+        return;
     }
+
+    if (options?.message && options.message.length > 0) {
+        const snackbar = SnackbarByErrorType[options.type || "error"];
+        options.message.forEach(snackbar);
+    } else {
+        root?.forEach((err) => {
+            const snackbar = SnackbarByErrorType[options?.type || err.type];
+            snackbar(err.message);
+        });
+    }
+
+    options?.callback?.();
 }
 
 export function errorFormHandlerWithAlert<T extends FieldValues>({
     error,
     setError,
+    formValues,
     t,
-    fallback,
 }: {
     error: unknown;
     setError: UseFormSetError<T>;
+    formValues: T;
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
-    fallback?: { root?: MessageKeyType };
 }) {
-    const { messages } = normalizeError<T>({ error, t });
+    const { root, fields } = normalizeError<T>({ error, t });
 
-    if (messages.root?.[0]) {
+    if (root?.[0]) {
         setError("root.server", {
             type: "server",
-            message: messages.root[0],
+            message: root[0].message,
         });
     }
 
-    if (messages.fields) {
-        const fields = messages.fields as FieldMap;
-        for (const key in fields) {
-            setError(key as Path<T>, {
-                type: "server",
-                message: fields[key]?.[0],
-            });
+    if (fields) {
+        const newFields = fields as FieldValues;
+        for (const key in newFields) {
+            if (key in formValues) {
+                setError(key as Path<T>, {
+                    type: "server",
+                    message: fields[key]?.[0],
+                });
+            }
         }
     }
 }

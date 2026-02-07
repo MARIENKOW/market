@@ -1,6 +1,15 @@
 import { ResetPasswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
 import { ENDPOINT } from "@myorg/shared/endpoints";
-import { Body, Controller, Post } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    ForbiddenException,
+    InternalServerErrorException,
+    NotFoundException,
+    Post,
+    UnauthorizedException,
+} from "@nestjs/common";
+import { NotFoundError } from "rxjs";
 
 const { path, user } = ENDPOINT.resetPasswordToken;
 

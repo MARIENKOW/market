@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 
 type MessageProp = { message?: string };
 
-export default function AuthErrorElement({ message }: MessageProp) {
+export default function UnauthorizedErrorElement({ message }: MessageProp) {
     const t = useTranslations();
     const router = useRouter();
     return (
@@ -23,7 +23,7 @@ export default function AuthErrorElement({ message }: MessageProp) {
         >
             <Box display={"flex"} flexDirection={"column"} gap={1}>
                 <StyledTypography textAlign={"center"} variant={"h3"}>
-                    {t("feedback.error.auth.title")}
+                    {t("feedback.error.unauthorized.title")}
                 </StyledTypography>
                 <StyledTypography
                     maxWidth={700}
@@ -31,7 +31,7 @@ export default function AuthErrorElement({ message }: MessageProp) {
                     textAlign={"center"}
                     variant={"h6"}
                 >
-                    {t("feedback.error.auth.subtitle")}
+                    {t("feedback.error.unauthorized.subtitle")}
                 </StyledTypography>
             </Box>
             {message && (
@@ -48,9 +48,8 @@ export default function AuthErrorElement({ message }: MessageProp) {
             )}
             <Box display={"flex"} gap={1} flexDirection={"column"}>
                 <StyledButton onClick={router.refresh} variant="contained">
-                    {t("feedback.error.auth.reload")}
+                    {t("feedback.error.unauthorized.reload")}
                 </StyledButton>
-                <LogoutErrorButton />
             </Box>
         </Box>
     );

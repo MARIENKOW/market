@@ -28,9 +28,8 @@ export default function LogoutErrorButton() {
                 error,
                 t,
                 fallback: {
-                    unknown: { message: t("features.logoutErr.error") },
-                    other: { message: t("features.logoutErr.error") },
-                    internal: { message: t("features.logoutErr.error") },
+                    unknown: { message: [t("features.logoutErr.error")] },
+                    internal: { message: [t("features.logoutErr.error")] },
                 },
             });
         } finally {

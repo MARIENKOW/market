@@ -57,20 +57,22 @@ export default function UserChangePasswordForm() {
     }, [password, trigger, rePassword]);
 
     const onSubmit: CustomSubmitHandler<UserChangePasswordDtoOutput> = async (
-        data,
+        formValues,
         { setError },
     ) => {
         try {
-            await authUser.changePassword(data, {
+            await authUser.changePassword(formValues, {
                 token: token as string,
                 email: searchParams.get("email"),
             });
             snackbarSuccess(
-                t("pages.register.feedback.success.registerSuccess"),
+                t(
+                    "pages.forgotPassword.changePassword.feedback.success.changeSuccess",
+                ),
             );
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (error) {
-            errorFormHandlerWithAlert({ error, setError, t });
+            errorFormHandlerWithAlert({ error, setError, t, formValues });
         }
     };
 

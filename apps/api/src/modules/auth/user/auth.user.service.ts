@@ -1,4 +1,4 @@
-import { Injectable, Req } from "@nestjs/common";
+import { Injectable, NotFoundException, Req } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { UserService } from "@/modules/user/user.service";
 import {
@@ -8,13 +8,14 @@ import {
     UserRegisterDtoOutput,
 } from "@myorg/shared/form";
 import { SessionUserService } from "@/modules/session/user/session.user.service";
-import { User, UserSession } from "@/generated/prisma";
+import { UserSession } from "@/generated/prisma";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { ResetPasswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
 import { MailerService } from "@/modules/mailer/mailer.service";
 import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
-import { I18nService } from "nestjs-i18n";
 import { ActivateTokenUserService } from "../../activateToken/user/activate.token.user.service";
+import { MessageStructure } from "@myorg/shared/i18n";
+import { I18nService } from "nestjs-i18n";
 
 @Injectable()
 export class AuthUserService {
@@ -24,7 +25,7 @@ export class AuthUserService {
         private resetToken: ResetPasswordTokenUserService,
         private mailerService: MailerService,
         private activateToken: ActivateTokenUserService,
-        private i18n: I18nService,
+        private i18n: I18nService<MessageStructure>,
     ) {}
 
     async register(body: UserRegisterDtoOutput): Promise<string> {
@@ -45,32 +46,13 @@ export class AuthUserService {
             email,
             passwordHash: hashed,
         });
-        if (userData.status === "ACTIVE") {
-            return this.i18n.t(
-                "pages.register.feedback.success.registerSuccess",
-            );
-        } else if (userData.status === "NOACTIVE") {
-            const { expires, token, id } = await this.activateToken.create(
-                userData.id,
-            );
-            try {
-                await this.mailerService.sendActivateToken({
-                    to: userData.email,
-                    expires,
-                    token,
-                });
-                return this.i18n.t("pages.register.feedback.success.mailSend", {
-                    args: { time: i18nFormatDuration(expires) },
-                });
-            } catch (error) {
-                await this.activateToken.delete(id);
-                throw error;
-            }
-        } else {
-            throw new ValidationException({
-                root: [this.i18n.t("api.FALLBACK_ERR")],
+        if (userData.status === "NOACTIVE") {
+            const expires = await this.activateToken.createAndSend(userData);
+            return this.i18n.t("pages.register.feedback.success.mailSend", {
+                args: { time: i18nFormatDuration(expires) },
             });
         }
+        return this.i18n.t("pages.register.feedback.success.registerSuccess");
     }
     async login(body: UserLoginDtoOutput): Promise<UserSession> {
         const { email, password } = body;
@@ -93,12 +75,129 @@ export class AuthUserService {
                     password: ["form.password.invalid"],
                 },
             });
-        // if (user.status === "NOACTIVE")
-        //     throw new ValidationException({
-        //         root: [this.i18n.t("pages.login.feedback.errors.mailSend",{args:{time:i18nFormatDuration(1000*60*15)}})],
-        //     });
+        if (user.status === "NOACTIVE")
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.login.feedback.errors.notActive",
+                            {
+                                args: {
+                                    time: i18nFormatDuration(1000 * 60 * 15),
+                                },
+                            },
+                        ),
+                        type: "error",
+                    },
+                ],
+            });
         const sessionUserData = await this.sessionUser.create(user.id);
         return sessionUserData;
+    }
+    async sendActivate({ email }: { email?: string }) {
+        if (!email) throw new NotFoundException();
+        const userData = await this.user.findByEmail(email);
+        if (!userData) throw new NotFoundException();
+        if (userData.status === "ACTIVE")
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "features.activate.error.alreadyActive",
+                        ),
+                        type: "info",
+                    },
+                ],
+            });
+
+        const activateToken =
+            await this.activateToken.isHaveUserToken(userData);
+        if (activateToken)
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "features.activate.error.alreadySend",
+                            {
+                                args: {
+                                    time: i18nFormatDuration(
+                                        activateToken.expiresAt.getTime() -
+                                            new Date(Date.now()).getTime(),
+                                    ),
+                                },
+                            },
+                        ),
+                        type: "info",
+                    },
+                ],
+            });
+        const expires = await this.activateToken.createAndSend(userData);
+        return this.i18n.t("features.activate.success.sendSuccess", {
+            args: { time: i18nFormatDuration(expires) },
+        });
+    }
+    async activate({
+        token,
+        email,
+    }: {
+        token: string;
+        email?: string;
+    }): Promise<true> {
+        if (!email) throw new NotFoundException();
+        const userData = await this.user.findByEmail(email);
+        if (!userData) throw new NotFoundException();
+        if (userData.status === "ACTIVE") throw new NotFoundException();
+        const activateTokenData = await this.activateToken.findByUserId(
+            userData.id,
+        );
+
+        if (!activateTokenData)
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.activate.feedback.errors.notValid",
+                        ),
+                        type: "error",
+                        data: { isShowButton: true },
+                    },
+                ],
+            });
+        const isExpire =
+            await this.activateToken.isExpireAndDelete(activateTokenData);
+        if (isExpire)
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.activate.feedback.errors.expired",
+                        ),
+                        type: "error",
+                        data: { isShowButton: true },
+                    },
+                ],
+            });
+        const isValid = await this.activateToken.isTokenEqualHash(
+            token,
+            activateTokenData.tokenHash,
+        );
+        if (!isValid) {
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.activate.feedback.errors.notValid",
+                        ),
+                        type: "error",
+                        data: {
+                            isShowButton: true,
+                        },
+                    },
+                ],
+            });
+        }
+        await this.user.activate(userData.id);
+        return true;
     }
     async forgotPassword(body: UserForgotPasswordDtoOutput): Promise<string> {
         const { email } = body;
@@ -117,14 +216,17 @@ export class AuthUserService {
                 );
                 throw new ValidationException<UserForgotPasswordDtoOutput>({
                     root: [
-                        this.i18n.t(
-                            "pages.forgotPassword.feedback.errors.alreadySent",
-                            {
-                                args: {
-                                    time,
+                        {
+                            message: this.i18n.t(
+                                "pages.forgotPassword.feedback.errors.alreadySent",
+                                {
+                                    args: {
+                                        time,
+                                    },
                                 },
-                            },
-                        ),
+                            ),
+                            type: "error",
+                        },
                     ],
                 });
             }

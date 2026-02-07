@@ -7,19 +7,20 @@ import {
 import { PrismaService } from "@/modules/prisma/prisma.service";
 import { mapUserSession } from "@/modules/session/user/session.user.mapper";
 import { UserSessionDto } from "@myorg/shared/dto";
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { UserService } from "@/modules/user/user.service";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
+import { MessageStructure } from "@myorg/shared/i18n";
 
 @Injectable()
 export class ResetPasswordTokenUserService {
     constructor(
         private prisma: PrismaService,
         private user: UserService,
-        private i18n: I18nService,
+        private i18n: I18nService<MessageStructure>,
     ) {}
     private expires = 15 * 60 * 1000; //15 мин
     findByUserId(userId: string): Promise<ResetPasswordTokenUser | null> {
@@ -50,18 +51,24 @@ export class ResetPasswordTokenUserService {
         if (!email)
             throw new ValidationException({
                 root: [
-                    this.i18n.t(
-                        "pages.forgotPassword.changePassword.feedback.errors.notFound",
-                    ),
+                    {
+                        message: this.i18n.t(
+                            "pages.forgotPassword.changePassword.feedback.errors.notFound",
+                        ),
+                        type: "error",
+                    },
                 ],
             });
         const userData = await this.user.findByEmailWithResetToken(email);
         if (!userData || !userData.resetPasswordToken)
             throw new ValidationException({
                 root: [
-                    this.i18n.t(
-                        "pages.forgotPassword.changePassword.feedback.errors.notFound",
-                    ),
+                    {
+                        message: this.i18n.t(
+                            "pages.forgotPassword.changePassword.feedback.errors.notFound",
+                        ),
+                        type: "error",
+                    },
                 ],
             });
 
@@ -75,19 +82,24 @@ export class ResetPasswordTokenUserService {
             console.log("object1");
             throw new ValidationException({
                 root: [
-                    this.i18n.t(
-                        "pages.forgotPassword.changePassword.feedback.errors.notFound",
-                    ),
+                    {
+                        message: this.i18n.t(
+                            "pages.forgotPassword.changePassword.feedback.errors.notFound",
+                        ),
+                        type: "error",
+                    },
                 ],
             });
         }
-        console.log("object");
         if (this.isExpireToken(resetTokenData))
             throw new ValidationException({
                 root: [
-                    this.i18n.t(
-                        "pages.forgotPassword.changePassword.feedback.errors.timeout",
-                    ),
+                    {
+                        message: this.i18n.t(
+                            "pages.forgotPassword.changePassword.feedback.errors.timeout",
+                        ),
+                        type: "error",
+                    },
                 ],
             });
 

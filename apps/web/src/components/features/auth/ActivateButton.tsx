@@ -1,7 +1,6 @@
 "use client";
 
 import { StyledButton } from "@/components/ui/StyledButton";
-import { snackbarError } from "@/utils/snackbar/snackbar.error";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
@@ -12,33 +11,32 @@ import { errorHandler } from "@/helpers/error/error.handler.helper";
 
 const user = new AuthUserService($apiClient);
 
-export default function LogoutButton() {
+export default function ActivateButton({ email }: { email: string }) {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
-    const router = useRouter();
 
     const handleClick = async () => {
         setLoading(true);
         try {
-            await user.logout();
-            router.refresh();
-            snackbarSuccess(t("features.logout.success"));
+            const message = await user.sendActivate({ email });
+            snackbarSuccess(message);
         } catch (error) {
+            console.log(error);
             errorHandler({
                 error,
                 t,
-                fallback: {
-                    unknown: { message: [t("features.logout.error")] },
-                    internal: { message: [t("features.logout.error")] },
-                },
             });
         } finally {
             setLoading(false);
         }
     };
     return (
-        <StyledButton loading={loading} onClick={handleClick}>
-            {t("features.logout.name")}
+        <StyledButton
+            variant="outlined"
+            loading={loading}
+            onClick={handleClick}
+        >
+            {t("features.activate.name")}
         </StyledButton>
     );
 }

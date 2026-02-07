@@ -8,6 +8,9 @@ import {
     Req,
     Param,
     Query,
+    UnauthorizedException,
+    ForbiddenException,
+    NotFoundException,
 } from "@nestjs/common";
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
 import { ENDPOINT } from "@myorg/shared/endpoints";
@@ -28,8 +31,9 @@ import { AuthGuard } from "@/modules/auth/auth.guard";
 import { Auth } from "@/modules/auth/auth.decorator";
 import { Request } from "express";
 
-const { register, login, logout, forgotPassword, changePassword } =
+const { register, login, logout, forgotPassword, changePassword, activate } =
     ENDPOINT.auth.user;
+
 @Controller()
 export class AuthUserController {
     constructor(private authUser: AuthUserService) {}
@@ -74,6 +78,17 @@ export class AuthUserController {
         @Query("email") email: string,
     ): Promise<true> {
         return await this.authUser.changePassword(body, { email, token });
+    }
+
+    @Post(activate.path)
+    async activate(
+        @Body() body: { email?: string; token: string },
+    ): Promise<true> {
+        return await this.authUser.activate(body);
+    }
+    @Post(activate.path + "/" + activate.send.path)
+    async sendActivate(@Body() body: { email?: string }): Promise<string> {
+        return await this.authUser.sendActivate(body);
     }
 
     @Post(logout.path)

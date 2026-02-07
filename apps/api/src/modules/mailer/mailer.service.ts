@@ -1,17 +1,10 @@
 // src/mailer/mailer.service.ts
-import {
-    Injectable,
-    Logger,
-    NestModule,
-    OnModuleInit,
-    Req,
-} from "@nestjs/common";
-import nodemailer, { Transporter } from "nodemailer";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import nodemailer from "nodemailer";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { I18nService } from "nestjs-i18n";
-import { MessageKeyType } from "@myorg/shared/i18n";
-import humanizeDuration from "humanize-duration";
 import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
+import { MessageStructure } from "@myorg/shared/i18n";
 
 export interface SendForgotPasswordOptions {
     to: string;
@@ -24,7 +17,7 @@ export class MailerService implements OnModuleInit {
     private transporter!: nodemailer.Transporter; // ← Вот так
     private readonly logger = new Logger(MailerService.name);
 
-    constructor(private i18n: I18nService) {}
+    constructor(private i18n: I18nService<MessageStructure>) {}
 
     onModuleInit() {
         this.transporter = nodemailer.createTransport({

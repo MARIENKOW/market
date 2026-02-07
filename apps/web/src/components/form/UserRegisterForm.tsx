@@ -63,15 +63,15 @@ export default function UserRegisterForm() {
     }, [password, trigger, rePassword]);
 
     const onSubmit: CustomSubmitHandler<UserRegisterDtoOutput> = async (
-        data,
+        formValues,
         { setError },
     ) => {
         try {
-            const message = await authUser.register(data);
+            const message = await authUser.register(formValues);
             snackbarSuccess(message);
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (error) {
-            errorFormHandlerWithAlert({ error, setError, t });
+            errorFormHandlerWithAlert({ error, setError, t, formValues });
         }
     };
 
