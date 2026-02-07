@@ -6,12 +6,14 @@ import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { useRouter } from "@/i18n/navigation";
 import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
+import { useTransition } from "react";
 
 type MessageProp = { message?: string };
 
 export default function UnauthorizedErrorElement({ message }: MessageProp) {
     const t = useTranslations();
     const router = useRouter();
+    const [loading, transition] = useTransition();
     return (
         <Box
             flex={1}
@@ -47,7 +49,11 @@ export default function UnauthorizedErrorElement({ message }: MessageProp) {
                 </StyledTypography>
             )}
             <Box display={"flex"} gap={1} flexDirection={"column"}>
-                <StyledButton onClick={router.refresh} variant="contained">
+                <StyledButton
+                    loading={loading}
+                    onClick={() => transition(router.refresh)}
+                    variant="contained"
+                >
                     {t("feedback.error.unauthorized.reload")}
                 </StyledButton>
             </Box>

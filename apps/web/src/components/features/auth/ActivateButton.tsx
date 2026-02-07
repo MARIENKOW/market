@@ -11,7 +11,13 @@ import { errorHandler } from "@/helpers/error/error.handler.helper";
 
 const user = new AuthUserService($apiClient);
 
-export default function ActivateButton({ email }: { email: string }) {
+export default function ActivateButton({
+    email,
+    afterFetch,
+}: {
+    email: string;
+    afterFetch?: () => void;
+}) {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
 
@@ -27,6 +33,7 @@ export default function ActivateButton({ email }: { email: string }) {
                 t,
             });
         } finally {
+            if (afterFetch) afterFetch();
             setLoading(false);
         }
     };

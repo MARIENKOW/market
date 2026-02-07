@@ -23,17 +23,23 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Box } from "@mui/material";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { MessageKeyType } from "@myorg/shared/i18n";
+import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
+import { useState } from "react";
+import ActivateButton from "@/components/features/auth/ActivateButton";
 
 const authUser = new AuthUserService($apiClient);
 
 export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     const router = useRouter();
     const t = useTranslations();
+    const [isShowButton, setIsShowButton] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>("");
 
     const onSubmit: CustomSubmitHandler<UserLoginDtoInput> = async (
         formValues,
         { setError },
     ) => {
+        setIsShowButton(false);
         try {
             await authUser.login(formValues);
             snackbarSuccess(t("pages.login.feedback.success.loginSuccess"));
@@ -44,6 +50,18 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
                 error,
                 setError,
                 formValues,
+                fallback: {
+                    validation: {
+                        callback: () => {
+                            const { data }: { data: ErrorsWithMessages } =
+                                error as ApiErrorResponse;
+                            if (data.root?.[0]?.data?.isShowButton) {
+                                setIsShowButton(true);
+                                setEmail(formValues.email);
+                            }
+                        },
+                    },
+                },
                 t,
             });
         }
@@ -96,6 +114,12 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
             </Box>
             <Box mt={2} gap={2} display={"flex"} flexDirection={"column"}>
                 <FormAlert />
+                {isShowButton && (
+                    <ActivateButton
+                        afterFetch={() => setIsShowButton(false)}
+                        email={email}
+                    />
+                )}
                 <SubmitButton />
             </Box>
             {/* <StyledDivider />

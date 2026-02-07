@@ -5,6 +5,7 @@ import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { useRouter } from "@/i18n/navigation";
 import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
+import { useTransition } from "react";
 
 type MessageProp = { message?: string; reset?: () => void };
 
@@ -12,6 +13,7 @@ export default function ErrorElement({ message, reset }: MessageProp) {
     const route = useRouter();
     const resetFn = reset || route.refresh;
     const t = useTranslations();
+    const [loading, transition] = useTransition();
     return (
         <Box
             flex={1}
@@ -47,7 +49,11 @@ export default function ErrorElement({ message, reset }: MessageProp) {
                 )}
             </Box>
             {resetFn && (
-                <StyledButton onClick={resetFn} variant="contained">
+                <StyledButton
+                    loading={loading}
+                    onClick={() => transition(resetFn)}
+                    variant="contained"
+                >
                     {t("feedback.error.fallback.reload")}
                 </StyledButton>
             )}

@@ -75,15 +75,48 @@ export class AuthUserService {
                     password: ["form.password.invalid"],
                 },
             });
-        if (user.status === "NOACTIVE")
+        if (user.status === "NOACTIVE") {
+            const activateTokenData = await this.activateToken.findByUserId(
+                user.id,
+            );
+
+            if (!activateTokenData)
+                throw new ValidationException({
+                    root: [
+                        {
+                            message: this.i18n.t(
+                                "pages.login.feedback.errors.sendMail",
+                            ),
+                            type: "error",
+                            data: { isShowButton: true },
+                        },
+                    ],
+                });
+            const isExpire =
+                this.activateToken.isExpireToken(activateTokenData);
+            if (isExpire)
+                throw new ValidationException({
+                    root: [
+                        {
+                            message: this.i18n.t(
+                                "pages.login.feedback.errors.expire",
+                            ),
+                            type: "error",
+                            data: { isShowButton: true },
+                        },
+                    ],
+                });
             throw new ValidationException({
                 root: [
                     {
                         message: this.i18n.t(
-                            "pages.login.feedback.errors.notActive",
+                            "pages.login.feedback.errors.alreadySend",
                             {
                                 args: {
-                                    time: i18nFormatDuration(1000 * 60 * 15),
+                                    time: i18nFormatDuration(
+                                        activateTokenData.expiresAt.getTime() -
+                                            new Date(Date.now()).getTime(),
+                                    ),
                                 },
                             },
                         ),
@@ -91,6 +124,8 @@ export class AuthUserService {
                     },
                 ],
             });
+        }
+
         const sessionUserData = await this.sessionUser.create(user.id);
         return sessionUserData;
     }
@@ -163,20 +198,6 @@ export class AuthUserService {
                     },
                 ],
             });
-        const isExpire =
-            await this.activateToken.isExpireAndDelete(activateTokenData);
-        if (isExpire)
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t(
-                            "pages.activate.feedback.errors.expired",
-                        ),
-                        type: "error",
-                        data: { isShowButton: true },
-                    },
-                ],
-            });
         const isValid = await this.activateToken.isTokenEqualHash(
             token,
             activateTokenData.tokenHash,
@@ -189,14 +210,25 @@ export class AuthUserService {
                             "pages.activate.feedback.errors.notValid",
                         ),
                         type: "error",
-                        data: {
-                            isShowButton: true,
-                        },
                     },
                 ],
             });
         }
+        const isExpire = this.activateToken.isExpireToken(activateTokenData);
+        if (isExpire)
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.activate.feedback.errors.expired",
+                        ),
+                        type: "error",
+                        data: { isShowButton: true },
+                    },
+                ],
+            });
         await this.user.activate(userData.id);
+        await this.activateToken.deleteByUserId(userData.id);
         return true;
     }
     async forgotPassword(body: UserForgotPasswordDtoOutput): Promise<string> {

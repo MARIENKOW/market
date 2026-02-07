@@ -59,18 +59,29 @@ export function errorHandler({
     options?.callback?.();
 }
 
+export type FallbackFormType = {
+    [K in ErrorNormalizeContext]?: { callback?: () => void };
+};
+
 export function errorFormHandlerWithAlert<T extends FieldValues>({
     error,
     setError,
     formValues,
+    fallback,
     t,
 }: {
     error: unknown;
     setError: UseFormSetError<T>;
     formValues: T;
+    fallback?: FallbackFormType;
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
 }) {
+    const context = getErrorContext(error);
     const { root, fields } = normalizeError<T>({ error, t });
+
+    const options = fallback?.[context];
+
+    if (options?.callback) options?.callback();
 
     if (root?.[0]) {
         setError("root.server", {
