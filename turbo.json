@@ -24,28 +24,29 @@
         "DB_PASSWORD",
         "DB_CONNECT_TIMEOUT",
         "DB_PORT",
+        "DB_PROVIDER",
 
         "SMTP_HOST",
         "SMTP_PORT",
         "SMTP_USER",
         "SMTP_PASSWORD",
 
-        "JWT_SESSION_SECRET",
-        "JWT_SESSION_TIME",
+        "JWT_ACCESS_SECRET",
+        "JWT_REFRESH_SECRET",
+        "JWT_SECRET",
 
         "TELEGRAM_BOT_TOKEN",
         "TELEGRAM_CHAT_ID",
 
-        "SERVER_PORT",
-
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
 
-        "AUTH_SECRET",
+        "NODE_ENV",
 
-        "CLIENT_API",
-        "NEXT_PUBLIC_SERVER_API",
-        "DB_PROVIDER"
+        "ALLOWED_ORIGIN",
+        
+        "NEXT_PUBLIC_SERVER_PORT",
+        "NEXT_PUBLIC_GLOBAL_PREFIX"
     ],
     "globalDependencies": ["**/.env.*"]
 }

@@ -9,6 +9,7 @@ import { MessageStructure } from "@myorg/shared/i18n";
 export interface SendForgotPasswordOptions {
     to: string;
     token: string;
+    origin: string;
     expires: number;
 }
 
@@ -50,8 +51,9 @@ export class MailerService implements OnModuleInit {
         to,
         token,
         expires,
+        origin,
     }: SendForgotPasswordOptions) {
-        const resetUrl = `${process.env.CLIENT_API}${FULL_PATH_ROUTE.forgotPasssword.path}/${token}?email=${to}`;
+        const resetUrl = `${origin}${FULL_PATH_ROUTE.forgotPasssword.path}/${token}?email=${to}`;
 
         const html = `
             <!DOCTYPE html >
@@ -72,8 +74,13 @@ export class MailerService implements OnModuleInit {
             text: `${this.i18n.t("mail.resetPassword.button")}: ${resetUrl}`,
         });
     }
-    async sendActivateToken({ to, token, expires }: SendForgotPasswordOptions) {
-        const resetUrl = `${process.env.CLIENT_API}${FULL_PATH_ROUTE.activate.path}/${token}?email=${to}`;
+    async sendActivateToken({
+        to,
+        token,
+        expires,
+        origin,
+    }: SendForgotPasswordOptions) {
+        const resetUrl = `${origin}${FULL_PATH_ROUTE.activate.path}/${token}?email=${to}`;
 
         const html = `
             <!DOCTYPE html >

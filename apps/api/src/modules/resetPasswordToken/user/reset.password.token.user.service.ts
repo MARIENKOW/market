@@ -1,24 +1,19 @@
-import {
-    Prisma,
-    ResetPasswordTokenUser,
-    User,
-    UserSession,
-} from "@/generated/prisma";
+import { ResetPasswordTokenUser, User } from "@/generated/prisma";
 import { PrismaService } from "@/modules/prisma/prisma.service";
-import { mapUserSession } from "@/modules/session/user/session.user.mapper";
-import { UserSessionDto } from "@myorg/shared/dto";
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { UserService } from "@/modules/user/user.service";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 import { MessageStructure } from "@myorg/shared/i18n";
+import { MailerService } from "@/modules/mailer/mailer.service";
 
 @Injectable()
 export class ResetPasswordTokenUserService {
     constructor(
         private prisma: PrismaService,
+        private mailerService: MailerService,
         private user: UserService,
         private i18n: I18nService<MessageStructure>,
     ) {}
@@ -27,6 +22,31 @@ export class ResetPasswordTokenUserService {
         return this.prisma.resetPasswordTokenUser.findUnique({
             where: { userId },
         });
+    }
+    async isHaveUserToken(user: User): Promise<ResetPasswordTokenUser | null> {
+        const resetTokenData = await this.findByUserId(user.id);
+        if (!resetTokenData) return null;
+        const isExpireToken = this.isExpireToken(resetTokenData);
+        if (isExpireToken) {
+            await this.delete(resetTokenData.id);
+            return null;
+        }
+        return resetTokenData;
+    }
+    async createAndSend(user: User, origin: string): Promise<number> {
+        const { token, id } = await this.create(user.id);
+        try {
+            await this.mailerService.sendForgotPassword({
+                to: user.email,
+                token,
+                expires: this.expires,
+                origin,
+            });
+            return this.expires;
+        } catch (error) {
+            await this.delete(id);
+            throw error;
+        }
     }
     findById(id: string): Promise<ResetPasswordTokenUser | null> {
         return this.prisma.resetPasswordTokenUser.findUnique({
@@ -41,57 +61,25 @@ export class ResetPasswordTokenUserService {
         if (time <= 0) return true;
         return false;
     }
-    async checkToken({
+    async check({
         token,
         email,
     }: {
         token: string;
         email?: string;
-    }): Promise<User> {
-        if (!email)
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t(
-                            "pages.forgotPassword.changePassword.feedback.errors.notFound",
-                        ),
-                        type: "error",
-                    },
-                ],
-            });
-        const userData = await this.user.findByEmailWithResetToken(email);
-        if (!userData || !userData.resetPasswordToken)
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t(
-                            "pages.forgotPassword.changePassword.feedback.errors.notFound",
-                        ),
-                        type: "error",
-                    },
-                ],
-            });
-
-        const resetTokenData = userData.resetPasswordToken;
+    }): Promise<true> {
+        if (!email) throw new NotFoundException();
+        const userData = await this.user.findByEmail(email);
+        if (!userData) throw new NotFoundException();
+        const resetPasswordToken = await this.findByUserId(userData.id);
+        if (!resetPasswordToken) throw new NotFoundException();
         const isValid = await this.isTokenEqualHash(
             token,
-            resetTokenData.tokenHash,
+            resetPasswordToken.tokenHash,
         );
-        console.log(isValid);
-        if (!isValid) {
-            console.log("object1");
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t(
-                            "pages.forgotPassword.changePassword.feedback.errors.notFound",
-                        ),
-                        type: "error",
-                    },
-                ],
-            });
-        }
-        if (this.isExpireToken(resetTokenData))
+        if (!isValid) throw new NotFoundException();
+
+        if (this.isExpireToken(resetPasswordToken))
             throw new ValidationException({
                 root: [
                     {
@@ -103,18 +91,15 @@ export class ResetPasswordTokenUserService {
                 ],
             });
 
-        return userData;
+        return true;
     }
-    private async isTokenEqualHash(
-        token: string,
-        hash: string,
-    ): Promise<boolean> {
+    async isTokenEqualHash(token: string, hash: string): Promise<boolean> {
         const data = await bcrypt.compare(token, hash);
         return data;
     }
     async create(
         userId: string,
-    ): Promise<ResetPasswordTokenUser & { token: string; expires: number }> {
+    ): Promise<ResetPasswordTokenUser & { token: string }> {
         const token = this.createToken();
         const tokenHash = await bcrypt.hash(token, 12);
         const data = await this.prisma.resetPasswordTokenUser.create({
@@ -125,7 +110,7 @@ export class ResetPasswordTokenUserService {
             },
         });
 
-        return { ...data, token, expires: this.expires };
+        return { ...data, token };
     }
     async delete(id: string): Promise<true> {
         await this.prisma.resetPasswordTokenUser.delete({ where: { id } });

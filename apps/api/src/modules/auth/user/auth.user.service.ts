@@ -1,5 +1,8 @@
-import { Injectable, NotFoundException, Req } from "@nestjs/common";
-import * as bcrypt from "bcrypt";
+import {
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from "@nestjs/common";
 import { UserService } from "@/modules/user/user.service";
 import {
     UserChangePasswordDtoOutput,
@@ -8,24 +11,24 @@ import {
     UserRegisterDtoOutput,
 } from "@myorg/shared/form";
 import { SessionUserService } from "@/modules/session/user/session.user.service";
-import { UserSession } from "@/generated/prisma";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { ResetPasswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
-import { MailerService } from "@/modules/mailer/mailer.service";
 import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
 import { ActivateTokenUserService } from "../../activateToken/user/activate.token.user.service";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { I18nService } from "nestjs-i18n";
-
+import { HashService } from "@/modules/hash/hash.service";
+import { RequestContextService } from "@/common/request-context/request-context.service";
 @Injectable()
 export class AuthUserService {
     constructor(
         private user: UserService,
         private sessionUser: SessionUserService,
         private resetToken: ResetPasswordTokenUserService,
-        private mailerService: MailerService,
         private activateToken: ActivateTokenUserService,
         private i18n: I18nService<MessageStructure>,
+        private hash: HashService,
+        private context: RequestContextService,
     ) {}
 
     async register(body: UserRegisterDtoOutput): Promise<string> {
@@ -39,7 +42,7 @@ export class AuthUserService {
                 },
             });
 
-        const hashed = await bcrypt.hash(password, 12);
+        const hashed = await this.hash.hash(password);
 
         const userData = await this.user.create({
             updatedAt: new Date(),
@@ -47,14 +50,29 @@ export class AuthUserService {
             passwordHash: hashed,
         });
         if (userData.status === "NOACTIVE") {
-            const expires = await this.activateToken.createAndSend(userData);
+            const origin = this.context.origin;
+            const expires = await this.activateToken.createAndSend(
+                userData,
+                origin,
+            );
             return this.i18n.t("pages.register.feedback.success.mailSend", {
                 args: { time: i18nFormatDuration(expires) },
             });
         }
         return this.i18n.t("pages.register.feedback.success.registerSuccess");
     }
-    async login(body: UserLoginDtoOutput): Promise<UserSession> {
+    async refresh(
+        refreshTokenUser: string,
+    ): Promise<{ accessTokenUser: string; refreshTokenUser: string }> {
+        const { accessToken, refreshToken } =
+            await this.sessionUser.refresh(refreshTokenUser);
+
+        return { accessTokenUser: accessToken, refreshTokenUser: refreshToken };
+    }
+    async login(
+        body: UserLoginDtoOutput,
+        { ip, userAgent }: { ip?: string; userAgent?: string },
+    ): Promise<{ accessToken: string; refreshToken: string }> {
         const { email, password } = body;
         const user = await this.user.findByEmail(email);
         if (!user)
@@ -68,7 +86,7 @@ export class AuthUserService {
                     password: ["form.password.invalid"],
                 },
             });
-        const valid = await bcrypt.compare(password, user.passwordHash);
+        const valid = await this.hash.compare(password, user.passwordHash);
         if (!valid)
             throw new ValidationException<UserLoginDtoOutput>({
                 fields: {
@@ -126,7 +144,12 @@ export class AuthUserService {
             });
         }
 
-        const sessionUserData = await this.sessionUser.create(user.id);
+        const sessionUserData = await this.sessionUser.create({
+            userId: user.id,
+            ip,
+
+            userAgent,
+        });
         return sessionUserData;
     }
     async sendActivate({ email }: { email?: string }) {
@@ -166,7 +189,12 @@ export class AuthUserService {
                     },
                 ],
             });
-        const expires = await this.activateToken.createAndSend(userData);
+
+        const origin = this.context.origin;
+        const expires = await this.activateToken.createAndSend(
+            userData,
+            origin,
+        );
         return this.i18n.t("features.activate.success.sendSuccess", {
             args: { time: i18nFormatDuration(expires) },
         });
@@ -185,35 +213,13 @@ export class AuthUserService {
         const activateTokenData = await this.activateToken.findByUserId(
             userData.id,
         );
-
-        if (!activateTokenData)
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t(
-                            "pages.activate.feedback.errors.notValid",
-                        ),
-                        type: "error",
-                        data: { isShowButton: true },
-                    },
-                ],
-            });
+        if (!activateTokenData) throw new NotFoundException();
         const isValid = await this.activateToken.isTokenEqualHash(
             token,
             activateTokenData.tokenHash,
         );
-        if (!isValid) {
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t(
-                            "pages.activate.feedback.errors.notValid",
-                        ),
-                        type: "error",
-                    },
-                ],
-            });
-        }
+        if (!isValid) throw new NotFoundException();
+
         const isExpire = this.activateToken.isExpireToken(activateTokenData);
         if (isExpire)
             throw new ValidationException({
@@ -231,50 +237,37 @@ export class AuthUserService {
         await this.activateToken.deleteByUserId(userData.id);
         return true;
     }
-    async forgotPassword(body: UserForgotPasswordDtoOutput): Promise<string> {
-        const { email } = body;
+    async forgotPassword({
+        email,
+    }: UserForgotPasswordDtoOutput): Promise<string> {
         const user = await this.user.findByEmail(email);
         if (!user)
             throw new ValidationException<UserForgotPasswordDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
-        const resetTokenData = await this.resetToken.findByUserId(user.id);
-        if (resetTokenData) {
-            const isExpireToken = this.resetToken.isExpireToken(resetTokenData);
-            if (!isExpireToken) {
-                const time = i18nFormatDuration(
-                    resetTokenData.expiresAt.getTime() -
-                        new Date(Date.now()).getTime(),
-                );
-                throw new ValidationException<UserForgotPasswordDtoOutput>({
-                    root: [
-                        {
-                            message: this.i18n.t(
-                                "pages.forgotPassword.feedback.errors.alreadySent",
-                                {
-                                    args: {
-                                        time,
-                                    },
+
+        const resetTokenData = await this.resetToken.isHaveUserToken(user);
+        if (resetTokenData)
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.forgotPassword.feedback.errors.alreadySent",
+                            {
+                                args: {
+                                    time: i18nFormatDuration(
+                                        resetTokenData.expiresAt.getTime() -
+                                            new Date(Date.now()).getTime(),
+                                    ),
                                 },
-                            ),
-                            type: "error",
-                        },
-                    ],
-                });
-            }
-            await this.resetToken.delete(resetTokenData.id);
-        }
-        const { token, id, expires } = await this.resetToken.create(user.id);
-        try {
-            await this.mailerService.sendForgotPassword({
-                to: user.email,
-                token,
-                expires,
+                            },
+                        ),
+                        type: "error",
+                    },
+                ],
             });
-        } catch (error) {
-            await this.resetToken.delete(id);
-            throw error;
-        }
+        const origin = this.context.origin;
+        const expires = await this.resetToken.createAndSend(user, origin);
         return this.i18n.t("pages.forgotPassword.feedback.success", {
             args: {
                 time: i18nFormatDuration(expires),
@@ -285,13 +278,33 @@ export class AuthUserService {
         { password }: UserChangePasswordDtoOutput,
         { token, email }: { token: string; email: string },
     ): Promise<true> {
-        const { id } = await this.resetToken.checkToken({
-            email,
+        if (!email) throw new NotFoundException();
+        const userData = await this.user.findByEmail(email);
+        if (!userData) throw new NotFoundException();
+        const resetPasswordToken = await this.resetToken.findByUserId(
+            userData.id,
+        );
+        if (!resetPasswordToken) throw new NotFoundException();
+        const isValid = await this.resetToken.isTokenEqualHash(
             token,
-        });
+            resetPasswordToken.tokenHash,
+        );
+        if (!isValid) throw new NotFoundException();
 
-        await this.user.changePassword({ password, id });
-        await this.resetToken.deleteByUserId(id);
+        if (this.resetToken.isExpireToken(resetPasswordToken))
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.forgotPassword.changePassword.feedback.errors.timeout",
+                        ),
+                        type: "error",
+                    },
+                ],
+            });
+
+        await this.user.changePassword({ password, id: userData.id });
+        await this.resetToken.deleteByUserId(userData.id);
         return true;
     }
     async logout(sessionId: string): Promise<true> {

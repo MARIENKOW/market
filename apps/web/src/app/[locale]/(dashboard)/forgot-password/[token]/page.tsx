@@ -5,7 +5,7 @@ import UserChangePasswordForm from "@/components/form/UserChangePasswordForm";
 import UserRememberPasswordForm from "@/components/form/UserRememberPasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { redirect } from "@/i18n/navigation";
-import { $apiServer } from "@/lib/api/fetch.server";
+import { $apiServer } from "@/utils/api/fetch.server";
 import ResetPasswordTokenService from "@/services/resetPasswordToken/user/reset.password.token.service";
 import { Box, Typography } from "@mui/material";
 import { ApiErrorResponse } from "@myorg/shared/dto";

@@ -13,6 +13,9 @@ export const ENDPOINT = {
             forgotPassword: {
                 path: "forgot-password",
             },
+            refresh: {
+                path: "refresh",
+            },
             activate: {
                 send: {
                     path: "send",

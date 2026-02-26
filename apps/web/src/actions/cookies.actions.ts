@@ -23,6 +23,3 @@ export async function getAllCookieToClient() {
     return resValue;
 }
 
-export async function getUserSessionId(): Promise<string | null> {
-    return await getCookieValue("sessionId");
-}

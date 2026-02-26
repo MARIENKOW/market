@@ -85,7 +85,6 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
         }
     }
     const text = await res.text();
-
     try {
         const json = JSON.parse(text);
         return json;

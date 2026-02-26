@@ -10,10 +10,12 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
-import { AUTH_TYPE_KEY, Auth } from "@/modules/auth/auth.decorator";
+import { AUTH_TYPE_KEY } from "@/modules/auth/auth.decorator";
 import { AuthType } from "@/modules/auth/auth.actor.type";
-import { SessionUserService } from "@/modules/session/user/session.user.service";
-import { getMessageKey } from "@myorg/shared/i18n";
+import {
+    AccessTokenUserPayload,
+    SessionUserService,
+} from "@/modules/session/user/session.user.service";
 import { UserService } from "@/modules/user/user.service";
 
 @Injectable()
@@ -22,7 +24,6 @@ export class AuthGuard implements CanActivate {
         private readonly reflector: Reflector,
         private readonly sessionUser: SessionUserService,
         private readonly user: UserService,
-        // private readonly sessionAdmin: SessionAdminService,
     ) {}
 
     async canActivate(ctx: ExecutionContext): Promise<boolean> {
@@ -34,20 +35,30 @@ export class AuthGuard implements CanActivate {
             this.reflector.get<AuthType[]>(AUTH_TYPE_KEY, ctx.getClass());
 
         if (!allowedRoles || allowedRoles.length === 0) {
-            throw new ForbiddenException("Auth type not specified on route");
+            throw new ForbiddenException();
         }
 
         // for (const role of allowedRoles) {
         // if (role === "user" && cookies.sessionId) {
 
         if (allowedRoles.includes("user")) {
-            if (!cookies.sessionId) throw new UnauthorizedException();
-            const session = await this.sessionUser.findById(cookies.sessionId);
+            if (!cookies.accessTokenUser) throw new UnauthorizedException();
+            let plaload: AccessTokenUserPayload;
+            try {
+                plaload = this.sessionUser.verifyAccessToken(
+                    cookies.accessTokenUser,
+                );
+            } catch (error) {
+                throw new UnauthorizedException();
+            }
+
+            const session = await this.sessionUser.findById(plaload.sessionId);
             // if (!session) continue;
             if (!session) throw new UnauthorizedException();
             const user = await this.user.findById(session.userId);
             // if (!user) continue;
             if (!user) throw new UnauthorizedException();
+            if (user.status !== "ACTIVE") throw new UnauthorizedException();
 
             req.actor = { type: "user", user: user, sessionId: session.id };
             await this.sessionUser.touch(session.id);

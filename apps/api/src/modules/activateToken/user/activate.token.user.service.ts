@@ -26,13 +26,14 @@ export class ActivateTokenUserService {
         if (isExpire) return null;
         return activateToken;
     }
-    async createAndSend(userData: User): Promise<number> {
+    async createAndSend(userData: User, origin: string): Promise<number> {
         const { expires, token, id } = await this.create(userData.id);
         try {
             await this.mailerService.sendActivateToken({
                 to: userData.email,
                 expires,
                 token,
+                origin,
             });
             return expires;
         } catch (error) {

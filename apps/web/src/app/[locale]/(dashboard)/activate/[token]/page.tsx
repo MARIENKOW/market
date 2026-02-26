@@ -1,13 +1,9 @@
+import NotFoundActivateError from "@/app/[locale]/(dashboard)/activate/[token]/NotFoundActivateError";
 import RedirectWithMessage from "@/components/features/RedirectWithMessage";
-import AuthErrorElement from "@/components/feedback/error/AuthErrorElement";
-import ActivateErrorElement from "@/components/feedback/error/custom/ActivateErrorElement";
-import ResetTokenErrorElement from "@/components/feedback/error/custom/ResetTokenErrorElement";
+import ActivateErrorElement from "@/app/[locale]/(dashboard)/activate/[token]/ActivateErrorElement";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
-import UserChangePasswordForm from "@/components/form/UserChangePasswordForm";
-import UserRememberPasswordForm from "@/components/form/UserRememberPasswordForm";
-import { ContainerComponent } from "@/components/ui/Container";
 import { redirect } from "@/i18n/navigation";
-import { $apiServer } from "@/lib/api/fetch.server";
+import { $apiServer } from "@/utils/api/fetch.server";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { Box, Typography } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
@@ -42,6 +38,7 @@ export default async function Page({
         return (
             <ErrorHandlerElement
                 fallback={{
+                    notfound: { element: <NotFoundActivateError /> },
                     validation: {
                         element: (
                             <ActivateErrorElement error={error} email={email} />

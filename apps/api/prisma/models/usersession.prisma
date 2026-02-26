@@ -4,10 +4,11 @@ model UserSession {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   userAgent  String?
+  refreshTokenHash String   @unique  // хешированный JWT{}
   ip         String?
   createdAt  DateTime @default(now())
   lastUsedAt DateTime
 
-  @@map("sessions")
   @@index([userId])
+  @@index([refreshTokenHash])
 }

@@ -1,12 +1,12 @@
-import { getUserSessionId } from "@/actions/cookies.actions";
+import { getCookieValue } from "@/actions/cookies.actions";
 import {
     isApiErrorResponse,
     isUnauthorizedError,
 } from "@/helpers/error/error.type.helper";
-import { $apiServer } from "@/lib/api/fetch.server";
 import UserService from "@/services/user/user.service";
 import { ApiErrorResponse, UserDto } from "@myorg/shared/dto";
 import { cache } from "react";
+import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
 
 type CachedUserMeReturn = Promise<{
     user: UserDto | null;
@@ -16,12 +16,13 @@ type CachedUserMeReturn = Promise<{
 export const getUserAuth: () => CachedUserMeReturn = cache(async () => {
     let user = null;
     let error = false;
-    const sessionId = await getUserSessionId();
-    if (!sessionId) return { user, error };
+    const accessToken = await getCookieValue("accessTokenUser");
+    if (!accessToken) return { user, error };
     try {
-        const userService = new UserService($apiServer);
+        const userService = new UserService($apiUserServer);
         user = await userService.me();
     } catch (e) {
+        console.log(e);
         if (
             !isApiErrorResponse(e) ||
             !isUnauthorizedError(e as ApiErrorResponse)

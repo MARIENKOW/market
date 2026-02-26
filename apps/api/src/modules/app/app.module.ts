@@ -7,9 +7,11 @@ import {
     CookieResolver,
 } from "nestjs-i18n";
 import { CoreModule } from "@/modules/core/core.module";
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { defaultLanguage } from "@myorg/shared/i18n";
 import { TsI18nLoader } from "@/lib/i18n/i18n.loader";
+import { RequestContextMiddleware } from "@/common/request-context/request-context.middleware";
+import { RequestContextService } from "@/common/request-context/request-context.service";
 @Module({
     imports: [
         AuthRegisterModule,
@@ -24,6 +26,10 @@ import { TsI18nLoader } from "@/lib/i18n/i18n.loader";
         }),
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, RequestContextService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(RequestContextMiddleware).forRoutes("*");
+    }
+}

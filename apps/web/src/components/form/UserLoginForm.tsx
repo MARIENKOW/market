@@ -15,7 +15,7 @@ import SimpleForm from "@/components/wrappers/form/SimpleForm";
 import { Link, useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
-import { $apiClient } from "@/lib/api/fetch.client";
+import { $apiClient } from "@/utils/api/fetch.client";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
@@ -26,6 +26,8 @@ import { MessageKeyType } from "@myorg/shared/i18n";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 import { useState } from "react";
 import ActivateButton from "@/components/features/auth/ActivateButton";
+import { StyledDivider } from "@/components/ui/StyledDivider";
+import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
 
 const authUser = new AuthUserService($apiClient);
 
@@ -122,8 +124,8 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
                 )}
                 <SubmitButton />
             </Box>
-            {/* <StyledDivider />
-            <GoogleAuthButton /> */}
+            <StyledDivider />
+            <GoogleAuthButton />
         </SimpleForm>
     );
 }

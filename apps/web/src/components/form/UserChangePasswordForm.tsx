@@ -19,7 +19,7 @@ import { useWatch } from "react-hook-form";
 import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
-import { $apiClient } from "@/lib/api/fetch.client";
+import { $apiClient } from "@/utils/api/fetch.client";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
 import { useParams, useSearchParams } from "next/navigation";

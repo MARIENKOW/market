@@ -3,13 +3,17 @@ import { AppModule } from "@/modules/app/app.module";
 import { NestFactory } from "@nestjs/core";
 import cookieParser from "cookie-parser";
 
+
+const origin = process.env.ALLOWED_ORIGIN
+    ? process.env.ALLOWED_ORIGIN.split(",")
+    : [];
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    app.setGlobalPrefix("api");
+    app.setGlobalPrefix(process.env.NEXT_PUBLIC_GLOBAL_PREFIX || "");
     app.useGlobalFilters(new GlobalExceptionFilter());
     app.use(cookieParser());
     app.enableCors({
-        origin: [process.env.CLIENT_API],
+        origin,
         // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true, // cookies/auth
         // allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
@@ -17,10 +21,10 @@ async function bootstrap() {
         // maxAge: 3600, // preflight кэш
     });
     await app
-        .listen(process.env.SERVER_PORT || 5000)
+        .listen(process.env.NEXT_PUBLIC_SERVER_PORT || 8000)
         .catch((err) => console.log("nest error: ", err))
-        .then(() => {
-            console.log("server is working on port: ", process.env.SERVER_PORT);
+        .then((data) => {
+            console.log("server is working on port: ", data.address().port);
         });
 }
 

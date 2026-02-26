@@ -8,12 +8,16 @@ import {
     UserChangePasswordDtoOutput,
 } from "@myorg/shared/form";
 
-const { login, register, logout, forgotPassword, activate } =
+const { login, register, logout, forgotPassword, activate, refresh } =
     FULL_PATH_ENDPOINT.auth.user;
 
 export default class AuthUserService {
     login: (body: UserLoginDtoOutput) => Promise<true>;
     logout: () => Promise<true>;
+    refresh: () => Promise<{
+        accessTokenUser: string;
+        refreshTokenUser: string;
+    }>;
     register: (body: UserRegisterDtoOutput) => Promise<string>;
     forgotPassword: (body: UserForgotPasswordDtoOutput) => Promise<string>;
     changePassword: (
@@ -39,6 +43,16 @@ export default class AuthUserService {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
+            });
+            return res;
+        };
+        this.refresh = async () => {
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api(refresh.path, {
+                signal: controller.signal,
+                method: 'GET',
             });
             return res;
         };

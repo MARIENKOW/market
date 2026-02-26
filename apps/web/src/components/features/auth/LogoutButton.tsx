@@ -7,7 +7,7 @@ import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { $apiClient } from "@/lib/api/fetch.client";
+import { $apiClient } from "@/utils/api/fetch.client";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 
 const user = new AuthUserService($apiClient);

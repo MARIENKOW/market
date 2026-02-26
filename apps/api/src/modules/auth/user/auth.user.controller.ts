@@ -8,9 +8,8 @@ import {
     Req,
     Param,
     Query,
+    Get,
     UnauthorizedException,
-    ForbiddenException,
-    NotFoundException,
 } from "@nestjs/common";
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
 import { ENDPOINT } from "@myorg/shared/endpoints";
@@ -25,13 +24,19 @@ import {
     UserRegisterSchema,
 } from "@myorg/shared/form";
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
-import { Response } from "express";
-import { UserDto } from "@myorg/shared/dto";
+import { CookieOptions, Request, Response } from "express";
 import { AuthGuard } from "@/modules/auth/auth.guard";
 import { Auth } from "@/modules/auth/auth.decorator";
-import { Request } from "express";
 
-const { register, login, logout, forgotPassword, changePassword, activate } =
+export const COOKIE_CONFIG: CookieOptions = {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
+    path: "/",
+};
+
+const { register, login, logout, forgotPassword, refresh, activate } =
     ENDPOINT.auth.user;
 
 @Controller()
@@ -45,20 +50,34 @@ export class AuthUserController {
     ): Promise<string> {
         return this.authUser.register(body);
     }
+    @Get(refresh.path)
+    async refresh(
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<{ accessTokenUser: string; refreshTokenUser: string }> {
+        const accessToken = req.cookies["accessTokenUser"];
+        if (!accessToken) throw new UnauthorizedException();
+        const refreshToken = req.cookies["refreshTokenUser"];
+        if (!refreshToken) throw new UnauthorizedException();
+        const { accessTokenUser, refreshTokenUser } =
+            await this.authUser.refresh(refreshToken);
+        res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
+        res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
+        return { accessTokenUser, refreshTokenUser };
+    }
 
     @Post(login.path)
     async login(
         @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
+        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
-        const { id } = await this.authUser.login(body);
-        res.cookie("sessionId", id, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней для refresh
-            path: "/",
+        const { accessToken, refreshToken } = await this.authUser.login(body, {
+            ip: req.ip,
+            userAgent: req.headers["user-agent"],
         });
+        res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
+        res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
         return true;
     }
 
@@ -99,14 +118,7 @@ export class AuthUserController {
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         await this.authUser.logout(req.actor.sessionId);
-
-        res.cookie("sessionId", "", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 0,
-            path: "/",
-        });
+        res.cookie("sessionId", "", COOKIE_CONFIG);
         return true;
     }
 }

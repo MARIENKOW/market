@@ -15,7 +15,7 @@ import {
     UserForgotPasswordDtoOutput,
     UserForgotPasswordSchema,
 } from "@myorg/shared/form";
-import { $apiClient } from "@/lib/api/fetch.client";
+import { $apiClient } from "@/utils/api/fetch.client";
 import {
     FULL_PATH_ROUTE,
     USER_PUBLIC_FALLBACK_ROUTE,
