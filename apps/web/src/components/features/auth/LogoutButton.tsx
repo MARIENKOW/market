@@ -38,10 +38,7 @@ export default function LogoutButton() {
         }
     };
     return (
-        <StyledButton
-            //  loading={loading}
-            onClick={handleClick}
-        >
+        <StyledButton loading={loading} onClick={handleClick}>
             {t("features.logout.name")}
         </StyledButton>
     );
