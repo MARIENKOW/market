@@ -40,9 +40,10 @@ export class SessionUserService {
     generateAccessToken(playload: AccessTokenUserPayload): string {
         return this.jwt.sign(playload, {
             secret: process.env.JWT_ACCESS_SECRET,
-            expiresIn: "20s",
+            expiresIn: "10s",
         });
     }
+
     verifyAccessToken(accessTokenUser: string): AccessTokenUserPayload {
         return this.jwt.verify(accessTokenUser, {
             secret: process.env.JWT_ACCESS_SECRET,
@@ -53,50 +54,71 @@ export class SessionUserService {
             secret: process.env.JWT_REFRESH_SECRET,
             expiresIn: "30d",
         });
+
+        
     }
     verifyRefreshToken(refreshTokenUser: string): AccessTokenUserPayload {
         return this.jwt.verify(refreshTokenUser, {
             secret: process.env.JWT_REFRESH_SECRET,
         });
     }
-    async refresh(refreshTokenUser: string): Promise<{
-        accessToken: string;
-        refreshToken: string;
-    }> {
-        let payload: RefreshTokenUserPayload;
-        try {
-            payload = this.verifyRefreshToken(refreshTokenUser);
-        } catch (error) {
-            throw new UnauthorizedException();
-        }
-        const sessionData = await this.findById(payload.sessionId);
-
-        if (!sessionData) throw new UnauthorizedException();
-
-        const isValid = this.hash.compare(
-            refreshTokenUser,
-            sessionData.refreshTokenHash,
-        );
-
-        if (!isValid) throw new UnauthorizedException();
-
-        const accessToken = this.generateAccessToken({
-            userId: sessionData.userId,
-            sessionId: sessionData.id,
-        });
-        const refreshToken = this.generateRefreshToken({
-            userId: sessionData.userId,
-            sessionId: sessionData.id,
-        });
-
-        const refreshTokenHash = await this.hash.hash(refreshToken);
-
-        await this.prisma.userSession.update({
-            where: { id: sessionData.id },
-            data: { refreshTokenHash, lastUsedAt: new Date() },
-        });
-        return { accessToken, refreshToken };
+async refresh(refreshTokenUser: string): Promise<{
+    accessToken: string;
+    refreshToken: string;
+}> {
+    let payload: RefreshTokenUserPayload;
+    try {
+        payload = this.verifyRefreshToken(refreshTokenUser);
+    } catch (error) {
+        throw new UnauthorizedException();
     }
+
+    const sessionData = await this.findById(payload.sessionId);
+    if (!sessionData) throw new UnauthorizedException();
+
+    // Проверяем текущий токен
+    const isValid = this.hash.verifySha256(
+        refreshTokenUser,
+        sessionData.refreshTokenHash,
+    );
+
+    if (!isValid) {
+        // Проверяем предыдущий токен (grace period)
+        const isPreviousValid =
+            sessionData.previousRefreshTokenHash &&
+            sessionData.previousTokenExpiresAt &&
+            sessionData.previousTokenExpiresAt > new Date() &&
+            this.hash.verifySha256(
+                refreshTokenUser,
+                sessionData.previousRefreshTokenHash,
+            );
+
+        if (!isPreviousValid) throw new UnauthorizedException();
+    }
+
+    const accessToken = this.generateAccessToken({
+        userId: sessionData.userId,
+        sessionId: sessionData.id,
+    });
+    const refreshToken = this.generateRefreshToken({
+        userId: sessionData.userId,
+        sessionId: sessionData.id,
+    });
+
+    const refreshTokenHash = this.hash.sha256(refreshToken);
+
+    await this.prisma.userSession.update({
+        where: { id: sessionData.id },
+        data: {
+            refreshTokenHash,
+            previousRefreshTokenHash: sessionData.refreshTokenHash, // старый становится previous
+            previousTokenExpiresAt: new Date(Date.now() + 30 * 1000), // живёт 30 секунд
+            lastUsedAt: new Date(),
+        },
+    });
+
+    return { accessToken, refreshToken };
+}
     async create({
         userId,
         ip,
@@ -112,7 +134,7 @@ export class SessionUserService {
             userId,
             sessionId: id,
         });
-        const refreshTokenHash = await this.hash.hash(refreshToken);
+        const refreshTokenHash = this.hash.sha256(refreshToken);
 
         const data = await this.prisma.userSession.create({
             data: {

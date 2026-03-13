@@ -7,12 +7,16 @@ export interface FetchBaseOptions extends RequestInit {
     body?: BodyInit | null;
 }
 
-export type FetchCustom = (
+export type FetchCustom = <T>(
     path: string,
     options: FetchBaseOptions,
-) => Promise<any>;
+) => FetchCustomReturn<T>;
+export type FetchCustomReturn<T> = Promise<Response & { data: T }>;
 
-export const fetchCustom: FetchCustom = async (path, options = {}) => {
+export async function fetchCustom<T>(
+    path: string,
+    options: FetchBaseOptions = {},
+): FetchCustomReturn<T> {
     const { ...rest } = options;
 
     const init: RequestInit = {
@@ -87,7 +91,7 @@ export const fetchCustom: FetchCustom = async (path, options = {}) => {
     const text = await res.text();
     try {
         const json = JSON.parse(text);
-        return json;
+        return Object.assign(res, { data: json as T });
     } catch {}
-    return text;
-};
+    return Object.assign(res, { data: text as T });
+}

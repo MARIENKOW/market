@@ -30,8 +30,9 @@ import { Box } from "@mui/material";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { MessageKeyType } from "@myorg/shared/i18n";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
-const authUser = new AuthUserService($apiClient);
+const authUser = new AuthUserService($apiUserClient);
 
 export default function UserRegisterForm() {
     const t = useTranslations();
@@ -67,8 +68,8 @@ export default function UserRegisterForm() {
         { setError },
     ) => {
         try {
-            const message = await authUser.register(formValues);
-            snackbarSuccess(message);
+            const { data } = await authUser.register(formValues);
+            snackbarSuccess(data);
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError, t, formValues });

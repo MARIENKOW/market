@@ -1,9 +1,12 @@
 "use server";
 
 import { getAllCookieToClient } from "@/actions/cookies.actions";
-import { FetchBaseOptions, fetchCustom } from "@/lib/api";
+import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
 
-export const $apiServer = async (path: string, options: FetchBaseOptions) => {
+export const $apiServer = async <T>(
+    path: string,
+    options: FetchBaseOptions,
+): FetchCustomReturn<T> => {
     const cookie = await getAllCookieToClient();
 
     const defaultOptions: FetchBaseOptions = {
@@ -15,7 +18,7 @@ export const $apiServer = async (path: string, options: FetchBaseOptions) => {
 
     let newHeaders = options.headers || {};
 
-    return await fetchCustom(
+    return await fetchCustom<T>(
         "http://localhost:" +
             process.env.NEXT_PUBLIC_SERVER_PORT +
             "/" +

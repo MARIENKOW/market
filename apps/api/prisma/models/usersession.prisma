@@ -5,6 +5,8 @@ model UserSession {
 
   userAgent  String?
   refreshTokenHash String   @unique  // хешированный JWT{}
+    previousRefreshTokenHash String? @unique  // старый токен
+  previousTokenExpiresAt   DateTime?        // когда он умрёт
   ip         String?
   createdAt  DateTime @default(now())
   lastUsedAt DateTime

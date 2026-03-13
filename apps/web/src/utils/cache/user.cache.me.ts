@@ -20,7 +20,8 @@ export const getUserAuth: () => CachedUserMeReturn = cache(async () => {
     if (!accessToken) return { user, error };
     try {
         const userService = new UserService($apiUserServer);
-        user = await userService.me();
+        const res = await userService.me();
+        user = res.data;
     } catch (e) {
         console.log(e);
         if (

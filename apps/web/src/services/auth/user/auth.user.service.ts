@@ -1,4 +1,4 @@
-import { FetchCustom } from "@/lib/api";
+import { FetchCustom, FetchCustomReturn } from "@/lib/api";
 import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
@@ -12,26 +12,25 @@ const { login, register, logout, forgotPassword, activate, refresh } =
     FULL_PATH_ENDPOINT.auth.user;
 
 export default class AuthUserService {
-    login: (body: UserLoginDtoOutput) => Promise<true>;
-    logout: () => Promise<true>;
-    refresh: () => Promise<{
-        accessTokenUser: string;
-        refreshTokenUser: string;
-    }>;
-    register: (body: UserRegisterDtoOutput) => Promise<string>;
-    forgotPassword: (body: UserForgotPasswordDtoOutput) => Promise<string>;
+    login: (body: UserLoginDtoOutput) => FetchCustomReturn<true>;
+    logout: () => FetchCustomReturn<true>;
+    refresh: () => FetchCustomReturn<true>;
+    register: (body: UserRegisterDtoOutput) => FetchCustomReturn<string>;
+    forgotPassword: (
+        body: UserForgotPasswordDtoOutput,
+    ) => FetchCustomReturn<string>;
     changePassword: (
         body: UserChangePasswordDtoOutput,
         { token, email }: { token: string; email: string | null },
-    ) => Promise<true>;
+    ) => FetchCustomReturn<true>;
     activate: ({
         email,
         token,
     }: {
         email: string;
         token: string;
-    }) => Promise<true>;
-    sendActivate: ({ email }: { email?: string }) => Promise<string>;
+    }) => FetchCustomReturn<true>;
+    sendActivate: ({ email }: { email?: string }) => FetchCustomReturn<string>;
     abortController: AbortController | null = null;
 
     constructor(api: FetchCustom) {
@@ -39,7 +38,7 @@ export default class AuthUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(login.path, {
+            const res = await api<true>(login.path, {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
@@ -50,9 +49,10 @@ export default class AuthUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(refresh.path, {
+            const res = await api<true>(refresh.path, {
                 signal: controller.signal,
-                method: 'GET',
+                credentials: "include",
+                method: "GET",
             });
             return res;
         };
@@ -60,7 +60,7 @@ export default class AuthUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(activate.path, {
+            const res = await api<true>(activate.path, {
                 signal: controller.signal,
                 cache: "no-store",
                 method: "POST",
@@ -72,7 +72,7 @@ export default class AuthUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(activate.send.path, {
+            const res = await api<string>(activate.send.path, {
                 signal: controller.signal,
                 cache: "no-store",
                 method: "POST",
@@ -84,7 +84,7 @@ export default class AuthUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(logout.path, {
+            const res = await api<true>(logout.path, {
                 signal: controller.signal,
                 method: "POST",
             });
@@ -94,7 +94,7 @@ export default class AuthUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(register.path, {
+            const res = await api<string>(register.path, {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
@@ -105,7 +105,7 @@ export default class AuthUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(forgotPassword.path, {
+            const res = await api<string>(forgotPassword.path, {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
@@ -117,7 +117,7 @@ export default class AuthUserService {
             const controller = new AbortController();
             console.log(body);
             this.abortController = controller;
-            const res = await api(
+            const res = await api<true>(
                 forgotPassword.path + "/" + token + "?email=" + email,
                 {
                     signal: controller.signal,

@@ -3,16 +3,19 @@ import {
     isApiErrorResponse,
     isUnauthorizedError,
 } from "@/helpers/error/error.type.helper";
-import { FetchBaseOptions, fetchCustom } from "@/lib/api";
+import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
+import AuthUserService from "@/services/auth/user/auth.user.service";
 import { $apiClient } from "@/utils/api/fetch.client";
 import { ApiErrorResponse } from "@myorg/shared/dto";
 import { HTTP_STATUSES } from "@myorg/shared/http";
 
-export const $apiUserClient = async (
+let refreshPromise: null | FetchCustomReturn<true> = null;
+
+export const $apiUserClient = async <T>(
     path: string,
     options: FetchBaseOptions,
-) => {
-    const accessToken = getCookieValue("accessToken");
+): FetchCustomReturn<T> => {
+    const accessToken = getCookieValue("accessTokenUser");
     if (!accessToken) {
         const UnauthorizedError: ApiErrorResponse = {
             code: HTTP_STATUSES.Unauthorized.code,
@@ -35,7 +38,7 @@ export const $apiUserClient = async (
     let newHeaders = options.headers || {};
 
     try {
-        return $apiClient(path, {
+        return await $apiClient<T>(path, {
             ...defaultOptions,
             ...options,
             headers: { ...defaultOptions.headers, ...newHeaders },
@@ -45,10 +48,23 @@ export const $apiUserClient = async (
             isApiErrorResponse(error) &&
             isUnauthorizedError(error as ApiErrorResponse)
         ) {
+            if (refreshPromise === null) {
+                const authUser = new AuthUserService($apiClient);
+                refreshPromise = authUser.refresh();
+            }
             try {
+                await refreshPromise;
+                refreshPromise = null;
             } catch (error) {
+                refreshPromise = null;
                 throw error;
             }
+            return $apiClient<T>(path, {
+                ...defaultOptions,
+                ...options,
+                headers: { ...defaultOptions.headers, ...newHeaders },
+            });
         }
+        throw error;
     }
 };

@@ -1,6 +1,10 @@
-import { FetchBaseOptions, fetchCustom } from "@/lib/api";
+import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
+import AuthUserService from "@/services/auth/user/auth.user.service";
 
-export const $apiClient = async (path: string, options: FetchBaseOptions) => {
+export const $apiClient = async <T>(
+    path: string,
+    options: FetchBaseOptions,
+): FetchCustomReturn<T> => {
     const defaultOptions: FetchBaseOptions = {
         credentials: "include",
         headers: {
@@ -10,9 +14,12 @@ export const $apiClient = async (path: string, options: FetchBaseOptions) => {
 
     let newHeaders = options.headers || {};
 
-    return fetchCustom("/" + process.env.NEXT_PUBLIC_GLOBAL_PREFIX + path, {
-        ...defaultOptions,
-        ...options,
-        headers: { ...defaultOptions.headers, ...newHeaders },
-    });
+    return await fetchCustom<T>(
+        "/" + process.env.NEXT_PUBLIC_GLOBAL_PREFIX + path,
+        {
+            ...defaultOptions,
+            ...options,
+            headers: { ...defaultOptions.headers, ...newHeaders },
+        },
+    );
 };

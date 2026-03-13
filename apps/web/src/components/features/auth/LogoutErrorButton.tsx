@@ -8,8 +8,9 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { $apiClient } from "@/utils/api/fetch.client";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
-const user = new AuthUserService($apiClient);
+const user = new AuthUserService($apiUserClient);
 
 export default function LogoutErrorButton() {
     const t = useTranslations();

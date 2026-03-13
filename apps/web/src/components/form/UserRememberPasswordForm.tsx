@@ -25,8 +25,9 @@ import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { Box } from "@mui/material";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
-const authUser = new AuthUserService($apiClient);
+const authUser = new AuthUserService($apiUserClient);
 
 export default function UserRememberPasswordForm() {
     const router = useRouter();
@@ -37,8 +38,8 @@ export default function UserRememberPasswordForm() {
         { setError },
     ) => {
         try {
-            const success = await authUser.forgotPassword(formValues);
-            snackbarSuccess(success);
+            const { data } = await authUser.forgotPassword(formValues);
+            snackbarSuccess(data);
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError, t, formValues });
         }

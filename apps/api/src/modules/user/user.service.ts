@@ -1,17 +1,16 @@
 import { Prisma, ResetPasswordTokenUser, User } from "@/generated/prisma";
-import { PrismaModule } from "@/modules/prisma/prisma.module";
+import { HashService } from "@/modules/hash/hash.service";
 import { PrismaService } from "@/modules/prisma/prisma.service";
 import { SessionUserService } from "@/modules/session/user/session.user.service";
-import { mapUser } from "@/modules/user/user.mapper";
-import { UserDto } from "@myorg/shared/dto";
+
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
     constructor(
         private prisma: PrismaService,
         private sessionUser: SessionUserService,
+        private hash: HashService,
     ) {}
 
     findById(id: string): Promise<User | null> {
@@ -24,7 +23,7 @@ export class UserService {
         password: string;
         id: string;
     }): Promise<User | null> {
-        const hashed = await bcrypt.hash(password, 12);
+        const hashed = await this.hash.hash(password);
         return this.prisma.user.update({
             where: { id },
             data: { passwordHash: hashed },

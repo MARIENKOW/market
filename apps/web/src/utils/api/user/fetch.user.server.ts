@@ -6,15 +6,15 @@ import {
     isApiErrorResponse,
     isUnauthorizedError,
 } from "@/helpers/error/error.type.helper";
-import { FetchBaseOptions, fetchCustom } from "@/lib/api";
+import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
 import { $apiServer } from "@/utils/api/fetch.server";
 import { ApiErrorResponse } from "@myorg/shared/dto";
 import { redirect } from "next/navigation";
 
-export const $apiUserServer = async (
+export const $apiUserServer = async <T>(
     path: string,
     options: FetchBaseOptions,
-) => {
+): FetchCustomReturn<T> => {
     const accessToken = await getCookieValue("accessToken");
     const defaultOptions: FetchBaseOptions = {
         headers: {
@@ -24,7 +24,7 @@ export const $apiUserServer = async (
 
     let newHeaders = options.headers || {};
 
-    return await $apiServer(path, {
+    return await $apiServer<T>(path, {
         ...defaultOptions,
         ...options,
         headers: { ...defaultOptions.headers, ...newHeaders },

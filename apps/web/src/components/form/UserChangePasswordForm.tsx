@@ -23,8 +23,9 @@ import { $apiClient } from "@/utils/api/fetch.client";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
 import { useParams, useSearchParams } from "next/navigation";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
-const authUser = new AuthUserService($apiClient);
+const authUser = new AuthUserService($apiUserClient);
 
 export default function UserChangePasswordForm() {
     const t = useTranslations();

@@ -1,4 +1,4 @@
-import { FetchCustom } from "@/lib/api";
+import { FetchCustom, FetchCustomReturn } from "@/lib/api";
 import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 
@@ -11,14 +11,14 @@ export default class ResetPasswordTokenService {
     }: {
         email: string;
         token: string;
-    }) => Promise<true>;
+    }) => FetchCustomReturn<true>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {
         this.check = async (data) => {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api(check.path, {
+            const res = await api<true>(check.path, {
                 signal: controller.signal,
                 cache: "no-store",
                 method: "POST",

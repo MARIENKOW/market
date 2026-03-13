@@ -30,7 +30,7 @@ import { Auth } from "@/modules/auth/auth.decorator";
 
 export const COOKIE_CONFIG: CookieOptions = {
     httpOnly: true,
-    secure: false,
+    secure: process.env.NODE_ENV === "production" ? true : false,
     sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
     path: "/",
@@ -54,16 +54,16 @@ export class AuthUserController {
     async refresh(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
-    ): Promise<{ accessTokenUser: string; refreshTokenUser: string }> {
+    ): Promise<true> {
         const accessToken = req.cookies["accessTokenUser"];
         if (!accessToken) throw new UnauthorizedException();
         const refreshToken = req.cookies["refreshTokenUser"];
         if (!refreshToken) throw new UnauthorizedException();
         const { accessTokenUser, refreshTokenUser } =
             await this.authUser.refresh(refreshToken);
-        res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
-        res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
-        return { accessTokenUser, refreshTokenUser };
+        res.cookie("accessTokenUser", accessTokenUser, COOKIE_CONFIG);
+        res.cookie("refreshTokenUser", refreshTokenUser, COOKIE_CONFIG);
+        return true;
     }
 
     @Post(login.path)
@@ -118,7 +118,8 @@ export class AuthUserController {
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         await this.authUser.logout(req.actor.sessionId);
-        res.cookie("sessionId", "", COOKIE_CONFIG);
+        res.cookie("accessTokenUser", "", COOKIE_CONFIG);
+        res.cookie("refreshTokenUser", "", COOKIE_CONFIG);
         return true;
     }
 }
