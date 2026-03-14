@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+    UnauthorizedException,
+} from "@nestjs/common";
 import { UserService } from "@/modules/user/user.service";
 import {
     UserChangePasswordDtoOutput,
@@ -15,6 +20,7 @@ import { MessageStructure } from "@myorg/shared/i18n";
 import { I18nService } from "nestjs-i18n";
 import { HashService } from "@/modules/hash/hash.service";
 import { RequestContextService } from "@/common/request-context/request-context.service";
+import { OAuth2Client } from "google-auth-library";
 @Injectable()
 export class AuthUserService {
     constructor(
@@ -25,7 +31,13 @@ export class AuthUserService {
         private i18n: I18nService<MessageStructure>,
         private hash: HashService,
         private context: RequestContextService,
-    ) {}
+        private oauthClient: OAuth2Client,
+    ) {
+        this.oauthClient = new OAuth2Client(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+        );
+    }
 
     async register(body: UserRegisterDtoOutput): Promise<string> {
         const { password, email } = body;
@@ -65,6 +77,50 @@ export class AuthUserService {
 
         return { accessTokenUser: accessToken, refreshTokenUser: refreshToken };
     }
+    async google(
+        { code }: { code: string },
+        { ip, userAgent }: { ip?: string; userAgent?: string },
+    ): Promise<{ accessToken: string; refreshToken: string }> {
+        console.log(
+            "objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject",
+        );
+        const { tokens } = await this.oauthClient.getToken({
+            code,
+            redirect_uri: "postmessage",
+        });
+
+        if (!tokens.id_token) throw new InternalServerErrorException();
+
+        const ticket = await this.oauthClient.verifyIdToken({
+            idToken: tokens.id_token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+
+        if (!payload?.email) {
+            throw new InternalServerErrorException();
+        }
+
+        const { email, name, picture } = payload;
+
+        let user = await this.user.findByEmail(email);
+
+        if (!user) {
+            user = await this.user.create({
+                updatedAt: new Date(),
+                status: "ACTIVE",
+                email,
+            });
+        }
+
+        const sessionUserData = await this.sessionUser.create({
+            userId: user.id,
+            ip,
+            userAgent,
+        });
+        return sessionUserData;
+    }
     async login(
         body: UserLoginDtoOutput,
         { ip, userAgent }: { ip?: string; userAgent?: string },
@@ -78,11 +134,24 @@ export class AuthUserService {
 
         if (!user.passwordHash)
             throw new ValidationException<UserLoginDtoOutput>({
-                fields: {
-                    password: ["form.password.invalid"],
-                },
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.login.feedback.errors.passwordNotFound",
+                            {
+                                args: {
+                                    btn: this.i18n.t(
+                                        "pages.forgotPassword.name",
+                                    ),
+                                },
+                            },
+                        ),
+                        type: "error",
+                    },
+                ],
             });
         const valid = await this.hash.compare(password, user.passwordHash);
+
         if (!valid)
             throw new ValidationException<UserLoginDtoOutput>({
                 fields: {
@@ -195,22 +264,22 @@ export class AuthUserService {
             args: { time: i18nFormatDuration(expires) },
         });
     }
-    async activate({
-        token,
-        email,
-    }: {
-        token: string;
-        email?: string;
-    }): Promise<true> {
-        if (!email) throw new NotFoundException();
-        const userData = await this.user.findByEmail(email);
+    async activate({ token }: { token: string }): Promise<true> {
+        let payload;
+        try {
+            payload = this.activateToken.verifyToken(decodeURIComponent(token));
+        } catch (error) {
+            console.log(error);
+            throw new NotFoundException();
+        }
+        const userData = await this.user.findById(payload.userId);
         if (!userData) throw new NotFoundException();
         if (userData.status === "ACTIVE") throw new NotFoundException();
         const activateTokenData = await this.activateToken.findByUserId(
             userData.id,
         );
         if (!activateTokenData) throw new NotFoundException();
-        const isValid = await this.activateToken.isTokenEqualHash(
+        const isValid = this.hash.verifySha256(
             token,
             activateTokenData.tokenHash,
         );
@@ -225,7 +294,7 @@ export class AuthUserService {
                             "pages.activate.feedback.errors.expired",
                         ),
                         type: "error",
-                        data: { isShowButton: true },
+                        data: { isShowButton: true, email: userData.email },
                     },
                 ],
             });
@@ -272,22 +341,28 @@ export class AuthUserService {
     }
     async changePassword(
         { password }: UserChangePasswordDtoOutput,
-        { token, email }: { token: string; email: string },
+        { token }: { token: string },
     ): Promise<true> {
-        if (!email) throw new NotFoundException();
-        const userData = await this.user.findByEmail(email);
+        let payload;
+        try {
+            payload = this.resetToken.verifyToken(decodeURIComponent(token));
+        } catch (error) {
+            throw new NotFoundException();
+        }
+        const userData = await this.user.findById(payload.userId);
         if (!userData) throw new NotFoundException();
         const resetPasswordToken = await this.resetToken.findByUserId(
             userData.id,
         );
         if (!resetPasswordToken) throw new NotFoundException();
-        const isValid = await this.resetToken.isTokenEqualHash(
+        const isValid = this.hash.verifySha256(
             token,
             resetPasswordToken.tokenHash,
         );
         if (!isValid) throw new NotFoundException();
 
-        if (this.resetToken.isExpireToken(resetPasswordToken))
+        if (this.resetToken.isExpireToken(resetPasswordToken)) {
+            console.log("object");
             throw new ValidationException({
                 root: [
                     {
@@ -295,12 +370,15 @@ export class AuthUserService {
                             "pages.forgotPassword.changePassword.feedback.errors.timeout",
                         ),
                         type: "error",
+                        data: { isShowButton: true },
                     },
                 ],
             });
+        }
 
         await this.user.changePassword({ password, id: userData.id });
         await this.resetToken.deleteByUserId(userData.id);
+        await this.sessionUser.deleteAllByUserId(userData.id);
         return true;
     }
     async logout(sessionId: string): Promise<true> {

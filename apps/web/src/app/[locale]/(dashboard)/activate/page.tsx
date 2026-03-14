@@ -1,6 +1,5 @@
-import NotFoundActivateError from "@/app/[locale]/(dashboard)/activate/[token]/NotFoundActivateError";
 import RedirectWithMessage from "@/components/features/RedirectWithMessage";
-import ActivateErrorElement from "@/app/[locale]/(dashboard)/activate/[token]/ActivateErrorElement";
+import ActivateErrorElement from "@/app/[locale]/(dashboard)/activate/ActivateErrorElement";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import { redirect } from "@/i18n/navigation";
 import { $apiServer } from "@/utils/api/fetch.server";
@@ -13,20 +12,17 @@ const authUser = new AuthUserService($apiServer);
 
 export default async function Page({
     searchParams,
-    params,
 }: {
     searchParams: Promise<any>;
-    params: Promise<{ token: string }>;
 }) {
-    const { token } = await params;
-    const { email } = await searchParams;
+    const { token } = await searchParams;
     const locale = await getLocale();
     const t = await getTranslations();
-    if (!email) {
+    if (!token) {
         redirect({ href: FULL_PATH_ROUTE.path, locale });
     }
     try {
-        await authUser.activate({ token, email });
+        await authUser.activate({ token });
         return (
             <RedirectWithMessage
                 message={t("pages.activate.feedback.success.accountActivate")}
@@ -38,11 +34,17 @@ export default async function Page({
         return (
             <ErrorHandlerElement
                 fallback={{
-                    notfound: { element: <NotFoundActivateError /> },
-                    validation: {
+                    notfound: {
                         element: (
-                            <ActivateErrorElement error={error} email={email} />
+                            <RedirectWithMessage
+                                message={t("api.NOT_FOUND")}
+                                type="error"
+                                path={FULL_PATH_ROUTE.path}
+                            />
                         ),
+                    },
+                    validation: {
+                        element: <ActivateErrorElement error={error} />,
                     },
                 }}
                 error={error}

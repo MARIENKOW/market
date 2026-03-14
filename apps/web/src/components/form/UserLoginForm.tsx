@@ -27,7 +27,7 @@ import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 import { useState } from "react";
 import ActivateButton from "@/components/features/auth/ActivateButton";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import GoogleAuthButton from "@/components/features/form/GoogleAuthButton";
+import GoogleAuthButton from "@/components/features/auth/GoogleAuthButton";
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 const authUser = new AuthUserService($apiUserClient);
@@ -126,7 +126,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
                 <SubmitButton />
             </Box>
             <StyledDivider />
-            <GoogleAuthButton />
+            <GoogleAuthButton redirectTo={redirectTo} />
         </SimpleForm>
     );
 }

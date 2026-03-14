@@ -5,6 +5,7 @@ export const ROUTE = {
     login: { path: "login" },
     activate: { path: "activate" },
     forgotPasssword: { path: "forgot-password" },
+    changePasssword: { path: "change-password" },
     register: { path: "register" },
     profile: { path: "profile" },
     admin: {

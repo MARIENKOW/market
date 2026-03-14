@@ -8,11 +8,12 @@ import {
     UserChangePasswordDtoOutput,
 } from "@myorg/shared/form";
 
-const { login, register, logout, forgotPassword, activate, refresh } =
+const { login, register, logout, forgotPassword, activate, refresh, google } =
     FULL_PATH_ENDPOINT.auth.user;
 
 export default class AuthUserService {
     login: (body: UserLoginDtoOutput) => FetchCustomReturn<true>;
+    google: (body: { code: string }) => FetchCustomReturn<true>;
     logout: () => FetchCustomReturn<true>;
     refresh: () => FetchCustomReturn<true>;
     register: (body: UserRegisterDtoOutput) => FetchCustomReturn<string>;
@@ -21,15 +22,9 @@ export default class AuthUserService {
     ) => FetchCustomReturn<string>;
     changePassword: (
         body: UserChangePasswordDtoOutput,
-        { token, email }: { token: string; email: string | null },
+        { token }: { token: string },
     ) => FetchCustomReturn<true>;
-    activate: ({
-        email,
-        token,
-    }: {
-        email: string;
-        token: string;
-    }) => FetchCustomReturn<true>;
+    activate: ({ token }: { token: string }) => FetchCustomReturn<true>;
     sendActivate: ({ email }: { email?: string }) => FetchCustomReturn<string>;
     abortController: AbortController | null = null;
 
@@ -39,6 +34,17 @@ export default class AuthUserService {
             const controller = new AbortController();
             this.abortController = controller;
             const res = await api<true>(login.path, {
+                signal: controller.signal,
+                method: "POST",
+                body: JSON.stringify(body),
+            });
+            return res;
+        };
+        this.google = async (body) => {
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api<true>(google.path, {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
@@ -112,19 +118,16 @@ export default class AuthUserService {
             });
             return res;
         };
-        this.changePassword = async (body, { email, token }) => {
+        this.changePassword = async (body, { token }) => {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             console.log(body);
             this.abortController = controller;
-            const res = await api<true>(
-                forgotPassword.path + "/" + token + "?email=" + email,
-                {
-                    signal: controller.signal,
-                    method: "POST",
-                    body: JSON.stringify(body),
-                },
-            );
+            const res = await api<true>(forgotPassword.path + "/" + token, {
+                signal: controller.signal,
+                method: "POST",
+                body: JSON.stringify(body),
+            });
             return res;
         };
     }

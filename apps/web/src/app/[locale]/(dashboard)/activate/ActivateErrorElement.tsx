@@ -9,19 +9,18 @@ import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 
 import { useTranslations } from "next-intl";
 
-type ActivateErrorProp = { error: unknown; email: string };
+type ActivateErrorProp = { error: unknown };
 
-export default function ActivateErrorElement({
-    error,
-    email,
-}: ActivateErrorProp) {
+export default function ActivateErrorElement({ error }: ActivateErrorProp) {
     let message;
     let isShowButton = false;
+    let email;
     if (isApiErrorResponse(error)) {
         const { data }: { data: ErrorsWithMessages } =
             error as ApiErrorResponse;
         message = data.root?.[0].message;
         isShowButton = data.root?.[0].data?.isShowButton;
+        email = data.root?.[0].data?.email;
     }
     const t = useTranslations();
     return (

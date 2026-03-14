@@ -8,6 +8,7 @@ import { ActivateTokenUserModule } from "../../activateToken/user/activate.token
 import { HashService } from "@/modules/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
 import { RequestContextService } from "@/common/request-context/request-context.service";
+import { OAuth2Client } from "google-auth-library";
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { RequestContextService } from "@/common/request-context/request-context.
         AuthUserService,
         SessionUserService,
         HashService,
+        OAuth2Client,
         JwtService,
         RequestContextService,
     ],

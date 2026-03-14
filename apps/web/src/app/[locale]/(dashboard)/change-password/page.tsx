@@ -13,29 +13,36 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Params } from "next/dist/server/request/params";
 import { SearchParams } from "next/dist/server/request/search-params";
+import RedirectWithMessage from "@/components/features/RedirectWithMessage";
 
 const resetPassword = new ResetPasswordTokenService($apiServer);
 
 export default async function Page({
     searchParams,
-    params,
 }: {
     searchParams: Promise<any>;
-    params: Promise<{ token: string }>;
 }) {
-    const { token } = await params;
-    const { email } = await searchParams;
-    if (!email) {
+    const { token } = await searchParams;
+    if (!token) {
         const locale = await getLocale();
         redirect({ href: FULL_PATH_ROUTE.path, locale });
     }
     const t = await getTranslations();
     try {
-        await resetPassword.check({ token, email });
+        await resetPassword.check({ token });
     } catch (error) {
         return (
             <ErrorHandlerElement
                 fallback={{
+                    notfound: {
+                        element: (
+                            <RedirectWithMessage
+                                path={FULL_PATH_ROUTE.path}
+                                message={t("api.NOT_FOUND")}
+                                type="error"
+                            />
+                        ),
+                    },
                     validation: {
                         element: <ResetTokenErrorElement error={error} />,
                     },

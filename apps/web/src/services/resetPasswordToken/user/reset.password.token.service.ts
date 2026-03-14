@@ -5,13 +5,7 @@ import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 const { check } = FULL_PATH_ENDPOINT.resetPasswordToken.user;
 
 export default class ResetPasswordTokenService {
-    check: ({
-        email,
-        token,
-    }: {
-        email: string;
-        token: string;
-    }) => FetchCustomReturn<true>;
+    check: ({ token }: { token: string }) => FetchCustomReturn<true>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {
         this.check = async (data) => {

@@ -8,16 +8,20 @@ import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 import { MailerService } from "@/modules/mailer/mailer.service";
 import { MessageStructure } from "@myorg/shared/i18n";
+import { JwtService } from "@nestjs/jwt";
+import { HashService } from "@/modules/hash/hash.service";
+
+export type ActivateTokenUserPayload = { userId: string };
 
 @Injectable()
 export class ActivateTokenUserService {
     constructor(
         private prisma: PrismaService,
-        private user: UserService,
-        private i18n: I18nService<MessageStructure>,
+        private hash: HashService,
+        private jwt: JwtService,
         private mailerService: MailerService,
     ) {}
-    private expires = 30 * 60 * 1000; //15 мин
+    private expires = 30 * 60 * 1000; //30 мин
 
     async isHaveUserToken(userData: User): Promise<ActivateTokenUser | null> {
         const activateToken = await this.findByUserId(userData.id);
@@ -51,8 +55,15 @@ export class ActivateTokenUserService {
             where: { id },
         });
     }
-    private createToken(): string {
-        return crypto.randomBytes(32).toString("hex");
+    private createToken(payload: ActivateTokenUserPayload): string {
+        return this.jwt.sign(payload, {
+            secret: process.env.JWT_SECRET,
+        });
+    }
+    verifyToken(token: string): ActivateTokenUserPayload {
+        return this.jwt.verify(token, {
+            secret: process.env.JWT_SECRET,
+        });
     }
     isExpireToken(model: ActivateTokenUser): boolean {
         const time = model.expiresAt.getTime() - new Date().getTime();
@@ -68,15 +79,12 @@ export class ActivateTokenUserService {
         }
         return isExpire;
     }
-    async isTokenEqualHash(token: string, hash: string): Promise<boolean> {
-        const data = await bcrypt.compare(token, hash);
-        return data;
-    }
+
     async create(
         userId: string,
     ): Promise<ActivateTokenUser & { token: string; expires: number }> {
-        const token = this.createToken();
-        const tokenHash = await bcrypt.hash(token, 12);
+        const token = this.createToken({ userId });
+        const tokenHash = this.hash.sha256(token);
         const data = await this.prisma.activateTokenUser.create({
             data: {
                 userId,

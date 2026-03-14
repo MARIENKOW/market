@@ -53,7 +53,7 @@ export class MailerService implements OnModuleInit {
         expires,
         origin,
     }: SendForgotPasswordOptions) {
-        const resetUrl = `${origin}${FULL_PATH_ROUTE.forgotPasssword.path}/${token}?email=${to}`;
+        const resetUrl = `${origin}${FULL_PATH_ROUTE.changePasssword.path}?token=${encodeURIComponent(token)}`;
 
         const html = `
             <!DOCTYPE html >
@@ -80,7 +80,7 @@ export class MailerService implements OnModuleInit {
         expires,
         origin,
     }: SendForgotPasswordOptions) {
-        const resetUrl = `${origin}${FULL_PATH_ROUTE.activate.path}/${token}?email=${to}`;
+        const resetUrl = `${origin}${FULL_PATH_ROUTE.activate.path}?token=${encodeURIComponent(token)}`;
 
         const html = `
             <!DOCTYPE html >

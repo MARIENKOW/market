@@ -14,24 +14,25 @@ import FormAlert from "@/components/features/form/FormAlert";
 import FormPassword from "@/components/features/form/fields/controlled/FormPassword";
 import useForm from "@/hooks/useForm";
 import FormProvider from "@/components/wrappers/form/FormProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
-import { $apiClient } from "@/utils/api/fetch.client";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
+import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
+import { StyledButton } from "@/components/ui/StyledButton";
 
 const authUser = new AuthUserService($apiUserClient);
 
 export default function UserChangePasswordForm() {
     const t = useTranslations();
     const router = useRouter();
-    const { token } = useParams();
     const searchParams = useSearchParams();
+    const [isShowButton, setIsShowButton] = useState<boolean>(false);
 
     const form = useForm<UserChangePasswordDtoInput>({
         resolver: zodResolver(UserChangePasswordSchema),
@@ -61,10 +62,10 @@ export default function UserChangePasswordForm() {
         formValues,
         { setError },
     ) => {
+        setIsShowButton(false)
         try {
             await authUser.changePassword(formValues, {
-                token: token as string,
-                email: searchParams.get("email"),
+                token: searchParams.get("token") as string,
             });
             snackbarSuccess(
                 t(
@@ -73,7 +74,22 @@ export default function UserChangePasswordForm() {
             );
             router.push(FULL_PATH_ROUTE.login.path);
         } catch (error) {
-            errorFormHandlerWithAlert({ error, setError, t, formValues });
+            errorFormHandlerWithAlert({
+                error,
+                setError,
+                t,
+                formValues,
+                fallback: {
+                    validation: {
+                        callback() {
+                            const { data } = error as ApiErrorResponse;
+                            const err = data as ErrorsWithMessages;
+                            if (err.root?.[0].data?.isShowButton)
+                                setIsShowButton(true);
+                        },
+                    },
+                },
+            });
         }
     };
 
@@ -90,6 +106,13 @@ export default function UserChangePasswordForm() {
                 />
                 <Box mt={2} gap={2} display={"flex"} flexDirection={"column"}>
                     <FormAlert />
+                    {isShowButton && (
+                        <Link href={FULL_PATH_ROUTE.forgotPasssword.path}>
+                            <StyledButton fullWidth variant="outlined">
+                                {t("pages.forgotPassword.name")}
+                            </StyledButton>
+                        </Link>
+                    )}
                     <SubmitButton />
                 </Box>
             </Form>

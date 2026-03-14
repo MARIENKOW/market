@@ -10,6 +10,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { AvailableLanguage } from "@myorg/shared/i18n";
 import UserAuthProvider from "@/components/wrappers/auth/UserAuthProvider";
 import { getUserAuth } from "@/utils/cache/user.cache.me";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -52,15 +53,21 @@ export default async function RootLayout({
                 }}
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <NextIntlClientProvider>
-                    <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-                        <ThemeRegistry themeMode={themeMode}>
-                            <UserAuthProvider error={error} user={user}>
-                                <ClientProvider>{children}</ClientProvider>
-                            </UserAuthProvider>
-                        </ThemeRegistry>
-                    </AppRouterCacheProvider>
-                </NextIntlClientProvider>
+                <GoogleOAuthProvider
+                    clientId={process.env.GOOGLE_CLIENT_ID as string}
+                >
+                    <NextIntlClientProvider>
+                        <AppRouterCacheProvider
+                            options={{ enableCssLayer: true }}
+                        >
+                            <ThemeRegistry themeMode={themeMode}>
+                                <UserAuthProvider error={error} user={user}>
+                                    <ClientProvider>{children}</ClientProvider>
+                                </UserAuthProvider>
+                            </ThemeRegistry>
+                        </AppRouterCacheProvider>
+                    </NextIntlClientProvider>
+                </GoogleOAuthProvider>
             </body>
         </html>
     );

@@ -1,6 +1,10 @@
 import { ResetPasswordTokenUser, User } from "@/generated/prisma";
 import { PrismaService } from "@/modules/prisma/prisma.service";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from "@nestjs/common";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { UserService } from "@/modules/user/user.service";
@@ -8,13 +12,20 @@ import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { MailerService } from "@/modules/mailer/mailer.service";
+import { HashService } from "@/modules/hash/hash.service";
+import { JwtService } from "@nestjs/jwt";
 
+export type RememberPasswordTokenUserPayload = {
+    userId: string;
+};
 @Injectable()
 export class ResetPasswordTokenUserService {
     constructor(
         private prisma: PrismaService,
         private mailerService: MailerService,
         private user: UserService,
+        private hash: HashService,
+        private jwt: JwtService,
         private i18n: I18nService<MessageStructure>,
     ) {}
     private expires = 15 * 60 * 1000; //15 мин
@@ -53,27 +64,34 @@ export class ResetPasswordTokenUserService {
             where: { id },
         });
     }
-    private createToken(): string {
-        return crypto.randomBytes(32).toString("hex");
+
+    private createToken(payload: RememberPasswordTokenUserPayload): string {
+        return this.jwt.sign(payload, {
+            secret: process.env.JWT_SECRET,
+        });
+    }
+    verifyToken(token: string): RememberPasswordTokenUserPayload {
+        return this.jwt.verify(token, {
+            secret: process.env.JWT_SECRET,
+        });
     }
     isExpireToken(model: ResetPasswordTokenUser): boolean {
         const time = model.expiresAt.getTime() - new Date().getTime();
         if (time <= 0) return true;
         return false;
     }
-    async check({
-        token,
-        email,
-    }: {
-        token: string;
-        email?: string;
-    }): Promise<true> {
-        if (!email) throw new NotFoundException();
-        const userData = await this.user.findByEmail(email);
+    async check({ token }: { token: string }): Promise<true> {
+        let payload;
+        try {
+            payload = this.verifyToken(decodeURIComponent(token));
+        } catch (error) {
+            throw new NotFoundException();
+        }
+        const userData = await this.user.findById(payload.userId);
         if (!userData) throw new NotFoundException();
         const resetPasswordToken = await this.findByUserId(userData.id);
         if (!resetPasswordToken) throw new NotFoundException();
-        const isValid = await this.isTokenEqualHash(
+        const isValid = this.hash.verifySha256(
             token,
             resetPasswordToken.tokenHash,
         );
@@ -93,15 +111,11 @@ export class ResetPasswordTokenUserService {
 
         return true;
     }
-    async isTokenEqualHash(token: string, hash: string): Promise<boolean> {
-        const data = await bcrypt.compare(token, hash);
-        return data;
-    }
     async create(
         userId: string,
     ): Promise<ResetPasswordTokenUser & { token: string }> {
-        const token = this.createToken();
-        const tokenHash = await bcrypt.hash(token, 12);
+        const token = this.createToken({ userId });
+        const tokenHash = this.hash.sha256(token);
         const data = await this.prisma.resetPasswordTokenUser.create({
             data: {
                 userId,

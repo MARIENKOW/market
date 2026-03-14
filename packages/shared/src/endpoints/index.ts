@@ -10,6 +10,9 @@ export const ENDPOINT = {
             login: {
                 path: "login",
             },
+            google: {
+                path: "google",
+            },
             forgotPassword: {
                 path: "forgot-password",
             },

@@ -36,7 +36,7 @@ export const COOKIE_CONFIG: CookieOptions = {
     path: "/",
 };
 
-const { register, login, logout, forgotPassword, refresh, activate } =
+const { register, login, logout, forgotPassword, refresh, activate, google } =
     ENDPOINT.auth.user;
 
 @Controller()
@@ -72,8 +72,30 @@ export class AuthUserController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
+        const ip =
+            req.headers["x-forwarded-for"]?.toString()?.split(",")?.[0] ||
+            req.headers["x-real-ip"]?.[0] ||
+            req.socket.remoteAddress;
         const { accessToken, refreshToken } = await this.authUser.login(body, {
-            ip: req.ip,
+            ip,
+            userAgent: req.headers["user-agent"],
+        });
+        res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
+        res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
+        return true;
+    }
+    @Post(google.path)
+    async google(
+        @Body() body: { code: string },
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<true> {
+        const ip =
+            req.headers["x-forwarded-for"]?.toString()?.split(",")?.[0] ||
+            req.headers["x-real-ip"]?.[0] ||
+            req.socket.remoteAddress;
+        const { accessToken, refreshToken } = await this.authUser.google(body, {
+            ip,
             userAgent: req.headers["user-agent"],
         });
         res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
@@ -94,15 +116,12 @@ export class AuthUserController {
         @Body(new ZodValidationPipe(UserChangePasswordSchema))
         body: UserChangePasswordDtoOutput,
         @Param("token") token: string,
-        @Query("email") email: string,
     ): Promise<true> {
-        return await this.authUser.changePassword(body, { email, token });
+        return await this.authUser.changePassword(body, { token });
     }
 
     @Post(activate.path)
-    async activate(
-        @Body() body: { email?: string; token: string },
-    ): Promise<true> {
+    async activate(@Body() body: { token: string }): Promise<true> {
         return await this.authUser.activate(body);
     }
     @Post(activate.path + "/" + activate.send.path)
