@@ -19,17 +19,11 @@ import { useEffect } from "react";
 import { useWatch } from "react-hook-form";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/auth/GoogleAuthButton";
-import { Link, useRouter } from "@/i18n/navigation";
-
+import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
-import { $apiClient } from "@/utils/api/fetch.client";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Box } from "@mui/material";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { MessageKeyType } from "@myorg/shared/i18n";
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 const authUser = new AuthUserService($apiUserClient);
@@ -91,20 +85,6 @@ export default function UserRegisterForm() {
                     name="rePassword"
                     label="form.rePassword.label"
                 />
-                <Box display={"flex"} gap={2} justifyContent={"space-between"}>
-                    <Link href={FULL_PATH_ROUTE.login.path}>
-                        <Box alignItems={"center"} display={"inline-flex"}>
-                            <ArrowLeftIcon color="primary" />
-                            <StyledTypography
-                                lineHeight={"100%"}
-                                variant="body2"
-                                color="primary"
-                            >
-                                {t("pages.login.name")}
-                            </StyledTypography>
-                        </Box>
-                    </Link>
-                </Box>
                 <Box mt={2} gap={2} display={"flex"} flexDirection={"column"}>
                     <FormAlert />
                     <SubmitButton />

@@ -19,7 +19,6 @@ export default function ThemeRegistry({
             storageManager={null}
             defaultMode={themeMode}
             theme={theme}
-            // disableTransitionOnChange
         >
             <CssBaseline enableColorScheme />
             {children}
@@ -30,10 +29,9 @@ export default function ThemeRegistry({
 export function useThemeContext(serverMode: AvailableMode) {
     const { mode, setMode } = useColorScheme();
     const themeMode = mode !== undefined ? mode : serverMode;
-    const toggleTheme = async () => {
-        const newMode = themeMode === "dark" ? "light" : "dark";
-        setMode(newMode);
-        await setThemeMode(newMode);
+    const changeTheme = async (theme: AvailableMode) => {
+        setMode(theme);
+        await setThemeMode(theme);
     };
-    return { themeMode, toggleTheme };
+    return { themeMode, changeTheme };
 }

@@ -16,6 +16,26 @@ export class UserService {
     findById(id: string): Promise<User | null> {
         return this.find({ where: { id } });
     }
+    async changeTheme({
+        id,
+        theme,
+    }: {
+        theme: string;
+        id: string;
+    }): Promise<true> {
+        await this.prisma.user.update({ where: { id }, data: { theme } });
+        return true;
+    }
+    async changeLocale({
+        id,
+        locale,
+    }: {
+        locale: string;
+        id: string;
+    }): Promise<true> {
+        await this.prisma.user.update({ where: { id }, data: { locale } });
+        return true;
+    }
     async changePassword({
         password,
         id,

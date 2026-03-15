@@ -8,11 +8,13 @@ import { getTranslations } from "next-intl/server";
 import AuthNavigation from "@/components/features/auth/AuthNavigation";
 import { FULL_PATH_ROUTE, ROUTE } from "@myorg/shared/route";
 import { getUserAuth } from "@/utils/cache/user.cache.me";
+import { AvailableMode } from "@/theme/theme";
 
 export default async function Header() {
     const t = await getTranslations();
     const mode = await getThemeMode();
-    const { user, error } = await getUserAuth();
+    const { user } = await getUserAuth();
+
     return (
         <Box
         //  position={"fixed"} top={0} left={0}
@@ -33,9 +35,11 @@ export default async function Header() {
                         <Button>{t("pages.main.name")}</Button>
                     </Link>
                     <Box alignItems={"center"} display={"flex"} gap={1}>
-                        <ThemeChange serverMode={mode} />
+                        <ThemeChange
+                            serverMode={(user?.theme as AvailableMode) || mode}
+                        />
                         <LanguageChange />
-                        <AuthNavigation user={user} error={error} />
+                        <AuthNavigation />
                     </Box>
                 </Box>
             </ContainerComponent>

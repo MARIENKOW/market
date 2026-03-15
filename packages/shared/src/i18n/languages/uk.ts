@@ -47,9 +47,10 @@ export const uk = {
                         "Регистрация успешна!. Ссылка для активации была отправлена на почту. Время действия: {time}",
                 },
             },
+            login: "Уже есть аккаунт?",
         },
         login: {
-            name: "Авторизация",
+            name: "Вход",
             feedback: {
                 success: {
                     loginSuccess: "Авторизация успешна!",
@@ -64,6 +65,7 @@ export const uk = {
                         "Аккаунт не активирован. Письмо для активации было отправлено на почту. Время действия: {time}",
                 },
             },
+            register: "Нет аккаунта?",
         },
         activate: {
             feedback: {
@@ -92,6 +94,7 @@ export const uk = {
                 },
             },
             name: "Забыли пароль?",
+            login: "Вернуться ко входу",
             feedback: {
                 errors: {
                     alreadySent:
@@ -99,6 +102,12 @@ export const uk = {
                 },
                 success:
                     "Письмо с ссылкой на восстановление отправлено. Время действия ссылки: {time}",
+            },
+        },
+        profile: {
+            name: "Мой аккаунт",
+            settings: {
+                name: "Настройки",
             },
         },
         notFound: {
@@ -156,6 +165,12 @@ export const uk = {
         },
     },
     features: {
+        theme: {
+            name: "Тема",
+        },
+        language: {
+            name: "Язык",
+        },
         logout: {
             name: "Выйти",
             error: "Не удалось выйти с аккаунта! Попробуйте позже",

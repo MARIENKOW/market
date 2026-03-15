@@ -19,7 +19,7 @@ export async function setThemeMode(theme: AvailableMode) {
     const cookieStore = await cookies();
 
     cookieStore.set("theme", theme, {
-        httpOnly: false, // Allow client to read it
+        httpOnly: false,
         maxAge: 60 * 60 * 24 * 365,
     });
 }

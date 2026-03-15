@@ -7,10 +7,13 @@ import { setRequestLocale } from "next-intl/server";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 import { getThemeMode } from "@/theme/themeMode";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { AvailableLanguage } from "@myorg/shared/i18n";
+import { AvailableLanguage, languages } from "@myorg/shared/i18n";
 import UserAuthProvider from "@/components/wrappers/auth/UserAuthProvider";
 import { getUserAuth } from "@/utils/cache/user.cache.me";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AvailableMode } from "@/theme/theme";
+import { redirect } from "@/i18n/navigation";
+import { getHeaderValue } from "@/actions/headers.actions";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -41,10 +44,13 @@ export default async function RootLayout({
     const themeMode = await getThemeMode();
 
     const { user, error } = await getUserAuth();
+
+    const newTheme = user?.theme || themeMode;
+
     setRequestLocale(locale as AvailableLanguage);
 
     return (
-        <html className={themeMode} lang={locale}>
+        <html className={newTheme} lang={locale}>
             <body
                 style={{
                     display: "flex",
@@ -60,7 +66,9 @@ export default async function RootLayout({
                         <AppRouterCacheProvider
                             options={{ enableCssLayer: true }}
                         >
-                            <ThemeRegistry themeMode={themeMode}>
+                            <ThemeRegistry
+                                themeMode={newTheme as AvailableMode}
+                            >
                                 <UserAuthProvider error={error} user={user}>
                                     <ClientProvider>{children}</ClientProvider>
                                 </UserAuthProvider>

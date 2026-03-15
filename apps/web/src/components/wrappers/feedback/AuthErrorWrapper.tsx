@@ -1,3 +1,5 @@
+"use client";
+
 import AuthErrorElement from "@/components/feedback/error/AuthErrorElement";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledDialog } from "@/components/ui/StyledDialog";

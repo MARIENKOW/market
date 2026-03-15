@@ -8,7 +8,7 @@ import {
 } from "@react-oauth/google";
 import { StyledButton } from "@/components/ui/StyledButton";
 import GoogleIcon from "@mui/icons-material/Google";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 import { snackbarError } from "@/utils/snackbar/snackbar.error";
@@ -24,6 +24,7 @@ export default function GoogleAuthButton({
 }: {
     redirectTo?: string;
 }) {
+    const [loading, setLoading] = useState<boolean>(false);
     // const l = useGoogleOneTapLogin({
     //     onSuccess: (r) => {
     //         console.log(r);
@@ -42,6 +43,8 @@ export default function GoogleAuthButton({
                 router.refresh();
             } catch (error) {
                 errorHandler({ error, t });
+            }finally{
+                setLoading(false)
             }
         },
         onError: () => snackbarError(t("api.FALLBACK_ERR")),
@@ -49,7 +52,14 @@ export default function GoogleAuthButton({
     });
 
     return (
-        <StyledButton onClick={() => login()} variant="outlined">
+        <StyledButton
+            loading={loading}
+            onClick={() => {
+                setLoading(true);
+                login();
+            }}
+            variant="outlined"
+        >
             <GoogleIcon />
         </StyledButton>
     );

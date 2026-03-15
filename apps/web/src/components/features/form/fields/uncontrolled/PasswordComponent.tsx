@@ -5,11 +5,10 @@ import React, { MouseEvent, useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import { StyledFormControl } from "@/components/ui/StyledFormControl";
 import { StyledInputLabel } from "@/components/ui/StyledInputLabel";
-import { StyledFilledInput } from "@/components/ui/StyledFilledInput";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledFormHelperText } from "@/components/ui/StyledFormHelperText";
 import InputComponent from "@/components/features/form/fields/uncontrolled/InputComponent";
-import { FieldValue, FieldValues } from "react-hook-form";
+import PasswordOutlinedIcon from "@mui/icons-material/PasswordOutlined";
 
 type PasswordComponentProps = {
     label: string;
@@ -43,6 +42,11 @@ export const PasswordComponent = ({
                 type={showPassword ? "text" : "password"}
                 value={value}
                 onChange={onChange}
+                // startAdornment={
+                //     <InputAdornment position="start">
+                //         <PasswordOutlinedIcon />
+                //     </InputAdornment>
+                // }
                 endAdornment={
                     <InputAdornment position="end">
                         <StyledIconButton

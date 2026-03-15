@@ -1,7 +1,12 @@
 import UserSignUpForm from "@/components/form/UserRegisterForm";
 import { ContainerComponent } from "@/components/ui/Container";
-import { Box, Typography } from "@mui/material";
+import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { Link } from "@/i18n/navigation";
+import { Box } from "@mui/material";
 import { getTranslations } from "next-intl/server";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 
 export default async function Page() {
     const t = await getTranslations();
@@ -19,16 +24,32 @@ export default async function Page() {
                     display={"flex"}
                     flexDirection={"column"}
                 >
-                    <Typography
+                    <StyledTypography
                         fontWeight={600}
                         color={"primary"}
                         sx={{ textAlign: "center", mb: 3 }}
                         variant="h6"
-                        component="h2"
                     >
                         {t("pages.register.name")}
-                    </Typography>
+                    </StyledTypography>
                     <UserSignUpForm />
+                    <Box
+                        mt={2}
+                        display={"flex"}
+                        gap={1}
+                        justifyContent={"center"}
+                    >
+                        <StyledTypography>
+                            {t("pages.register.login")}
+                        </StyledTypography>
+                        <Link href={FULL_PATH_ROUTE.login.path}>
+                            <Box alignItems={"center"} display={"inline-flex"}>
+                                <StyledTypography color="primary">
+                                    {t("pages.login.name")}
+                                </StyledTypography>
+                            </Box>
+                        </Link>
+                    </Box>
                 </Box>
             </Box>
         </ContainerComponent>

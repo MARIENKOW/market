@@ -1,9 +1,15 @@
 "use client";
-import { Box, styled, Switch } from "@mui/material";
+import { Box, styled, Switch, useColorScheme } from "@mui/material";
 import { useThemeContext } from "@/theme/ThemeRegistry";
 import ModeNightIcon from "@mui/icons-material/ModeNight";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { AvailableMode } from "@/theme/theme";
+import { StyledTooltip } from "@/components/ui/StyledTooltip";
+import { useTranslations } from "next-intl";
+import { useUserAuth } from "@/components/wrappers/auth/UserAuthProvider";
+import { memo, useCallback, useEffect } from "react";
+import UserService from "@/services/user/user.service";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 45,
@@ -31,55 +37,73 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
         borderRadius: 99,
     },
 }));
+const userFetch = new UserService($apiUserClient);
 
 export default function ThemeChange({
     serverMode,
 }: {
     serverMode: AvailableMode;
 }) {
-    const { themeMode, toggleTheme } = useThemeContext(serverMode);
+    const { themeMode, changeTheme } = useThemeContext(serverMode);
 
+    const { user } = useUserAuth();
+    const t = useTranslations();
+    const handleChange = async (newMode: AvailableMode) => {
+        changeTheme(newMode);
+        if (user) {
+            try {
+                userFetch.changeTheme({ theme: newMode });
+            } catch (error) {}
+        }
+    };
+    useEffect(() => {
+        changeTheme(serverMode);
+    }, [serverMode]);
     return (
-        <>
-            <MaterialUISwitch
-                checked={themeMode === "dark"}
-                icon={
-                    <Box
-                        display={"flex"}
-                        alignItems="center"
-                        justifyContent="center"
-                        height="100%"
-                    >
-                        <LightModeOutlinedIcon
-                            fontSize="small"
-                            sx={{
-                                color: "text.primary",
-                                width: 15,
-                                height: 15,
-                            }}
-                        />
-                    </Box>
-                }
-                checkedIcon={
-                    <Box
-                        display={"flex"}
-                        alignItems="center"
-                        justifyContent="center"
-                        height="100%"
-                    >
-                        <ModeNightIcon
-                            fontSize="small"
-                            sx={{
-                                color: "text.primary",
-                                width: 15,
-                                height: 15,
-                            }}
-                        />
-                    </Box>
-                }
-                size="medium"
-                onChange={toggleTheme}
-            />
-        </>
+        <StyledTooltip title={t("features.theme.name")}>
+            <Box display={"inline-flex"}>
+                <MaterialUISwitch
+                    checked={themeMode === "dark"}
+                    icon={
+                        <Box
+                            display={"flex"}
+                            alignItems="center"
+                            justifyContent="center"
+                            height="100%"
+                        >
+                            <LightModeOutlinedIcon
+                                fontSize="small"
+                                sx={{
+                                    color: "text.primary",
+                                    width: 15,
+                                    height: 15,
+                                }}
+                            />
+                        </Box>
+                    }
+                    checkedIcon={
+                        <Box
+                            display={"flex"}
+                            alignItems="center"
+                            justifyContent="center"
+                            height="100%"
+                        >
+                            <ModeNightIcon
+                                fontSize="small"
+                                sx={{
+                                    color: "text.primary",
+                                    width: 15,
+                                    height: 15,
+                                }}
+                            />
+                        </Box>
+                    }
+                    size="medium"
+                    onChange={() =>
+                        handleChange(themeMode === "dark" ? "light" : "dark")
+                    }
+                />
+            </Box>
+        </StyledTooltip>
     );
 }

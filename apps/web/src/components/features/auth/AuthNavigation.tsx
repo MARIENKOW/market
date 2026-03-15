@@ -1,27 +1,20 @@
-"use client";
+"use server";
 
-import LogoutButton from "@/components/features/auth/LogoutButton";
-import SignOutButton from "@/components/features/auth/LogoutButton";
-import LoadingElement from "@/components/feedback/LoadingElement";
+import UserNavigation from "@/components/features/auth/UserNavigation";
 import SkeletonAuthHeader from "@/components/skeletons/auth/SkeletonAuthHeader";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { Link } from "@/i18n/navigation";
+import { getUserAuth } from "@/utils/cache/user.cache.me";
 import { Box } from "@mui/material";
-import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
-import { error } from "console";
-import { useTranslations } from "next-intl";
 
-export default function AuthNavigation({
-    user,
-    error,
-}: {
-    user: UserDto | null;
-    error: boolean;
-}) {
-    const t = useTranslations();
+import { getTranslations } from "next-intl/server";
+
+export default async function AuthNavigation() {
+    const { user, error } = await getUserAuth();
+    const t = await getTranslations();
     if (error) return <SkeletonAuthHeader />;
-    if (!!user) return <LogoutButton />;
+    if (!!user) return <UserNavigation user={user} />;
 
     return (
         <Box display={"flex"} gap={1}>
@@ -29,9 +22,6 @@ export default function AuthNavigation({
                 <StyledButton variant="contained">
                     {t("pages.login.name")}
                 </StyledButton>
-            </Link>
-            <Link href={FULL_PATH_ROUTE.register.path}>
-                <StyledButton>{t("pages.register.name")}</StyledButton>
             </Link>
         </Box>
     );

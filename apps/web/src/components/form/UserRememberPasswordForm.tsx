@@ -59,32 +59,6 @@ export default function UserRememberPasswordForm() {
                 label={"form.email.label"}
                 name={"email"}
             />
-            <Box display={"flex"} gap={2} justifyContent={"space-between"}>
-                <Link href={FULL_PATH_ROUTE.register.path}>
-                    <Box alignItems={"center"} display={"inline-flex"}>
-                        <ArrowLeftIcon color="primary" />
-                        <StyledTypography
-                            lineHeight={"100%"}
-                            variant="body2"
-                            color="primary"
-                        >
-                            {t("pages.register.name")}
-                        </StyledTypography>
-                    </Box>
-                </Link>
-                <Link href={FULL_PATH_ROUTE.login.path}>
-                    <Box alignItems={"center"} display={"inline-flex"}>
-                        <StyledTypography
-                            lineHeight={"100%"}
-                            variant="body2"
-                            color="primary"
-                        >
-                            {t("pages.login.name")}
-                        </StyledTypography>
-                        <ArrowRightIcon color="primary" />
-                    </Box>
-                </Link>
-            </Box>
             <Box mt={2} gap={2} display={"flex"} flexDirection={"column"}>
                 <FormAlert />
                 <SubmitButton />

@@ -41,6 +41,12 @@ export const ENDPOINT = {
         me: {
             path: "me",
         },
+        theme: {
+            path: "theme",
+        },
+        locale: {
+            path: "locale",
+        },
     },
     resetPasswordToken: {
         path: "reset-password-token",

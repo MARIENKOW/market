@@ -30,7 +30,7 @@ import { Auth } from "@/modules/auth/auth.decorator";
 
 export const COOKIE_CONFIG: CookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production" ? true : false,
+    secure: false,
     sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
     path: "/",

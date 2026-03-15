@@ -7,7 +7,7 @@ export const ROUTE = {
     forgotPasssword: { path: "forgot-password" },
     changePasssword: { path: "change-password" },
     register: { path: "register" },
-    profile: { path: "profile" },
+    profile: { path: "profile", settings: { path: "settings" } },
     admin: {
         path: "admin",
     },
@@ -21,6 +21,8 @@ type Route = typeof ROUTE;
 export const FULL_PATH_ROUTE = buildFullPaths<Route>(ROUTE);
 
 export const PRIVATE_USER_PATH: string[] = [FULL_PATH_ROUTE.profile.path];
+export const ADMIN_PATH: string[] = [FULL_PATH_ROUTE.admin.path];
+export const SUPERADMIN_PATH: string[] = [FULL_PATH_ROUTE.superadmin.path];
 
 export const USER_PRIVATE_FALLBACK_ROUTE: string = FULL_PATH_ROUTE.login.path;
 

@@ -4,6 +4,8 @@ model User {
   email         String   @unique
   passwordHash  String?
 
+  theme  String?
+  locale  String?
   status          Status @default(NOACTIVE)
 
   createdAt       DateTime  @default(now())
