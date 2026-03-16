@@ -12,42 +12,5 @@
             "dependsOn": ["build"]
         }
     },
-    // "globalEnv": [
-    //     "FOLDER",
-    //     "IMG_FOLDER",
-    //     "VIDEO_FOLDER",
-    //     "DOCUMENT_FOLDER",
-
-    //     "DB_HOST",
-    //     "DB_USER",
-    //     "DB_DATABASE",
-    //     "DB_PASSWORD",
-    //     "DB_CONNECT_TIMEOUT",
-    //     "DB_PORT",
-    //     "DB_PROVIDER",
-
-    //     "SMTP_HOST",
-    //     "SMTP_PORT",
-    //     "SMTP_USER",
-    //     "SMTP_PASSWORD",
-
-    //     "JWT_ACCESS_SECRET",
-    //     "JWT_REFRESH_SECRET",
-    //     "JWT_SECRET",
-
-    //     "TELEGRAM_BOT_TOKEN",
-    //     "TELEGRAM_CHAT_ID",
-
-    //     "GOOGLE_CLIENT_ID",
-    //     "GOOGLE_CLIENT_SECRET",
-
-    //     "NODE_ENV",
-
-    //     "ALLOWED_ORIGIN",
-
-    //     "NEXT_PUBLIC_SERVER_PORT",
-    //     "NEXT_PUBLIC_GLOBAL_PREFIX"
-    // ],
-    // "globalDependencies": ["**/.env.*"]
     "globalPassThroughEnv": ["*"]
 }
