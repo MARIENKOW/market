@@ -4,72 +4,72 @@ export const light = {
     palette: {
         mode: "light" as AvailableMode,
         primary: {
-            main: "#6366f1", // Indigo 500
-            dark: "#4f46e5", // Indigo 600
-            light: "#818cf8", // Indigo 400
+            main: "#c9973a",
+            dark: "#a87828",
+            light: "#e0b860",
             contrastText: "#ffffff",
         },
         secondary: {
-            main: "#ec4899", // Pink 500
-            dark: "#db2777", // Pink 600
-            light: "#f472b6", // Pink 400
+            main: "#7c5c2a",
+            dark: "#5a3e18",
+            light: "#a07840",
             contrastText: "#ffffff",
         },
         default: {
-            main: "#1c1c1cff", // Pink 500
-            dark: "#000000ff", // Pink 600
-            light: "#393939ff", // Pink 400
+            main: "#5c5040",
+            dark: "#2a1f0e",
+            light: "#9a8868",
             contrastText: "#ffffff",
         },
         success: {
-            main: "#10b981", // Emerald 500
-            dark: "#059669", // Emerald 600
-            light: "#34d399", // Emerald 400
+            main: "#2d8a5e",
+            dark: "#1a6040",
+            light: "#4aad80",
             contrastText: "#ffffff",
         },
         error: {
-            main: "#ef4444", // Red 500
-            dark: "#dc2626", // Red 600
-            light: "#f87171", // Red 400
+            main: "#c0392b",
+            dark: "#992d22",
+            light: "#e05a4e",
             contrastText: "#ffffff",
         },
         warning: {
-            main: "#f59e0b", // Amber 500
-            dark: "#d97706", // Amber 600
-            light: "#fbbf24", // Amber 400
+            main: "#e67e22",
+            dark: "#c0621a",
+            light: "#f0a050",
             contrastText: "#ffffff",
         },
         info: {
-            main: "#3b82f6", // Blue 500
-            dark: "#2563eb", // Blue 600
-            light: "#60a5fa", // Blue 400
+            main: "#2980b9",
+            dark: "#1a6090",
+            light: "#4a9ed0",
             contrastText: "#ffffff",
         },
         background: {
-            default: "#f8fafc", // Slate 50
-            paper: "#ffffff", // White
+            default: "#f0ead8",
+            paper: "#f8f4ec",
         },
         text: {
-            primary: "#0f172a", // Slate 900
-            secondary: "#475569", // Slate 600
-            disabled: "#94a3b8", // Slate 400
+            primary: "#2a1f0e",
+            secondary: "#7a6848",
+            disabled: "#c0b090",
         },
-        divider: "#e2e8f0", // Slate 200
+        divider: "#d8ccb0",
         action: {
-            active: "#1e293b", // Slate 800
-            hover: "rgba(0,0,0,0.04)",
-            selected: "rgba(0,0,0,0.08)",
-            disabled: "#64748b", // Slate 500
-            disabledBackground: "rgba(0,0,0,0.12)",
+            active: "#2a1f0e",
+            hover: "rgba(201,151,58,0.08)",
+            selected: "rgba(201,151,58,0.15)",
+            disabled: "#a89878",
+            disabledBackground: "rgba(0,0,0,0.06)",
         },
         common: {
-            black: "#0f172a", // Slate 900
-            white: "#ffffff", // White
-            onBackgroundChanel: "#f1f5f9",
+            black: "#2a1f0e",
+            white: "#f8f4ec",
+            onBackgroundChanel: "#e8e0c8",
         },
         hoverOpacity: 0.08,
         disabledOpacity: 0.38,
-        focus: "rgba(99,102,241,0.12)",
+        focus: "rgba(201,151,58,0.18)",
         focusOpacity: 0.12,
         activatedOpacity: 0.12,
     },
