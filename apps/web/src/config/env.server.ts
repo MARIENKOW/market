@@ -13,9 +13,7 @@ const parsed = serverEnvSchema.safeParse(process.env);
 
 if (!parsed.success) {
     console.error("\n❌ Ошибка валидации серверных переменных окружения:\n");
-    // parsed.error.errors.forEach((e) => {
-    //     console.error(`   • ${e.path.join(".")}: ${e.message}`);
-    // });
+    console.error(parsed.error);
     throw new Error("Invalid server environment variables");
 }
 

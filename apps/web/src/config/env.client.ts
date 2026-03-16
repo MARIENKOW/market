@@ -9,14 +9,14 @@ import { clientEnvSchema } from "@myorg/shared/env";
 //
 // НЕ импортировать в клиентские компоненты ('use client')
 
-const parsed = clientEnvSchema.safeParse(process.env);
+const parsed = clientEnvSchema.safeParse({
+    NEXT_PUBLIC_API_GLOBAL_PREFIX: process.env.NEXT_PUBLIC_API_GLOBAL_PREFIX,
+    NEXT_PUBLIC_API_ORIGIN_CLIENT: process.env.NEXT_PUBLIC_API_ORIGIN_CLIENT,
+});
 
 if (!parsed.success) {
     console.error("\n❌ Ошибка валидации серверных переменных окружения:\n");
-    // parsed.error.errors.forEach((e) => {
-    //     console.error(`   • ${e.path.join(".")}: ${e.message}`);
-    // });
-    throw new Error("Invalid server environment variables");
+    console.error(parsed.error);
+    throw new Error("Invalid client environment variables");
 }
-
 export const clientEnv = parsed.data;

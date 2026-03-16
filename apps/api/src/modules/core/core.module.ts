@@ -1,3 +1,4 @@
+import { RequestContextService } from "@/common/request-context/request-context.service";
 import { AuthGuard } from "@/modules/auth/auth.guard";
 
 import { SessionUserModule } from "@/modules/session/user/session.user.module";
@@ -9,6 +10,6 @@ import { Reflector } from "@nestjs/core";
 @Module({
     imports: [SessionUserModule, UserModule],
     providers: [AuthGuard, Reflector],
-    exports: [AuthGuard],
+    exports: [AuthGuard ],
 })
 export class CoreModule {}

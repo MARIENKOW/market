@@ -27,10 +27,11 @@ import { ZodValidationPipe } from "@/common/pipe/zod-validation";
 import { CookieOptions, Request, Response } from "express";
 import { AuthGuard } from "@/modules/auth/auth.guard";
 import { Auth } from "@/modules/auth/auth.decorator";
+import { env } from "@/config";
 
 export const COOKIE_CONFIG: CookieOptions = {
     httpOnly: true,
-    secure: false,
+    secure: env.HTTPS,
     sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
     path: "/",
@@ -72,14 +73,7 @@ export class AuthUserController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
-        const ip =
-            req.headers["x-forwarded-for"]?.toString()?.split(",")?.[0] ||
-            req.headers["x-real-ip"]?.[0] ||
-            req.socket.remoteAddress;
-        const { accessToken, refreshToken } = await this.authUser.login(body, {
-            ip,
-            userAgent: req.headers["user-agent"],
-        });
+        const { accessToken, refreshToken } = await this.authUser.login(body);
         res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
         res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
         return true;
@@ -90,14 +84,7 @@ export class AuthUserController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
-        const ip =
-            req.headers["x-forwarded-for"]?.toString()?.split(",")?.[0] ||
-            req.headers["x-real-ip"]?.[0] ||
-            req.socket.remoteAddress;
-        const { accessToken, refreshToken } = await this.authUser.google(body, {
-            ip,
-            userAgent: req.headers["user-agent"],
-        });
+        const { accessToken, refreshToken } = await this.authUser.google(body);
         res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
         res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
         return true;

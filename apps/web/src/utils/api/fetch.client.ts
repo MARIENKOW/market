@@ -14,7 +14,10 @@ export const $apiClient = async <T>(
 
     let newHeaders = options.headers || {};
     return await fetchCustom<T>(
-        "/" + clientEnv.NEXT_PUBLIC_GLOBAL_PREFIX + path,
+        clientEnv.NEXT_PUBLIC_API_ORIGIN_CLIENT +
+            "/" +
+            clientEnv.NEXT_PUBLIC_API_GLOBAL_PREFIX +
+            path,
         {
             ...defaultOptions,
             ...options,

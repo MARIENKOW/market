@@ -44,17 +44,15 @@ export default function ThemeChange({
 }: {
     serverMode: AvailableMode;
 }) {
+    console.log(serverMode);
     const { themeMode, changeTheme } = useThemeContext(serverMode);
 
     const { user } = useUserAuth();
+    console.log(user);
     const t = useTranslations();
     const handleChange = async (newMode: AvailableMode) => {
         changeTheme(newMode);
-        if (user) {
-            try {
-                userFetch.changeTheme({ theme: newMode });
-            } catch (error) {}
-        }
+        if (user) userFetch.changeTheme({ theme: newMode }).catch(() => {});
     };
     useEffect(() => {
         changeTheme(serverMode);

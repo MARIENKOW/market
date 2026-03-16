@@ -77,10 +77,11 @@ export class AuthUserService {
 
         return { accessTokenUser: accessToken, refreshTokenUser: refreshToken };
     }
-    async google(
-        { code }: { code: string },
-        { ip, userAgent }: { ip?: string; userAgent?: string },
-    ): Promise<{ accessToken: string; refreshToken: string }> {
+    async google({
+        code,
+    }: {
+        code: string;
+    }): Promise<{ accessToken: string; refreshToken: string }> {
         console.log(
             "objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject",
         );
@@ -116,14 +117,11 @@ export class AuthUserService {
 
         const sessionUserData = await this.sessionUser.create({
             userId: user.id,
-            ip,
-            userAgent,
         });
         return sessionUserData;
     }
     async login(
         body: UserLoginDtoOutput,
-        { ip, userAgent }: { ip?: string; userAgent?: string },
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const { email, password } = body;
         const user = await this.user.findByEmail(email);
@@ -211,9 +209,6 @@ export class AuthUserService {
 
         const sessionUserData = await this.sessionUser.create({
             userId: user.id,
-            ip,
-
-            userAgent,
         });
         return sessionUserData;
     }

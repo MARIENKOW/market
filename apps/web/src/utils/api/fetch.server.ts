@@ -2,6 +2,7 @@
 
 import { getAllCookieToClient } from "@/actions/cookies.actions";
 import { clientEnv } from "@/config/env.client";
+import { serverEnv } from "@/config/env.server";
 import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
 
 export const $apiServer = async <T>(
@@ -19,10 +20,9 @@ export const $apiServer = async <T>(
 
     let newHeaders = options.headers || {};
     return await fetchCustom<T>(
-        "http://localhost:" +
-            clientEnv.NEXT_PUBLIC_SERVER_PORT +
+        serverEnv.API_ORIGIN_SERVER +
             "/" +
-            clientEnv.NEXT_PUBLIC_GLOBAL_PREFIX +
+            clientEnv.NEXT_PUBLIC_API_GLOBAL_PREFIX +
             path,
         {
             ...defaultOptions,

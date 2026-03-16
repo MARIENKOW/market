@@ -5,11 +5,12 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { I18nService } from "nestjs-i18n";
 import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
+import { env } from "@/config";
 
 export interface SendForgotPasswordOptions {
     to: string;
     token: string;
-    origin: string;
+    origin?: string;
     expires: number;
 }
 
@@ -25,11 +26,11 @@ export class MailerService implements OnModuleInit {
             // debug: true,
             // logger: true,
             secure: true,
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT ? +process.env.SMTP_PORT : 465,
+            host: env.SMTP_HOST,
+            port: env.SMTP_PORT,
             auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD,
+                user: env.SMTP_USER,
+                pass: env.SMTP_PASSWORD,
             },
             pool: true,
 
@@ -53,6 +54,7 @@ export class MailerService implements OnModuleInit {
         expires,
         origin,
     }: SendForgotPasswordOptions) {
+        console.log(origin);
         const resetUrl = `${origin}${FULL_PATH_ROUTE.changePasssword.path}?token=${encodeURIComponent(token)}`;
 
         const html = `
@@ -67,7 +69,7 @@ export class MailerService implements OnModuleInit {
             </body>
             </html>`;
         await this.transporter.sendMail({
-            from: process.env.SMTP_USER,
+            from: env.SMTP_USER,
             to,
             subject: this.i18n.t("mail.resetPassword.text"),
             html,
@@ -94,7 +96,7 @@ export class MailerService implements OnModuleInit {
             </body>
             </html>`;
         await this.transporter.sendMail({
-            from: process.env.SMTP_USER,
+            from: env.SMTP_USER,
             to,
             subject: this.i18n.t("mail.activate.text"),
             html,

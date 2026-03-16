@@ -54,8 +54,10 @@ export const serverEnvSchema = z
         GOOGLE_CLIENT_SECRET: z.string().min(1),
 
         // Misc
-        SSL: boolStr.default(false),
+        HTTPS: boolStr.default(false),
         ALLOWED_ORIGIN: csvString,
+        SERVER_PORT: z.coerce.number().int().positive(),
+        API_ORIGIN_SERVER: z.string(),
     })
     .transform((data) => ({
         ...data,
@@ -64,8 +66,8 @@ export const serverEnvSchema = z
 
 /** Только NEXT_PUBLIC_ — безопасно импортировать где угодно, в том числе на клиенте */
 export const clientEnvSchema = z.object({
-    NEXT_PUBLIC_SERVER_PORT: z.coerce.number().int().positive().default(8000),
-    NEXT_PUBLIC_GLOBAL_PREFIX: z.string().default("api"),
+    NEXT_PUBLIC_API_GLOBAL_PREFIX: z.string(),
+    NEXT_PUBLIC_API_ORIGIN_CLIENT: z.string(),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

@@ -22,7 +22,6 @@ import { OAuth2Client } from "google-auth-library";
         HashService,
         OAuth2Client,
         JwtService,
-        RequestContextService,
     ],
     controllers: [AuthUserController],
     exports: [AuthUserService],

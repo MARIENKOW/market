@@ -4,6 +4,8 @@ import { JwtService } from "@nestjs/jwt";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import * as crypto from "crypto";
 import { HashService } from "@/modules/hash/hash.service";
+import { env } from "@/config";
+import { RequestContextService } from "@/common/request-context/request-context.service";
 
 export type AccessTokenUserPayload = { userId: string; sessionId: string };
 export type RefreshTokenUserPayload = { userId: string; sessionId: string };
@@ -13,6 +15,7 @@ export class SessionUserService {
         private prisma: PrismaService,
         private jwt: JwtService,
         private hash: HashService,
+        private requestContext: RequestContextService,
     ) {}
 
     private ACCESS_TOKEN_EXPIRES = 10;
@@ -45,25 +48,25 @@ export class SessionUserService {
     }
     private generateAccessToken(playload: AccessTokenUserPayload): string {
         return this.jwt.sign(playload, {
-            secret: process.env.JWT_ACCESS_SECRET,
+            secret: env.JWT_ACCESS_SECRET,
             expiresIn: this.ACCESS_TOKEN_EXPIRES,
         });
     }
 
     verifyAccessToken(accessTokenUser: string): AccessTokenUserPayload {
         return this.jwt.verify(accessTokenUser, {
-            secret: process.env.JWT_ACCESS_SECRET,
+            secret: env.JWT_ACCESS_SECRET,
         });
     }
     private generateRefreshToken(playload: AccessTokenUserPayload): string {
         return this.jwt.sign(playload, {
-            secret: process.env.JWT_REFRESH_SECRET,
+            secret: env.JWT_REFRESH_SECRET,
             expiresIn: this.REFRESH_TOKEN_EXPIRES,
         });
     }
     verifyRefreshToken(refreshTokenUser: string): AccessTokenUserPayload {
         return this.jwt.verify(refreshTokenUser, {
-            secret: process.env.JWT_REFRESH_SECRET,
+            secret: env.JWT_REFRESH_SECRET,
         });
     }
     async refresh(refreshTokenUser: string): Promise<{
@@ -128,15 +131,10 @@ export class SessionUserService {
     }
     async create({
         userId,
-        ip,
-        userAgent,
     }: {
         userId: string;
-        ip?: string;
-        userAgent?: string;
     }): Promise<{ accessToken: string; refreshToken: string }> {
         const id = this.createId();
-        const normalizeIp = ip ? this.normalizeIp(ip) : "";
         const refreshToken = this.generateRefreshToken({
             userId,
             sessionId: id,
@@ -151,8 +149,8 @@ export class SessionUserService {
                     Date.now() + this.REFRESH_TOKEN_EXPIRES * 1000,
                 ),
                 refreshTokenHash,
-                ip: normalizeIp,
-                userAgent,
+                ip: this.requestContext.ip,
+                userAgent: this.requestContext.userAgent,
                 lastUsedAt: new Date(),
             },
         });

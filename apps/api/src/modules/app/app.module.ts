@@ -11,12 +11,13 @@ import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { defaultLanguage } from "@myorg/shared/i18n";
 import { TsI18nLoader } from "@/lib/i18n/i18n.loader";
 import { RequestContextMiddleware } from "@/common/request-context/request-context.middleware";
-import { RequestContextService } from "@/common/request-context/request-context.service";
+import { RequestContextModule } from "@/common/request-context/request-context.module";
 @Module({
     imports: [
         AuthRegisterModule,
         AuthModule,
         CoreModule,
+        RequestContextModule,
         I18nModule.forRoot({
             loaderOptions: {},
             fallbackLanguage: defaultLanguage,
@@ -26,10 +27,10 @@ import { RequestContextService } from "@/common/request-context/request-context.
         }),
     ],
     controllers: [AppController],
-    providers: [AppService, RequestContextService],
+    providers: [AppService],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(RequestContextMiddleware).forRoutes("*");
+        consumer.apply(RequestContextMiddleware).forRoutes("*path");
     }
 }

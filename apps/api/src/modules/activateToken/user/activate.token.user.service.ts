@@ -10,6 +10,7 @@ import { MailerService } from "@/modules/mailer/mailer.service";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { JwtService } from "@nestjs/jwt";
 import { HashService } from "@/modules/hash/hash.service";
+import { env } from "@/config";
 
 export type ActivateTokenUserPayload = { userId: string };
 
@@ -30,7 +31,7 @@ export class ActivateTokenUserService {
         if (isExpire) return null;
         return activateToken;
     }
-    async createAndSend(userData: User, origin: string): Promise<number> {
+    async createAndSend(userData: User, origin?: string): Promise<number> {
         const { expires, token, id } = await this.create(userData.id);
         try {
             await this.mailerService.sendActivateToken({
@@ -57,12 +58,12 @@ export class ActivateTokenUserService {
     }
     private createToken(payload: ActivateTokenUserPayload): string {
         return this.jwt.sign(payload, {
-            secret: process.env.JWT_SECRET,
+            secret: env.JWT_SECRET,
         });
     }
     verifyToken(token: string): ActivateTokenUserPayload {
         return this.jwt.verify(token, {
-            secret: process.env.JWT_SECRET,
+            secret: env.JWT_SECRET,
         });
     }
     isExpireToken(model: ActivateTokenUser): boolean {

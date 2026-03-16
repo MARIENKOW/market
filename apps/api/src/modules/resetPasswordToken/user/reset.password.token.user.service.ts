@@ -14,6 +14,7 @@ import { MessageStructure } from "@myorg/shared/i18n";
 import { MailerService } from "@/modules/mailer/mailer.service";
 import { HashService } from "@/modules/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
+import { env } from "@/config";
 
 export type RememberPasswordTokenUserPayload = {
     userId: string;
@@ -44,7 +45,7 @@ export class ResetPasswordTokenUserService {
         }
         return resetTokenData;
     }
-    async createAndSend(user: User, origin: string): Promise<number> {
+    async createAndSend(user: User, origin?: string): Promise<number> {
         const { token, id } = await this.create(user.id);
         try {
             await this.mailerService.sendForgotPassword({
@@ -67,12 +68,12 @@ export class ResetPasswordTokenUserService {
 
     private createToken(payload: RememberPasswordTokenUserPayload): string {
         return this.jwt.sign(payload, {
-            secret: process.env.JWT_SECRET,
+            secret: env.JWT_SECRET,
         });
     }
     verifyToken(token: string): RememberPasswordTokenUserPayload {
         return this.jwt.verify(token, {
-            secret: process.env.JWT_SECRET,
+            secret: env.JWT_SECRET,
         });
     }
     isExpireToken(model: ResetPasswordTokenUser): boolean {
