@@ -1,5 +1,5 @@
+import { clientEnv } from "@/config/env.client";
 import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
-import AuthUserService from "@/services/auth/user/auth.user.service";
 
 export const $apiClient = async <T>(
     path: string,
@@ -13,9 +13,8 @@ export const $apiClient = async <T>(
     };
 
     let newHeaders = options.headers || {};
-
     return await fetchCustom<T>(
-        "/" + process.env.NEXT_PUBLIC_GLOBAL_PREFIX + path,
+        "/" + clientEnv.NEXT_PUBLIC_GLOBAL_PREFIX + path,
         {
             ...defaultOptions,
             ...options,
