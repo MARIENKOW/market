@@ -1,5 +1,6 @@
 import { serverEnvSchema } from "@myorg/shared/env";
 
+
 // Этот файл можно импортировать ТОЛЬКО в:
 //   - Server Components
 //   - Route Handlers (app/api/...)
