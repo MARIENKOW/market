@@ -1,4 +1,4 @@
-enum Status {
+enum StatusUser {
   ACTIVE
   NOACTIVE
 }

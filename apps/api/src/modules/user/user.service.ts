@@ -1,8 +1,7 @@
-import { Prisma, ResetPasswordTokenUser, User } from "@/generated/prisma";
+import { Prisma, User } from "@/generated/prisma";
+import { SessionUserService } from "@/modules/auth/user/session/session.user.service";
 import { HashService } from "@/modules/hash/hash.service";
 import { PrismaService } from "@/modules/prisma/prisma.service";
-import { SessionUserService } from "@/modules/session/user/session.user.service";
-
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 
 @Injectable()

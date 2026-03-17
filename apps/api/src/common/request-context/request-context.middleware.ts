@@ -33,7 +33,6 @@ export class RequestContextMiddleware implements NestMiddleware {
         // За nginx: X-Forwarded-For: "реальный_ip, proxy1, proxy2"
         // Берём первый — он и есть клиент
 
-
         const forwarded = req.headers["x-forwarded-for"];
 
         if (forwarded) {
@@ -41,7 +40,6 @@ export class RequestContextMiddleware implements NestMiddleware {
                 ? forwarded[0].split(",")[0].trim()
                 : forwarded.split(",")[0].trim();
         }
-        console.log(req.headers);
         // X-Real-IP — nginx может слать именно этот заголовок
         const realIp = req.headers["x-real-ip"];
         if (realIp) {

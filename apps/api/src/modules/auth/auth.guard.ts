@@ -12,11 +12,8 @@ import { Reflector } from "@nestjs/core";
 import { Request } from "express";
 import { AUTH_TYPE_KEY } from "@/modules/auth/auth.decorator";
 import { AuthType } from "@/modules/auth/auth.actor.type";
-import {
-    AccessTokenUserPayload,
-    SessionUserService,
-} from "@/modules/session/user/session.user.service";
 import { UserService } from "@/modules/user/user.service";
+import { SessionUserService,AccessTokenUserPayload } from "@/modules/auth/user/session/session.user.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {

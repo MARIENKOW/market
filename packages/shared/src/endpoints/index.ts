@@ -35,9 +35,42 @@ export const ENDPOINT = {
                 path: "logout",
             },
         },
+        admin: {
+            path: "admin",
+            login: {
+                path: "login",
+            },
+            google: {
+                path: "google",
+            },
+            forgotPassword: {
+                path: "forgot-password",
+            },
+            refresh: {
+                path: "refresh",
+            },
+            changePassword: {
+                path: "change-password",
+            },
+            logout: {
+                path: "logout",
+            },
+        },
     },
     user: {
         path: "user",
+        me: {
+            path: "me",
+        },
+        theme: {
+            path: "theme",
+        },
+        locale: {
+            path: "locale",
+        },
+    },
+    admin: {
+        path: "admin",
         me: {
             path: "me",
         },
@@ -53,6 +86,10 @@ export const ENDPOINT = {
         user: {
             check: { path: "check" },
             path: "user",
+        },
+        admin: {
+            check: { path: "check" },
+            path: "admin",
         },
     },
 } as const;

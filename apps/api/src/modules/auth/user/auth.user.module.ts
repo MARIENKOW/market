@@ -2,27 +2,21 @@ import { Module } from "@nestjs/common";
 import { AuthUserController } from "@/modules/auth/user/auth.user.controller";
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
 import { UserModule } from "@/modules/user/user.module";
-import { SessionUserService } from "@/modules/session/user/session.user.service";
 import { ResetPasswordTokenUserModule } from "@/modules/resetPasswordToken/user/reset.password.token.user.module";
-import { ActivateTokenUserModule } from "../../activateToken/user/activate.token.user.module";
+import { ActivateTokenUserModule } from "../../activateToken/activate.token.user.module";
 import { HashService } from "@/modules/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
-import { RequestContextService } from "@/common/request-context/request-context.service";
 import { OAuth2Client } from "google-auth-library";
+import { SessionUserModule } from "@/modules/auth/user/session/session.user.module";
 
 @Module({
     imports: [
         UserModule,
         ResetPasswordTokenUserModule,
         ActivateTokenUserModule,
+        SessionUserModule,
     ],
-    providers: [
-        AuthUserService,
-        SessionUserService,
-        HashService,
-        OAuth2Client,
-        JwtService,
-    ],
+    providers: [AuthUserService, HashService, OAuth2Client, JwtService],
     controllers: [AuthUserController],
     exports: [AuthUserService],
 })

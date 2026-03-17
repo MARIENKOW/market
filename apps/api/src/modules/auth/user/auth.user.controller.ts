@@ -85,6 +85,7 @@ export class AuthUserController {
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         const { accessToken, refreshToken } = await this.authUser.google(body);
+        console.log(accessToken,refreshToken);
         res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
         res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
         return true;

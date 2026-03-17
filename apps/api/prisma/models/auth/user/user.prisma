@@ -6,12 +6,12 @@ model User {
 
   theme  String?
   locale  String?
-  status          Status @default(NOACTIVE)
+  status          StatusUser @default(NOACTIVE)
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  sessions      UserSession[]
+  sessions      SessionUser[]
   resetPasswordToken      ResetPasswordTokenUser?
   activateToken      ActivateTokenUser?
 

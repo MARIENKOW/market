@@ -1,0 +1,169 @@
+import { SessionAdmin } from "@/generated/prisma";
+import { PrismaService } from "@/modules/prisma/prisma.service";
+import { JwtService } from "@nestjs/jwt";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import * as crypto from "crypto";
+import { HashService } from "@/modules/hash/hash.service";
+import { env } from "@/config";
+import { RequestContextService } from "@/common/request-context/request-context.service";
+
+export type AccessTokenAdminPayload = { adminId: string; sessionId: string };
+export type RefreshTokenAdminPayload = { adminId: string; sessionId: string };
+@Injectable()
+export class SessionAdminService {
+    constructor(
+        private prisma: PrismaService,
+        private jwt: JwtService,
+        private hash: HashService,
+        private requestContext: RequestContextService,
+    ) {}
+
+    private ACCESS_TOKEN_EXPIRES = 10;
+    private REFRESH_TOKEN_EXPIRES = 30 * 24 * 60 * 60;
+
+    findById(id: string): Promise<SessionAdmin | null> {
+        return this.prisma.sessionAdmin.findUnique({
+            where: { id },
+        });
+    }
+    deleteAllByAdminId(adminId: string): Promise<{ count: number }> {
+        return this.prisma.sessionAdmin.deleteMany({ where: { adminId } });
+    }
+    async touch(id: string): Promise<Date> {
+        const lastUsedAt = new Date();
+        await this.prisma.sessionAdmin.update({
+            where: { id },
+            data: { lastUsedAt },
+        });
+        return lastUsedAt;
+    }
+    private createId(): string {
+        return crypto.randomBytes(32).toString("hex");
+    }
+    normalizeIp(ip: string): string {
+        if (ip.startsWith("::ffff:")) {
+            return ip.replace("::ffff:", "");
+        }
+        return ip;
+    }
+    private generateAccessToken(playload: AccessTokenAdminPayload): string {
+        return this.jwt.sign(playload, {
+            secret: env.JWT_ACCESS_SECRET,
+            expiresIn: this.ACCESS_TOKEN_EXPIRES,
+        });
+    }
+
+    verifyAccessToken(accessTokenAdmin: string): AccessTokenAdminPayload {
+        return this.jwt.verify(accessTokenAdmin, {
+            secret: env.JWT_ACCESS_SECRET,
+        });
+    }
+    private generateRefreshToken(playload: AccessTokenAdminPayload): string {
+        return this.jwt.sign(playload, {
+            secret: env.JWT_REFRESH_SECRET,
+            expiresIn: this.REFRESH_TOKEN_EXPIRES,
+        });
+    }
+    verifyRefreshToken(refreshTokenAdmin: string): AccessTokenAdminPayload {
+        return this.jwt.verify(refreshTokenAdmin, {
+            secret: env.JWT_REFRESH_SECRET,
+        });
+    }
+    async refresh(refreshTokenAdmin: string): Promise<{
+        accessToken: string;
+        refreshToken: string;
+    }> {
+        let payload: RefreshTokenAdminPayload;
+        try {
+            payload = this.verifyRefreshToken(refreshTokenAdmin);
+        } catch (error) {
+            throw new UnauthorizedException();
+        }
+
+        const sessionData = await this.findById(payload.sessionId);
+        if (!sessionData) throw new UnauthorizedException();
+
+        // Проверяем текущий токен
+        const isValid = this.hash.verifySha256(
+            refreshTokenAdmin,
+            sessionData.refreshTokenHash,
+        );
+
+        if (!isValid) {
+            // Проверяем предыдущий токен (grace period)
+            const isPreviousValid =
+                sessionData.previousRefreshTokenHash &&
+                sessionData.previousTokenExpiresAt &&
+                sessionData.previousTokenExpiresAt > new Date() &&
+                this.hash.verifySha256(
+                    refreshTokenAdmin,
+                    sessionData.previousRefreshTokenHash,
+                );
+
+            if (!isPreviousValid) throw new UnauthorizedException();
+        }
+
+        const accessToken = this.generateAccessToken({
+            adminId: sessionData.adminId,
+            sessionId: sessionData.id,
+        });
+        const refreshToken = this.generateRefreshToken({
+            adminId: sessionData.adminId,
+            sessionId: sessionData.id,
+        });
+
+        const refreshTokenHash = this.hash.sha256(refreshToken);
+
+        await this.prisma.sessionAdmin.update({
+            where: { id: sessionData.id },
+            data: {
+                refreshTokenHash,
+                expiresAt: new Date(
+                    Date.now() + this.REFRESH_TOKEN_EXPIRES * 1000,
+                ),
+                previousRefreshTokenHash: sessionData.refreshTokenHash, // старый становится previous
+                previousTokenExpiresAt: new Date(Date.now() + 30 * 1000), // живёт 30 секунд
+                lastUsedAt: new Date(),
+            },
+        });
+
+        return { accessToken, refreshToken };
+    }
+    async create({
+        adminId,
+    }: {
+        adminId: string;
+    }): Promise<{ accessToken: string; refreshToken: string }> {
+        const id = this.createId();
+        const refreshToken = this.generateRefreshToken({
+            adminId,
+            sessionId: id,
+        });
+        const refreshTokenHash = this.hash.sha256(refreshToken);
+
+        await this.prisma.sessionAdmin.create({
+            data: {
+                adminId,
+                id,
+                expiresAt: new Date(
+                    Date.now() + this.REFRESH_TOKEN_EXPIRES * 1000,
+                ),
+                refreshTokenHash,
+                ip: this.requestContext.ip,
+                userAgent: this.requestContext.userAgent,
+                lastUsedAt: new Date(),
+            },
+        });
+
+        const accessToken = this.generateAccessToken({
+            adminId,
+            sessionId: id,
+        });
+
+        return { refreshToken, accessToken };
+    }
+    async delete(sessionId: string): Promise<true> {
+        await this.prisma.sessionAdmin.delete({ where: { id: sessionId } });
+        return true;
+    }
+}

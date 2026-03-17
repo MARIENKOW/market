@@ -1,4 +1,4 @@
-import { UserSession } from "@/generated/prisma";
+import { SessionUser } from "@/generated/prisma";
 import { PrismaService } from "@/modules/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
@@ -21,17 +21,17 @@ export class SessionUserService {
     private ACCESS_TOKEN_EXPIRES = 10;
     private REFRESH_TOKEN_EXPIRES = 30 * 24 * 60 * 60;
 
-    findById(id: string): Promise<UserSession | null> {
-        return this.prisma.userSession.findUnique({
+    findById(id: string): Promise<SessionUser | null> {
+        return this.prisma.sessionUser.findUnique({
             where: { id },
         });
     }
     deleteAllByUserId(userId: string): Promise<{ count: number }> {
-        return this.prisma.userSession.deleteMany({ where: { userId } });
+        return this.prisma.sessionUser.deleteMany({ where: { userId } });
     }
     async touch(id: string): Promise<Date> {
         const lastUsedAt = new Date();
-        await this.prisma.userSession.update({
+        await this.prisma.sessionUser.update({
             where: { id },
             data: { lastUsedAt },
         });
@@ -114,7 +114,7 @@ export class SessionUserService {
 
         const refreshTokenHash = this.hash.sha256(refreshToken);
 
-        await this.prisma.userSession.update({
+        await this.prisma.sessionUser.update({
             where: { id: sessionData.id },
             data: {
                 refreshTokenHash,
@@ -141,7 +141,7 @@ export class SessionUserService {
         });
         const refreshTokenHash = this.hash.sha256(refreshToken);
 
-        await this.prisma.userSession.create({
+        await this.prisma.sessionUser.create({
             data: {
                 userId,
                 id,
@@ -163,7 +163,7 @@ export class SessionUserService {
         return { refreshToken, accessToken };
     }
     async delete(sessionId: string): Promise<true> {
-        await this.prisma.userSession.delete({ where: { id: sessionId } });
+        await this.prisma.sessionUser.delete({ where: { id: sessionId } });
         return true;
     }
 }

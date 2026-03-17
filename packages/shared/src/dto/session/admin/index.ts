@@ -1,4 +1,4 @@
-export type SessionUserDto = {
+export type SessionAdminDto = {
     id: string;
     userAgent: string | null;
     ip: string | null;

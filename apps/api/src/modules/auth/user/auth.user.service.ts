@@ -11,16 +11,16 @@ import {
     UserLoginDtoOutput,
     UserRegisterDtoOutput,
 } from "@myorg/shared/form";
-import { SessionUserService } from "@/modules/session/user/session.user.service";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { ResetPasswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
 import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
-import { ActivateTokenUserService } from "../../activateToken/user/activate.token.user.service";
+import { ActivateTokenUserService } from "../../activateToken/activate.token.user.service";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { I18nService } from "nestjs-i18n";
 import { HashService } from "@/modules/hash/hash.service";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 import { OAuth2Client } from "google-auth-library";
+import { SessionUserService } from "@/modules/auth/user/session/session.user.service";
 @Injectable()
 export class AuthUserService {
     constructor(
@@ -82,9 +82,6 @@ export class AuthUserService {
     }: {
         code: string;
     }): Promise<{ accessToken: string; refreshToken: string }> {
-        console.log(
-            "objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject",
-        );
         const { tokens } = await this.oauthClient.getToken({
             code,
             redirect_uri: "postmessage",
@@ -113,6 +110,9 @@ export class AuthUserService {
                 status: "ACTIVE",
                 email,
             });
+        }
+        if (user.status !== "ACTIVE") {
+            await this.user.activate(user.id);
         }
 
         const sessionUserData = await this.sessionUser.create({
