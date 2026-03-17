@@ -12,8 +12,8 @@ import UserAuthProvider from "@/components/wrappers/auth/UserAuthProvider";
 import { getUserAuth } from "@/utils/cache/user.cache.me";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AvailableMode } from "@/theme/theme";
-import { redirect } from "@/i18n/navigation";
-import { getHeaderValue } from "@/actions/headers.actions";
+import { EventListener } from "@/components/features/EventListener";
+import { NavigationProgress } from "@/components/features/NavigationProgress";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -45,7 +45,7 @@ export default async function RootLayout({
 
     const { user, error } = await getUserAuth();
 
-    const newTheme = user?.theme || themeMode;
+    const newTheme = themeMode;
 
     setRequestLocale(locale as AvailableLanguage);
 
@@ -69,6 +69,8 @@ export default async function RootLayout({
                             <ThemeRegistry
                                 themeMode={newTheme as AvailableMode}
                             >
+                                <EventListener />
+                                <NavigationProgress />
                                 <UserAuthProvider error={error} user={user}>
                                     <ClientProvider>{children}</ClientProvider>
                                 </UserAuthProvider>

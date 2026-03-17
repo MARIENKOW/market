@@ -1,16 +1,16 @@
 import { en } from "./languages/en";
-import { uk, type MessageStructure } from "./languages/uk";
-export { type MessageStructure } from "./languages/uk";
+import { ru, type MessageStructure } from "./languages/ru";
+export { type MessageStructure } from "./languages/ru";
 export const messagesModules = {
     en,
-    uk,
+    ru,
 } as const;
 
 export type AvailableLanguage = keyof typeof messagesModules;
 
 export const languages = Object.keys(messagesModules) as AvailableLanguage[];
 
-export const defaultLanguage: AvailableLanguage = "uk";
+export const defaultLanguage: AvailableLanguage = "ru";
 
 export const messagesMap: Record<AvailableLanguage, MessageStructure> =
     messagesModules;

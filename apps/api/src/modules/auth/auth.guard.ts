@@ -40,7 +40,8 @@ export class AuthGuard implements CanActivate {
 
         // for (const role of allowedRoles) {
         // if (role === "user" && cookies.sessionId) {
-
+        const auth = req.headers["x-type"];
+        console.log(auth);
         if (allowedRoles.includes("user")) {
             if (!cookies.accessTokenUser) throw new UnauthorizedException();
             let plaload: AccessTokenUserPayload;

@@ -16,18 +16,12 @@ import {
     UserForgotPasswordSchema,
 } from "@myorg/shared/form";
 import { $apiClient } from "@/utils/api/fetch.client";
-import {
-    FULL_PATH_ROUTE,
-    USER_PUBLIC_FALLBACK_ROUTE,
-} from "@myorg/shared/route";
-import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { Box } from "@mui/material";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
-import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
-const authUser = new AuthUserService($apiUserClient);
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
+
+import { Box } from "@mui/material";
+
+const authUser = new AuthUserService($apiClient);
 
 export default function UserRememberPasswordForm() {
     const router = useRouter();

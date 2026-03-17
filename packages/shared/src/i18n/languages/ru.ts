@@ -7,7 +7,7 @@ import {
     USERNAME_MIN_LENGTH,
 } from "../../form/constants";
 
-export const uk = {
+export const ru = {
     form: {
         password: {
             min: `минимум ${PASSWORD_MIN_LENGTH} символов`,
@@ -210,4 +210,4 @@ export const uk = {
     },
 };
 
-export type MessageStructure = typeof uk;
+export type MessageStructure = typeof ru;

@@ -40,7 +40,6 @@ export default async function Mid(req: NextRequest) {
                         );
                     });
                 } catch (error) {
-                    console.log("err", error);
                     if (isEqualPath(PRIVATE_USER_PATH, pathname)) {
                         const loginUrl = new URL(
                             locale

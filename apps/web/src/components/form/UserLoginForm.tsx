@@ -19,9 +19,9 @@ import { useState } from "react";
 import ActivateButton from "@/components/features/auth/ActivateButton";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import GoogleAuthButton from "@/components/features/auth/GoogleAuthButton";
-import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
+import { $apiClient } from "@/utils/api/fetch.client";
 
-const authUser = new AuthUserService($apiUserClient);
+const authUser = new AuthUserService($apiClient);
 
 export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     const router = useRouter();

@@ -1,70 +1,72 @@
-import { getCookieValue } from "@/actions/cookies.actions";
 import {
     isApiErrorResponse,
     isUnauthorizedError,
 } from "@/helpers/error/error.type.helper";
-import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
-import AuthUserService from "@/services/auth/user/auth.user.service";
+import { FetchBaseOptions, FetchCustomReturn } from "@/utils/api";
 import { $apiClient } from "@/utils/api/fetch.client";
-import { ApiErrorResponse } from "@myorg/shared/dto";
-import { HTTP_STATUSES } from "@myorg/shared/http";
+import { dispatchCustomEvent, EVENTS_KEYS } from "@/helpers/event.helper";
+import AuthUserService from "@/services/auth/user/auth.user.service";
 
-let refreshPromise: null | FetchCustomReturn<true> = null;
+// ─── Singleton ───────────────────────────────────────────────────
+const authService = new AuthUserService($apiClient);
 
+// ─── Refresh queue — защита от параллельных рефрешей ─────────────
+let refreshPromise: FetchCustomReturn<true> | null = null;
+
+const tryRefresh = async (): Promise<void> => {
+    if (!refreshPromise) {
+        refreshPromise = authService.refresh();
+    }
+    try {
+        await refreshPromise;
+    } finally {
+        refreshPromise = null;
+    }
+};
+
+// ─── Default headers ─────────────────────────────────────────────
+const DEFAULT_HEADERS: FetchBaseOptions["headers"] = {
+    "x-type": "user",
+};
+
+const buildOptions = (options: FetchBaseOptions): FetchBaseOptions => ({
+    ...options,
+    headers: { ...DEFAULT_HEADERS, ...options.headers },
+});
+
+// ─── Main ─────────────────────────────────────────────────────────
 export const $apiUserClient = async <T>(
     path: string,
     options: FetchBaseOptions,
 ): FetchCustomReturn<T> => {
-    const accessToken = getCookieValue("accessTokenUser");
-    if (!accessToken) {
-        const UnauthorizedError: ApiErrorResponse = {
-            code: HTTP_STATUSES.Unauthorized.code,
-            status: HTTP_STATUSES.Unauthorized.status,
-            message: HTTP_STATUSES.Unauthorized.statusText,
-            data: null,
-            timestamp: new Date().toISOString(),
-            path,
-            context: "NEXT",
-            errorType: "ApiErrorResponse",
-        };
-        throw UnauthorizedError;
-    }
-    const defaultOptions: FetchBaseOptions = {
-        headers: {
-            Aauthorization: `Bearer ${accessToken}`,
-        },
-    };
-
-    let newHeaders = options.headers || {};
-
     try {
-        return await $apiClient<T>(path, {
-            ...defaultOptions,
-            ...options,
-            headers: { ...defaultOptions.headers, ...newHeaders },
-        });
+        return await $apiClient<T>(path, buildOptions(options));
     } catch (error) {
-        if (
-            isApiErrorResponse(error) &&
-            isUnauthorizedError(error as ApiErrorResponse)
-        ) {
-            if (refreshPromise === null) {
-                const authUser = new AuthUserService($apiClient);
-                refreshPromise = authUser.refresh();
-            }
-            try {
-                await refreshPromise;
-                refreshPromise = null;
-            } catch (error) {
-                refreshPromise = null;
-                throw error;
-            }
-            return $apiClient<T>(path, {
-                ...defaultOptions,
-                ...options,
-                headers: { ...defaultOptions.headers, ...newHeaders },
-            });
+        // Не 401 — пробрасываем сразу
+        if (!isApiErrorResponse(error) || !isUnauthorizedError(error as any)) {
+            throw error;
         }
-        throw error;
+
+        // 401 — пробуем рефреш
+        try {
+            await tryRefresh();
+        } catch (refreshError) {
+            // Рефреш не удался — сессия истекла
+            dispatchCustomEvent(EVENTS_KEYS.UNAUTHORIZED);
+            throw refreshError;
+        }
+
+        // Повторяем запрос с новым токеном
+        try {
+            return await $apiClient<T>(path, buildOptions(options));
+        } catch (retryError) {
+            if (
+                isApiErrorResponse(retryError) &&
+                isUnauthorizedError(retryError as any)
+            ) {
+                dispatchCustomEvent(EVENTS_KEYS.UNAUTHORIZED);
+            }
+            throw retryError;
+        }
     }
 };

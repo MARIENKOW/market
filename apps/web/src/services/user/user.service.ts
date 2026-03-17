@@ -1,4 +1,4 @@
-import { FetchCustom, FetchCustomReturn } from "@/lib/api";
+import { FetchCustom, FetchCustomReturn } from "@/utils/api";
 import { AvailableMode } from "@/theme/theme";
 import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";

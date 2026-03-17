@@ -25,8 +25,9 @@ import { useSearchParams } from "next/navigation";
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 import { StyledButton } from "@/components/ui/StyledButton";
+import { $apiClient } from "@/utils/api/fetch.client";
 
-const authUser = new AuthUserService($apiUserClient);
+const authUser = new AuthUserService($apiClient);
 
 export default function UserChangePasswordForm() {
     const t = useTranslations();

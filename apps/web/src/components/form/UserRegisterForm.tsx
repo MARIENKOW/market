@@ -24,9 +24,9 @@ import AuthUserService from "@/services/auth/user/auth.user.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
-import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
+import { $apiClient } from "@/utils/api/fetch.client";
 
-const authUser = new AuthUserService($apiUserClient);
+const authUser = new AuthUserService($apiClient);
 
 export default function UserRegisterForm() {
     const t = useTranslations();

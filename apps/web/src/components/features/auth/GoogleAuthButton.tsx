@@ -16,8 +16,9 @@ import { useTranslations } from "next-intl";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { useRouter } from "@/i18n/navigation";
+import { $apiClient } from "@/utils/api/fetch.client";
 
-const auth = new AuthUserService($apiUserClient);
+const auth = new AuthUserService($apiClient);
 
 export default function GoogleAuthButton({
     redirectTo,
@@ -25,10 +26,10 @@ export default function GoogleAuthButton({
     redirectTo?: string;
 }) {
     const [loading, setLoading] = useState<boolean>(false);
-    // const l = useGoogleOneTapLogin({
+    // useGoogleOneTapLogin({
     //     onSuccess: (r) => {
-    //         console.log(r);
-    //     }, // сразу id_token ✅
+    //         console.log(r);  //credenital | clientId = undefined
+    //     },
     //     onError: () => console.error("failed"),
     // });
 
@@ -43,8 +44,8 @@ export default function GoogleAuthButton({
                 router.refresh();
             } catch (error) {
                 errorHandler({ error, t });
-            }finally{
-                setLoading(false)
+            } finally {
+                setLoading(false);
             }
         },
         onError: () => snackbarError(t("api.FALLBACK_ERR")),

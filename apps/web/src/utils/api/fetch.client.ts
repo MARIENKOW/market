@@ -1,27 +1,21 @@
 import { clientEnv } from "@/config/env.client";
-import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/lib/api";
+import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/utils/api";
 
-export const $apiClient = async <T>(
+const BASE_URL = `${clientEnv.NEXT_PUBLIC_API_ORIGIN_CLIENT}/${clientEnv.NEXT_PUBLIC_API_GLOBAL_PREFIX}`;
+
+const DEFAULT_OPTIONS: FetchBaseOptions = {
+    credentials: "include",
+    headers: {
+        "Content-Type": "application/json",
+    },
+};
+
+export const $apiClient = <T>(
     path: string,
     options: FetchBaseOptions,
-): FetchCustomReturn<T> => {
-    const defaultOptions: FetchBaseOptions = {
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    };
-
-    let newHeaders = options.headers || {};
-    return await fetchCustom<T>(
-        clientEnv.NEXT_PUBLIC_API_ORIGIN_CLIENT +
-            "/" +
-            clientEnv.NEXT_PUBLIC_API_GLOBAL_PREFIX +
-            path,
-        {
-            ...defaultOptions,
-            ...options,
-            headers: { ...defaultOptions.headers, ...newHeaders },
-        },
-    );
-};
+): FetchCustomReturn<T> =>
+    fetchCustom<T>(`${BASE_URL}${path}`, {
+        ...DEFAULT_OPTIONS,
+        ...options,
+        headers: { ...DEFAULT_OPTIONS.headers, ...options.headers },
+    });

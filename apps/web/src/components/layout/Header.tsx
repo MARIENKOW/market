@@ -13,7 +13,7 @@ import { AvailableMode } from "@/theme/theme";
 export default async function Header() {
     const t = await getTranslations();
     const mode = await getThemeMode();
-    const { user } = await getUserAuth();
+    // const { user } = await getUserAuth();
 
     return (
         <Box
@@ -35,9 +35,7 @@ export default async function Header() {
                         <Button>{t("pages.main.name")}</Button>
                     </Link>
                     <Box alignItems={"center"} display={"flex"} gap={1}>
-                        <ThemeChange
-                            serverMode={(user?.theme as AvailableMode) || mode}
-                        />
+                        <ThemeChange serverMode={mode} />
                         <LanguageChange />
                         <AuthNavigation />
                     </Box>

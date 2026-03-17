@@ -37,26 +37,25 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
         borderRadius: 99,
     },
 }));
-const userFetch = new UserService($apiUserClient);
+// const userFetch = new UserService($apiUserClient);
 
 export default function ThemeChange({
     serverMode,
 }: {
     serverMode: AvailableMode;
 }) {
-    console.log(serverMode);
     const { themeMode, changeTheme } = useThemeContext(serverMode);
 
-    const { user } = useUserAuth();
-    console.log(user);
+    // const { user } = useUserAuth();
     const t = useTranslations();
     const handleChange = async (newMode: AvailableMode) => {
         changeTheme(newMode);
-        if (user) userFetch.changeTheme({ theme: newMode }).catch(() => {});
+        // if (user) userFetch.changeTheme({ theme: newMode }).catch(() => {});
     };
-    useEffect(() => {
-        changeTheme(serverMode);
-    }, [serverMode]);
+    // useEffect(() => {
+    //     changeTheme(serverMode);
+    // }, [serverMode]);
+    console.log(themeMode);
     return (
         <StyledTooltip title={t("features.theme.name")}>
             <Box display={"inline-flex"}>
