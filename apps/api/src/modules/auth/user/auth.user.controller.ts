@@ -28,6 +28,7 @@ import { CookieOptions, Request, Response } from "express";
 import { AuthGuard } from "@/modules/auth/auth.guard";
 import { Auth } from "@/modules/auth/auth.decorator";
 import { env } from "@/config";
+import { Public } from "@/modules/auth/public.decorator";
 
 export const COOKIE_CONFIG: CookieOptions = {
     httpOnly: true,
@@ -45,13 +46,16 @@ export class AuthUserController {
     constructor(private authUser: AuthUserService) {}
 
     @Post(register.path)
+    @Public()
     async register(
         @Body(new ZodValidationPipe(UserRegisterSchema))
         body: UserRegisterDtoOutput,
     ): Promise<string> {
         return this.authUser.register(body);
     }
+    
     @Get(refresh.path)
+    @Public()
     async refresh(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
@@ -68,6 +72,7 @@ export class AuthUserController {
     }
 
     @Post(login.path)
+    @Public()
     async login(
         @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
         @Req() req: Request,
@@ -79,6 +84,7 @@ export class AuthUserController {
         return true;
     }
     @Post(google.path)
+    @Public()
     async google(
         @Body() body: { code: string },
         @Req() req: Request,
@@ -92,6 +98,7 @@ export class AuthUserController {
     }
 
     @Post(forgotPassword.path)
+    @Public()
     async forgotPassword(
         @Body(new ZodValidationPipe(UserForgotPasswordSchema))
         body: UserForgotPasswordDtoOutput,
@@ -100,6 +107,7 @@ export class AuthUserController {
     }
 
     @Post(forgotPassword.path + "/:token")
+    @Public()
     async changePassword(
         @Body(new ZodValidationPipe(UserChangePasswordSchema))
         body: UserChangePasswordDtoOutput,
@@ -109,16 +117,17 @@ export class AuthUserController {
     }
 
     @Post(activate.path)
+    @Public()
     async activate(@Body() body: { token: string }): Promise<true> {
         return await this.authUser.activate(body);
     }
     @Post(activate.path + "/" + activate.send.path)
+    @Public()
     async sendActivate(@Body() body: { email?: string }): Promise<string> {
         return await this.authUser.sendActivate(body);
     }
 
     @Post(logout.path)
-    @UseGuards(AuthGuard)
     @Auth("user")
     async logout(
         @Req() req: Request,

@@ -19,7 +19,7 @@ import { StyledListItemText } from "@/components/ui/StyledListItemText";
 
 const user = new AuthUserService($apiUserClient);
 
-export default function LogoutMenuItem() {
+export default function LogoutMenuItemUser() {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
     const router = useRouter();

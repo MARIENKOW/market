@@ -15,6 +15,8 @@ import { MailerService } from "@/modules/mailer/mailer.service";
 import { HashService } from "@/modules/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
 import { env } from "@/config";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { RequestContextService } from "@/common/request-context/request-context.service";
 
 export type RememberPasswordTokenUserPayload = {
     userId: string;
@@ -26,10 +28,11 @@ export class ResetPasswordTokenUserService {
         private mailerService: MailerService,
         private user: UserService,
         private hash: HashService,
+        private context: RequestContextService,
         private jwt: JwtService,
         private i18n: I18nService<MessageStructure>,
     ) {}
-    private expires = 15 * 60 * 1000; //15 мин
+    expires = 15 * 60 * 1000; //15 мин
     findByUserId(userId: string): Promise<ResetPasswordTokenUser | null> {
         return this.prisma.resetPasswordTokenUser.findUnique({
             where: { userId },
@@ -45,14 +48,19 @@ export class ResetPasswordTokenUserService {
         }
         return resetTokenData;
     }
-    async createAndSend(user: User, origin?: string): Promise<number> {
+    async createAndSend({
+        user,
+        url,
+    }: {
+        user: User;
+        url: string;
+    }): Promise<number> {
         const { token, id } = await this.create(user.id);
         try {
             await this.mailerService.sendForgotPassword({
                 to: user.email,
-                token,
                 expires: this.expires,
-                origin,
+                url,
             });
             return this.expires;
         } catch (error) {

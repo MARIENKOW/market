@@ -26,6 +26,7 @@ import { AuthGuard } from "@/modules/auth/auth.guard";
 import { Auth } from "@/modules/auth/auth.decorator";
 import { env } from "@/config";
 import { AuthAdminService } from "@/modules/auth/admin/auth.admin.service";
+import { Public } from "@/modules/auth/public.decorator";
 
 export const COOKIE_CONFIG: CookieOptions = {
     httpOnly: true,
@@ -42,6 +43,7 @@ export class AuthAdminController {
     constructor(private authAdmin: AuthAdminService) {}
 
     @Get(refresh.path)
+    @Public()
     async refresh(
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
@@ -58,6 +60,7 @@ export class AuthAdminController {
     }
 
     @Post(login.path)
+    @Public()
     async login(
         @Body(new ZodValidationPipe(AdminLoginSchema))
         body: AdminLoginDtoOutput,
@@ -69,6 +72,7 @@ export class AuthAdminController {
         return true;
     }
     @Post(google.path)
+    @Public()
     async google(
         @Body() body: { code: string },
         @Req() req: Request,
@@ -82,6 +86,7 @@ export class AuthAdminController {
     }
 
     @Post(forgotPassword.path)
+    @Public()
     async forgotPassword(
         @Body(new ZodValidationPipe(AdminForgotPasswordSchema))
         body: AdminForgotPasswordDtoOutput,
@@ -90,6 +95,7 @@ export class AuthAdminController {
     }
 
     @Post(forgotPassword.path + "/:token")
+    @Public()
     async changePassword(
         @Body(new ZodValidationPipe(AdminChangePasswordSchema))
         body: AdminChangePasswordDtoOutput,
@@ -99,7 +105,6 @@ export class AuthAdminController {
     }
 
     @Post(logout.path)
-    @UseGuards(AuthGuard)
     @Auth("admin")
     async logout(
         @Req() req: Request,

@@ -1,4 +1,4 @@
-import Header from "@/components/layout/Header";
+import Header from "@/components/layout/header/user/HeaderUser";
 import { Box } from "@mui/material";
 import React from "react";
 

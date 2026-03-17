@@ -3,8 +3,6 @@ import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
-    USERNAME_MAX_LENGTH,
-    USERNAME_MIN_LENGTH,
 } from "../../form/constants";
 
 export const en: MessageStructure = {
@@ -12,7 +10,7 @@ export const en: MessageStructure = {
         password: {
             min: `minimum ${PASSWORD_MIN_LENGTH} characters`,
             max: `maximum ${PASSWORD_MAX_LENGTH} characters`,
-            invalid: `Incorrect password`,
+            invalid: `Invalid password`,
             label: `Password`,
         },
         email: {
@@ -23,13 +21,8 @@ export const en: MessageStructure = {
             label: `Email`,
         },
         rePassword: {
-            label: `Repeat password`,
+            label: `Confirm password`,
             same: "Passwords do not match",
-        },
-        username: {
-            min: `minimum ${USERNAME_MIN_LENGTH} characters`,
-            max: `maximum ${USERNAME_MAX_LENGTH} characters`,
-            label: `Username`,
         },
         required: "Required field",
         submit: "Submit",
@@ -39,7 +32,7 @@ export const en: MessageStructure = {
             name: "Home",
         },
         register: {
-            name: "Sign up",
+            name: "Register",
             feedback: {
                 success: {
                     registerSuccess: "Registration successful!",
@@ -50,31 +43,68 @@ export const en: MessageStructure = {
             login: "Already have an account?",
         },
         login: {
-            name: "Log in",
+            name: "Login",
             feedback: {
                 success: {
                     loginSuccess: "Login successful!",
                 },
                 errors: {
                     notActive: "Account is not activated.",
-                    passwordNotFound: `Password is not set! Click: "{btn}"`,
-                    sendMail:
-                        "Account is not activated. Send an activation email.",
-                    expire: "Account is not activated. The activation link has expired. Send a new email.",
+                    passwordNotFound: `Password not set! Click: "{btn}"`,
+                    sendMail: "Account is not activated. Send activation email",
+                    expire: "Account is not activated. Activation link has expired. Send a new email",
                     alreadySend:
-                        "Account is not activated. An activation email has already been sent. Valid for: {time}",
+                        "Account is not activated. Activation email has already been sent. Valid for: {time}",
                 },
             },
-            register: "Don’t have an account?",
+            register: "Don't have an account?",
         },
+        admin: {
+            name: "main",
+            settings: { name: "Settings" },
+            login: {
+                name: "Login",
+                feedback: {
+                    success: {
+                        loginSuccess: "Login successful!",
+                    },
+                },
+            },
+            forgotPassword: {
+                changePassword: {
+                    name: "Change password",
+                    feedback: {
+                        success: {
+                            changeSuccess: "Password changed successfully!",
+                        },
+                        errors: {
+                            timeout:
+                                "The password reset link has expired! Please request a new one",
+                            notFound: "Invalid link! Please request a new one",
+                        },
+                    },
+                },
+                name: "Forgot password?",
+                login: "Back to login",
+                feedback: {
+                    errors: {
+                        alreadySent:
+                            "A password reset email has already been sent. Valid for: {time}",
+                    },
+                    success:
+                        "A password reset email has been sent. Valid for: {time}",
+                },
+            },
+        },
+
         activate: {
             feedback: {
                 success: {
                     accountActivate: "Account successfully activated.",
                 },
                 errors: {
-                    notValid: "The link is invalid!",
-                    expired: "The link has expired",
+                    notValid: "Invalid link!",
+                    expired: "Activation link has expired",
                 },
             },
         },
@@ -87,9 +117,8 @@ export const en: MessageStructure = {
                     },
                     errors: {
                         timeout:
-                            "The password reset link has expired. Please repeat the sending procedure.",
-                        notFound:
-                            "The link is invalid. Please repeat the sending procedure.",
+                            "The password reset link has expired! Please request a new one",
+                        notFound: "Invalid link! Please request a new one",
                     },
                 },
             },
@@ -98,10 +127,10 @@ export const en: MessageStructure = {
             feedback: {
                 errors: {
                     alreadySent:
-                        "A password reset email has already been sent. Link valid for: {time}",
+                        "A password reset email has already been sent. Valid for: {time}",
                 },
                 success:
-                    "A password reset email has been sent. Link valid for: {time}",
+                    "A password reset email has been sent. Valid for: {time}",
             },
         },
         profile: {
@@ -116,12 +145,12 @@ export const en: MessageStructure = {
     },
     api: {
         ERR_NETWORK: "No network connection. Try again later.",
-        FALLBACK_ERR: "Oops! Something went wrong, please try again later.",
-        FORBIDDEN: "Insufficient permissions",
-        UNAUTHORIZED: "You are not authorized. Please log in.",
-        NOT_FOUND: "Error 404",
-        ABORT_ERROR: "Request was canceled",
-        auth: "Authentication error, reload the page or log in again.",
+        FALLBACK_ERR: "Oops! Something went wrong, try again later",
+        FORBIDDEN: "Access denied",
+        UNAUTHORIZED: "You are not authorized! Please log in",
+        NOT_FOUND: "404 error",
+        ABORT_ERROR: "Request was cancelled",
+        auth: "Authentication error, reload the page or log in again",
     },
     feedback: {
         empty: {
@@ -131,12 +160,12 @@ export const en: MessageStructure = {
             network: {
                 title: "Oops!",
                 subtitle: "No network connection.",
-                reload: "Reload",
+                reload: "reload",
             },
             fallback: {
                 title: "Oops!",
                 subtitle: "Something went wrong",
-                reload: "Reload",
+                reload: "reload",
             },
             resetToken: {
                 title: "Oops!",
@@ -145,12 +174,12 @@ export const en: MessageStructure = {
             activate: {
                 title: "Oops!",
                 subtitle: "Something went wrong",
-                reload: "Send email",
+                reload: "send email",
             },
             forbidden: {
                 title: "Oops!",
-                subtitle: "Insufficient permissions",
-                reload: "Reload",
+                subtitle: "Access denied",
+                reload: "reload",
             },
             auth: {
                 title: "Oops!",
@@ -172,25 +201,25 @@ export const en: MessageStructure = {
             name: "Language",
         },
         logout: {
-            name: "Log out",
-            error: "Failed to log out. Try again later.",
-            success: "You have successfully logged out.",
+            name: "Logout",
+            error: "Failed to log out! Try again later",
+            success: "You have successfully logged out",
         },
         logoutErr: {
             name: "Reset session",
-            error: "Failed to reset the session. Try again later.",
-            success: "You have successfully reset the session.",
+            error: "Failed to reset session! Try again later",
+            success: "Session reset successfully",
         },
         activate: {
             name: "Send email",
             error: {
                 alreadySend:
-                    "An email with a link has already been sent. Link valid for: {time}",
+                    "Activation email has already been sent. Valid for: {time}",
                 alreadyActive: "User is already activated",
             },
             success: {
                 sendSuccess:
-                    "An email with a link has been sent. Link valid for: {time}",
+                    "Activation email has been sent. Valid for: {time}",
             },
         },
     },

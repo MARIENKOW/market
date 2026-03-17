@@ -1,5 +1,5 @@
-import UserSignInForm from "@/components/form/UserLoginForm";
-import UserRememberPasswordForm from "@/components/form/UserRememberPasswordForm";
+import UserSignInForm from "@/components/form/auth/user/UserLoginForm";
+import UserRememberPasswordForm from "@/components/form/auth/user/UserRememberPasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Link } from "@/i18n/navigation";

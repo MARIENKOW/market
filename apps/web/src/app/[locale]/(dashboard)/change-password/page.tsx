@@ -1,12 +1,12 @@
 import AuthErrorElement from "@/components/feedback/error/AuthErrorElement";
-import ResetTokenErrorElement from "@/components/feedback/error/custom/ResetTokenErrorElement";
+import ResetTokenErrorElement from "@/app/[locale]/(dashboard)/change-password/ResetTokenErrorElement";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
-import UserChangePasswordForm from "@/components/form/UserChangePasswordForm";
-import UserRememberPasswordForm from "@/components/form/UserRememberPasswordForm";
+import UserChangePasswordForm from "@/components/form/auth/user/UserChangePasswordForm";
+import UserRememberPasswordForm from "@/components/form/auth/user/UserRememberPasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { redirect } from "@/i18n/navigation";
 import { $apiServer } from "@/utils/api/fetch.server";
-import ResetPasswordTokenService from "@/services/resetPasswordToken/user/reset.password.token.service";
+import ResetPasswordTokenService from "@/services/resetPasswordToken/user/resetPasswordToken.service.user";
 import { Box, Typography } from "@mui/material";
 import { ApiErrorResponse } from "@myorg/shared/dto";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";

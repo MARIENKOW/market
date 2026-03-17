@@ -7,9 +7,15 @@ import { HashService } from "@/modules/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
 import { OAuth2Client } from "google-auth-library";
 import { SessionAdminModule } from "@/modules/auth/admin/session/session.admin.module";
+import { MailerModule } from "@/modules/mailer/mailer.module";
 
 @Module({
-    imports: [AdminModule, ResetPasswordTokenAdminModule, SessionAdminModule],
+    imports: [
+        AdminModule,
+        ResetPasswordTokenAdminModule,
+        SessionAdminModule,
+        MailerModule,
+    ],
     providers: [AuthAdminService, HashService, OAuth2Client, JwtService],
     controllers: [AuthAdminController],
     exports: [AuthAdminService],

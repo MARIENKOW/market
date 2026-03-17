@@ -2,7 +2,6 @@ import {
     Injectable,
     InternalServerErrorException,
     NotFoundException,
-    UnauthorizedException,
 } from "@nestjs/common";
 import { AdminService } from "@/modules/admin/admin.service";
 import {
@@ -19,79 +18,42 @@ import { HashService } from "@/modules/hash/hash.service";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 import { OAuth2Client } from "google-auth-library";
 import { SessionAdminService } from "@/modules/auth/admin/session/session.admin.service";
+import { MailerService } from "@/modules/mailer/mailer.service";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { env } from "@/config";
+
 @Injectable()
 export class AuthAdminService {
+    private readonly oauthClient: OAuth2Client;
+
     constructor(
-        private admin: AdminService,
-        private session: SessionAdminService,
-        private resetToken: ResetPasswordTokenAdminService,
-        private i18n: I18nService<MessageStructure>,
-        private hash: HashService,
-        private context: RequestContextService,
-        private oauthClient: OAuth2Client,
+        private readonly admin: AdminService,
+        private readonly session: SessionAdminService,
+        private readonly resetToken: ResetPasswordTokenAdminService,
+        private readonly i18n: I18nService<MessageStructure>,
+        private readonly hash: HashService,
+        private readonly context: RequestContextService,
+        private readonly mailer: MailerService,
     ) {
         this.oauthClient = new OAuth2Client(
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET,
+            env.GOOGLE_CLIENT_ID,
+            env.GOOGLE_CLIENT_SECRET,
         );
     }
 
-    async refresh(
-        refreshTokenAdmin: string,
-    ): Promise<{ accessTokenAdmin: string; refreshTokenAdmin: string }> {
-        const { accessToken, refreshToken } =
-            await this.session.refresh(refreshTokenAdmin);
-
-        return {
-            accessTokenAdmin: accessToken,
-            refreshTokenAdmin: refreshToken,
-        };
-    }
-    async google({
-        code,
-    }: {
-        code: string;
-    }): Promise<{ accessToken: string; refreshToken: string }> {
-        const { tokens } = await this.oauthClient.getToken({
-            code,
-            redirect_uri: "postmessage",
-        });
-
-        if (!tokens.id_token) throw new InternalServerErrorException();
-
-        const ticket = await this.oauthClient.verifyIdToken({
-            idToken: tokens.id_token,
-            audience: process.env.GOOGLE_CLIENT_ID,
-        });
-
-        const payload = ticket.getPayload();
-
-        if (!payload?.email) {
-            throw new InternalServerErrorException();
-        }
-
-        const { email, name, picture } = payload;
-
-        let admin = await this.admin.findByEmail(email);
-
-        if (!admin) throw new UnauthorizedException();
-
-        const sessionData = await this.session.create({
-            adminId: admin.id,
-        });
-        return sessionData;
-    }
     async login(
         body: AdminLoginDtoOutput,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const { email, password } = body;
+
         const admin = await this.admin.findByEmail(email);
-        if (!admin)
+        if (!admin) {
             throw new ValidationException<AdminLoginDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
+        }
 
-        if (!admin.passwordHash)
+        if (!admin.passwordHash) {
             throw new ValidationException<AdminLoginDtoOutput>({
                 root: [
                     {
@@ -109,33 +71,93 @@ export class AuthAdminService {
                     },
                 ],
             });
-        const valid = await this.hash.compare(password, admin.passwordHash);
+        }
 
-        if (!valid)
+        const isValid = await this.hash.compare(password, admin.passwordHash);
+        if (!isValid) {
             throw new ValidationException<AdminLoginDtoOutput>({
-                fields: {
-                    password: ["form.password.invalid"],
-                },
+                fields: { password: ["form.password.invalid"] },
             });
-        //!--- Admin staatus blocked
+        }
 
-        const sessionData = await this.session.create({
-            adminId: admin.id,
+        // if (admin.status !== "ACTIVE") {
+        //     throw new ValidationException<AdminLoginDtoOutput>({
+        //         root: [
+        //             {
+        //                 message: this.i18n.t(
+        //                     "pages.login.feedback.errors.blocked",
+        //                 ),
+        //                 type: "error",
+        //             },
+        //         ],
+        //     });
+        // }
+
+        return this.session.create({ adminId: admin.id });
+    }
+
+    async google({
+        code,
+    }: {
+        code: string;
+    }): Promise<{ accessToken: string; refreshToken: string }> {
+        const { tokens } = await this.oauthClient.getToken({
+            code,
+            redirect_uri: "postmessage",
         });
-        return sessionData;
+
+        if (!tokens.id_token) throw new InternalServerErrorException();
+
+        const ticket = await this.oauthClient.verifyIdToken({
+            idToken: tokens.id_token,
+            audience: env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        if (!payload?.email) throw new InternalServerErrorException();
+
+        const admin = await this.admin.findByEmail(payload.email);
+        if (!admin) throw new NotFoundException();
+
+        // if (admin.status !== "ACTIVE") {
+        //     throw new ValidationException({
+        //         root: [
+        //             {
+        //                 message: this.i18n.t(
+        //                     "pages.login.feedback.errors.blocked",
+        //                 ),
+        //                 type: "error",
+        //             },
+        //         ],
+        //     });
+        // }
+
+        return this.session.create({ adminId: admin.id });
+    }
+
+    async refresh(
+        refreshTokenAdmin: string,
+    ): Promise<{ accessTokenAdmin: string; refreshTokenAdmin: string }> {
+        const { accessToken, refreshToken } =
+            await this.session.refresh(refreshTokenAdmin);
+        return {
+            accessTokenAdmin: accessToken,
+            refreshTokenAdmin: refreshToken,
+        };
     }
 
     async forgotPassword({
         email,
     }: AdminForgotPasswordDtoOutput): Promise<string> {
         const admin = await this.admin.findByEmail(email);
-        if (!admin)
+        if (!admin) {
             throw new ValidationException<AdminForgotPasswordDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
+        }
 
-        const resetTokenData = await this.resetToken.isHaveAdminToken(admin);
-        if (resetTokenData)
+        const existing = await this.resetToken.isHaveAdminToken(admin);
+        if (existing) {
             throw new ValidationException({
                 root: [
                     {
@@ -144,8 +166,8 @@ export class AuthAdminService {
                             {
                                 args: {
                                     time: i18nFormatDuration(
-                                        resetTokenData.expiresAt.getTime() -
-                                            new Date(Date.now()).getTime(),
+                                        existing.expiresAt.getTime() -
+                                            Date.now(),
                                     ),
                                 },
                             },
@@ -154,38 +176,50 @@ export class AuthAdminService {
                     },
                 ],
             });
-        const origin = this.context.origin;
-        const expires = await this.resetToken.createAndSend(admin, origin);
+        }
+
+        const { token, id } = await this.resetToken.create(admin.id);
+        const url = `${this.context.origin}${FULL_PATH_ROUTE.admin.changePasssword.path}?token=${encodeURIComponent(token)}`;
+
+        try {
+            await this.mailer.sendForgotPassword({
+                to: admin.email,
+                expires: this.resetToken.expires,
+                url,
+            });
+        } catch (error) {
+            await this.resetToken.delete(id);
+            throw error;
+        }
+
         return this.i18n.t("pages.forgotPassword.feedback.success", {
-            args: {
-                time: i18nFormatDuration(expires),
-            },
+            args: { time: i18nFormatDuration(this.resetToken.expires) },
         });
     }
+
     async changePassword(
         { password }: AdminChangePasswordDtoOutput,
         { token }: { token: string },
     ): Promise<true> {
-        let payload;
+        const decoded = decodeURIComponent(token);
+
+        let payload: { adminId: string };
         try {
-            payload = this.resetToken.verifyToken(decodeURIComponent(token));
-        } catch (error) {
+            payload = this.resetToken.verifyToken(decoded);
+        } catch {
             throw new NotFoundException();
         }
-        const adminData = await this.admin.findById(payload.adminId);
-        if (!adminData) throw new NotFoundException();
-        const resetPasswordToken = await this.resetToken.findByAdminId(
-            adminData.id,
-        );
-        if (!resetPasswordToken) throw new NotFoundException();
-        const isValid = this.hash.verifySha256(
-            token,
-            resetPasswordToken.tokenHash,
-        );
+
+        const admin = await this.admin.findById(payload.adminId);
+        if (!admin) throw new NotFoundException();
+
+        const tokenData = await this.resetToken.findByAdminId(admin.id);
+        if (!tokenData) throw new NotFoundException();
+
+        const isValid = this.hash.verifySha256(decoded, tokenData.tokenHash); // ← был баг: token вместо decoded
         if (!isValid) throw new NotFoundException();
 
-        if (this.resetToken.isExpireToken(resetPasswordToken)) {
-            console.log("object");
+        if (this.resetToken.isExpireToken(tokenData)) {
             throw new ValidationException({
                 root: [
                     {
@@ -199,12 +233,13 @@ export class AuthAdminService {
             });
         }
 
-        await this.admin.changePassword({ password, id: adminData.id });
-        await this.resetToken.deleteByAdminId(adminData.id);
-        await this.session.deleteAllByAdminId(adminData.id);
+        await this.admin.changePassword({ password, id: admin.id });
+        await this.resetToken.deleteByAdminId(admin.id);
+        await this.session.deleteAllByAdminId(admin.id);
         return true;
     }
+
     async logout(sessionId: string): Promise<true> {
-        return await this.session.delete(sessionId);
+        return this.session.delete(sessionId);
     }
 }

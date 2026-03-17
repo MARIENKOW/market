@@ -1,6 +1,6 @@
 "use client";
 
-import LogoutMenuItem from "@/components/features/auth/LogoutMenuItem";
+import LogoutMenuItem from "@/components/features/auth/user/LogoutMenuItem.user";
 import { StyledAvatar } from "@/components/ui/StyledAvatar";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledListItemIcon } from "@/components/ui/StyledListItemIcon";
@@ -20,7 +20,7 @@ import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 
-export default function ({ user }: { user: UserDto }) {
+export default function NavigationUser({ user }: { user: UserDto }) {
     const [open, setOpen] = useState<boolean>(false);
     const t = useTranslations();
     const menuRef = useRef(null);

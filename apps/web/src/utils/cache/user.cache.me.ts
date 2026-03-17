@@ -1,4 +1,3 @@
-import { getCookieValue } from "@/actions/cookies.actions";
 import {
     isApiErrorResponse,
     isUnauthorizedError,
@@ -16,8 +15,6 @@ type CachedUserMeReturn = Promise<{
 export const getUserAuth: () => CachedUserMeReturn = cache(async () => {
     let user = null;
     let error = false;
-    const accessToken = await getCookieValue("accessTokenUser");
-    if (!accessToken) return { user, error };
     try {
         const userService = new UserService($apiUserServer);
         const res = await userService.me();

@@ -1,6 +1,6 @@
 "use server";
 
-import UserNavigation from "@/components/features/auth/UserNavigation";
+import UserNavigation from "@/components/features/auth/user/Navigation.user";
 import SkeletonAuthHeader from "@/components/skeletons/auth/SkeletonAuthHeader";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { Link } from "@/i18n/navigation";
@@ -12,6 +12,7 @@ import { getTranslations } from "next-intl/server";
 
 export default async function AuthNavigation() {
     const { user, error } = await getUserAuth();
+    console.log(user);
     const t = await getTranslations();
     if (error) return <SkeletonAuthHeader />;
     if (!!user) return <UserNavigation user={user} />;

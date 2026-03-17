@@ -1,10 +1,7 @@
-import { success } from "zod";
 import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
-    USERNAME_MAX_LENGTH,
-    USERNAME_MIN_LENGTH,
 } from "../../form/constants";
 
 export const ru = {
@@ -25,11 +22,6 @@ export const ru = {
         rePassword: {
             label: `Пароль повторно`,
             same: "Пароли не совпадают",
-        },
-        username: {
-            min: `минимум ${USERNAME_MIN_LENGTH} символов`,
-            max: `максимум ${USERNAME_MAX_LENGTH} символов`,
-            label: `Логин`,
         },
         required: "обязательное поле",
         submit: "Подтвердить",
@@ -67,6 +59,45 @@ export const ru = {
             },
             register: "Нет аккаунта?",
         },
+        admin: {
+            name: "Главная",
+            settings: { name: "Настройки" },
+            login: {
+                name: "Вход",
+                feedback: {
+                    success: {
+                        loginSuccess: "Авторизация успешна!",
+                    },
+                },
+            },
+            forgotPassword: {
+                changePassword: {
+                    name: "Смена пароля",
+                    feedback: {
+                        success: {
+                            changeSuccess: "Смена пароля успешна!",
+                        },
+                        errors: {
+                            timeout:
+                                "Закончился срок действия ссылки восстановления! пройдите еще раз процедуру отправки",
+                            notFound:
+                                "Ссылка недействительна! пройдите еще раз процедуру отправки",
+                        },
+                    },
+                },
+                name: "Забыли пароль?",
+                login: "Вернуться ко входу",
+                feedback: {
+                    errors: {
+                        alreadySent:
+                            "Письмо с ссылкой на восстановление уже было отправлено. Время действия ссылки: {time}",
+                    },
+                    success:
+                        "Письмо с ссылкой на восстановление отправлено. Время действия ссылки: {time}",
+                },
+            },
+        },
+
         activate: {
             feedback: {
                 success: {

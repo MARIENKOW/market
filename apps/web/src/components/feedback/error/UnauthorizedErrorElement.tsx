@@ -1,6 +1,6 @@
 "use client";
 
-import LogoutErrorButton from "@/components/features/auth/LogoutErrorButton";
+import LogoutErrorButton from "@/components/features/auth/user/LogoutErrorButton";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { useRouter } from "@/i18n/navigation";

@@ -1,10 +1,9 @@
 import { FetchCustom, FetchCustomReturn } from "@/utils/api";
-import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 
-const { check } = FULL_PATH_ENDPOINT.resetPasswordToken.user;
+const { check } = FULL_PATH_ENDPOINT.resetPasswordToken.admin;
 
-export default class ResetPasswordTokenService {
+export default class ResetPasswordTokenServiceAdmin {
     check: ({ token }: { token: string }) => FetchCustomReturn<true>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {

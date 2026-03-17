@@ -2,7 +2,6 @@ import {
     Injectable,
     InternalServerErrorException,
     NotFoundException,
-    UnauthorizedException,
 } from "@nestjs/common";
 import { UserService } from "@/modules/user/user.service";
 import {
@@ -21,116 +20,70 @@ import { HashService } from "@/modules/hash/hash.service";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 import { OAuth2Client } from "google-auth-library";
 import { SessionUserService } from "@/modules/auth/user/session/session.user.service";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { MailerService } from "@/modules/mailer/mailer.service";
+import { env } from "@/config";
+
 @Injectable()
 export class AuthUserService {
+    private readonly oauthClient: OAuth2Client;
+
     constructor(
-        private user: UserService,
-        private sessionUser: SessionUserService,
-        private resetToken: ResetPasswordTokenUserService,
-        private activateToken: ActivateTokenUserService,
-        private i18n: I18nService<MessageStructure>,
-        private hash: HashService,
-        private context: RequestContextService,
-        private oauthClient: OAuth2Client,
+        private readonly user: UserService,
+        private readonly sessionUser: SessionUserService,
+        private readonly resetToken: ResetPasswordTokenUserService,
+        private readonly activateToken: ActivateTokenUserService,
+        private readonly i18n: I18nService<MessageStructure>,
+        private readonly hash: HashService,
+        private readonly mailer: MailerService,
+        private readonly context: RequestContextService,
     ) {
         this.oauthClient = new OAuth2Client(
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET,
+            env.GOOGLE_CLIENT_ID,
+            env.GOOGLE_CLIENT_SECRET,
         );
     }
 
     async register(body: UserRegisterDtoOutput): Promise<string> {
         const { password, email } = body;
 
-        const emailUnique = await this.user.findByEmail(email);
-        if (emailUnique)
+        const existing = await this.user.findByEmail(email);
+        if (existing) {
             throw new ValidationException<UserRegisterDtoOutput>({
-                fields: {
-                    email: ["form.email.unique"],
-                },
+                fields: { email: ["form.email.unique"] },
             });
+        }
 
-        const hashed = await this.hash.hash(password);
-
-        const userData = await this.user.create({
+        const passwordHash = await this.hash.hash(password);
+        const user = await this.user.create({
             updatedAt: new Date(),
             email,
-            passwordHash: hashed,
+            passwordHash,
         });
-        if (userData.status === "NOACTIVE") {
-            const origin = this.context.origin;
-            const expires = await this.activateToken.createAndSend(
-                userData,
-                origin,
-            );
+
+        if (user.status === "NOACTIVE") {
+            await this.sendActivationEmail(user.id, user.email);
             return this.i18n.t("pages.register.feedback.success.mailSend", {
-                args: { time: i18nFormatDuration(expires) },
+                args: { time: i18nFormatDuration(this.activateToken.expires) },
             });
         }
+
         return this.i18n.t("pages.register.feedback.success.registerSuccess");
     }
-    async refresh(
-        refreshTokenUser: string,
-    ): Promise<{ accessTokenUser: string; refreshTokenUser: string }> {
-        const { accessToken, refreshToken } =
-            await this.sessionUser.refresh(refreshTokenUser);
 
-        return { accessTokenUser: accessToken, refreshTokenUser: refreshToken };
-    }
-    async google({
-        code,
-    }: {
-        code: string;
-    }): Promise<{ accessToken: string; refreshToken: string }> {
-        const { tokens } = await this.oauthClient.getToken({
-            code,
-            redirect_uri: "postmessage",
-        });
-
-        if (!tokens.id_token) throw new InternalServerErrorException();
-
-        const ticket = await this.oauthClient.verifyIdToken({
-            idToken: tokens.id_token,
-            audience: process.env.GOOGLE_CLIENT_ID,
-        });
-
-        const payload = ticket.getPayload();
-
-        if (!payload?.email) {
-            throw new InternalServerErrorException();
-        }
-
-        const { email, name, picture } = payload;
-
-        let user = await this.user.findByEmail(email);
-
-        if (!user) {
-            user = await this.user.create({
-                updatedAt: new Date(),
-                status: "ACTIVE",
-                email,
-            });
-        }
-        if (user.status !== "ACTIVE") {
-            await this.user.activate(user.id);
-        }
-
-        const sessionUserData = await this.sessionUser.create({
-            userId: user.id,
-        });
-        return sessionUserData;
-    }
     async login(
         body: UserLoginDtoOutput,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const { email, password } = body;
+
         const user = await this.user.findByEmail(email);
-        if (!user)
+        if (!user) {
             throw new ValidationException<UserLoginDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
+        }
 
-        if (!user.passwordHash)
+        if (!user.passwordHash) {
             throw new ValidationException<UserLoginDtoOutput>({
                 root: [
                     {
@@ -148,75 +101,74 @@ export class AuthUserService {
                     },
                 ],
             });
-        const valid = await this.hash.compare(password, user.passwordHash);
+        }
 
-        if (!valid)
+        const isValid = await this.hash.compare(password, user.passwordHash);
+        if (!isValid) {
             throw new ValidationException<UserLoginDtoOutput>({
-                fields: {
-                    password: ["form.password.invalid"],
-                },
-            });
-        if (user.status === "NOACTIVE") {
-            const activateTokenData = await this.activateToken.findByUserId(
-                user.id,
-            );
-
-            if (!activateTokenData)
-                throw new ValidationException({
-                    root: [
-                        {
-                            message: this.i18n.t(
-                                "pages.login.feedback.errors.sendMail",
-                            ),
-                            type: "error",
-                            data: { isShowButton: true },
-                        },
-                    ],
-                });
-            const isExpire =
-                this.activateToken.isExpireToken(activateTokenData);
-            if (isExpire)
-                throw new ValidationException({
-                    root: [
-                        {
-                            message: this.i18n.t(
-                                "pages.login.feedback.errors.expire",
-                            ),
-                            type: "error",
-                            data: { isShowButton: true },
-                        },
-                    ],
-                });
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t(
-                            "pages.login.feedback.errors.alreadySend",
-                            {
-                                args: {
-                                    time: i18nFormatDuration(
-                                        activateTokenData.expiresAt.getTime() -
-                                            new Date(Date.now()).getTime(),
-                                    ),
-                                },
-                            },
-                        ),
-                        type: "error",
-                    },
-                ],
+                fields: { password: ["form.password.invalid"] },
             });
         }
 
-        const sessionUserData = await this.sessionUser.create({
-            userId: user.id,
-        });
-        return sessionUserData;
+        if (user.status === "NOACTIVE") {
+            await this.throwActivationError(user.id);
+        }
+
+        return this.sessionUser.create({ userId: user.id });
     }
-    async sendActivate({ email }: { email?: string }) {
+
+    async google({
+        code,
+    }: {
+        code: string;
+    }): Promise<{ accessToken: string; refreshToken: string }> {
+        const { tokens } = await this.oauthClient.getToken({
+            code,
+            redirect_uri: "postmessage",
+        });
+
+        if (!tokens.id_token) throw new InternalServerErrorException();
+
+        const ticket = await this.oauthClient.verifyIdToken({
+            idToken: tokens.id_token,
+            audience: env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        if (!payload?.email) throw new InternalServerErrorException();
+
+        let user = await this.user.findByEmail(payload.email);
+
+        if (!user) {
+            user = await this.user.create({
+                updatedAt: new Date(),
+                status: "ACTIVE",
+                email: payload.email,
+            });
+        }
+
+        if (user.status !== "ACTIVE") {
+            await this.user.activate(user.id);
+        }
+
+        return this.sessionUser.create({ userId: user.id });
+    }
+
+    async refresh(
+        refreshTokenUser: string,
+    ): Promise<{ accessTokenUser: string; refreshTokenUser: string }> {
+        const { accessToken, refreshToken } =
+            await this.sessionUser.refresh(refreshTokenUser);
+        return { accessTokenUser: accessToken, refreshTokenUser: refreshToken };
+    }
+
+    async sendActivate({ email }: { email?: string }): Promise<string> {
         if (!email) throw new NotFoundException();
-        const userData = await this.user.findByEmail(email);
-        if (!userData) throw new NotFoundException();
-        if (userData.status === "ACTIVE")
+
+        const user = await this.user.findByEmail(email);
+        if (!user) throw new NotFoundException();
+
+        if (user.status === "ACTIVE") {
             throw new ValidationException({
                 root: [
                     {
@@ -227,10 +179,10 @@ export class AuthUserService {
                     },
                 ],
             });
+        }
 
-        const activateToken =
-            await this.activateToken.isHaveUserToken(userData);
-        if (activateToken)
+        const existing = await this.activateToken.isHaveUserToken(user);
+        if (existing) {
             throw new ValidationException({
                 root: [
                     {
@@ -239,8 +191,8 @@ export class AuthUserService {
                             {
                                 args: {
                                     time: i18nFormatDuration(
-                                        activateToken.expiresAt.getTime() -
-                                            new Date(Date.now()).getTime(),
+                                        existing.expiresAt.getTime() -
+                                            Date.now(),
                                     ),
                                 },
                             },
@@ -249,39 +201,34 @@ export class AuthUserService {
                     },
                 ],
             });
+        }
 
-        const origin = this.context.origin;
-        const expires = await this.activateToken.createAndSend(
-            userData,
-            origin,
-        );
+        const { expires } = await this.sendActivationEmail(user.id, user.email);
         return this.i18n.t("features.activate.success.sendSuccess", {
             args: { time: i18nFormatDuration(expires) },
         });
     }
+
     async activate({ token }: { token: string }): Promise<true> {
-        let payload;
+        const decoded = decodeURIComponent(token);
+
+        let payload: { userId: string };
         try {
-            payload = this.activateToken.verifyToken(decodeURIComponent(token));
-        } catch (error) {
-            console.log(error);
+            payload = this.activateToken.verifyToken(decoded);
+        } catch {
             throw new NotFoundException();
         }
-        const userData = await this.user.findById(payload.userId);
-        if (!userData) throw new NotFoundException();
-        if (userData.status === "ACTIVE") throw new NotFoundException();
-        const activateTokenData = await this.activateToken.findByUserId(
-            userData.id,
-        );
-        if (!activateTokenData) throw new NotFoundException();
-        const isValid = this.hash.verifySha256(
-            token,
-            activateTokenData.tokenHash,
-        );
+
+        const user = await this.user.findById(payload.userId);
+        if (!user || user.status === "ACTIVE") throw new NotFoundException();
+
+        const tokenData = await this.activateToken.findByUserId(user.id);
+        if (!tokenData) throw new NotFoundException();
+
+        const isValid = this.hash.verifySha256(decoded, tokenData.tokenHash);
         if (!isValid) throw new NotFoundException();
 
-        const isExpire = this.activateToken.isExpireToken(activateTokenData);
-        if (isExpire)
+        if (this.activateToken.isExpireToken(tokenData)) {
             throw new ValidationException({
                 root: [
                     {
@@ -289,25 +236,29 @@ export class AuthUserService {
                             "pages.activate.feedback.errors.expired",
                         ),
                         type: "error",
-                        data: { isShowButton: true, email: userData.email },
+                        data: { isShowButton: true, email: user.email },
                     },
                 ],
             });
-        await this.user.activate(userData.id);
-        await this.activateToken.deleteByUserId(userData.id);
+        }
+
+        await this.user.activate(user.id);
+        await this.activateToken.deleteByUserId(user.id);
         return true;
     }
+
     async forgotPassword({
         email,
     }: UserForgotPasswordDtoOutput): Promise<string> {
         const user = await this.user.findByEmail(email);
-        if (!user)
+        if (!user) {
             throw new ValidationException<UserForgotPasswordDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
+        }
 
-        const resetTokenData = await this.resetToken.isHaveUserToken(user);
-        if (resetTokenData)
+        const existing = await this.resetToken.isHaveUserToken(user);
+        if (existing) {
             throw new ValidationException({
                 root: [
                     {
@@ -316,8 +267,8 @@ export class AuthUserService {
                             {
                                 args: {
                                     time: i18nFormatDuration(
-                                        resetTokenData.expiresAt.getTime() -
-                                            new Date(Date.now()).getTime(),
+                                        existing.expiresAt.getTime() -
+                                            Date.now(),
                                     ),
                                 },
                             },
@@ -326,38 +277,50 @@ export class AuthUserService {
                     },
                 ],
             });
-        const origin = this.context.origin;
-        const expires = await this.resetToken.createAndSend(user, origin);
+        }
+
+        const { token, id } = await this.resetToken.create(user.id);
+        const url = `${this.context.origin}${FULL_PATH_ROUTE.changePasssword.path}?token=${encodeURIComponent(token)}`;
+
+        try {
+            await this.mailer.sendForgotPassword({
+                to: user.email,
+                expires: this.resetToken.expires,
+                url,
+            });
+        } catch (error) {
+            await this.resetToken.delete(id);
+            throw error;
+        }
+
         return this.i18n.t("pages.forgotPassword.feedback.success", {
-            args: {
-                time: i18nFormatDuration(expires),
-            },
+            args: { time: i18nFormatDuration(this.resetToken.expires) },
         });
     }
+
     async changePassword(
         { password }: UserChangePasswordDtoOutput,
         { token }: { token: string },
     ): Promise<true> {
-        let payload;
+        const decoded = decodeURIComponent(token);
+
+        let payload: { userId: string };
         try {
-            payload = this.resetToken.verifyToken(decodeURIComponent(token));
-        } catch (error) {
+            payload = this.resetToken.verifyToken(decoded);
+        } catch {
             throw new NotFoundException();
         }
-        const userData = await this.user.findById(payload.userId);
-        if (!userData) throw new NotFoundException();
-        const resetPasswordToken = await this.resetToken.findByUserId(
-            userData.id,
-        );
-        if (!resetPasswordToken) throw new NotFoundException();
-        const isValid = this.hash.verifySha256(
-            token,
-            resetPasswordToken.tokenHash,
-        );
+
+        const user = await this.user.findById(payload.userId);
+        if (!user) throw new NotFoundException();
+
+        const tokenData = await this.resetToken.findByUserId(user.id);
+        if (!tokenData) throw new NotFoundException();
+
+        const isValid = this.hash.verifySha256(decoded, tokenData.tokenHash);
         if (!isValid) throw new NotFoundException();
 
-        if (this.resetToken.isExpireToken(resetPasswordToken)) {
-            console.log("object");
+        if (this.resetToken.isExpireToken(tokenData)) {
             throw new ValidationException({
                 root: [
                     {
@@ -371,12 +334,79 @@ export class AuthUserService {
             });
         }
 
-        await this.user.changePassword({ password, id: userData.id });
-        await this.resetToken.deleteByUserId(userData.id);
-        await this.sessionUser.deleteAllByUserId(userData.id);
+        await this.user.changePassword({ password, id: user.id });
+        await this.resetToken.deleteByUserId(user.id);
+        await this.sessionUser.deleteAllByUserId(user.id);
         return true;
     }
+
     async logout(sessionId: string): Promise<true> {
-        return await this.sessionUser.delete(sessionId);
+        return this.sessionUser.delete(sessionId);
+    }
+
+    // Private helpers
+
+    private async sendActivationEmail(userId: string, email: string) {
+        const { expires, token, id } = await this.activateToken.create(userId);
+        const url = `${this.context.origin}${FULL_PATH_ROUTE.activate.path}?token=${encodeURIComponent(token)}`;
+
+        try {
+            await this.mailer.sendActivateToken({ to: email, expires, url });
+        } catch (error) {
+            await this.activateToken.delete(id);
+            throw error;
+        }
+
+        return { expires };
+    }
+
+    private async throwActivationError(userId: string): Promise<never> {
+        const tokenData = await this.activateToken.findByUserId(userId);
+
+        if (!tokenData) {
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.login.feedback.errors.sendMail",
+                        ),
+                        type: "error",
+                        data: { isShowButton: true },
+                    },
+                ],
+            });
+        }
+
+        if (this.activateToken.isExpireToken(tokenData)) {
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.login.feedback.errors.expire",
+                        ),
+                        type: "error",
+                        data: { isShowButton: true },
+                    },
+                ],
+            });
+        }
+
+        throw new ValidationException({
+            root: [
+                {
+                    message: this.i18n.t(
+                        "pages.login.feedback.errors.alreadySend",
+                        {
+                            args: {
+                                time: i18nFormatDuration(
+                                    tokenData.expiresAt.getTime() - Date.now(),
+                                ),
+                            },
+                        },
+                    ),
+                    type: "error",
+                },
+            ],
+        });
     }
 }

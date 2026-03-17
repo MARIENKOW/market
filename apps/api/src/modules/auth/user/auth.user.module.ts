@@ -8,12 +8,14 @@ import { HashService } from "@/modules/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
 import { OAuth2Client } from "google-auth-library";
 import { SessionUserModule } from "@/modules/auth/user/session/session.user.module";
+import { MailerModule } from "@/modules/mailer/mailer.module";
 
 @Module({
     imports: [
         UserModule,
         ResetPasswordTokenUserModule,
         ActivateTokenUserModule,
+        MailerModule,
         SessionUserModule,
     ],
     providers: [AuthUserService, HashService, OAuth2Client, JwtService],

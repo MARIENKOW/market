@@ -13,13 +13,11 @@ const { path, me, theme, locale } = ENDPOINT.user;
 export class UserController {
     constructor(private user: UserService) {}
     @Get(me.path)
-    @UseGuards(AuthGuard)
     @Auth("user")
     async me(@Req() req: Request): Promise<UserDto> {
         return mapUser(req.actor.user);
     }
     @Put(theme.path)
-    @UseGuards(AuthGuard)
     @Auth("user")
     async theme(
         @Req() req: Request,
@@ -31,7 +29,6 @@ export class UserController {
         });
     }
     @Put(locale.path)
-    @UseGuards(AuthGuard)
     @Auth("user")
     async locale(
         @Req() req: Request,

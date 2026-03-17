@@ -24,7 +24,7 @@ export class ResetPasswordTokenAdminService {
         private jwt: JwtService,
         private i18n: I18nService<MessageStructure>,
     ) {}
-    private expires = 15 * 60 * 1000; //15 мин
+    expires = 15 * 60 * 1000; //15 мин
     findByAdminId(adminId: string): Promise<ResetPasswordTokenAdmin | null> {
         return this.prisma.resetPasswordTokenAdmin.findUnique({
             where: { adminId },
@@ -42,21 +42,7 @@ export class ResetPasswordTokenAdminService {
         }
         return resetTokenData;
     }
-    async createAndSend(admin: Admin, origin?: string): Promise<number> {
-        const { token, id } = await this.create(admin.id);
-        try {
-            await this.mailerService.sendForgotPassword({
-                to: admin.email,
-                token,
-                expires: this.expires,
-                origin,
-            });
-            return this.expires;
-        } catch (error) {
-            await this.delete(id);
-            throw error;
-        }
-    }
+
     findById(id: string): Promise<ResetPasswordTokenAdmin | null> {
         return this.prisma.resetPasswordTokenAdmin.findUnique({
             where: { id },

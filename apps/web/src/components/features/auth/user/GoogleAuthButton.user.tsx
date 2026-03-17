@@ -20,7 +20,7 @@ import { $apiClient } from "@/utils/api/fetch.client";
 
 const auth = new AuthUserService($apiClient);
 
-export default function GoogleAuthButton({
+export default function GoogleAuthButtonUser({
     redirectTo,
 }: {
     redirectTo?: string;

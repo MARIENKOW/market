@@ -1,6 +1,6 @@
 "use client";
 
-import LogoutErrorButton from "@/components/features/auth/LogoutErrorButton";
+// import LogoutErrorButton from "@/components/features/auth/LogoutErrorButton";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { useRouter } from "@/i18n/navigation";
@@ -56,7 +56,7 @@ export default function AuthErrorElement({ message }: MessageProp) {
                 >
                     {t("feedback.error.auth.reload")}
                 </StyledButton>
-                <LogoutErrorButton />
+                {/* <LogoutErrorButton /> */}
             </Box>
         </Box>
     );

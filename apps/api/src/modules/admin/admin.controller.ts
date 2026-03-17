@@ -13,13 +13,11 @@ const { path, me, theme, locale } = ENDPOINT.admin;
 export class AdminController {
     constructor(private admin: AdminService) {}
     @Get(me.path)
-    @UseGuards(AuthGuard)
     @Auth("admin")
     async me(@Req() req: Request): Promise<AdminDto> {
         return mapAdmin(req.actor.admin);
     }
     @Put(theme.path)
-    @UseGuards(AuthGuard)
     @Auth("admin")
     async theme(
         @Req() req: Request,
@@ -31,7 +29,6 @@ export class AdminController {
         });
     }
     @Put(locale.path)
-    @UseGuards(AuthGuard)
     @Auth("admin")
     async locale(
         @Req() req: Request,

@@ -1,6 +1,6 @@
 "use client";
 
-import ActivateButton from "@/components/features/auth/ActivateButton";
+import ActivateButton from "@/components/features/auth/user/ActivateButton";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { isApiErrorResponse } from "@/helpers/error/error.type.helper";

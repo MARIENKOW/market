@@ -9,8 +9,7 @@ import { env } from "@/config";
 
 export interface SendForgotPasswordOptions {
     to: string;
-    token: string;
-    origin?: string;
+    url: string;
     expires: number;
 }
 
@@ -48,14 +47,7 @@ export class MailerService implements OnModuleInit {
         );
     }
 
-    async sendForgotPassword({
-        to,
-        token,
-        expires,
-        origin,
-    }: SendForgotPasswordOptions) {
-        console.log(origin);
-        const resetUrl = `${origin}${FULL_PATH_ROUTE.changePasssword.path}?token=${encodeURIComponent(token)}`;
+    async sendForgotPassword({ to, expires, url }: SendForgotPasswordOptions) {
 
         const html = `
             <!DOCTYPE html >
@@ -63,7 +55,7 @@ export class MailerService implements OnModuleInit {
             <head><meta charset="UTF-8"></head>
             <body style="font-family: Arial;">
             <h2>${this.i18n.t("mail.resetPassword.title")}</h2>
-            <p><a href="${resetUrl}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.resetPassword.button")}</a></p>
+            <p><a href="${url}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.resetPassword.button")}</a></p>
             <hr>
             <p>${this.i18n.t("mail.resetPassword.exsited", { args: { time: i18nFormatDuration(expires) } })}</p>
             </body>
@@ -73,16 +65,15 @@ export class MailerService implements OnModuleInit {
             to,
             subject: this.i18n.t("mail.resetPassword.text"),
             html,
-            text: `${this.i18n.t("mail.resetPassword.button")}: ${resetUrl}`,
+            text: `${this.i18n.t("mail.resetPassword.button")}: ${url}`,
         });
     }
     async sendActivateToken({
         to,
-        token,
+        url,
         expires,
-        origin,
+        
     }: SendForgotPasswordOptions) {
-        const resetUrl = `${origin}${FULL_PATH_ROUTE.activate.path}?token=${encodeURIComponent(token)}`;
 
         const html = `
             <!DOCTYPE html >
@@ -90,7 +81,7 @@ export class MailerService implements OnModuleInit {
             <head><meta charset="UTF-8"></head>
             <body style="font-family: Arial;">
             <h2>${this.i18n.t("mail.activate.title")}</h2>
-            <p><a href="${resetUrl}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.activate.button")}</a></p>
+            <p><a href="${url}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.activate.button")}</a></p>
             <hr>
             <p>${this.i18n.t("mail.activate.exsited", { args: { time: i18nFormatDuration(expires) } })}</p>
             </body>
@@ -100,7 +91,7 @@ export class MailerService implements OnModuleInit {
             to,
             subject: this.i18n.t("mail.activate.text"),
             html,
-            text: `${this.i18n.t("mail.activate.button")}: ${resetUrl}`,
+            text: `${this.i18n.t("mail.activate.button")}: ${url}`,
         });
     }
 }

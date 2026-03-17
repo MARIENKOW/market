@@ -18,7 +18,7 @@ import FormProvider from "@/components/wrappers/form/FormProvider";
 import { useEffect } from "react";
 import { useWatch } from "react-hook-form";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import GoogleAuthButton from "@/components/features/auth/GoogleAuthButton";
+import GoogleAuthButtonUser from "@/components/features/auth/user/GoogleAuthButton.user";
 import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
@@ -90,7 +90,7 @@ export default function UserRegisterForm() {
                     <SubmitButton />
                 </Box>
                 <StyledDivider />
-                <GoogleAuthButton />
+                <GoogleAuthButtonUser />
             </Form>
         </FormProvider>
     );

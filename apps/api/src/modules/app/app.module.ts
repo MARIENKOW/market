@@ -1,11 +1,7 @@
 import { AppController } from "@/modules/app/app.controller";
 import { AppService } from "@/modules/app/app.service";
 import { AuthModule, AuthRegisterModule } from "@/modules/auth/auth.module";
-import {
-    I18nModule,
-    AcceptLanguageResolver,
-    CookieResolver,
-} from "nestjs-i18n";
+import { I18nModule, CookieResolver } from "nestjs-i18n";
 import { CoreModule } from "@/modules/core/core.module";
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { defaultLanguage } from "@myorg/shared/i18n";

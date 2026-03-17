@@ -6,7 +6,9 @@ model Admin {
 
   theme         String?
   locale        String?
+
   status        StatusAdmin @default(ACTIVE)
+  role          RoleAdmin @default(ADMIN)
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

@@ -10,37 +10,44 @@ import FormAlert from "@/components/features/form/FormAlert";
 import FormPassword from "@/components/features/form/fields/controlled/FormPassword";
 import SimpleForm from "@/components/wrappers/form/SimpleForm";
 import { useRouter } from "@/i18n/navigation";
-import AuthUserService from "@/services/auth/user/auth.user.service";
-import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
+import AuthAdminService from "@/services/auth/admin/auth.admin.service";
+import { AdminLoginDtoInput, AdminLoginSchema } from "@myorg/shared/form";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 import { useState } from "react";
-import ActivateButton from "@/components/features/auth/ActivateButton";
+import ActivateButton from "@/components/features/auth/user/ActivateButton";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import GoogleAuthButton from "@/components/features/auth/GoogleAuthButton";
+import GoogleAuthButton from "@/components/features/auth/user/GoogleAuthButton.user";
 import { $apiClient } from "@/utils/api/fetch.client";
+import GoogleAuthButtonAdmin from "@/components/features/auth/admin/GoogleAuthButton.admin";
 
-const authUser = new AuthUserService($apiClient);
+const authAdmin = new AuthAdminService($apiClient);
 
-export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
+export default function AdminLoginForm({
+    redirectTo,
+}: {
+    redirectTo?: string;
+}) {
     const router = useRouter();
     const t = useTranslations();
     const [isShowButton, setIsShowButton] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
 
-    const onSubmit: CustomSubmitHandler<UserLoginDtoInput> = async (
+    const onSubmit: CustomSubmitHandler<AdminLoginDtoInput> = async (
         formValues,
         { setError },
     ) => {
         setIsShowButton(false);
         try {
-            await authUser.login(formValues);
-            snackbarSuccess(t("pages.login.feedback.success.loginSuccess"));
+            await authAdmin.login(formValues);
+            snackbarSuccess(
+                t("pages.admin.login.feedback.success.loginSuccess"),
+            );
             if (redirectTo) router.push(redirectTo);
             router.refresh();
         } catch (error) {
-            errorFormHandlerWithAlert<UserLoginDtoInput>({
+            errorFormHandlerWithAlert<AdminLoginDtoInput>({
                 error,
                 setError,
                 formValues,
@@ -62,9 +69,9 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     };
 
     return (
-        <SimpleForm<UserLoginDtoInput>
+        <SimpleForm<AdminLoginDtoInput>
             params={{
-                resolver: zodResolver(UserLoginSchema),
+                resolver: zodResolver(AdminLoginSchema),
                 defaultValues: {
                     email: "",
                     password: "",
@@ -72,11 +79,11 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
             }}
             onSubmit={onSubmit}
         >
-            <FormFilledTextField<UserLoginDtoInput>
+            <FormFilledTextField<AdminLoginDtoInput>
                 label={"form.email.label"}
                 name={"email"}
             />
-            <FormPassword<UserLoginDtoInput>
+            <FormPassword<AdminLoginDtoInput>
                 name="password"
                 label="form.password.label"
             />
@@ -91,7 +98,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
                 <SubmitButton />
             </Box>
             <StyledDivider />
-            <GoogleAuthButton redirectTo={redirectTo} />
+            <GoogleAuthButtonAdmin redirectTo={redirectTo} />
         </SimpleForm>
     );
 }

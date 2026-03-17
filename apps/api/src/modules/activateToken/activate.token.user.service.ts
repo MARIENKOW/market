@@ -20,9 +20,8 @@ export class ActivateTokenUserService {
         private prisma: PrismaService,
         private hash: HashService,
         private jwt: JwtService,
-        private mailerService: MailerService,
     ) {}
-    private expires = 30 * 60 * 1000; //30 мин
+    expires = 30 * 60 * 1000; //30 мин
 
     async isHaveUserToken(userData: User): Promise<ActivateTokenUser | null> {
         const activateToken = await this.findByUserId(userData.id);
@@ -30,21 +29,6 @@ export class ActivateTokenUserService {
         const isExpire = await this.isExpireAndDelete(activateToken);
         if (isExpire) return null;
         return activateToken;
-    }
-    async createAndSend(userData: User, origin?: string): Promise<number> {
-        const { expires, token, id } = await this.create(userData.id);
-        try {
-            await this.mailerService.sendActivateToken({
-                to: userData.email,
-                expires,
-                token,
-                origin,
-            });
-            return expires;
-        } catch (error) {
-            await this.delete(id);
-            throw error;
-        }
     }
     async findByUserId(userId: string): Promise<ActivateTokenUser | null> {
         return this.prisma.activateTokenUser.findUnique({
