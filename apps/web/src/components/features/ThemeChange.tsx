@@ -1,15 +1,11 @@
 "use client";
-import { Box, styled, Switch, useColorScheme } from "@mui/material";
+import { Box, styled, Switch } from "@mui/material";
 import { useThemeContext } from "@/theme/ThemeRegistry";
 import ModeNightIcon from "@mui/icons-material/ModeNight";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { AvailableMode } from "@/theme/theme";
 import { StyledTooltip } from "@/components/ui/StyledTooltip";
 import { useTranslations } from "next-intl";
-import { useUserAuth } from "@/components/wrappers/auth/UserAuthProvider";
-import { memo, useCallback, useEffect } from "react";
-import UserService from "@/services/user/user.service";
-import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 45,
@@ -55,7 +51,6 @@ export default function ThemeChange({
     // useEffect(() => {
     //     changeTheme(serverMode);
     // }, [serverMode]);
-    console.log(themeMode);
     return (
         <StyledTooltip title={t("features.theme.name")}>
             <Box display={"inline-flex"}>

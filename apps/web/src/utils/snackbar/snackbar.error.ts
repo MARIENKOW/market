@@ -1,5 +1,5 @@
-import { enqueueSnackbar } from "notistack";
+import { toast } from "sonner";
 
 export const snackbarError = (value: string) => {
-    return enqueueSnackbar(value, { variant: "error" });
+    return toast.error(value);
 };

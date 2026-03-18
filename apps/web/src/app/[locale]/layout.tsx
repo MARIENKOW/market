@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClientProvider } from "@/components/wrappers/ClientProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import ThemeRegistry from "@/theme/ThemeRegistry";
 import { getThemeMode } from "@/theme/themeMode";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { AvailableLanguage, languages } from "@myorg/shared/i18n";
-import UserAuthProvider from "@/components/wrappers/auth/UserAuthProvider";
-import { getUserAuth } from "@/utils/cache/user.cache.me";
+import { AvailableLanguage } from "@myorg/shared/i18n";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AvailableMode } from "@/theme/theme";
 import { EventListener } from "@/components/features/EventListener";
 import { NavigationProgress } from "@/components/features/NavigationProgress";
+import { StyledToaster } from "@/components/feedback/StyledToaster";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -43,8 +41,6 @@ export default async function RootLayout({
 
     const themeMode = await getThemeMode();
 
-    const { user, error } = await getUserAuth();
-
     const newTheme = themeMode;
 
     setRequestLocale(locale as AvailableLanguage);
@@ -55,7 +51,7 @@ export default async function RootLayout({
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    minHeight: "100vh",
+                    minHeight: "100dvh",
                 }}
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
@@ -71,9 +67,8 @@ export default async function RootLayout({
                             >
                                 <EventListener />
                                 <NavigationProgress />
-                                <UserAuthProvider error={error} user={user}>
-                                    <ClientProvider>{children}</ClientProvider>
-                                </UserAuthProvider>
+                                <StyledToaster serverMode={newTheme} />
+                                {children}
                             </ThemeRegistry>
                         </AppRouterCacheProvider>
                     </NextIntlClientProvider>
