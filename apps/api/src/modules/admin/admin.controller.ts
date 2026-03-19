@@ -1,11 +1,11 @@
-import { Auth } from "@/modules/auth/auth.decorator";
-import { AuthGuard } from "@/modules/auth/auth.guard";
+import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { mapAdmin } from "@/modules/admin/admin.mapper";
 import { AdminService } from "@/modules/admin/admin.service";
 import { AdminDto } from "@myorg/shared/dto";
 import { ENDPOINT } from "@myorg/shared/endpoints";
 import { Body, Controller, Get, Put, Req, UseGuards } from "@nestjs/common";
 import { Request } from "express";
+import { AdminActor } from "@/modules/auth/auth.type";
 
 const { path, me, theme, locale } = ENDPOINT.admin;
 
@@ -13,29 +13,30 @@ const { path, me, theme, locale } = ENDPOINT.admin;
 export class AdminController {
     constructor(private admin: AdminService) {}
     @Get(me.path)
-    @Auth("admin")
-    async me(@Req() req: Request): Promise<AdminDto> {
-        return mapAdmin(req.actor.admin);
+    @Auth('ADMIN')
+    async me(@CurrentActor() actor: AdminActor): Promise<AdminDto> {
+        return mapAdmin(actor.admin);
     }
     @Put(theme.path)
-    @Auth("admin")
+    @Auth('ADMIN')
     async theme(
         @Req() req: Request,
+        @CurrentActor() actor: AdminActor,
         @Body() body: { theme: string },
     ): Promise<true> {
         return this.admin.changeTheme({
-            id: req.actor.admin.id,
+            id: actor.admin.id,
             theme: body.theme,
         });
     }
     @Put(locale.path)
-    @Auth("admin")
+    @Auth('ADMIN')
     async locale(
-        @Req() req: Request,
+        @CurrentActor() actor: AdminActor,
         @Body() body: { locale: string },
     ): Promise<true> {
         return this.admin.changeLocale({
-            id: req.actor.admin.id,
+            id: actor.admin.id,
             locale: body.locale,
         });
     }

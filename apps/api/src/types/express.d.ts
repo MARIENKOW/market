@@ -1,5 +1,6 @@
 // types/express.d.ts
-import { Actor } from "@/auth/actor.type";
+
+import { Actor } from "@/modules/auth/auth.type";
 
 declare global {
     namespace Express {

@@ -1,4 +1,4 @@
-import { Public } from "@/modules/auth/public.decorator";
+import { Public } from "@/modules/auth/decorators/public.decorator";
 import { ResetPasswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
 import { ENDPOINT } from "@myorg/shared/endpoints";
 import { Body, Controller, Post } from "@nestjs/common";

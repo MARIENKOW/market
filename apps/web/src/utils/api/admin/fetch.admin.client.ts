@@ -26,7 +26,7 @@ const tryRefresh = async (): Promise<void> => {
 
 // ─── Default headers ─────────────────────────────────────────────
 const DEFAULT_HEADERS: FetchBaseOptions["headers"] = {
-    "x-type": "admin",
+    "x-type": "ADMIN",
 };
 
 const buildOptions = (options: FetchBaseOptions): FetchBaseOptions => ({

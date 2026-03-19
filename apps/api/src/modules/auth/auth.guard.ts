@@ -1,20 +1,28 @@
+// auth.guard.ts
 import {
     CanActivate,
     ExecutionContext,
     Injectable,
     UnauthorizedException,
+    ForbiddenException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
-import { AUTH_TYPE_KEY } from "@/modules/auth/auth.decorator";
-import { IS_PUBLIC_KEY } from "@/modules/auth/public.decorator";
-import { AuthType } from "@/modules/auth/auth.actor.type";
+import { AUTH_ROLES_KEY } from "@/modules/auth/decorators/auth.decorator";
+import { IS_PUBLIC_KEY } from "@/modules/auth/decorators/public.decorator";
+import {
+    AuthRole,
+    AdminRole,
+    ActorType,
+    Actor,
+} from "@/modules/auth/auth.type";
+
 import { UserService } from "@/modules/user/user.service";
+import { AdminService } from "@/modules/admin/admin.service";
 import {
     SessionUserService,
     AccessTokenUserPayload,
 } from "@/modules/auth/user/session/session.user.service";
-import { AdminService } from "@/modules/admin/admin.service";
 import {
     SessionAdminService,
     AccessTokenAdminPayload,
@@ -25,8 +33,8 @@ export class AuthGuard implements CanActivate {
     constructor(
         private readonly reflector: Reflector,
         private readonly sessionUser: SessionUserService,
-        private readonly user: UserService,
         private readonly sessionAdmin: SessionAdminService,
+        private readonly user: UserService,
         private readonly admin: AdminService,
     ) {}
 
@@ -37,37 +45,88 @@ export class AuthGuard implements CanActivate {
         );
         if (isPublic) return true;
 
-        const allowedRoles = this.reflector.getAllAndOverride<AuthType[]>(
-            AUTH_TYPE_KEY,
+        const allowedRoles = this.reflector.getAllAndOverride<AuthRole[]>(
+            AUTH_ROLES_KEY,
             [ctx.getHandler(), ctx.getClass()],
         );
+
+        // Нет декоратора @Auth() — роут закрыт
         if (!allowedRoles?.length) throw new UnauthorizedException();
 
         const req = ctx.switchToHttp().getRequest<Request>();
-        const cookies = req.cookies ?? {};
+        const xType = req.headers["x-type"] as string | undefined;
 
-        if (allowedRoles.includes("user")) {
-            return this.authenticateUser(req, cookies);
-        }
+        const actorType = this.resolveActorType(xType, allowedRoles,req.cookies);
+        if (!actorType) throw new UnauthorizedException();
 
-        if (allowedRoles.includes("admin")) {
-            return this.authenticateAdmin(req, cookies);
-        }
+        const actor =
+            actorType === "USER"
+                ? await this.buildUserActor(req.cookies)
+                : await this.buildAdminActor(req.cookies);
 
-        throw new UnauthorizedException();
+        this.assertRoleAllowed(actor, allowedRoles);
+
+        req.actor = actor;
+        await this.touch(actor);
+
+        return true;
     }
 
-    private async authenticateUser(
-        req: Request,
+    // Определяем с кем работаем: user или admin
+    // x-type имеет приоритет (нужен когда роут открыт для обоих)
+    // 1. resolveActorType по куки
+    private resolveActorType(
+        xType: string | undefined,
+        allowedRoles: AuthRole[],
         cookies: Record<string, string>,
-    ): Promise<boolean> {
-        if (!cookies.accessTokenUser) throw new UnauthorizedException();
+    ): ActorType | null {
+        if (xType === "USER" || xType === "ADMIN") return xType;
+
+        const needsUser = allowedRoles.includes("USER");
+        const needsAdmin = allowedRoles.some(
+            (r) => r === "ADMIN" || r === "SUPERADMIN",
+        );
+
+        if (needsUser && needsAdmin) {
+            if (cookies.accessTokenAdmin) return "ADMIN";
+            if (cookies.accessTokenUser) return "USER";
+            return null;
+        }
+
+        if (needsUser) return "USER";
+        if (needsAdmin) return "ADMIN";
+        return null;
+    }
+
+    // 2. expiresAt — уже обсудили
+    // 3. console.log убрать — уже обсудили
+
+    // Проверяем что роль актора входит в разрешённые для этого роута
+    private assertRoleAllowed(actor: Actor, allowedRoles: AuthRole[]): void {
+        if (actor.type === "USER" && allowedRoles.includes("USER")) return;
+
+        if (actor.type === "ADMIN") {
+            const hasAdminRole = allowedRoles.some(
+                (r) => r === "ADMIN" || r === "SUPERADMIN",
+            );
+            if (!hasAdminRole) throw new ForbiddenException(); // ← сначала это
+
+            if (actor.role === "SUPERADMIN") return;
+            if (allowedRoles.includes(actor.role)) return;
+        }
+
+        throw new ForbiddenException();
+    }
+
+    private async buildUserActor(
+        cookies: Record<string, string>,
+    ): Promise<Actor> {
+        const token = cookies.accessTokenUser;
+        if (!token) throw new UnauthorizedException();
 
         let payload: AccessTokenUserPayload;
         try {
-            payload = this.sessionUser.verifyAccessToken(
-                cookies.accessTokenUser,
-            );
+            payload = this.sessionUser.verifyAccessToken(token);
         } catch {
             throw new UnauthorizedException();
         }
@@ -79,22 +138,18 @@ export class AuthGuard implements CanActivate {
         if (!user || user.status !== "ACTIVE")
             throw new UnauthorizedException();
 
-        req.actor = { type: "user", user, sessionId: session.id };
-        await this.sessionUser.touch(session.id);
-        return true;
+        return { type: "USER", user, sessionId: session.id };
     }
 
-    private async authenticateAdmin(
-        req: Request,
+    private async buildAdminActor(
         cookies: Record<string, string>,
-    ): Promise<boolean> {
-        if (!cookies.accessTokenAdmin) throw new UnauthorizedException();
+    ): Promise<Actor> {
+        const token = cookies.accessTokenAdmin;
+        if (!token) throw new UnauthorizedException();
 
         let payload: AccessTokenAdminPayload;
         try {
-            payload = this.sessionAdmin.verifyAccessToken(
-                cookies.accessTokenAdmin,
-            );
+            payload = this.sessionAdmin.verifyAccessToken(token);
         } catch {
             throw new UnauthorizedException();
         }
@@ -106,8 +161,16 @@ export class AuthGuard implements CanActivate {
         if (!admin || admin.status !== "ACTIVE")
             throw new UnauthorizedException();
 
-        req.actor = { type: "admin", admin, sessionId: session.id };
-        await this.sessionAdmin.touch(session.id);
-        return true;
+        const role = admin.role as AdminRole;
+
+        return { type: "ADMIN", admin, role, sessionId: session.id };
+    }
+
+    private async touch(actor: Actor): Promise<void> {
+        if (actor.type === "USER") {
+            await this.sessionUser.touch(actor.sessionId);
+        } else {
+            await this.sessionAdmin.touch(actor.sessionId);
+        }
     }
 }

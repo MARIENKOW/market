@@ -4,10 +4,8 @@ import {
     Post,
     Body,
     Res,
-    UseGuards,
     Req,
     Param,
-    Query,
     Get,
     UnauthorizedException,
 } from "@nestjs/common";
@@ -25,10 +23,10 @@ import {
 } from "@myorg/shared/form";
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
 import { CookieOptions, Request, Response } from "express";
-import { AuthGuard } from "@/modules/auth/auth.guard";
-import { Auth } from "@/modules/auth/auth.decorator";
+import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { env } from "@/config";
-import { Public } from "@/modules/auth/public.decorator";
+import { Public } from "@/modules/auth/decorators/public.decorator";
+import { UserActor } from "@/modules/auth/auth.type";
 
 export const COOKIE_CONFIG: CookieOptions = {
     httpOnly: true,
@@ -53,7 +51,7 @@ export class AuthUserController {
     ): Promise<string> {
         return this.authUser.register(body);
     }
-    
+
     @Get(refresh.path)
     @Public()
     async refresh(
@@ -91,7 +89,7 @@ export class AuthUserController {
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         const { accessToken, refreshToken } = await this.authUser.google(body);
-        console.log(accessToken,refreshToken);
+        console.log(accessToken, refreshToken);
         res.cookie("accessTokenUser", accessToken, COOKIE_CONFIG);
         res.cookie("refreshTokenUser", refreshToken, COOKIE_CONFIG);
         return true;
@@ -128,12 +126,12 @@ export class AuthUserController {
     }
 
     @Post(logout.path)
-    @Auth("user")
+    @Auth('USER')
     async logout(
-        @Req() req: Request,
+        @CurrentActor() actor: UserActor,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
-        await this.authUser.logout(req.actor.sessionId);
+        await this.authUser.logout(actor.sessionId);
         res.cookie("accessTokenUser", "", COOKIE_CONFIG);
         res.cookie("refreshTokenUser", "", COOKIE_CONFIG);
         return true;

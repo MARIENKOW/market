@@ -50,6 +50,9 @@ export default function GoogleAuthButtonAdmin({
                 setLoading(false);
             }
         },
+        onNonOAuthError: () => {
+            setLoading(false);
+        },
         onError: () => snackbarError(t("api.FALLBACK_ERR")),
         flow: "auth-code",
     });

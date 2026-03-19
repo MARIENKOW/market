@@ -23,10 +23,11 @@ import {
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
 import { CookieOptions, Request, Response } from "express";
 import { AuthGuard } from "@/modules/auth/auth.guard";
-import { Auth } from "@/modules/auth/auth.decorator";
+import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { env } from "@/config";
 import { AuthAdminService } from "@/modules/auth/admin/auth.admin.service";
-import { Public } from "@/modules/auth/public.decorator";
+import { Public } from "@/modules/auth/decorators/public.decorator";
+import { AdminActor } from "@/modules/auth/auth.type";
 
 export const COOKIE_CONFIG: CookieOptions = {
     httpOnly: true,
@@ -105,12 +106,12 @@ export class AuthAdminController {
     }
 
     @Post(logout.path)
-    @Auth("admin")
+    @Auth('ADMIN')
     async logout(
-        @Req() req: Request,
+        @CurrentActor() actor: AdminActor,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
-        await this.authAdmin.logout(req.actor.sessionId);
+        await this.authAdmin.logout(actor.sessionId);
         res.cookie("accessTokenAdmin", "", COOKIE_CONFIG);
         res.cookie("refreshTokenAdmin", "", COOKIE_CONFIG);
         return true;

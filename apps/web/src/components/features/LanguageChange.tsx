@@ -12,31 +12,20 @@ import {
     defaultLanguage,
 } from "@myorg/shared/i18n";
 import ReactCountryFlag from "react-country-flag";
-import { useUserAuth } from "@/components/wrappers/auth/UserAuthProvider";
-import UserService from "@/services/user/user.service";
-import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 import { StyledTooltip } from "@/components/ui/StyledTooltip";
-import { useState, useTransition } from "react";
-const userFetch = new UserService($apiUserClient);
+import { useState } from "react";
 export function LanguageChange() {
     const router = useRouter();
     const locale = useLocale();
     const [open, setOpen] = useState<boolean>(false);
     const pathname = usePathname();
-    const { user } = useUserAuth();
     const t = useTranslations();
-    const [l, startTransition] = useTransition();
 
     const handleChange = (event: SelectChangeEvent<unknown>) => {
-        startTransition(() => setOpen(false));
+        setOpen(false);
         const value = event.target.value as AvailableLanguage;
         const lang = languages.includes(value) ? value : defaultLanguage;
         router.replace(pathname, { locale: lang });
-        if (user) {
-            try {
-                userFetch.changeLocale({ locale: lang });
-            } catch (error) {}
-        }
     };
 
     if (languages.length <= 1) return null;

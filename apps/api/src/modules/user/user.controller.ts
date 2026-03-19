@@ -1,11 +1,18 @@
-import { Auth } from "@/modules/auth/auth.decorator";
-import { AuthGuard } from "@/modules/auth/auth.guard";
+import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { mapUser } from "@/modules/user/user.mapper";
 import { UserService } from "@/modules/user/user.service";
 import { UserDto } from "@myorg/shared/dto";
 import { ENDPOINT } from "@myorg/shared/endpoints";
-import { Body, Controller, Get, Put, Req, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Get,
+    Put,
+    Req,
+    UnauthorizedException,
+} from "@nestjs/common";
 import { Request } from "express";
+import { isUserActor, UserActor } from "@/modules/auth/auth.type";
 
 const { path, me, theme, locale } = ENDPOINT.user;
 
@@ -13,27 +20,29 @@ const { path, me, theme, locale } = ENDPOINT.user;
 export class UserController {
     constructor(private user: UserService) {}
     @Get(me.path)
-    @Auth("user")
-    async me(@Req() req: Request): Promise<UserDto> {
-        return mapUser(req.actor.user);
+    @Auth("USER")
+    async me(@CurrentActor() actor: UserActor): Promise<UserDto> {
+        return mapUser(actor.user);
     }
     @Put(theme.path)
-    @Auth("user")
+    @Auth("USER")
     async theme(
-        @Req() req: Request,
+        @CurrentActor() actor: UserActor,
         @Body() body: { theme: string },
     ): Promise<true> {
         return this.user.changeTheme({
-            id: req.actor.user.id,
+            id: actor.user.id,
             theme: body.theme,
         });
     }
     @Put(locale.path)
-    @Auth("user")
+    @Auth("USER")
     async locale(
         @Req() req: Request,
         @Body() body: { locale: string },
     ): Promise<true> {
+        if (!req.actor || !isUserActor(req.actor))
+            throw new UnauthorizedException();
         return this.user.changeLocale({
             id: req.actor.user.id,
             locale: body.locale,

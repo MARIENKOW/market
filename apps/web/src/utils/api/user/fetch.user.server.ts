@@ -4,7 +4,7 @@ import { FetchBaseOptions, FetchCustomReturn } from "@/utils/api";
 import { $apiServer } from "@/utils/api/fetch.server";
 
 const DEFAULT_HEADERS: FetchBaseOptions["headers"] = {
-    "x-type": "user",
+    "x-type": "USER",
 };
 
 export const $apiUserServer = async <T>(
