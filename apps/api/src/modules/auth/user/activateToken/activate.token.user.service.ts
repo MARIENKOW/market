@@ -1,15 +1,8 @@
 import { ActivateTokenUser, User } from "@/generated/prisma";
-import { PrismaService } from "@/modules/prisma/prisma.service";
-import { Injectable, NotFoundException } from "@nestjs/common";
-import crypto from "crypto";
-import bcrypt from "bcrypt";
-import { UserService } from "@/modules/user/user.service";
-import { ValidationException } from "@/common/exception/validation.exception";
-import { I18nService } from "nestjs-i18n";
-import { MailerService } from "@/modules/mailer/mailer.service";
-import { MessageStructure } from "@myorg/shared/i18n";
+import { PrismaService } from "@/infrastructure/prisma/prisma.service";
+import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { HashService } from "@/modules/hash/hash.service";
+import { HashService } from "@/infrastructure/hash/hash.service";
 import { env } from "@/config";
 
 export type ActivateTokenUserPayload = { userId: string };

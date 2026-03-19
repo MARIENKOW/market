@@ -11,14 +11,14 @@ import {
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { ResetPasswordTokenAdminService } from "@/modules/resetPasswordToken/admin/reset.password.token.admin.service";
-import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
+import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { I18nService } from "nestjs-i18n";
-import { HashService } from "@/modules/hash/hash.service";
+import { HashService } from "@/infrastructure/hash/hash.service";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 import { OAuth2Client } from "google-auth-library";
 import { SessionAdminService } from "@/modules/auth/admin/session/session.admin.service";
-import { MailerService } from "@/modules/mailer/mailer.service";
+import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { env } from "@/config";
 

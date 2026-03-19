@@ -1,9 +1,9 @@
 import { SessionUser } from "@/generated/prisma";
-import { PrismaService } from "@/modules/prisma/prisma.service";
+import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import * as crypto from "crypto";
-import { HashService } from "@/modules/hash/hash.service";
+import { HashService } from "@/infrastructure/hash/hash.service";
 import { env } from "@/config";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 

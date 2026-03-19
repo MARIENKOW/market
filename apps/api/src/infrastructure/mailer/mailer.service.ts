@@ -3,7 +3,7 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import nodemailer from "nodemailer";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { I18nService } from "nestjs-i18n";
-import { i18nFormatDuration } from "@/helpers/i18n.formatDuration";
+import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { env } from "@/config";
 
@@ -48,7 +48,6 @@ export class MailerService implements OnModuleInit {
     }
 
     async sendForgotPassword({ to, expires, url }: SendForgotPasswordOptions) {
-
         const html = `
             <!DOCTYPE html >
             <html>
@@ -68,13 +67,7 @@ export class MailerService implements OnModuleInit {
             text: `${this.i18n.t("mail.resetPassword.button")}: ${url}`,
         });
     }
-    async sendActivateToken({
-        to,
-        url,
-        expires,
-        
-    }: SendForgotPasswordOptions) {
-
+    async sendActivateToken({ to, url, expires }: SendForgotPasswordOptions) {
         const html = `
             <!DOCTYPE html >
             <html>

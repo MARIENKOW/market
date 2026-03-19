@@ -10,7 +10,7 @@ import {
     UnauthorizedException,
 } from "@nestjs/common";
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
-import { ENDPOINT } from "@myorg/shared/endpoints";
+import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     UserChangePasswordDtoOutput,
     UserChangePasswordSchema,
@@ -39,7 +39,9 @@ export const COOKIE_CONFIG: CookieOptions = {
 const { register, login, logout, forgotPassword, refresh, activate, google } =
     ENDPOINT.auth.user;
 
-@Controller()
+const { path } = FULL_PATH_ENDPOINT.auth.user;
+
+@Controller(path)
 export class AuthUserController {
     constructor(private authUser: AuthUserService) {}
 
@@ -126,7 +128,7 @@ export class AuthUserController {
     }
 
     @Post(logout.path)
-    @Auth('USER')
+    @Auth("USER")
     async logout(
         @CurrentActor() actor: UserActor,
         @Res({ passthrough: true }) res: Response,

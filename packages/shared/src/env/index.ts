@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Email, Password } from "../form/fields";
 
 const boolStr = z.enum(["true", "false"]).transform((v) => v === "true");
 const csvString = z.string().transform((v) =>
@@ -52,6 +53,9 @@ export const serverEnvSchema = z
         // Google OAuth
         GOOGLE_CLIENT_ID: z.string().min(1),
         GOOGLE_CLIENT_SECRET: z.string().min(1),
+
+        SUPERADMIN_EMAIL: Email,
+        SUPERADMIN_PASSWORD: Password,
 
         // Misc
         HTTPS: boolStr.default(false),

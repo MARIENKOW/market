@@ -1,5 +1,5 @@
 import { ResetPasswordTokenUser, User } from "@/generated/prisma";
-import { PrismaService } from "@/modules/prisma/prisma.service";
+import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import {
     Injectable,
     NotFoundException,
@@ -11,8 +11,8 @@ import { UserService } from "@/modules/user/user.service";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 import { MessageStructure } from "@myorg/shared/i18n";
-import { MailerService } from "@/modules/mailer/mailer.service";
-import { HashService } from "@/modules/hash/hash.service";
+import { MailerService } from "@/infrastructure/mailer/mailer.service";
+import { HashService } from "@/infrastructure/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
 import { env } from "@/config";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";

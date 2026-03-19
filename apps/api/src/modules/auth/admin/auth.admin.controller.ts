@@ -11,7 +11,7 @@ import {
     Get,
     UnauthorizedException,
 } from "@nestjs/common";
-import { ENDPOINT } from "@myorg/shared/endpoints";
+import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     AdminChangePasswordDtoOutput,
     AdminChangePasswordSchema,
@@ -38,8 +38,9 @@ export const COOKIE_CONFIG: CookieOptions = {
 };
 
 const { login, logout, forgotPassword, refresh, google } = ENDPOINT.auth.admin;
+const { path } = FULL_PATH_ENDPOINT.auth.admin;
 
-@Controller()
+@Controller(path)
 export class AuthAdminController {
     constructor(private authAdmin: AuthAdminService) {}
 
@@ -106,7 +107,7 @@ export class AuthAdminController {
     }
 
     @Post(logout.path)
-    @Auth('ADMIN')
+    @Auth("ADMIN")
     async logout(
         @CurrentActor() actor: AdminActor,
         @Res({ passthrough: true }) res: Response,

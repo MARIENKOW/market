@@ -1,6 +1,5 @@
 import { AppController } from "@/modules/app/app.controller";
 import { AppService } from "@/modules/app/app.service";
-import { AuthModule, AuthRegisterModule } from "@/modules/auth/auth.module";
 import { I18nModule, CookieResolver } from "nestjs-i18n";
 import { CoreModule } from "@/modules/core/core.module";
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
@@ -8,11 +7,13 @@ import { defaultLanguage } from "@myorg/shared/i18n";
 import { TsI18nLoader } from "@/lib/i18n/i18n.loader";
 import { RequestContextMiddleware } from "@/common/request-context/request-context.middleware";
 import { RequestContextModule } from "@/common/request-context/request-context.module";
+import { AuthUserModule } from "@/modules/auth/user/auth.user.module";
+import { AuthAdminModule } from "@/modules/auth/admin/auth.admin.module";
 @Module({
     imports: [
-        AuthRegisterModule,
-        AuthModule,
         CoreModule,
+        AuthUserModule,
+        AuthAdminModule,
         RequestContextModule,
         I18nModule.forRoot({
             loaderOptions: {},
@@ -22,6 +23,7 @@ import { RequestContextModule } from "@/common/request-context/request-context.m
             throwOnMissingKey: true,
         }),
     ],
+    
     controllers: [AppController],
     providers: [AppService],
 })

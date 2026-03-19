@@ -1,5 +1,4 @@
 import { FetchCustom, FetchCustomReturn } from "@/utils/api";
-import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     UserLoginDtoOutput,

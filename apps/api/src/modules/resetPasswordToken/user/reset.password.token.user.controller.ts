@@ -16,3 +16,4 @@ export default class ResetPasswordTokenUserController {
         return await this.resetPassword.check(body);
     }
 }
+

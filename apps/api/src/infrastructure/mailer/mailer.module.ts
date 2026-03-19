@@ -1,4 +1,4 @@
-import { MailerService } from "@/modules/mailer/mailer.service";
+import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { Module } from "@nestjs/common";
 
 @Module({

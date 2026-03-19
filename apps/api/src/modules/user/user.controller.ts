@@ -2,7 +2,7 @@ import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { mapUser } from "@/modules/user/user.mapper";
 import { UserService } from "@/modules/user/user.service";
 import { UserDto } from "@myorg/shared/dto";
-import { ENDPOINT } from "@myorg/shared/endpoints";
+import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     Body,
     Controller,
@@ -14,7 +14,8 @@ import {
 import { Request } from "express";
 import { isUserActor, UserActor } from "@/modules/auth/auth.type";
 
-const { path, me, theme, locale } = ENDPOINT.user;
+const { me, theme, locale } = ENDPOINT.user;
+const { path } = FULL_PATH_ENDPOINT.user;
 
 @Controller(path)
 export class UserController {
