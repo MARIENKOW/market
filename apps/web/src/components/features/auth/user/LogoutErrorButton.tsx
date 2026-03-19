@@ -24,7 +24,6 @@ export default function LogoutErrorButton() {
             router.refresh();
             snackbarSuccess(t("features.logoutErr.success"));
         } catch (error) {
-            console.log(error);
             errorHandler({
                 error,
                 t,

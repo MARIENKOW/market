@@ -1,9 +1,7 @@
 "use client";
 
 import { UserDto } from "@myorg/shared/dto";
-import { useTranslations } from "next-intl";
-import { createContext, useContext, useEffect } from "react";
-import { snackbarError } from "@/utils/snackbar/snackbar.error";
+import { createContext, useContext } from "react";
 
 type UserAuthContext = {
     user: UserDto | null;

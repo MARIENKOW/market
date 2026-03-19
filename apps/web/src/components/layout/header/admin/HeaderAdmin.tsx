@@ -6,7 +6,6 @@ import { getThemeMode } from "@/theme/themeMode";
 import { Box, Button, Toolbar } from "@mui/material";
 import { getTranslations } from "next-intl/server";
 import { FULL_PATH_ROUTE, ROUTE } from "@myorg/shared/route";
-import NavigationAdmin from "@/components/features/auth/admin/Navigation.admin";
 import AuthNavigationAdmin from "@/components/features/auth/admin/AuthNavigation.admin";
 
 export default async function HeaderAdmin() {

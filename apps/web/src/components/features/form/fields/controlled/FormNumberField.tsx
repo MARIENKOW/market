@@ -28,7 +28,6 @@ export default function FormNumberField<TFieldValues extends FieldValues>({
                     inputMode="numeric"
                     value={value}
                     onChange={({ target }) => {
-                        console.log(target.value);
                         onChange(target.value);
                     }}
                     helperText={

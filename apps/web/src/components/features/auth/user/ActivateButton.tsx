@@ -24,10 +24,9 @@ export default function ActivateButton({
     const handleClick = async () => {
         setLoading(true);
         try {
-            const {data} = await user.sendActivate({ email });
+            const { data } = await user.sendActivate({ email });
             snackbarSuccess(data);
         } catch (error) {
-            console.log(error);
             errorHandler({
                 error,
                 t,

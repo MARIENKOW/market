@@ -1,5 +1,4 @@
 import { HashService } from "../src/infrastructure/hash/hash.service";
-import { SeedSchema } from "@myorg/shared/src/form/schema/SeedSchema";
 import { env } from "../src/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma";
@@ -19,23 +18,16 @@ async function main() {
         return;
     }
 
-    const parsed = SeedSchema.safeParse({
-        email: env.SUPERADMIN_EMAIL,
-        password: env.SUPERADMIN_PASSWORD,
-    });
-
-    if (!parsed.success) {
+    if (!env.SUPERADMIN_PASSWORD || !env.SUPERADMIN_EMAIL) {
         console.error("❌ Ошибка валидации env-переменных:");
-        console.error(parsed.error.flatten().fieldErrors);
         process.exit(1);
     }
 
-    const { email, password } = parsed.data;
-    const passwordHash = await hash.hash(password);
+    const passwordHash = await hash.hash(env.SUPERADMIN_PASSWORD);
 
     await prisma.admin.create({
         data: {
-            email,
+            email: env.SUPERADMIN_EMAIL,
             passwordHash,
             role: "SUPERADMIN",
             status: "ACTIVE",
@@ -43,12 +35,11 @@ async function main() {
         },
     });
 
-    console.log(`✅ Superadmin created: ${email}`);
+    console.log(`✅ Superadmin created: ${env.SUPERADMIN_EMAIL}`);
 }
 
 main()
     .catch(console.error)
     .finally(async () => {
-        console.log("finaly");
         await prisma.$disconnect();
     });

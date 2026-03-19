@@ -10,7 +10,6 @@ export const EventListener = () => {
 
     useEffect(() => {
         const onUnauthorized = () => {
-            console.log(EVENTS_KEYS.UNAUTHORIZED);
             startTransition(() => router.refresh());
         };
 

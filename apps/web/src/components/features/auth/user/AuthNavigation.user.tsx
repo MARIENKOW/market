@@ -12,7 +12,6 @@ import { getTranslations } from "next-intl/server";
 
 export default async function AuthNavigation() {
     const { user, error } = await getUserAuth();
-    console.log(user);
     const t = await getTranslations();
     if (error) return <SkeletonAuthHeader />;
     if (!!user) return <UserNavigation user={user} />;

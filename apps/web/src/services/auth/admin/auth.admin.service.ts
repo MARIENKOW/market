@@ -84,7 +84,6 @@ export default class AuthAdminService {
         this.changePassword = async (body, { token }) => {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
-            console.log(body);
             this.abortController = controller;
             const res = await api<true>(forgotPassword.path + "/" + token, {
                 signal: controller.signal,

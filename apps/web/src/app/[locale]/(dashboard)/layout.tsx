@@ -4,11 +4,11 @@ import { getUserAuth } from "@/utils/cache/user.cache.me";
 import { Box } from "@mui/material";
 import React from "react";
 
-type RootMainLayoutType = {
+export default async function UserLayout({
+    children,
+}: {
     children: React.ReactNode;
-};
-
-export default async function UserLayout({ children }: RootMainLayoutType) {
+}) {
     const { user, error } = await getUserAuth();
     return (
         <UserAuthProvider user={user} error={error}>
