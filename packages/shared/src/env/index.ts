@@ -12,10 +12,7 @@ const csvString = z.string().transform((v) =>
 /** Только серверные — НИКОГДА не импортировать в клиентские компоненты */
 export const serverEnvSchema = z
     .object({
-        NODE_ENV: z
-            .enum(["development", "production", "test"])
-            .default("development"),
-
+        NODE_ENV: z.enum(["development", "production", "test"]),
         // Folders
         FOLDER: z.string().startsWith("/"),
         IMG_FOLDER: z.string().startsWith("/"),
@@ -27,15 +24,15 @@ export const serverEnvSchema = z
         DB_USER: z.string().min(1),
         DB_DATABASE: z.string().min(1),
         DB_PASSWORD: z.string().default(""),
-        DB_PORT: z.coerce.number().int().positive().default(5432),
-        DB_CONNECT_TIMEOUT: z.coerce.number().int().positive().default(30000),
+        DB_PORT: z.coerce.number().int().positive(),
+        DB_CONNECT_TIMEOUT: z.coerce.number().int().positive(),
         DB_PROVIDER: z
             .enum(["postgresql", "mysql", "sqlite"])
             .default("postgresql"),
 
         // SMTP
         SMTP_HOST: z.string().min(1),
-        SMTP_PORT: z.coerce.number().int().positive().default(465),
+        SMTP_PORT: z.coerce.number().int().positive(),
         SMTP_USER: z.string().email(),
         SMTP_PASSWORD: z.string().min(1),
 
@@ -54,8 +51,8 @@ export const serverEnvSchema = z
         GOOGLE_CLIENT_ID: z.string().min(1),
         GOOGLE_CLIENT_SECRET: z.string().min(1),
 
-        SUPERADMIN_EMAIL: Email,
-        SUPERADMIN_PASSWORD: Password,
+        SUPERADMIN_EMAIL: Email.or(z.literal("")),
+        SUPERADMIN_PASSWORD: Password.or(z.literal("")),
 
         // Misc
         HTTPS: boolStr.default(false),

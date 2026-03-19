@@ -1,7 +1,6 @@
 // src/mailer/mailer.service.ts
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import nodemailer from "nodemailer";
-import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { I18nService } from "nestjs-i18n";
 import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
