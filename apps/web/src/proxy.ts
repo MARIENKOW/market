@@ -41,29 +41,29 @@ export default async function Mid(req: NextRequest) {
                         );
                     });
                 } catch (error) {
-                    if (isEqualPath(PRIVATE_ADMIN_PATH, pathname)) {
-                        const loginUrl = new URL(
-                            locale
-                                ? `/${locale}${ADMIN_PRIVATE_FALLBACK_ROUTE}`
-                                : ADMIN_PRIVATE_FALLBACK_ROUTE,
-                            req.url,
-                        );
-                        loginUrl.searchParams.set("callback", pathname);
-                        return NextResponse.redirect(loginUrl);
-                    }
+                    // if (isEqualPath(PRIVATE_ADMIN_PATH, pathname)) {
+                    //     const loginUrl = new URL(
+                    //         locale
+                    //             ? `/${locale}${ADMIN_PRIVATE_FALLBACK_ROUTE}`
+                    //             : ADMIN_PRIVATE_FALLBACK_ROUTE,
+                    //         req.url,
+                    //     );
+                    //     loginUrl.searchParams.set("callback", pathname);
+                    //     return NextResponse.redirect(loginUrl);
+                    // }
                 }
             }
         } else {
-            if (isEqualPath(PRIVATE_ADMIN_PATH, pathname)) {
-                const loginUrl = new URL(
-                    locale
-                        ? `/${locale}${ADMIN_PRIVATE_FALLBACK_ROUTE}`
-                        : ADMIN_PRIVATE_FALLBACK_ROUTE,
-                    req.url,
-                );
-                loginUrl.searchParams.set("callback", pathname);
-                return NextResponse.redirect(loginUrl);
-            }
+            // if (isEqualPath(PRIVATE_ADMIN_PATH, pathname)) {
+            //     const loginUrl = new URL(
+            //         locale
+            //             ? `/${locale}${ADMIN_PRIVATE_FALLBACK_ROUTE}`
+            //             : ADMIN_PRIVATE_FALLBACK_ROUTE,
+            //         req.url,
+            //     );
+            //     loginUrl.searchParams.set("callback", pathname);
+            //     return NextResponse.redirect(loginUrl);
+            // }
         }
     } else {
         const accessTokenUser = req.cookies.get("accessTokenUser")?.value;
@@ -83,29 +83,29 @@ export default async function Mid(req: NextRequest) {
                         );
                     });
                 } catch (error) {
-                    if (isEqualPath(PRIVATE_USER_PATH, pathname)) {
-                        const loginUrl = new URL(
-                            locale
-                                ? `/${locale}${USER_PRIVATE_FALLBACK_ROUTE}`
-                                : USER_PRIVATE_FALLBACK_ROUTE,
-                            req.url,
-                        );
-                        loginUrl.searchParams.set("callback", pathname);
-                        return NextResponse.redirect(loginUrl);
-                    }
+                    // if (isEqualPath(PRIVATE_USER_PATH, pathname)) {
+                    //     const loginUrl = new URL(
+                    //         locale
+                    //             ? `/${locale}${USER_PRIVATE_FALLBACK_ROUTE}`
+                    //             : USER_PRIVATE_FALLBACK_ROUTE,
+                    //         req.url,
+                    //     );
+                    //     loginUrl.searchParams.set("callback", pathname);
+                    //     return NextResponse.redirect(loginUrl);
+                    // }
                 }
             }
         } else {
-            if (isEqualPath(PRIVATE_USER_PATH, pathname)) {
-                const loginUrl = new URL(
-                    locale
-                        ? `/${locale}${USER_PRIVATE_FALLBACK_ROUTE}`
-                        : USER_PRIVATE_FALLBACK_ROUTE,
-                    req.url,
-                );
-                loginUrl.searchParams.set("callback", pathname);
-                return NextResponse.redirect(loginUrl);
-            }
+            // if (isEqualPath(PRIVATE_USER_PATH, pathname)) {
+            //     const loginUrl = new URL(
+            //         locale
+            //             ? `/${locale}${USER_PRIVATE_FALLBACK_ROUTE}`
+            //             : USER_PRIVATE_FALLBACK_ROUTE,
+            //         req.url,
+            //     );
+            //     loginUrl.searchParams.set("callback", pathname);
+            //     return NextResponse.redirect(loginUrl);
+            // }
         }
     }
     return res;

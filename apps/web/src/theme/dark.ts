@@ -1,7 +1,8 @@
 import { ThemeConfigStructure } from "@/theme/light";
 import { AvailableMode } from "@/theme/theme";
+import { ThemeOptions } from "@mui/material";
 
-export const dark: ThemeConfigStructure = {
+export const dark: ThemeOptions = {
     palette: {
         mode: "dark" as AvailableMode,
         primary: {
@@ -16,12 +17,7 @@ export const dark: ThemeConfigStructure = {
             light: "#e0aa8a",
             contrastText: "#ffffff",
         },
-        default: {
-            main: "#c8bca4",
-            dark: "#e8dcc0",
-            light: "#7a6848",
-            contrastText: "#1e1a14",
-        },
+
         success: {
             main: "#34d399",
             dark: "#10b981",
@@ -62,16 +58,16 @@ export const dark: ThemeConfigStructure = {
             selected: "rgba(224,184,96,0.16)",
             disabled: "#3e3828",
             disabledBackground: "rgba(255,255,255,0.06)",
+            hoverOpacity: 0.08,
+            selectedOpacity: 0.15,
+            disabledOpacity: 0.38,
+            focus: "rgba(201,151,58,0.12)", // фон при фокусе
+            focusOpacity: 0.12,
+            activatedOpacity: 0.24,
         },
         common: {
             black: "#1e1a14",
             white: "#e8dcc0",
-            onBackgroundChanel: "#252018",
         },
-        hoverOpacity: 0.08,
-        disabledOpacity: 0.38,
-        focus: "rgba(224,184,96,0.22)",
-        focusOpacity: 0.12,
-        activatedOpacity: 0.12,
     },
 };

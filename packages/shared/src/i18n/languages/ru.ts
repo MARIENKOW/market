@@ -139,6 +139,19 @@ export const ru = {
             name: "Мой аккаунт",
             settings: {
                 name: "Настройки",
+                groups:{
+                    account:'Аккаунт',
+                    other:'Прочее'
+                },
+                profile: {
+                    name: "Профиль",
+                },
+                password: {
+                    name: "Пароль",
+                },
+                sessions: {
+                    name: "Сессии",
+                },
             },
         },
         notFound: {

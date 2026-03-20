@@ -7,13 +7,21 @@ export const ROUTE = {
     forgotPasssword: { path: "forgot-password" },
     changePasssword: { path: "change-password" },
     register: { path: "register" },
-    profile: { path: "profile", settings: { path: "settings" } },
+    profile: {
+        path: "profile",
+        settings: {
+            path: "settings",
+            profile: { path: "profile" },
+            password: { path: "password" },
+            sessions: { path: "sessions" },
+        },
+    },
     admin: {
         path: "admin",
         profile: {
             path: "profile",
         },
-        settings:{path:'settings'},
+        settings: { path: "settings" },
         login: {
             path: "login",
         },

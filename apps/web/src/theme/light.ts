@@ -1,6 +1,7 @@
 import { AvailableMode } from "@/theme/theme";
+import { ThemeOptions } from "@mui/material";
 
-export const light = {
+export const light: ThemeOptions = {
     palette: {
         mode: "light" as AvailableMode,
         primary: {
@@ -13,12 +14,6 @@ export const light = {
             main: "#7c5c2a",
             dark: "#5a3e18",
             light: "#a07840",
-            contrastText: "#ffffff",
-        },
-        default: {
-            main: "#5c5040",
-            dark: "#2a1f0e",
-            light: "#9a8868",
             contrastText: "#ffffff",
         },
         success: {
@@ -61,17 +56,17 @@ export const light = {
             selected: "rgba(201,151,58,0.15)",
             disabled: "#a89878",
             disabledBackground: "rgba(0,0,0,0.06)",
+            hoverOpacity: 0.08,
+            selectedOpacity: 0.25,
+            disabledOpacity: 0.38,
+            focus: "rgba(201,151,58,0.12)", // фон при фокусе
+            focusOpacity: 0.12,
+            activatedOpacity: 0.24,
         },
         common: {
             black: "#2a1f0e",
             white: "#f8f4ec",
-            onBackgroundChanel: "#e8e0c8",
         },
-        hoverOpacity: 0.08,
-        disabledOpacity: 0.38,
-        focus: "rgba(201,151,58,0.18)",
-        focusOpacity: 0.12,
-        activatedOpacity: 0.12,
     },
 };
 

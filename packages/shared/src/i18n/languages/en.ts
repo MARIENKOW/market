@@ -137,6 +137,19 @@ export const en: MessageStructure = {
             name: "My account",
             settings: {
                 name: "Settings",
+                groups: {
+                    account: "Account",
+                    other: "Other",
+                },
+                profile: {
+                    name: "Profile",
+                },
+                password: {
+                    name: "Password",
+                },
+                sessions: {
+                    name: "Sessions",
+                },
             },
         },
         notFound: {
