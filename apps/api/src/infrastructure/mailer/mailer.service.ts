@@ -86,4 +86,37 @@ export class MailerService implements OnModuleInit {
             text: `${this.i18n.t("mail.activate.button")}: ${url}`,
         });
     }
+    async sendChangePasswordCode({
+        to,
+        code,
+        expires,
+    }: {
+        to: string;
+        code: string;
+        expires: number;
+    }) {
+        const html = `
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"></head>
+        <body style="font-family: Arial;">
+        <h2>${this.i18n.t("mail.changePassword.title")}</h2>
+        <p>${this.i18n.t("mail.changePassword.description")}</p>
+        <div style="font-size:32px;font-weight:bold;letter-spacing:8px;padding:16px 24px;background:#f5f5f5;border-radius:8px;display:inline-block;margin:8px 0;">
+            ${code}
+        </div>
+        <hr>
+        <p>${this.i18n.t("mail.changePassword.expires", { args: { time: i18nFormatDuration(expires) } })}</p>
+        <p style="color:#888;font-size:12px;">${this.i18n.t("mail.changePassword.ignore")}</p>
+        </body>
+        </html>`;
+
+        await this.transporter.sendMail({
+            from: env.SMTP_USER,
+            to,
+            subject: this.i18n.t("mail.changePassword.subject"),
+            html,
+            text: `${this.i18n.t("mail.changePassword.subject")}: ${code}`,
+        });
+    }
 }

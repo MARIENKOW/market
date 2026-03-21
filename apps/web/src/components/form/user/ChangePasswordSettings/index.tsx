@@ -9,24 +9,28 @@ import ChangePasswordStepper from "@/components/form/user/ChangePasswordSettings
 
 type Step = 0 | 1 | 2;
 
+export type Success = {
+    email: string;
+    time: number;
+};
 interface Props {
     /** 0 = шаг 1, 1 = шаг 2 (pending запрос уже есть) */
     initialStep: Step;
     /** замаскированный email если запрос уже был отправлен */
-    initialEmail: string;
+    initialSuccess: Success;
     onCancel?: () => void;
 }
 
 export default function ChangePasswordForm({
     initialStep,
-    initialEmail,
+    initialSuccess,
     onCancel,
 }: Props) {
     const [step, setStep] = useState<Step>(initialStep);
-    const [email, setEmail] = useState<string>(initialEmail);
+    const [success, setSuccess] = useState<Success>(initialSuccess);
 
-    const handleStep1Success = (maskedEmail: string) => {
-        setEmail(maskedEmail);
+    const handleStep1Success = (success: Success) => {
+        setSuccess(success);
         setStep(1);
     };
 
@@ -44,7 +48,7 @@ export default function ChangePasswordForm({
 
             <Collapse in={step === 1} unmountOnExit>
                 <ChangePasswordSettingsStep2User
-                    email={email}
+                    success={success}
                     onSuccess={() => setStep(2)}
                     onCancel={() => setStep(0)}
                 />

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, CircularProgress } from "@mui/material";
 import { MailOutline } from "@mui/icons-material";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import FormProvider from "@/components/wrappers/form/FormProvider";
 import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -20,17 +20,19 @@ import {
 import { StyledAlert } from "@/components/ui/StyledAlert";
 import { StyledButton } from "@/components/ui/StyledButton";
 import FormOtpInput from "@/components/features/form/fields/controlled/FormOtpInput";
+import { Success } from "@/components/form/user/ChangePasswordSettings";
+import { formatDuration } from "@/utils/formatDuration";
 
 const RESEND_COOLDOWN = 60;
 
 interface Props {
-    email: string;
+    success: Success;
     onSuccess: () => void;
     onCancel: () => void;
 }
 
 export default function ChangePasswordSettingsStep2User({
-    email,
+    success,
     onSuccess,
     onCancel,
 }: Props) {
@@ -39,6 +41,7 @@ export default function ChangePasswordSettingsStep2User({
     const [resending, setResending] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const locale = useLocale();
 
     const startTimer = () => {
         clearInterval(timerRef.current!);
@@ -84,25 +87,32 @@ export default function ChangePasswordSettingsStep2User({
         defaultValues: { code: "" },
     });
 
-    const onSubmit: CustomSubmitHandler<UserChangePasswordCodeDtoOutput> =
-        async (formValues, { setError }) => {
-            try {
-                // await changePasswordService.confirm(formValues);
-                onSuccess();
-            } catch (error) {
-                errorFormHandlerWithAlert({ error, setError, t, formValues });
-            }
-        };
+    const onSubmit: CustomSubmitHandler<
+        UserChangePasswordCodeDtoOutput
+    > = async (formValues, { setError }) => {
+        try {
+            // await changePasswordService.confirm(formValues);
+            onSuccess();
+        } catch (error) {
+            errorFormHandlerWithAlert({ error, setError, t, formValues });
+        }
+    };
 
     return (
         <FormProvider<UserChangePasswordCodeDtoInput> form={form}>
-            <Form<UserChangePasswordCodeDtoInput> form={form} onSubmit={onSubmit}>
+            <Form<UserChangePasswordCodeDtoInput>
+                form={form}
+                onSubmit={onSubmit}
+            >
                 <Box display="flex" flexDirection="column" gap={3}>
                     <StyledAlert
                         severity="info"
                         icon={<MailOutline fontSize="small" />}
                     >
-                        {t("pages.profile.settings.password.hint", { email })}
+                        {t("pages.profile.settings.password.hint", {
+                            email: success.email,
+                            time: formatDuration(success.time, locale),
+                        })}
                     </StyledAlert>
 
                     <FormOtpInput name="code" label="form.code.label" />

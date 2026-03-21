@@ -9,11 +9,13 @@ import { RequestContextMiddleware } from "@/common/request-context/request-conte
 import { RequestContextModule } from "@/common/request-context/request-context.module";
 import { AuthUserModule } from "@/modules/auth/user/auth.user.module";
 import { AuthAdminModule } from "@/modules/auth/admin/auth.admin.module";
+import { ChangePasswordUserModule } from "@/modules/user/ChangePasswordCode/changePassword.user.module";
 @Module({
     imports: [
         CoreModule,
         AuthUserModule,
         AuthAdminModule,
+        ChangePasswordUserModule,
         RequestContextModule,
         I18nModule.forRoot({
             loaderOptions: {},

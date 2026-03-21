@@ -9,12 +9,10 @@ export function i18nFormatDuration(
 ): string {
     const language = lang || I18nContext.current()?.lang || defaultLanguage;
 
-    console.log(language);
-console.log(ms);
     return humanizeDuration(ms, {
         language,
         largest: 2,
-        round:true,
+        round: true,
         fallbacks: ["en"],
     });
 }

@@ -36,7 +36,7 @@ export default async function Page() {
 
                 <ChangePasswordForm
                     initialEmail="den.adsas@das"
-                    initialStep={1}
+                    initialStep={0}
                 />
             </Box>
         </Box>

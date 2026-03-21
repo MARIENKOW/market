@@ -19,10 +19,15 @@ import {
     UserChangePasswordSettingsSchema,
 } from "@myorg/shared/form";
 import { StyledDivider } from "@/components/ui/StyledDivider";
+import ChangePasswordUserService from "@/services/user/changePassword.user.service";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
+import { Success } from "@/components/form/user/ChangePasswordSettings";
 
 interface Props {
-    onSuccess: (maskedEmail: string) => void;
+    onSuccess: (success: Success) => void;
 }
+
+const changePass = new ChangePasswordUserService($apiUserClient);
 
 export default function ChangePasswordSettingsStep1User({ onSuccess }: Props) {
     const t = useTranslations();
@@ -49,19 +54,23 @@ export default function ChangePasswordSettingsStep1User({ onSuccess }: Props) {
         trigger("rePassword");
     }, [newPassword, rePassword, trigger]);
 
-    const onSubmit: CustomSubmitHandler<UserChangePasswordSettingsDtoOutput> =
-        async (formValues, { setError }) => {
-            try {
-                // const { maskedEmail } = await changePasswordService.initiate(formValues);
-                onSuccess('maskedEmail');
-            } catch (error) {
-                errorFormHandlerWithAlert({ error, setError, t, formValues });
-            }
-        };
+    const onSubmit: CustomSubmitHandler<
+        UserChangePasswordSettingsDtoOutput
+    > = async (formValues, { setError }) => {
+        try {
+            const { data } = await changePass.init(formValues);
+            onSuccess(data);
+        } catch (error) {
+            errorFormHandlerWithAlert({ error, setError, t, formValues });
+        }
+    };
 
     return (
         <FormProvider<UserChangePasswordSettingsDtoInput> form={form}>
-            <Form<UserChangePasswordSettingsDtoInput> form={form} onSubmit={onSubmit}>
+            <Form<UserChangePasswordSettingsDtoInput>
+                form={form}
+                onSubmit={onSubmit}
+            >
                 <Box display="flex" flexDirection="column" gap={2}>
                     <FormPassword<UserChangePasswordSettingsDtoInput>
                         name="currentPassword"

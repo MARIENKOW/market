@@ -5,7 +5,6 @@ import {
     useEffect,
     useCallback,
     KeyboardEvent,
-    ClipboardEvent,
     CompositionEvent,
 } from "react";
 import { Box, SxProps, Theme, useTheme } from "@mui/material";
@@ -36,27 +35,26 @@ export default function OtpInput({
     const theme = useTheme();
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const isComposingRef = useRef(false);
-    // Тайминг вместо boolean — защита от гонки keyDown/onInput на Android WebView
     const backspaceHandledAtRef = useRef<number>(0);
 
-    // Защита от value длиннее length
     const safeValue = value.slice(0, length);
     const digits = Array.from({ length }, (_, i) => safeValue[i] ?? "");
 
     // ── Утилита фокуса ────────────────────────────────────────────────────────
+
     const focus = useCallback(
         (idx: number) => {
             const clamped = Math.max(0, Math.min(idx, length - 1));
             const el = inputsRef.current[clamped];
             if (!el) return;
             el.focus();
-            // iOS Safari: select() без setTimeout игнорируется
             setTimeout(() => el.select(), 0);
         },
         [length],
     );
 
-    // ── Автофокус — реагирует на autoFocus и value (напр. SMS autofill) ───────
+    // ── Автофокус ─────────────────────────────────────────────────────────────
+
     useEffect(() => {
         if (!autoFocus) return;
         const firstEmpty = digits.findIndex((d) => !d);
@@ -64,13 +62,13 @@ export default function OtpInput({
     }, [autoFocus, value]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ── Emit ──────────────────────────────────────────────────────────────────
+
     const emit = useCallback(
         (next: string[]) => {
             const val = next.join("");
             if (val === safeValue) return;
             onChange(val);
             if (next.every(Boolean)) {
-                // setTimeout — React успевает обновить UI до колбэка
                 setTimeout(() => {
                     inputsRef.current[length - 1]?.blur();
                     onComplete?.(val);
@@ -80,17 +78,17 @@ export default function OtpInput({
         [onChange, onComplete, safeValue, length],
     );
 
-    // ── onChange ──────────────────────────────────────────────────────────────
+    // ── onChange — только одиночный ввод ─────────────────────────────────────
+
     const handleChange = useCallback(
         (idx: number, raw: string) => {
-            // Если пришло больше 1 символа — это paste, обрабатывает handlePaste
+            // paste обрабатывается нативным listener'ом ниже — игнорируем
             if (raw.length > 1) return;
 
             const char = raw.replace(/\D/g, "").slice(-1);
             const next = [...digits];
 
             if (!char) {
-                // Явно очищаем ячейку если символ не цифра
                 next[idx] = "";
                 emit(next);
                 return;
@@ -104,6 +102,7 @@ export default function OtpInput({
     );
 
     // ── onKeyDown ─────────────────────────────────────────────────────────────
+
     const handleKeyDown = useCallback(
         (idx: number, e: KeyboardEvent<HTMLInputElement>) => {
             if (isComposingRef.current) return;
@@ -156,29 +155,51 @@ export default function OtpInput({
         [digits, emit, focus, length],
     );
 
-    // ── onPaste ───────────────────────────────────────────────────────────────
-    const handlePaste = useCallback(
-        (e: ClipboardEvent<HTMLInputElement>, idx: number) => {
-            e.preventDefault();
-            const pasted = e.clipboardData
-                .getData("text")
-                .replace(/\D/g, "")
-                .slice(0, length);
-            if (!pasted) return;
+    // ── Paste — нативный listener напрямую на <input> ─────────────────────────
+    // onPaste на StyledTextField вешается на внешний div — e.preventDefault()
+    // не останавливает браузер от вставки в input до того как мы обработаем.
+    // Нативный listener с { capture: false } на самом input решает проблему.
 
-            const next = [...digits];
-            pasted.split("").forEach((char, i) => {
-                if (idx + i < length) next[idx + i] = char;
-            });
-            emit(next);
+    const digitsRef = useRef(digits);
+    digitsRef.current = digits;
 
-            const nextEmpty = next.findIndex((d, i) => i >= idx && !d);
-            focus(nextEmpty === -1 ? length - 1 : nextEmpty);
-        },
-        [digits, emit, focus, length],
-    );
+    const emitRef = useRef(emit);
+    emitRef.current = emit;
+
+    const focusRef = useRef(focus);
+    focusRef.current = focus;
+
+    useEffect(() => {
+        const listeners: Array<() => void> = [];
+
+        inputsRef.current.forEach((el, idx) => {
+            if (!el) return;
+
+            const handler = (e: ClipboardEvent) => {
+                e.preventDefault();
+                const text = e.clipboardData?.getData("text") ?? "";
+                const pasted = text.replace(/\D/g, "").slice(0, length);
+                if (!pasted) return;
+
+                const next = [...digitsRef.current];
+                pasted.split("").forEach((char, i) => {
+                    if (idx + i < length) next[idx + i] = char;
+                });
+                emitRef.current(next);
+
+                const nextEmpty = next.findIndex((d, i) => i >= idx && !d);
+                focusRef.current(nextEmpty === -1 ? length - 1 : nextEmpty);
+            };
+
+            el.addEventListener("paste", handler);
+            listeners.push(() => el.removeEventListener("paste", handler));
+        });
+
+        return () => listeners.forEach((remove) => remove());
+    }, [length]);
 
     // ── Android backspace fallback ─────────────────────────────────────────────
+
     const handleInput = useCallback(
         (idx: number, e: React.FormEvent<HTMLDivElement>) => {
             if (
@@ -186,7 +207,6 @@ export default function OtpInput({
                 "deleteContentBackward"
             )
                 return;
-            // Тайминг-фильтр: если keyDown уже обработал backspace < 50мс назад — пропускаем
             if (Date.now() - backspaceHandledAtRef.current < 50) return;
 
             const next = [...digits];
@@ -203,6 +223,7 @@ export default function OtpInput({
     );
 
     // ── IME ───────────────────────────────────────────────────────────────────
+
     const handleCompositionStart = useCallback(() => {
         isComposingRef.current = true;
     }, []);
@@ -219,6 +240,8 @@ export default function OtpInput({
     const handleClick = useCallback((idx: number) => {
         inputsRef.current[idx]?.select();
     }, []);
+
+    // ── Render ────────────────────────────────────────────────────────────────
 
     return (
         <Box
@@ -258,9 +281,6 @@ export default function OtpInput({
                     onChange={(e) => handleChange(idx, e.target.value)}
                     onKeyDown={(e) =>
                         handleKeyDown(idx, e as KeyboardEvent<HTMLInputElement>)
-                    }
-                    onPaste={(e) =>
-                        handlePaste(e as ClipboardEvent<HTMLInputElement>, idx)
                     }
                     onInput={(e) => handleInput(idx, e)}
                     onFocus={(e) => e.target.select()}

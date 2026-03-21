@@ -7,7 +7,6 @@ import {
     Step,
     StepLabel,
     Stepper,
-    useMediaQuery,
     useTheme,
     StepIconProps,
 } from "@mui/material";
@@ -94,11 +93,73 @@ interface Props {
 export default function ChangePasswordStepper({ activeStep }: Props) {
     const t = useTranslations();
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    if (isMobile) {
-        return (
-            <Box>
+    return (
+        <>
+            <Stepper
+                activeStep={activeStep}
+                alternativeLabel
+                sx={{
+                    display: { xs: "none", sm: "flex" },
+                    // Линия между шагами
+                    "& .MuiStepConnector-line": {
+                        borderColor: theme.palette.divider,
+                        borderTopWidth: 1.5,
+                        transition: theme.transitions.create("border-color", {
+                            duration: theme.transitions.duration.short,
+                        }),
+                    },
+                    "& .MuiStepConnector-root.Mui-completed .MuiStepConnector-line":
+                        {
+                            borderColor: theme.palette.primary.main,
+                        },
+                    "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line":
+                        {
+                            borderColor: `${theme.palette.primary.main}60`,
+                        },
+                }}
+            >
+                {STEPS.map((s, idx) => (
+                    <Step key={idx} completed={activeStep > idx}>
+                        <StepLabel
+                            slots={{
+                                stepIcon: (props) => (
+                                    <StepIcon {...props} icon={s.icon} />
+                                ),
+                            }}
+                        >
+                            <StyledTypography
+                                variant="caption"
+                                color={
+                                    activeStep === idx
+                                        ? "primary.main"
+                                        : activeStep > idx
+                                          ? "text.secondary"
+                                          : "text.disabled"
+                                }
+                                fontWeight={
+                                    activeStep === idx
+                                        ? theme.typography.fontWeightBold
+                                        : theme.typography.fontWeightRegular
+                                }
+                                sx={{
+                                    transition: theme.transitions.create(
+                                        ["color", "font-weight"],
+                                        {
+                                            duration:
+                                                theme.transitions.duration
+                                                    .short,
+                                        },
+                                    ),
+                                }}
+                            >
+                                {t(s.labelKey)}
+                            </StyledTypography>
+                        </StepLabel>
+                    </Step>
+                ))}
+            </Stepper>
+            <Box display={{ xs: "block", sm: "none" }}>
                 <Box
                     display="flex"
                     justifyContent="space-between"
@@ -146,69 +207,6 @@ export default function ChangePasswordStepper({ activeStep }: Props) {
                     }}
                 />
             </Box>
-        );
-    }
-
-    return (
-        <Stepper
-            activeStep={activeStep}
-            alternativeLabel
-            sx={{
-                // Линия между шагами
-                "& .MuiStepConnector-line": {
-                    borderColor: theme.palette.divider,
-                    borderTopWidth: 1.5,
-                    transition: theme.transitions.create("border-color", {
-                        duration: theme.transitions.duration.short,
-                    }),
-                },
-                "& .MuiStepConnector-root.Mui-completed .MuiStepConnector-line":
-                    {
-                        borderColor: theme.palette.primary.main,
-                    },
-                "& .MuiStepConnector-root.Mui-active .MuiStepConnector-line": {
-                    borderColor: `${theme.palette.primary.main}60`,
-                },
-            }}
-        >
-            {STEPS.map((s, idx) => (
-                <Step key={idx} completed={activeStep > idx}>
-                    <StepLabel
-                        slots={{
-                            stepIcon: (props) => (
-                                <StepIcon {...props} icon={s.icon} />
-                            ),
-                        }}
-                    >
-                        <StyledTypography
-                            variant="caption"
-                            color={
-                                activeStep === idx
-                                    ? "primary.main"
-                                    : activeStep > idx
-                                      ? "text.secondary"
-                                      : "text.disabled"
-                            }
-                            fontWeight={
-                                activeStep === idx
-                                    ? theme.typography.fontWeightBold
-                                    : theme.typography.fontWeightRegular
-                            }
-                            sx={{
-                                transition: theme.transitions.create(
-                                    ["color", "font-weight"],
-                                    {
-                                        duration:
-                                            theme.transitions.duration.short,
-                                    },
-                                ),
-                            }}
-                        >
-                            {t(s.labelKey)}
-                        </StyledTypography>
-                    </StepLabel>
-                </Step>
-            ))}
-        </Stepper>
+        </>
     );
 }
