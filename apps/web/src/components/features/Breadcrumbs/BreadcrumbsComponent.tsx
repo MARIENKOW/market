@@ -12,19 +12,11 @@ import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
 import { Box } from "@mui/material";
 
-type BreadcrumbsObject =
-    | {
-          href: string;
-          name: string;
-          key: any;
-          nameType: "string";
-      }
-    | {
-          href: string;
-          name: MessageKeyType;
-          key: any;
-          nameType: "key";
-      };
+type BreadcrumbsObject = {
+    href: string;
+    name: string;
+    key: any;
+};
 
 export default function BreadcrumbsComponent({
     options,
@@ -47,7 +39,7 @@ export default function BreadcrumbsComponent({
                             key={e.key}
                             color={"primary"}
                         >
-                            {e.nameType === "key" ? t(e.name) : e.name}
+                            {e.name}
                         </StyledTypography>
                     </Link>
                 ) : (
@@ -56,7 +48,7 @@ export default function BreadcrumbsComponent({
                         key={e.key}
                         color={"text.seccondary"}
                     >
-                        {e.nameType === "key" ? t(e.name) : e.name}
+                        {e.name}
                     </StyledTypography>
                 ),
             )}

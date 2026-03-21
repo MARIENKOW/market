@@ -2,6 +2,7 @@ import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
+    CODE_LENGTH,
 } from "../../form/constants";
 
 export const ru = {
@@ -11,6 +12,23 @@ export const ru = {
             max: `максимум ${PASSWORD_MAX_LENGTH} символов`,
             invalid: `Неправильный пароль`,
             label: `Пароль`,
+        },
+        currentPassword: {
+            min: `минимум ${PASSWORD_MIN_LENGTH} символов`,
+            max: `максимум ${PASSWORD_MAX_LENGTH} символов`,
+            invalid: `Неправильный пароль`,
+            label: `Текущий Пароль`,
+        },
+        newPassword: {
+            min: `минимум ${PASSWORD_MIN_LENGTH} символов`,
+            max: `максимум ${PASSWORD_MAX_LENGTH} символов`,
+            sameAsCurrent: "Новый пароль совпадает с текущим",
+            label: `Новый пароль`,
+        },
+        code: {
+            length: `Код должен содержать ${CODE_LENGTH} цифр`,
+            digits: "Только цифры",
+            label: "Код подтверждения",
         },
         email: {
             max: `максимум ${EMAIL_MAX_LENGTH} символов`,
@@ -22,6 +40,8 @@ export const ru = {
         rePassword: {
             label: `Пароль повторно`,
             same: "Пароли не совпадают",
+            min: `минимум ${PASSWORD_MIN_LENGTH} символов`,
+            max: `максимум ${PASSWORD_MAX_LENGTH} символов`,
         },
         required: "обязательное поле",
         submit: "Подтвердить",
@@ -139,15 +159,30 @@ export const ru = {
             name: "Мой аккаунт",
             settings: {
                 name: "Настройки",
-                groups:{
-                    account:'Аккаунт',
-                    other:'Прочее'
+                groups: {
+                    account: "Аккаунт",
+                    other: "Прочее",
                 },
                 profile: {
                     name: "Профиль",
                 },
                 password: {
                     name: "Пароль",
+                    subtitle: "Потребуется подтверждение по email",
+                    resend: "Отправить повторно",
+                    step1: "Введите пароли",
+                    step2: "Подтвердите по email",
+                    step3: "Готово",
+                    resendIn: "Повторно через {seconds}с",
+                    hint: "Код отправлен на {email}",
+                    back: "Назад",
+                    cancel: "Отменить смену пароля",
+                    success: {
+                        title: "Пароль изменён",
+                        subtitle:
+                            "Все активные сессии завершены. Используйте новый пароль для входа.",
+                        name: "Готово",
+                    },
                 },
                 sessions: {
                     name: "Сессии",

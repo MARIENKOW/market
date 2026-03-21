@@ -1,4 +1,4 @@
-import Header from "@/components/layout/header/user/HeaderUser";
+import HeaderUser from "@/components/layout/header/user/HeaderUser";
 import UserAuthProvider from "@/components/wrappers/auth/UserAuthProvider";
 import { getUserAuth } from "@/utils/cache/user.cache.me";
 import { Box } from "@mui/material";
@@ -13,7 +13,7 @@ export default async function UserLayout({
     return (
         <UserAuthProvider user={user} error={error}>
             <Box flex={1} display={"flex"} flexDirection={"column"}>
-                <Header />
+                <HeaderUser />
                 <Box flex={1} display={"flex"} flexDirection={"column"}>
                     {children}
                 </Box>

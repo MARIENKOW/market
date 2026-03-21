@@ -5,7 +5,7 @@ import { Box, Paper, Typography } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 
-export default async function Page() {
+export default async function ProfilePage() {
     const t = await getTranslations();
     return (
         <Box>
@@ -19,8 +19,8 @@ export default async function Page() {
                                 key: "sett",
                             },
                             {
-                                name: t("pages.profile.settings.sessions.name"),
-                                href: FULL_PATH_ROUTE.profile.settings.sessions
+                                name: t("pages.profile.settings.profile.name"),
+                                href: FULL_PATH_ROUTE.profile.settings.profile
                                     .path,
                                 key: "sett2",
                             },
@@ -28,7 +28,7 @@ export default async function Page() {
                     />
                 </Box>
                 <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
-                    {t("pages.profile.settings.sessions.name")}
+                    {t("pages.profile.settings.profile.name")}
                 </StyledTypography>
                 <StyledTypography variant="body2" color="text.secondary" mb={4}>
                     Имя, фото, контакты

@@ -2,6 +2,8 @@ export * from "./schema/UserRegisterSchema";
 export * from "./schema/UserLoginSchema";
 export * from "./schema/UserForgotPasswordSchema";
 export * from "./schema/UserChangePasswordSchema";
+export * from "./schema/UserChangePasswordCodeSchema";
+export * from "./schema/UserChangePasswordSettingsSchema";
 export * from "./schema/AdminLoginSchema";
 export * from "./schema/AdminForgotPasswordSchema";
 export * from "./schema/AdminChangePasswordSchema";

@@ -1,8 +1,8 @@
-import { en } from "./languages/en";
+// import { en } from "./languages/en";
 import { ru, type MessageStructure } from "./languages/ru";
 export { type MessageStructure } from "./languages/ru";
 export const messagesModules = {
-    en,
+    // en,
     ru,
 } as const;
 
