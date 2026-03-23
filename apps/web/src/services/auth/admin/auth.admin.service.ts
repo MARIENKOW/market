@@ -2,8 +2,8 @@ import { FetchCustom, FetchCustomReturn } from "@/utils/api";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     AdminLoginDtoOutput,
-    AdminForgotPasswordDtoOutput,
-    AdminChangePasswordDtoOutput,
+    ForgotPasswordDtoOutput,
+    ChangePasswordDtoOutput,
 } from "@myorg/shared/form";
 
 const { login, logout, forgotPassword, refresh, google } =
@@ -15,10 +15,10 @@ export default class AuthAdminService {
     logout: () => FetchCustomReturn<true>;
     refresh: () => FetchCustomReturn<true>;
     forgotPassword: (
-        body: AdminForgotPasswordDtoOutput,
+        body: ForgotPasswordDtoOutput,
     ) => FetchCustomReturn<string>;
     changePassword: (
-        body: AdminChangePasswordDtoOutput,
+        body: ChangePasswordDtoOutput,
         { token }: { token: string },
     ) => FetchCustomReturn<true>;
 

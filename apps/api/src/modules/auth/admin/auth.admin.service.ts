@@ -5,12 +5,11 @@ import {
 } from "@nestjs/common";
 import { AdminService } from "@/modules/admin/admin.service";
 import {
-    AdminChangePasswordDtoOutput,
-    AdminForgotPasswordDtoOutput,
+    ChangePasswordDtoOutput,
+    ForgotPasswordDtoOutput,
     AdminLoginDtoOutput,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { ResetPasswordTokenAdminService } from "@/modules/resetPasswordToken/admin/reset.password.token.admin.service";
 import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { I18nService } from "nestjs-i18n";
@@ -21,6 +20,7 @@ import { SessionAdminService } from "@/modules/auth/admin/session/session.admin.
 import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { env } from "@/config";
+import { ResetPasswordTokenAdminService } from "@/modules/auth/admin/resetPasswordToken/reset.password.token.admin.service";
 
 @Injectable()
 export class AuthAdminService {
@@ -146,12 +146,10 @@ export class AuthAdminService {
         };
     }
 
-    async forgotPassword({
-        email,
-    }: AdminForgotPasswordDtoOutput): Promise<string> {
+    async forgotPassword({ email }: ForgotPasswordDtoOutput): Promise<string> {
         const admin = await this.admin.findByEmail(email);
         if (!admin) {
-            throw new ValidationException<AdminForgotPasswordDtoOutput>({
+            throw new ValidationException<ForgotPasswordDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
         }
@@ -198,7 +196,7 @@ export class AuthAdminService {
     }
 
     async changePassword(
-        { password }: AdminChangePasswordDtoOutput,
+        { password }: ChangePasswordDtoOutput,
         { token }: { token: string },
     ): Promise<true> {
         const decoded = decodeURIComponent(token);

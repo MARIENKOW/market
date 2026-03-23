@@ -21,7 +21,12 @@ export const ROUTE = {
         profile: {
             path: "profile",
         },
-        settings: { path: "settings" },
+        settings: {
+            path: "settings",
+            profile: { path: "profile" },
+            password: { path: "password" },
+            sessions: { path: "sessions" },
+        },
         login: {
             path: "login",
         },

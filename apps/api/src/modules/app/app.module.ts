@@ -10,12 +10,14 @@ import { RequestContextModule } from "@/common/request-context/request-context.m
 import { AuthUserModule } from "@/modules/auth/user/auth.user.module";
 import { AuthAdminModule } from "@/modules/auth/admin/auth.admin.module";
 import { ChangePasswordUserModule } from "@/modules/user/ChangePasswordCode/changePassword.user.module";
+import { ChangePasswordAdminModule } from "@/modules/admin/ChangePasswordCode/changePassword.admin.module";
 @Module({
     imports: [
         CoreModule,
         AuthUserModule,
         AuthAdminModule,
         ChangePasswordUserModule,
+        ChangePasswordAdminModule,
         RequestContextModule,
         I18nModule.forRoot({
             loaderOptions: {},
@@ -25,7 +27,7 @@ import { ChangePasswordUserModule } from "@/modules/user/ChangePasswordCode/chan
             throwOnMissingKey: true,
         }),
     ],
-    
+
     controllers: [AppController],
     providers: [AppService],
 })

@@ -1,4 +1,4 @@
-import UserLoginForm from "@/components/form/auth/user/UserLoginForm";
+import UserLoginForm from "@/components/form/user/auth/UserLoginForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Link } from "@/i18n/navigation";

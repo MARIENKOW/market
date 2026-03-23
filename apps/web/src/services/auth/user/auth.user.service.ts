@@ -3,8 +3,8 @@ import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     UserLoginDtoOutput,
     UserRegisterDtoOutput,
-    UserForgotPasswordDtoOutput,
-    UserChangePasswordDtoOutput,
+    ForgotPasswordDtoOutput,
+    ChangePasswordDtoOutput,
 } from "@myorg/shared/form";
 
 const { login, register, logout, forgotPassword, activate, refresh, google } =
@@ -17,10 +17,10 @@ export default class AuthUserService {
     refresh: () => FetchCustomReturn<true>;
     register: (body: UserRegisterDtoOutput) => FetchCustomReturn<string>;
     forgotPassword: (
-        body: UserForgotPasswordDtoOutput,
+        body: ForgotPasswordDtoOutput,
     ) => FetchCustomReturn<string>;
     changePassword: (
-        body: UserChangePasswordDtoOutput,
+        body: ChangePasswordDtoOutput,
         { token }: { token: string },
     ) => FetchCustomReturn<true>;
     activate: ({ token }: { token: string }) => FetchCustomReturn<true>;

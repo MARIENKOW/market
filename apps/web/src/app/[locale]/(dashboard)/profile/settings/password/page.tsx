@@ -1,4 +1,3 @@
-import ChangePasswordForm from "@/components/form/user/ChangePasswordSettings";
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Box } from "@mui/material";
@@ -7,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import ChangePasswordUserService from "@/services/user/changePassword.user.service";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
+import ChangePasswordSettingsForm from "@/components/form/user/ChangePasswordSettnigsForm";
 
 const changePassword = new ChangePasswordUserService($apiUserServer);
 
@@ -22,42 +22,45 @@ export default async function Page() {
     }
 
     return (
-        <Box>
-            <Box sx={{ p: { xs: 2, sm: 4 } }}>
-                <Box mb={4} display={{ xs: "flex", md: "none" }}>
-                    <BreadcrumbsComponent
-                        options={[
-                            {
-                                name: t("pages.profile.settings.name"),
-                                href: FULL_PATH_ROUTE.profile.settings.path,
-                                key: "sett",
-                            },
-                            {
-                                name: t("pages.profile.settings.password.name"),
-                                href: FULL_PATH_ROUTE.profile.settings.password
-                                    .path,
-                                key: "sett2",
-                            },
-                        ]}
-                    />
-                </Box>
-                <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
-                    {t("pages.profile.settings.password.name")}
-                </StyledTypography>
-                <StyledTypography variant="body2" color="text.secondary" mb={4}>
-                    {t("pages.profile.settings.password.subtitle")}
-                </StyledTypography>
-                {error ? (
-                    <ErrorHandlerElement error={error} />
-                ) : (
-                    data && (
-                        <ChangePasswordForm
-                            initialMailSendSuccess={data?.pending}
-                            withoutPassword={data?.withoutPassword}
-                        />
-                    )
-                )}
+        <Box
+            display={"flex"}
+            flexDirection={"column"}
+            flex={1}
+            sx={{ p: { xs: 2, sm: 4 } }}
+        >
+            <Box mb={4} display={{ xs: "flex", md: "none" }}>
+                <BreadcrumbsComponent
+                    options={[
+                        {
+                            name: t("pages.profile.settings.name"),
+                            href: FULL_PATH_ROUTE.profile.settings.path,
+                            key: "sett",
+                        },
+                        {
+                            name: t("pages.profile.settings.password.name"),
+                            href: FULL_PATH_ROUTE.profile.settings.password
+                                .path,
+                            key: "sett2",
+                        },
+                    ]}
+                />
             </Box>
+            <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
+                {t("pages.profile.settings.password.name")}
+            </StyledTypography>
+            <StyledTypography variant="body2" color="text.secondary" mb={4}>
+                {t("pages.profile.settings.password.subtitle")}
+            </StyledTypography>
+            {error ? (
+                <ErrorHandlerElement error={error} />
+            ) : (
+                data && (
+                    <ChangePasswordSettingsForm
+                        initialMailSendSuccess={data?.pending}
+                        withoutPassword={data?.withoutPassword}
+                    />
+                )
+            )}
         </Box>
     );
 }

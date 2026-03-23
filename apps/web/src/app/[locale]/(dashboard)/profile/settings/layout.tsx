@@ -1,4 +1,5 @@
-import Sidebar from "@/app/[locale]/(dashboard)/profile/settings/components/Sidebar";
+import { NAV_GROUPS } from "@/app/[locale]/(dashboard)/profile/settings/nav.config";
+import Sidebar from "@/components/layout/navigation/Sidebar";
 import { Box } from "@mui/material";
 
 export default async function SettingsLayout({
@@ -20,9 +21,11 @@ export default async function SettingsLayout({
                     borderColor: "divider",
                 }}
             >
-                <Sidebar />
+                <Sidebar config={NAV_GROUPS} />
             </Box>
-            <Box sx={{ flex: 1 }}>{children}</Box>
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                {children}
+            </Box>
         </Box>
     );
 }

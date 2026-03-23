@@ -12,10 +12,10 @@ import {
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
-    UserChangePasswordDtoOutput,
-    UserChangePasswordSchema,
-    UserForgotPasswordDtoOutput,
-    UserForgotPasswordSchema,
+    ChangePasswordDtoOutput,
+    ChangePasswordSchema,
+    ForgotPasswordDtoOutput,
+    ForgotPasswordSchema,
     UserLoginDtoOutput,
     UserLoginSchema,
     UserRegisterDtoOutput,
@@ -98,8 +98,8 @@ export class AuthUserController {
     @Post(forgotPassword.path)
     @Public()
     async forgotPassword(
-        @Body(new ZodValidationPipe(UserForgotPasswordSchema))
-        body: UserForgotPasswordDtoOutput,
+        @Body(new ZodValidationPipe(ForgotPasswordSchema))
+        body: ForgotPasswordDtoOutput,
     ): Promise<string> {
         return await this.authUser.forgotPassword(body);
     }
@@ -107,8 +107,8 @@ export class AuthUserController {
     @Post(forgotPassword.path + "/:token")
     @Public()
     async changePassword(
-        @Body(new ZodValidationPipe(UserChangePasswordSchema))
-        body: UserChangePasswordDtoOutput,
+        @Body(new ZodValidationPipe(ChangePasswordSchema))
+        body: ChangePasswordDtoOutput,
         @Param("token") token: string,
     ): Promise<true> {
         return await this.authUser.changePassword(body, { token });

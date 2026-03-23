@@ -5,13 +5,12 @@ import {
 } from "@nestjs/common";
 import { UserService } from "@/modules/user/user.service";
 import {
-    UserChangePasswordDtoOutput,
-    UserForgotPasswordDtoOutput,
+    ChangePasswordDtoOutput,
+    ForgotPasswordDtoOutput,
     UserLoginDtoOutput,
     UserRegisterDtoOutput,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { ResetPasswordTokenUserService } from "@/modules/resetPasswordToken/user/reset.password.token.user.service";
 import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { I18nService } from "nestjs-i18n";
@@ -23,6 +22,7 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { env } from "@/config";
 import { ActivateTokenUserService } from "@/modules/auth/user/activateToken/activate.token.user.service";
+import { ResetPasswordTokenUserService } from "./resetPasswordToken/reset.password.token.user.service";
 
 @Injectable()
 export class AuthUserService {
@@ -247,12 +247,10 @@ export class AuthUserService {
         return true;
     }
 
-    async forgotPassword({
-        email,
-    }: UserForgotPasswordDtoOutput): Promise<string> {
+    async forgotPassword({ email }: ForgotPasswordDtoOutput): Promise<string> {
         const user = await this.user.findByEmail(email);
         if (!user) {
-            throw new ValidationException<UserForgotPasswordDtoOutput>({
+            throw new ValidationException<ForgotPasswordDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
         }
@@ -299,7 +297,7 @@ export class AuthUserService {
     }
 
     async changePassword(
-        { password }: UserChangePasswordDtoOutput,
+        { password }: ChangePasswordDtoOutput,
         { token }: { token: string },
     ): Promise<true> {
         const decoded = decodeURIComponent(token);

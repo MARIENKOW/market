@@ -1,37 +1,25 @@
 import { FetchCustom, FetchCustomReturn } from "@/utils/api";
+import { ChangePasswordStatus, MailSendSuccess } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
-    UserChangePasswordCodeDtoOutput,
-    UserChangePasswordDtoOutput,
-    UserChangePasswordSettingsDtoOutput,
+    ChangePasswordCodeDtoOutput,
+    ChangePasswordDtoOutput,
+    ChangePasswordSettingsDtoOutput,
 } from "@myorg/shared/form";
 
 const { status, confirm, resend, init, initWithoutPassword, cancel } =
     FULL_PATH_ENDPOINT.user.changePassword;
 
-export type MailSendSuccess = {
-    email: string;
-    time: number;
-    cooldown: number | false;
-};
-
-export type ChangePasswordStatus = {
-    withoutPassword: boolean;
-    pending: MailSendSuccess | null;
-    blocked: { time: number } | null;
-    cooldown: { time: number } | null;
-};
-
 export default class ChangePasswordUserService {
     init: (
-        body: UserChangePasswordSettingsDtoOutput,
+        body: ChangePasswordSettingsDtoOutput,
     ) => FetchCustomReturn<MailSendSuccess>;
     initWithoutPassword: (
-        body: UserChangePasswordDtoOutput,
+        body: ChangePasswordDtoOutput,
     ) => FetchCustomReturn<MailSendSuccess>;
     cancel: () => FetchCustomReturn<void>;
     resend: () => FetchCustomReturn<MailSendSuccess>;
-    confirm: (body: UserChangePasswordCodeDtoOutput) => FetchCustomReturn<void>;
+    confirm: (body: ChangePasswordCodeDtoOutput) => FetchCustomReturn<void>;
     status: () => FetchCustomReturn<ChangePasswordStatus>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {

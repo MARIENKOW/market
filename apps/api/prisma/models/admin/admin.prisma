@@ -1,0 +1,22 @@
+
+model Admin {
+  id            String    @id @default(cuid())
+  email         String   @unique
+  passwordHash  String?
+
+  theme         String?
+  locale        String?
+
+  status        StatusAdmin @default(ACTIVE)
+  role          RoleAdmin @default(ADMIN)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  passwordChangedAt    DateTime?
+
+  sessions      SessionAdmin[]
+  changePasswordCode      ChangePasswordCodeAdmin?
+  resetPasswordToken      ResetPasswordTokenAdmin?
+
+  @@map("admins")
+}

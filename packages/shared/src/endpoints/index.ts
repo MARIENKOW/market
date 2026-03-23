@@ -81,6 +81,17 @@ export const ENDPOINT = {
         },
     },
     admin: {
+        changePassword: {
+            path: "change-password",
+            status: { path: "status" },
+            confirm: { path: "confirm" },
+            resend: { path: "resend" },
+            init: { path: "init" },
+            initWithoutPassword: { path: "initWithoutPassword" },
+            cancel: {
+                path: "cancel",
+            },
+        },
         path: "admin",
         me: {
             path: "me",

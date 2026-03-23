@@ -8,7 +8,7 @@ import {
 } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import AdminLoginForm from "@/components/form/auth/admin/AdminLoginForm";
+import AdminLoginForm from "@/components/form/admin/auth/AdminLoginForm";
 
 export default async function Page({
     searchParams,

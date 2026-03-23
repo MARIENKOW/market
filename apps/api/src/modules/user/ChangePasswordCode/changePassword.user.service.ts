@@ -14,15 +14,16 @@ import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { OtpService } from "@/infrastructure/otp/otp.service";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import {
-    UserChangePasswordCodeDtoOutput,
-    UserChangePasswordSettingsDtoOutput,
-    UserChangePasswordDtoOutput,
+    ChangePasswordCodeDtoOutput,
+    ChangePasswordSettingsDtoOutput,
+    ChangePasswordDtoOutput,
     CHANGE_PASSWORD_OTP_LENGTH,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
+import { ChangePasswordStatus, MailSendSuccess } from "@myorg/shared/dto";
 
 // ── Конфигурация ──────────────────────────────────────────────────────────────
 
@@ -34,19 +35,6 @@ export const CHANGE_PASSWORD_CONFIG = {
     blockDuration: 60 * 60 * 1000,
     passwordChangeCooldown: 5 * 60 * 60 * 1000,
 } as const;
-
-export type MailSendSuccess = {
-    email: string;
-    time: number;
-    cooldown: number | false;
-};
-
-export type ChangePasswordStatus = {
-    withoutPassword: boolean;
-    pending: MailSendSuccess | null;
-    blocked: { time: number } | null;
-    cooldown: { time: number } | null;
-};
 
 // ── Сервис ────────────────────────────────────────────────────────────────────
 
@@ -134,13 +122,21 @@ export class ChangePasswordUserService {
         const cooldown = this.calcPasswordChangeCooldown(user);
         const token = await this.getToken(user.id);
         const withoutPassword = !user.passwordHash;
-        const empty = {
+        const empty: ChangePasswordStatus = {
             cooldown,
             withoutPassword,
             pending: null,
             blocked: null,
         };
+
         if (!token || cooldown) return empty;
+
+        // SUCCESS и истёкший — сразу empty
+        if (
+            token.status === ChangePasswordCodeStatus.SUCCESS ||
+            token.expiresAt < new Date()
+        )
+            return empty;
 
         if (token.status === ChangePasswordCodeStatus.BLOCKED) {
             if (!this.isStillBlocked(token.blockedAt)) return empty;
@@ -156,8 +152,7 @@ export class ChangePasswordUserService {
             };
         }
 
-        if (token.expiresAt < new Date()) return empty;
-
+        // PENDING
         return {
             withoutPassword,
             pending: {
@@ -174,7 +169,7 @@ export class ChangePasswordUserService {
 
     async initiate(
         user: User,
-        dto: UserChangePasswordSettingsDtoOutput,
+        dto: ChangePasswordSettingsDtoOutput,
     ): Promise<MailSendSuccess> {
         if (!user.passwordHash) {
             throw new InternalServerErrorException();
@@ -191,7 +186,7 @@ export class ChangePasswordUserService {
             user.passwordHash,
         );
         if (!isCurrentValid) {
-            throw new ValidationException<UserChangePasswordSettingsDtoOutput>({
+            throw new ValidationException<ChangePasswordSettingsDtoOutput>({
                 fields: { currentPassword: ["form.currentPassword.invalid"] },
             });
         }
@@ -216,7 +211,7 @@ export class ChangePasswordUserService {
 
     async initiateWithoutPassword(
         user: User,
-        dto: UserChangePasswordDtoOutput,
+        dto: ChangePasswordDtoOutput,
     ): Promise<MailSendSuccess> {
         if (user.passwordHash) {
             throw new InternalServerErrorException();
@@ -245,7 +240,7 @@ export class ChangePasswordUserService {
 
     async confirm(
         userId: string,
-        dto: UserChangePasswordCodeDtoOutput,
+        dto: ChangePasswordCodeDtoOutput,
     ): Promise<void> {
         const token = await this.prisma.changePasswordCodeUser.findFirst({
             where: {
@@ -488,6 +483,7 @@ export class ChangePasswordUserService {
                 codeHash,
                 newPasswordHash,
                 expiresAt: this.makeExpiresAt(),
+                lastResendAt: new Date(),
             },
             update: {
                 codeHash,
@@ -496,8 +492,8 @@ export class ChangePasswordUserService {
                 status: ChangePasswordCodeStatus.PENDING,
                 attempts: 0,
                 resendCount: 0,
-                lastResendAt: null,
                 blockedAt: null,
+                lastResendAt: new Date(),
             },
         });
 

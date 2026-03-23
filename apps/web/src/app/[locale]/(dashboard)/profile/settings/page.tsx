@@ -1,16 +1,25 @@
 import { Box } from "@mui/material";
-import MobileNavigation from "@/app/[locale]/(dashboard)/profile/settings/components/MobileNavigation";
+import MobileNavigation from "@/components/layout/navigation/MobileNavigation";
 import ProfilePage from "@/app/[locale]/(dashboard)/profile/settings/ProfilePage";
+import { NAV_GROUPS } from "@/app/[locale]/(dashboard)/profile/settings/nav.config";
 
 export default async function Page() {
     return (
         <>
-            <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <Box
+                flexDirection={"column"}
+                flex={1}
+                sx={{ display: { xs: "none", md: "flex" } }}
+            >
                 <ProfilePage />
             </Box>
 
-            <Box sx={{ display: { xs: "block", md: "none" } }}>
-                <MobileNavigation />
+            <Box
+                flexDirection={"column"}
+                flex={1}
+                sx={{ display: { xs: "flex", md: "none" } }}
+            >
+                <MobileNavigation config={NAV_GROUPS} />
             </Box>
         </>
     );

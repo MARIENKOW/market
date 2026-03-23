@@ -1,4 +1,4 @@
-import AdminRememberPasswordForm from "@/components/form/auth/admin/AdminRememberPasswordForm";
+import AdminRememberPasswordForm from "@/components/form/admin/auth/AdminRememberPasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Link } from "@/i18n/navigation";

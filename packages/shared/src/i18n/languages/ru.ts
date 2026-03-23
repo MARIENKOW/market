@@ -81,7 +81,23 @@ export const ru = {
         },
         admin: {
             name: "Главная",
-            settings: { name: "Настройки" },
+            settings: {
+                name: "Настройки",
+                groups: {
+                    account: "Аккаунт",
+                    other: "Прочее",
+                },
+                profile: {
+                    name: "Профиль",
+                },
+                password: {
+                    name: "Пароль",
+                    subtitle: "Потребуется подтверждение по email",
+                },
+                sessions: {
+                    name: "Сессии",
+                },
+            },
             login: {
                 name: "Вход",
                 feedback: {
@@ -169,12 +185,6 @@ export const ru = {
                 password: {
                     name: "Пароль",
                     subtitle: "Потребуется подтверждение по email",
-                    resend: "Повторно",
-                    step1: "Введите пароли",
-                    step2: "Подтвердите по email",
-                    resendIn: "Повторно через: {time}",
-                    hint: "Код отправлен на {email}. Время действия кода: {time}",
-                    cancel: "Отменить",
                 },
                 sessions: {
                     name: "Сессии",
@@ -267,10 +277,15 @@ export const ru = {
         changePassword: {
             success: "Вы удачно поменяли пароль! Авторизуйтесь заново",
             blocked: "Смена пароля запрещена. Повторите через: {time}",
+            step1: "Введите пароли",
+            step2: "Подтвердите по email",
+            hint: "Код отправлен на {email}. Время действия кода: {time}",
+            cancel: "Отменить",
             changeCooldown:
                 "Следующий запрос смены пароля доступен через: {time}",
             resend: {
-                cooldown: "Повторно отправить можно через: {time}",
+                name: "Повторно",
+                cooldown: "Повторно через: {time}",
                 limit: "Исчерпаны попытки повторной отправки кода",
             },
             code: {

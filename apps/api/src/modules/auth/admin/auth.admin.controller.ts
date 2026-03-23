@@ -4,19 +4,17 @@ import {
     Post,
     Body,
     Res,
-    UseGuards,
     Req,
     Param,
-    Query,
     Get,
     UnauthorizedException,
 } from "@nestjs/common";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
-    AdminChangePasswordDtoOutput,
-    AdminChangePasswordSchema,
-    AdminForgotPasswordDtoOutput,
-    AdminForgotPasswordSchema,
+    ChangePasswordDtoOutput,
+    ChangePasswordSchema,
+    ForgotPasswordDtoOutput,
+    ForgotPasswordSchema,
     AdminLoginDtoOutput,
     AdminLoginSchema,
 } from "@myorg/shared/form";
@@ -90,8 +88,8 @@ export class AuthAdminController {
     @Post(forgotPassword.path)
     @Public()
     async forgotPassword(
-        @Body(new ZodValidationPipe(AdminForgotPasswordSchema))
-        body: AdminForgotPasswordDtoOutput,
+        @Body(new ZodValidationPipe(ForgotPasswordSchema))
+        body: ForgotPasswordDtoOutput,
     ): Promise<string> {
         return await this.authAdmin.forgotPassword(body);
     }
@@ -99,8 +97,8 @@ export class AuthAdminController {
     @Post(forgotPassword.path + "/:token")
     @Public()
     async changePassword(
-        @Body(new ZodValidationPipe(AdminChangePasswordSchema))
-        body: AdminChangePasswordDtoOutput,
+        @Body(new ZodValidationPipe(ChangePasswordSchema))
+        body: ChangePasswordDtoOutput,
         @Param("token") token: string,
     ): Promise<true> {
         return await this.authAdmin.changePassword(body, { token });

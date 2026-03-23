@@ -1,11 +1,10 @@
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
-import AdminChangePasswordForm from "@/components/form/auth/admin/AdminChangePasswordForm";
+import AdminChangePasswordForm from "@/components/form/admin/auth/AdminChangePasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
 import { redirect } from "@/i18n/navigation";
 import { $apiServer } from "@/utils/api/fetch.server";
-import ResetPasswordTokenService from "@/services/resetPasswordToken/admin/resetPasswordToken.service.admin";
+import ResetPasswordTokenService from "@/services/auth/admin/resetPasswordToken.service.admin";
 import { Box, Typography } from "@mui/material";
-import { ApiErrorResponse } from "@myorg/shared/dto";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getLocale, getTranslations } from "next-intl/server";
 import ResetTokenErrorElement from "@/app/[locale]/admin/change-password/ResetTokenErrorElement";

@@ -8,50 +8,53 @@ import { getTranslations } from "next-intl/server";
 export default async function Page() {
     const t = await getTranslations();
     return (
-        <Box>
-            <Box sx={{ p: { xs: 2, sm: 4 } }}>
-                <Box mb={4} display={{ xs: "flex", md: "none" }}>
-                    <BreadcrumbsComponent
-                        options={[
-                            {
-                                name: t("pages.profile.settings.name"),
-                                href: FULL_PATH_ROUTE.profile.settings.path,
-                                key: "sett",
-                            },
-                            {
-                                name: t("pages.profile.settings.sessions.name"),
-                                href: FULL_PATH_ROUTE.profile.settings.sessions
-                                    .path,
-                                key: "sett2",
-                            },
-                        ]}
-                    />
-                </Box>
-                <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
-                    {t("pages.profile.settings.sessions.name")}
-                </StyledTypography>
-                <StyledTypography variant="body2" color="text.secondary" mb={4}>
-                    Имя, фото, контакты
-                </StyledTypography>
-
-                <StyledPaper
-                    variant="outlined"
-                    sx={{
-                        p: 3,
-                        borderRadius: 3,
-                        borderStyle: "dashed",
-                        borderColor: "divider",
-                    }}
-                >
-                    <StyledTypography
-                        color="text.secondary"
-                        textAlign="center"
-                        fontSize={14}
-                    >
-                        Контент страницы
-                    </StyledTypography>
-                </StyledPaper>
+        <Box
+            display={"flex"}
+            flexDirection={"column"}
+            flex={1}
+            sx={{ p: { xs: 2, sm: 4 } }}
+        >
+            <Box mb={4} display={{ xs: "flex", md: "none" }}>
+                <BreadcrumbsComponent
+                    options={[
+                        {
+                            name: t("pages.profile.settings.name"),
+                            href: FULL_PATH_ROUTE.profile.settings.path,
+                            key: "sett",
+                        },
+                        {
+                            name: t("pages.profile.settings.sessions.name"),
+                            href: FULL_PATH_ROUTE.profile.settings.sessions
+                                .path,
+                            key: "sett2",
+                        },
+                    ]}
+                />
             </Box>
+            <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
+                {t("pages.profile.settings.sessions.name")}
+            </StyledTypography>
+            <StyledTypography variant="body2" color="text.secondary" mb={4}>
+                Имя, фото, контакты
+            </StyledTypography>
+
+            <StyledPaper
+                variant="outlined"
+                sx={{
+                    p: 3,
+                    borderRadius: 3,
+                    borderStyle: "dashed",
+                    borderColor: "divider",
+                }}
+            >
+                <StyledTypography
+                    color="text.secondary"
+                    textAlign="center"
+                    fontSize={14}
+                >
+                    Контент страницы
+                </StyledTypography>
+            </StyledPaper>
         </Box>
     );
 }
