@@ -2,7 +2,7 @@ import {
     EMAIL_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
-    CODE_LENGTH,
+    CHANGE_PASSWORD_OTP_LENGTH,
 } from "../../form/constants";
 
 export const ru = {
@@ -26,7 +26,7 @@ export const ru = {
             label: `Новый пароль`,
         },
         code: {
-            length: `Код должен содержать ${CODE_LENGTH} цифр`,
+            length: `Код должен содержать ${CHANGE_PASSWORD_OTP_LENGTH} цифр`,
             digits: "Только цифры",
             label: "Код подтверждения",
         },
@@ -173,7 +173,7 @@ export const ru = {
                     step1: "Введите пароли",
                     step2: "Подтвердите по email",
                     step3: "Готово",
-                    resendIn: "Повторно через {seconds}с",
+                    resendIn: "Повторно через: {time}",
                     hint: "Код отправлен на {email}. Время действия кода: {time}",
                     back: "Назад",
                     cancel: "Отменить смену пароля",
@@ -270,6 +270,11 @@ export const ru = {
             success: {
                 sendSuccess:
                     "Письмо с ссылкой было отправлено на почту. Время действия ссылки: {time}",
+            },
+        },
+        changePassword: {
+            resend: {
+                cooldown: "Повторно отправить можно через: {time}",
             },
         },
     },

@@ -13,9 +13,14 @@ import { FieldValues } from "react-hook-form";
 export type FormOtpInputProps = {
     name: string;
     label: MessageKeyType;
+    length: number;
 };
 
-export default function FormOtpInput({ name, label }: FormOtpInputProps) {
+export default function FormOtpInput({
+    name,
+    label,
+    length,
+}: FormOtpInputProps) {
     const t = useTranslations();
 
     return (
@@ -36,7 +41,7 @@ export default function FormOtpInput({ name, label }: FormOtpInputProps) {
                     >
                         {t(label)}
                     </StyledTypography>
-                    <OtpInput error={!!error} {...field} />
+                    <OtpInput length={length} error={!!error} {...field} />
                     {error && (
                         <StyledFormHelperText
                             error={!!error}

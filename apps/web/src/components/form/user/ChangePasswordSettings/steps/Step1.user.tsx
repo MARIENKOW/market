@@ -19,12 +19,13 @@ import {
     UserChangePasswordSettingsSchema,
 } from "@myorg/shared/form";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import ChangePasswordUserService from "@/services/user/changePassword.user.service";
+import ChangePasswordUserService, {
+    MailSendSuccess,
+} from "@/services/user/changePassword.user.service";
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
-import { Success } from "@/components/form/user/ChangePasswordSettings";
 
 interface Props {
-    onSuccess: (success: Success) => void;
+    onSuccess: (success: MailSendSuccess) => void;
 }
 
 const changePass = new ChangePasswordUserService($apiUserClient);
@@ -87,7 +88,9 @@ export default function ChangePasswordSettingsStep1User({ onSuccess }: Props) {
                     />
                 </Box>
                 <FormAlert />
-                <SubmitButton />
+                <Box display={"flex"} mt={4}>
+                    <SubmitButton />
+                </Box>
             </Form>
         </FormProvider>
     );

@@ -131,11 +131,9 @@ export default function ChangePasswordStepper({ activeStep }: Props) {
                             <StyledTypography
                                 variant="caption"
                                 color={
-                                    activeStep === idx
+                                    activeStep >= idx
                                         ? "primary.main"
-                                        : activeStep > idx
-                                          ? "text.secondary"
-                                          : "text.disabled"
+                                        : "text.secondary"
                                 }
                                 fontWeight={
                                     activeStep === idx

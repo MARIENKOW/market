@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { MailOutline } from "@mui/icons-material";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -13,74 +12,42 @@ import FormAlert from "@/components/features/form/FormAlert";
 import useForm from "@/hooks/useForm";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import {
+    CHANGE_PASSWORD_OTP_LENGTH,
     UserChangePasswordCodeDtoInput,
     UserChangePasswordCodeDtoOutput,
     UserChangePasswordCodeSchema,
 } from "@myorg/shared/form";
 import { StyledAlert } from "@/components/ui/StyledAlert";
-import { StyledButton } from "@/components/ui/StyledButton";
 import FormOtpInput from "@/components/features/form/fields/controlled/FormOtpInput";
-import { Success } from "@/components/form/user/ChangePasswordSettings";
 import { formatDuration } from "@/utils/formatDuration";
-
-const RESEND_COOLDOWN = 60;
+import ChangePasswordUserService, {
+    MailSendSuccess,
+} from "@/services/user/changePassword.user.service";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
+import CancelPasswordChange from "@/components/form/user/ChangePasswordSettings/features/CancelPasswordChange";
+import ResendPasswordChange from "@/components/form/user/ChangePasswordSettings/features/ResendPasswordChange";
+import { FetchCustomReturn } from "@/utils/api";
+import { Dispatch, SetStateAction } from "react";
 
 interface Props {
-    success: Success;
+    setMailSendSuccess: Dispatch<SetStateAction<MailSendSuccess>>;
+    mailSendSuccess: MailSendSuccess;
     onSuccess: () => void;
     onCancel: () => void;
 }
 
+const changePassword = new ChangePasswordUserService($apiUserClient);
+const resendChangePassword = new ChangePasswordUserService($apiUserClient);
+const cancelChangePassword = new ChangePasswordUserService($apiUserClient);
+
 export default function ChangePasswordSettingsStep2User({
-    success,
+    setMailSendSuccess,
+    mailSendSuccess,
     onSuccess,
     onCancel,
 }: Props) {
     const t = useTranslations();
-    const [resendCooldown, setResendCooldown] = useState(RESEND_COOLDOWN);
-    const [resending, setResending] = useState(false);
-    const [cancelling, setCancelling] = useState(false);
-    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const locale = useLocale();
-
-    const startTimer = () => {
-        clearInterval(timerRef.current!);
-        setResendCooldown(RESEND_COOLDOWN);
-        timerRef.current = setInterval(() => {
-            setResendCooldown((s) => {
-                if (s <= 1) {
-                    clearInterval(timerRef.current!);
-                    return 0;
-                }
-                return s - 1;
-            });
-        }, 1000);
-    };
-
-    useEffect(() => {
-        startTimer();
-        return () => clearInterval(timerRef.current!);
-    }, []);
-
-    const handleResend = async () => {
-        setResending(true);
-        try {
-            // await changePasswordService.resend();
-            startTimer();
-        } finally {
-            setResending(false);
-        }
-    };
-
-    const handleCancel = async () => {
-        setCancelling(true);
-        try {
-            // await changePasswordService.cancel();
-            onCancel();
-        } finally {
-            setCancelling(false);
-        }
-    };
 
     const form = useForm<UserChangePasswordCodeDtoInput>({
         resolver: zodResolver(UserChangePasswordCodeSchema),
@@ -91,7 +58,7 @@ export default function ChangePasswordSettingsStep2User({
         UserChangePasswordCodeDtoOutput
     > = async (formValues, { setError }) => {
         try {
-            // await changePasswordService.confirm(formValues);
+            await changePassword.confirm(formValues);
             onSuccess();
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError, t, formValues });
@@ -110,14 +77,17 @@ export default function ChangePasswordSettingsStep2User({
                         icon={<MailOutline fontSize="small" />}
                     >
                         {t("pages.profile.settings.password.hint", {
-                            email: success.email,
-                            time: formatDuration(success.time, locale),
+                            email: mailSendSuccess.email,
+                            time: formatDuration(mailSendSuccess.time, locale),
                         })}
                     </StyledAlert>
 
-                    <FormOtpInput name="code" label="form.code.label" />
+                    <FormOtpInput
+                        length={CHANGE_PASSWORD_OTP_LENGTH}
+                        name="code"
+                        label="form.code.label"
+                    />
 
-                    {/* Resend + Cancel */}
                     <Box
                         display="flex"
                         alignItems="center"
@@ -125,42 +95,21 @@ export default function ChangePasswordSettingsStep2User({
                         flexWrap="wrap"
                         gap={1}
                     >
-                        {/* Отмена запроса */}
-                        <StyledButton
-                            variant="text"
-                            size="small"
-                            color="error"
-                            disabled={cancelling}
-                            onClick={handleCancel}
-                            startIcon={
-                                cancelling ? (
-                                    <CircularProgress size={13} color="error" />
-                                ) : undefined
-                            }
-                        >
-                            {t("pages.profile.settings.password.cancel")}
-                        </StyledButton>
-
-                        {/* Повторная отправка */}
-                        <StyledButton
-                            variant="text"
-                            size="small"
-                            disabled={resendCooldown > 0 || resending}
-                            onClick={handleResend}
-                            sx={{ minWidth: 150 }}
-                            startIcon={
-                                resending ? (
-                                    <CircularProgress size={13} />
-                                ) : undefined
-                            }
-                        >
-                            {resendCooldown > 0
-                                ? t(
-                                      "pages.profile.settings.password.resendIn",
-                                      { seconds: resendCooldown },
-                                  )
-                                : t("pages.profile.settings.password.resend")}
-                        </StyledButton>
+                        <CancelPasswordChange
+                            onCancel={async () => {
+                                await cancelChangePassword.cancel();
+                                onCancel();
+                            }}
+                        />
+                        <ResendPasswordChange
+                            initialCooldown={mailSendSuccess.cooldown}
+                            onResend={async () => {
+                                const { data } =
+                                    await resendChangePassword.resend();
+                                setMailSendSuccess(data);
+                                return data;
+                            }}
+                        />
                     </Box>
 
                     <FormAlert />

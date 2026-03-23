@@ -27,6 +27,7 @@ export default function SubmitButton({ variant, text }: SubmitButtonParams) {
 
     return (
         <StyledButton
+            fullWidth
             loading={isSubmitting}
             endIcon={<DoubleArrowIcon />}
             type="submit"

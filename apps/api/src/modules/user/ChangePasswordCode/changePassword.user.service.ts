@@ -1,19 +1,15 @@
 import {
     BadRequestException,
-    ConflictException,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
 } from "@nestjs/common";
 
-import {
-    OTP_MAX_ATTEMPTS,
-    OTP_RESEND_COOLDOWN_SECONDS,
-    OTP_MAX_RESENDS,
-    OTP_BLOCK_DURATION_MS,
-} from "@myorg/shared/dto";
 import { UserService } from "@/modules/user/user.service";
-import { ChangePasswordCodeStatus } from "@/generated/prisma";
+import {
+    ChangePasswordCodeStatus,
+    ChangePasswordCodeUser,
+} from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { OtpService } from "@/infrastructure/otp/otp.service";
@@ -22,8 +18,18 @@ import {
     UserChangePasswordCodeDtoOutput,
     UserChangePasswordSettingsDtoOutput,
     UserChangePasswordDtoOutput,
+    CHANGE_PASSWORD_OTP_LENGTH,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
+import { I18nService } from "nestjs-i18n";
+import { MessageKeyType, MessageStructure } from "@myorg/shared/i18n";
+import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
+
+export type MailSendSuccess = {
+    email: string;
+    time: number;
+    cooldown: number | false;
+};
 
 @Injectable()
 export class ChangePasswordUserService {
@@ -33,14 +39,19 @@ export class ChangePasswordUserService {
         private readonly mailService: MailerService,
         private readonly hash: HashService,
         private readonly user: UserService,
+        private readonly i18n: I18nService<MessageStructure>,
     ) {}
 
     expires = 15 * 60 * 1000;
+    resendCooldown = 60 * 1000;
+    maxResends = 3;
+    maxOtpAttempts = 3;
+    blockDuration = 15 * 60 * 60 * 1000;
 
     // ── Утилиты блокировки ────────────────────────────────────────────────────
 
     private getBlockedUntil(blockedAt: Date): Date {
-        return new Date(blockedAt.getTime() + OTP_BLOCK_DURATION_MS);
+        return new Date(blockedAt.getTime() + this.blockDuration);
     }
 
     private isStillBlocked(blockedAt: Date | null): blockedAt is Date {
@@ -114,7 +125,7 @@ export class ChangePasswordUserService {
     async initiate(
         userId: string,
         dto: UserChangePasswordSettingsDtoOutput,
-    ): Promise<{ email: string; time: number }> {
+    ): Promise<MailSendSuccess> {
         const user = await this.getUserOrThrow(userId);
 
         if (!user.passwordHash) {
@@ -124,7 +135,12 @@ export class ChangePasswordUserService {
         await this.checkBlock(userId);
         const isPending = await this.isPendingToken(userId);
 
-        if (isPending) return { email: user.email, time: isPending.time };
+        if (isPending)
+            return {
+                email: user.email,
+                time: isPending.time,
+                cooldown: isPending.cooldown,
+            };
 
         const isCurrentValid = await this.hash.compare(
             dto.currentPassword,
@@ -146,13 +162,20 @@ export class ChangePasswordUserService {
             });
         }
 
-        const { code } = await this.createToken(userId, dto.newPassword);
+        const { code, token } = await this.createToken(userId, dto.newPassword);
         await this.mailService.sendChangePasswordCode({
             to: user.email,
             code,
             expires: this.expires,
         });
-        return { email: user.email, time: this.expires };
+        return {
+            email: user.email,
+            time: this.expires,
+            cooldown:
+                token.resendCount >= this.maxResends
+                    ? false
+                    : this.resendCooldown,
+        };
     }
 
     // ── Инициация (нет пароля — OAuth юзер) ──────────────────────────────────
@@ -160,7 +183,7 @@ export class ChangePasswordUserService {
     async initiateWithoutPassword(
         userId: string,
         dto: UserChangePasswordDtoOutput,
-    ): Promise<{ email: string; time: number }> {
+    ): Promise<MailSendSuccess> {
         const user = await this.getUserOrThrow(userId);
 
         if (user.passwordHash) {
@@ -170,15 +193,27 @@ export class ChangePasswordUserService {
         await this.checkBlock(userId);
         const isPending = await this.isPendingToken(userId);
 
-        if (isPending) return { email: user.email, time: isPending.time };
+        if (isPending)
+            return {
+                email: user.email,
+                time: isPending.time,
+                cooldown: isPending.cooldown,
+            };
 
-        const { code } = await this.createToken(userId, dto.password);
+        const { code, token } = await this.createToken(userId, dto.password);
         await this.mailService.sendChangePasswordCode({
             to: user.email,
             code,
             expires: this.expires,
         });
-        return { email: user.email, time: this.expires };
+        return {
+            email: user.email,
+            time: this.expires,
+            cooldown:
+                token.resendCount >= this.maxResends
+                    ? false
+                    : this.resendCooldown,
+        };
     }
 
     // ── Подтверждение ─────────────────────────────────────────────────────────
@@ -189,7 +224,7 @@ export class ChangePasswordUserService {
     ): Promise<void> {
         const token = await this.getActivePending(userId);
 
-        if (token.attempts >= OTP_MAX_ATTEMPTS) {
+        if (token.attempts >= this.maxOtpAttempts) {
             await this.blockToken(userId);
             this.throwBlocked(new Date());
         }
@@ -198,7 +233,7 @@ export class ChangePasswordUserService {
 
         if (!isValid) {
             const newAttempts = token.attempts + 1;
-            const isNowBlocked = newAttempts >= OTP_MAX_ATTEMPTS;
+            const isNowBlocked = newAttempts >= this.maxOtpAttempts;
             const blockedAt = isNowBlocked ? new Date() : null;
 
             await this.prisma.changePasswordCodeUser.update({
@@ -214,7 +249,7 @@ export class ChangePasswordUserService {
 
             throw new BadRequestException({
                 message: "code_invalid",
-                remainingAttempts: OTP_MAX_ATTEMPTS - newAttempts,
+                remainingAttempts: this.maxOtpAttempts - newAttempts,
                 ...(isNowBlocked && {
                     blockedUntil: this.getBlockedUntil(blockedAt!),
                 }),
@@ -238,24 +273,32 @@ export class ChangePasswordUserService {
 
     // ── Повторная отправка ────────────────────────────────────────────────────
 
-    async resend(userId: string): Promise<void> {
-        const token = await this.getActivePending(userId);
+    async resend(userId: string): Promise<MailSendSuccess> {
+        const user = await this.user.findById(userId);
+        if (!user) throw new NotFoundException();
+        const token = await this.getActivePending(user.id);
 
         if (token.lastResendAt) {
             const cooldownEnd = new Date(
-                token.lastResendAt.getTime() +
-                    OTP_RESEND_COOLDOWN_SECONDS * 1000,
+                token.lastResendAt.getTime() + this.resendCooldown,
             );
             if (new Date() < cooldownEnd) {
                 throw new ValidationException({
                     root: [
                         {
-                            message: "pages.resend.cooldown",
+                            message: this.i18n.t(
+                                "features.changePassword.resend.cooldown",
+                                {
+                                    args: {
+                                        time: i18nFormatDuration(
+                                            cooldownEnd.getTime() - Date.now(),
+                                        ),
+                                    },
+                                },
+                            ),
                             type: "error",
                             data: {
-                                secondsLeft: Math.ceil(
-                                    (cooldownEnd.getTime() - Date.now()) / 1000,
-                                ),
+                                time: cooldownEnd.getTime() - Date.now(),
                             },
                         },
                     ],
@@ -263,7 +306,7 @@ export class ChangePasswordUserService {
             }
         }
 
-        if (token.resendCount >= OTP_MAX_RESENDS) {
+        if (token.resendCount >= this.maxResends) {
             throw new ValidationException({
                 root: [{ message: "pages.resend.limit", type: "error" }],
             });
@@ -271,18 +314,31 @@ export class ChangePasswordUserService {
 
         const { code, codeHash } = this.generateCode();
 
-        await this.prisma.changePasswordCodeUser.update({
-            where: { userId },
-            data: {
-                codeHash,
-                expiresAt: this.makeExpiresAt(),
-                attempts: 0,
-                resendCount: { increment: 1 },
-                lastResendAt: new Date(),
-            },
+        const changePasswordCodeUser =
+            await this.prisma.changePasswordCodeUser.update({
+                where: { userId: user.id },
+                data: {
+                    codeHash,
+                    expiresAt: this.makeExpiresAt(),
+                    attempts: 0,
+                    resendCount: { increment: 1 },
+                    lastResendAt: new Date(),
+                },
+            });
+        await this.mailService.sendChangePasswordCode({
+            to: user.email,
+            code,
+            expires: this.expires,
         });
 
-        // await this.mailService.sendChangePasswordCode(token.user.email, code);
+        return {
+            email: user.email,
+            time: this.expires,
+            cooldown:
+                token.resendCount >= this.maxResends
+                    ? false
+                    : this.resendCooldown,
+        };
     }
 
     // ── Отмена ────────────────────────────────────────────────────────────────
@@ -328,27 +384,43 @@ export class ChangePasswordUserService {
      */
     private async isPendingToken(
         userId: string,
-    ): Promise<false | { time: number }> {
+    ): Promise<false | { time: number; cooldown: number | false }> {
         const token = await this.getToken(userId);
 
         if (
             token?.status === ChangePasswordCodeStatus.PENDING &&
             token.expiresAt > new Date()
         ) {
-            return { time: token.expiresAt.getTime() - Date.now() };
+            let cooldown: number | false;
+
+            if (token.resendCount >= this.maxResends) {
+                cooldown = false;
+            } else {
+                const remainingMs =
+                    (token.lastResendAt?.getTime() ?? 0) +
+                    this.resendCooldown -
+                    Date.now();
+                cooldown = Math.max(0, Math.ceil(remainingMs));
+            }
+
+            return {
+                time: token.expiresAt.getTime() - Date.now(),
+                cooldown,
+            };
         }
+
         return false;
     }
 
     private async createToken(
         userId: string,
         newPassword: string,
-    ): Promise<{ code: string }> {
+    ): Promise<{ code: string; token: ChangePasswordCodeUser }> {
         const { code, codeHash } = this.generateCode();
         const newPasswordHash = await this.hash.hash(newPassword);
 
         // upsert — одна запись на юзера, перезаписываем если была (истёкшая или SUCCESS)
-        await this.prisma.changePasswordCodeUser.upsert({
+        const cahngePassword = await this.prisma.changePasswordCodeUser.upsert({
             where: { userId },
             create: {
                 userId,
@@ -370,7 +442,7 @@ export class ChangePasswordUserService {
 
         // await this.mailService.sendChangePasswordCode(email, code);
 
-        return { code };
+        return { code, token: cahngePassword };
     }
 
     /** Возвращает токен или null — без фильтрации по статусу */
@@ -399,7 +471,7 @@ export class ChangePasswordUserService {
     }
 
     private generateCode(): { code: string; codeHash: string } {
-        const code = this.otpService.generate();
+        const code = this.otpService.generate({ length: CHANGE_PASSWORD_OTP_LENGTH });
         return { code, codeHash: this.hash.sha256(code) };
     }
 

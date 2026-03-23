@@ -76,6 +76,7 @@ export function errorFormHandlerWithAlert<T extends FieldValues>({
     fallback?: FallbackFormType;
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
 }) {
+    console.log(error);
     const context = getErrorContext(error);
     const { root, fields } = normalizeError<T>({ error, t });
 

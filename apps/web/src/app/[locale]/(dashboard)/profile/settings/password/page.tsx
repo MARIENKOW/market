@@ -35,7 +35,11 @@ export default async function Page() {
                 </StyledTypography>
 
                 <ChangePasswordForm
-                    initialEmail="den.adsas@das"
+                    initialSuccess={{
+                        email: "dasdsad",
+                        time: 10000,
+                        cooldown: 2000,
+                    }}
                     initialStep={0}
                 />
             </Box>

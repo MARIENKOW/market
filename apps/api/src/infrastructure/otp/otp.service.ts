@@ -1,4 +1,3 @@
-import { OTP_CODE_LENGTH } from "@myorg/shared/dto";
 import { Injectable } from "@nestjs/common";
 import * as crypto from "crypto";
 
@@ -9,10 +8,10 @@ export class OtpService {
     }
 
     /** Генерирует числовой OTP код заданной длины */
-    generate(): string {
-        const max = Math.pow(10, OTP_CODE_LENGTH);
+    generate({ length }: { length: number }): string {
+        const max = Math.pow(10, length);
         // crypto.randomInt — криптографически безопасный CSPRNG
         const code = crypto.randomInt(0, max);
-        return code.toString().padStart(OTP_CODE_LENGTH, "0");
+        return code.toString().padStart(length, "0");
     }
 }

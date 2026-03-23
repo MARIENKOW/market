@@ -1,11 +1,11 @@
 import z from "zod";
 import { getMessageKey } from "../../i18n";
-import { CODE_LENGTH } from "../constants";
+import { CHANGE_PASSWORD_OTP_LENGTH } from "../constants";
 
 export const UserChangePasswordCodeSchema = z.object({
     code: z
         .string()
-        .length(CODE_LENGTH, getMessageKey("form.code.length"))
+        .length(CHANGE_PASSWORD_OTP_LENGTH, getMessageKey("form.code.length"))
         .regex(/^\d+$/, getMessageKey("form.code.digits")),
 });
 
