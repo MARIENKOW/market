@@ -1,14 +1,13 @@
 import {
-    BadRequestException,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
 } from "@nestjs/common";
 
-import { UserService } from "@/modules/user/user.service";
 import {
     ChangePasswordCodeStatus,
     ChangePasswordCodeUser,
+    User,
 } from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { MailerService } from "@/infrastructure/mailer/mailer.service";
@@ -22,14 +21,34 @@ import {
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
-import { MessageKeyType, MessageStructure } from "@myorg/shared/i18n";
+import { MessageStructure } from "@myorg/shared/i18n";
 import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
+
+// ── Конфигурация ──────────────────────────────────────────────────────────────
+
+export const CHANGE_PASSWORD_CONFIG = {
+    expires: 15 * 60 * 1000,
+    resendCooldown: 60 * 1000,
+    maxResends: 3,
+    maxOtpAttempts: 3,
+    blockDuration: 60 * 60 * 1000,
+    passwordChangeCooldown: 5 * 60 * 60 * 1000,
+} as const;
 
 export type MailSendSuccess = {
     email: string;
     time: number;
     cooldown: number | false;
 };
+
+export type ChangePasswordStatus = {
+    withoutPassword: boolean;
+    pending: MailSendSuccess | null;
+    blocked: { time: number } | null;
+    cooldown: { time: number } | null;
+};
+
+// ── Сервис ────────────────────────────────────────────────────────────────────
 
 @Injectable()
 export class ChangePasswordUserService {
@@ -38,20 +57,15 @@ export class ChangePasswordUserService {
         private readonly otpService: OtpService,
         private readonly mailService: MailerService,
         private readonly hash: HashService,
-        private readonly user: UserService,
         private readonly i18n: I18nService<MessageStructure>,
     ) {}
 
-    expires = 15 * 60 * 1000;
-    resendCooldown = 60 * 1000;
-    maxResends = 3;
-    maxOtpAttempts = 3;
-    blockDuration = 15 * 60 * 60 * 1000;
+    private readonly cfg = CHANGE_PASSWORD_CONFIG;
 
     // ── Утилиты блокировки ────────────────────────────────────────────────────
 
     private getBlockedUntil(blockedAt: Date): Date {
-        return new Date(blockedAt.getTime() + this.blockDuration);
+        return new Date(blockedAt.getTime() + this.cfg.blockDuration);
     }
 
     private isStillBlocked(blockedAt: Date | null): blockedAt is Date {
@@ -63,84 +77,114 @@ export class ChangePasswordUserService {
         throw new ValidationException({
             root: [
                 {
-                    message: "pages.blocked",
+                    message: this.i18n.t("features.changePassword.blocked", {
+                        args: {
+                            time: i18nFormatDuration(
+                                this.getBlockedUntil(blockedAt).getTime() -
+                                    Date.now(),
+                            ),
+                        },
+                    }),
                     type: "error",
-                    data: { blockedUntil: this.getBlockedUntil(blockedAt) },
                 },
             ],
         });
     }
 
+    // ── Утилиты cooldown после смены ──────────────────────────────────────────
+
+    private getPasswordChangeAvailableAt(user: User): Date | null {
+        if (!user.passwordChangedAt) return null;
+        return new Date(
+            user.passwordChangedAt.getTime() + this.cfg.passwordChangeCooldown,
+        );
+    }
+
+    private calcPasswordChangeCooldown(user: User): { time: number } | null {
+        const availableAt = this.getPasswordChangeAvailableAt(user);
+        if (!availableAt) return null;
+        const remaining = availableAt.getTime() - Date.now();
+        return remaining > 0 ? { time: remaining } : null;
+    }
+
+    private checkPasswordChangeCooldown(user: User): void {
+        const availableAt = this.getPasswordChangeAvailableAt(user);
+        if (!availableAt) return;
+        const remaining = availableAt.getTime() - Date.now();
+        if (remaining > 0) {
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "features.changePassword.changeCooldown",
+                            {
+                                args: { time: i18nFormatDuration(remaining) },
+                            },
+                        ),
+                        type: "error",
+                    },
+                ],
+            });
+        }
+    }
+
     // ── Статус ────────────────────────────────────────────────────────────────
 
-    async getStatus(userId: string): Promise<{
-        pending: boolean;
-        blocked: boolean;
-        blockedUntil: Date | null;
-        maskedEmail: string | null;
-        hasPassword: boolean;
-    }> {
-        const user = await this.prisma.user.findUniqueOrThrow({
-            where: { id: userId },
-            select: { passwordHash: true, email: true },
-        });
-
-        const token = await this.getToken(userId);
-        const base = { hasPassword: !!user.passwordHash };
+    async getStatus(user: User): Promise<ChangePasswordStatus> {
+        const cooldown = this.calcPasswordChangeCooldown(user);
+        const token = await this.getToken(user.id);
+        const withoutPassword = !user.passwordHash;
         const empty = {
-            ...base,
-            pending: false,
-            blocked: false,
-            blockedUntil: null,
-            maskedEmail: null,
+            cooldown,
+            withoutPassword,
+            pending: null,
+            blocked: null,
         };
-
-        if (!token) return empty;
+        if (!token || cooldown) return empty;
 
         if (token.status === ChangePasswordCodeStatus.BLOCKED) {
             if (!this.isStillBlocked(token.blockedAt)) return empty;
             return {
-                ...base,
-                pending: false,
-                blocked: true,
-                blockedUntil: this.getBlockedUntil(token.blockedAt),
-                maskedEmail: null,
+                withoutPassword,
+                pending: null,
+                cooldown: null,
+                blocked: {
+                    time:
+                        this.getBlockedUntil(token.blockedAt).getTime() -
+                        Date.now(),
+                },
             };
         }
 
-        // PENDING — проверяем не истёк ли
         if (token.expiresAt < new Date()) return empty;
 
         return {
-            ...base,
-            pending: true,
-            blocked: false,
-            blockedUntil: null,
-            maskedEmail: this.maskEmail(user.email),
+            withoutPassword,
+            pending: {
+                email: user.email,
+                time: token.expiresAt.getTime() - Date.now(),
+                cooldown: this.calcResendCooldown(token),
+            },
+            blocked: null,
+            cooldown: null,
         };
     }
 
     // ── Инициация (есть пароль) ───────────────────────────────────────────────
 
     async initiate(
-        userId: string,
+        user: User,
         dto: UserChangePasswordSettingsDtoOutput,
     ): Promise<MailSendSuccess> {
-        const user = await this.getUserOrThrow(userId);
-
         if (!user.passwordHash) {
             throw new InternalServerErrorException();
         }
 
-        await this.checkBlock(userId);
-        const isPending = await this.isPendingToken(userId);
+        this.checkPasswordChangeCooldown(user);
 
-        if (isPending)
-            return {
-                email: user.email,
-                time: isPending.time,
-                cooldown: isPending.cooldown,
-            };
+        const { blocked, pending } = await this.checkBlockAndPending(user.id);
+        if (blocked) this.throwBlocked(blocked);
+        if (pending) return { email: user.email, ...pending };
 
         const isCurrentValid = await this.hash.compare(
             dto.currentPassword,
@@ -152,67 +196,48 @@ export class ChangePasswordUserService {
             });
         }
 
-        const isSame = await this.hash.compare(
+        const { code, token } = await this.createToken(
+            user.id,
             dto.newPassword,
-            user.passwordHash,
         );
-        if (isSame) {
-            throw new ValidationException<UserChangePasswordSettingsDtoOutput>({
-                fields: { newPassword: ["form.newPassword.sameAsCurrent"] },
-            });
-        }
+        await this.sendCodeOrRollback(user.id, user.email, code);
 
-        const { code, token } = await this.createToken(userId, dto.newPassword);
-        await this.mailService.sendChangePasswordCode({
-            to: user.email,
-            code,
-            expires: this.expires,
-        });
         return {
             email: user.email,
-            time: this.expires,
+            time: this.cfg.expires,
             cooldown:
-                token.resendCount >= this.maxResends
+                token.resendCount >= this.cfg.maxResends
                     ? false
-                    : this.resendCooldown,
+                    : this.cfg.resendCooldown,
         };
     }
 
     // ── Инициация (нет пароля — OAuth юзер) ──────────────────────────────────
 
     async initiateWithoutPassword(
-        userId: string,
+        user: User,
         dto: UserChangePasswordDtoOutput,
     ): Promise<MailSendSuccess> {
-        const user = await this.getUserOrThrow(userId);
-
         if (user.passwordHash) {
             throw new InternalServerErrorException();
         }
 
-        await this.checkBlock(userId);
-        const isPending = await this.isPendingToken(userId);
+        this.checkPasswordChangeCooldown(user);
 
-        if (isPending)
-            return {
-                email: user.email,
-                time: isPending.time,
-                cooldown: isPending.cooldown,
-            };
+        const { blocked, pending } = await this.checkBlockAndPending(user.id);
+        if (blocked) this.throwBlocked(blocked);
+        if (pending) return { email: user.email, ...pending };
 
-        const { code, token } = await this.createToken(userId, dto.password);
-        await this.mailService.sendChangePasswordCode({
-            to: user.email,
-            code,
-            expires: this.expires,
-        });
+        const { code, token } = await this.createToken(user.id, dto.password);
+        await this.sendCodeOrRollback(user.id, user.email, code);
+
         return {
             email: user.email,
-            time: this.expires,
+            time: this.cfg.expires,
             cooldown:
-                token.resendCount >= this.maxResends
+                token.resendCount >= this.cfg.maxResends
                     ? false
-                    : this.resendCooldown,
+                    : this.cfg.resendCooldown,
         };
     }
 
@@ -222,18 +247,21 @@ export class ChangePasswordUserService {
         userId: string,
         dto: UserChangePasswordCodeDtoOutput,
     ): Promise<void> {
-        const token = await this.getActivePending(userId);
-
-        if (token.attempts >= this.maxOtpAttempts) {
-            await this.blockToken(userId);
-            this.throwBlocked(new Date());
-        }
+        const token = await this.prisma.changePasswordCodeUser.findFirst({
+            where: {
+                userId,
+                status: ChangePasswordCodeStatus.PENDING,
+                expiresAt: { gt: new Date() },
+                attempts: { lt: this.cfg.maxOtpAttempts },
+            },
+        });
+        if (!token) throw new NotFoundException();
 
         const isValid = this.hash.verifySha256(dto.code, token.codeHash);
 
         if (!isValid) {
             const newAttempts = token.attempts + 1;
-            const isNowBlocked = newAttempts >= this.maxOtpAttempts;
+            const isNowBlocked = newAttempts >= this.cfg.maxOtpAttempts;
             const blockedAt = isNowBlocked ? new Date() : null;
 
             await this.prisma.changePasswordCodeUser.update({
@@ -247,23 +275,56 @@ export class ChangePasswordUserService {
                 },
             });
 
-            throw new BadRequestException({
-                message: "code_invalid",
-                remainingAttempts: this.maxOtpAttempts - newAttempts,
-                ...(isNowBlocked && {
-                    blockedUntil: this.getBlockedUntil(blockedAt!),
-                }),
+            if (isNowBlocked) {
+                throw new ValidationException({
+                    root: [
+                        {
+                            message: this.i18n.t(
+                                "features.changePassword.code.blocked",
+                                {
+                                    args: {
+                                        time: i18nFormatDuration(
+                                            this.getBlockedUntil(
+                                                blockedAt!,
+                                            ).getTime() - Date.now(),
+                                        ),
+                                    },
+                                },
+                            ),
+                            data: { return: true },
+                            type: "error",
+                        },
+                    ],
+                });
+            }
+
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "features.changePassword.code.invalid",
+                            {
+                                args: {
+                                    count:
+                                        this.cfg.maxOtpAttempts - newAttempts,
+                                },
+                            },
+                        ),
+                        type: "error",
+                    },
+                ],
             });
         }
 
-        // Меняем пароль + помечаем успех атомарно
         await this.prisma.$transaction([
             this.prisma.user.update({
                 where: { id: userId },
                 data: {
                     passwordHash: token.newPasswordHash,
+                    passwordChangedAt: new Date(),
                 },
             }),
+            this.prisma.sessionUser.deleteMany({ where: { userId } }),
             this.prisma.changePasswordCodeUser.update({
                 where: { userId },
                 data: { status: ChangePasswordCodeStatus.SUCCESS },
@@ -273,14 +334,25 @@ export class ChangePasswordUserService {
 
     // ── Повторная отправка ────────────────────────────────────────────────────
 
-    async resend(userId: string): Promise<MailSendSuccess> {
-        const user = await this.user.findById(userId);
-        if (!user) throw new NotFoundException();
+    async resend(user: User): Promise<MailSendSuccess> {
         const token = await this.getActivePending(user.id);
+
+        if (token.resendCount >= this.cfg.maxResends) {
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "features.changePassword.resend.limit",
+                        ),
+                        type: "error",
+                    },
+                ],
+            });
+        }
 
         if (token.lastResendAt) {
             const cooldownEnd = new Date(
-                token.lastResendAt.getTime() + this.resendCooldown,
+                token.lastResendAt.getTime() + this.cfg.resendCooldown,
             );
             if (new Date() < cooldownEnd) {
                 throw new ValidationException({
@@ -306,110 +378,100 @@ export class ChangePasswordUserService {
             }
         }
 
-        if (token.resendCount >= this.maxResends) {
-            throw new ValidationException({
-                root: [{ message: "pages.resend.limit", type: "error" }],
-            });
-        }
-
         const { code, codeHash } = this.generateCode();
 
-        const changePasswordCodeUser =
+        await this.prisma.changePasswordCodeUser.update({
+            where: { userId: user.id },
+            data: {
+                codeHash,
+                expiresAt: this.makeExpiresAt(),
+                attempts: 0,
+                resendCount: { increment: 1 },
+                lastResendAt: new Date(),
+            },
+        });
+
+        try {
+            await this.mailService.sendChangePasswordCode({
+                to: user.email,
+                code,
+                expires: this.cfg.expires,
+            });
+        } catch (error) {
             await this.prisma.changePasswordCodeUser.update({
                 where: { userId: user.id },
                 data: {
-                    codeHash,
-                    expiresAt: this.makeExpiresAt(),
-                    attempts: 0,
-                    resendCount: { increment: 1 },
-                    lastResendAt: new Date(),
+                    codeHash: token.codeHash,
+                    expiresAt: token.expiresAt,
+                    attempts: token.attempts,
+                    resendCount: token.resendCount,
+                    lastResendAt: token.lastResendAt,
                 },
             });
-        await this.mailService.sendChangePasswordCode({
-            to: user.email,
-            code,
-            expires: this.expires,
-        });
+            throw error;
+        }
 
         return {
             email: user.email,
-            time: this.expires,
+            time: this.cfg.expires,
             cooldown:
-                token.resendCount >= this.maxResends
+                token.resendCount + 1 >= this.cfg.maxResends
                     ? false
-                    : this.resendCooldown,
+                    : this.cfg.resendCooldown,
         };
     }
 
     // ── Отмена ────────────────────────────────────────────────────────────────
 
     async cancel(userId: string): Promise<void> {
-        const token = await this.getActivePending(userId);
-
-        // Удаляем запись — не меняем статус
+        await this.getActivePending(userId);
         await this.prisma.changePasswordCodeUser.delete({
             where: { userId },
         });
     }
 
-    // ── Private: блокировка ───────────────────────────────────────────────────
+    // ── Private: блокировка + pending (один запрос) ───────────────────────────
 
-    private async checkBlock(userId: string): Promise<void> {
+    private async checkBlockAndPending(userId: string): Promise<{
+        blocked: Date | null;
+        pending: Omit<MailSendSuccess, "email"> | null;
+    }> {
         const token = await this.getToken(userId);
 
         if (
             token?.status === ChangePasswordCodeStatus.BLOCKED &&
             this.isStillBlocked(token.blockedAt)
         ) {
-            this.throwBlocked(token.blockedAt);
+            return { blocked: token.blockedAt, pending: null };
         }
-    }
-
-    private async blockToken(userId: string): Promise<void> {
-        await this.prisma.changePasswordCodeUser.update({
-            where: { userId },
-            data: {
-                status: ChangePasswordCodeStatus.BLOCKED,
-                blockedAt: new Date(),
-            },
-        });
-    }
-
-    // ── Private: токен ────────────────────────────────────────────────────────
-
-    /**
-     * Запрещает повторную инициацию если уже есть активный PENDING токен.
-     * Пользователь должен либо дождаться истечения, либо отменить через cancel,
-     * либо запросить повторный код через resend.
-     */
-    private async isPendingToken(
-        userId: string,
-    ): Promise<false | { time: number; cooldown: number | false }> {
-        const token = await this.getToken(userId);
 
         if (
             token?.status === ChangePasswordCodeStatus.PENDING &&
             token.expiresAt > new Date()
         ) {
-            let cooldown: number | false;
-
-            if (token.resendCount >= this.maxResends) {
-                cooldown = false;
-            } else {
-                const remainingMs =
-                    (token.lastResendAt?.getTime() ?? 0) +
-                    this.resendCooldown -
-                    Date.now();
-                cooldown = Math.max(0, Math.ceil(remainingMs));
-            }
-
             return {
-                time: token.expiresAt.getTime() - Date.now(),
-                cooldown,
+                blocked: null,
+                pending: {
+                    time: token.expiresAt.getTime() - Date.now(),
+                    cooldown: this.calcResendCooldown(token),
+                },
             };
         }
 
-        return false;
+        return { blocked: null, pending: null };
+    }
+
+    // ── Private: токен ────────────────────────────────────────────────────────
+
+    private calcResendCooldown(token: ChangePasswordCodeUser): number | false {
+        if (token.resendCount >= this.cfg.maxResends) return false;
+
+        const remainingMs =
+            (token.lastResendAt?.getTime() ?? 0) +
+            this.cfg.resendCooldown -
+            Date.now();
+
+        return Math.max(0, Math.ceil(remainingMs));
     }
 
     private async createToken(
@@ -419,8 +481,7 @@ export class ChangePasswordUserService {
         const { code, codeHash } = this.generateCode();
         const newPasswordHash = await this.hash.hash(newPassword);
 
-        // upsert — одна запись на юзера, перезаписываем если была (истёкшая или SUCCESS)
-        const cahngePassword = await this.prisma.changePasswordCodeUser.upsert({
+        const token = await this.prisma.changePasswordCodeUser.upsert({
             where: { userId },
             create: {
                 userId,
@@ -440,23 +501,18 @@ export class ChangePasswordUserService {
             },
         });
 
-        // await this.mailService.sendChangePasswordCode(email, code);
-
-        return { code, token: cahngePassword };
+        return { code, token };
     }
 
-    /** Возвращает токен или null — без фильтрации по статусу */
-    private getToken(userId: string) {
+    private getToken(userId: string): Promise<ChangePasswordCodeUser | null> {
         return this.prisma.changePasswordCodeUser.findUnique({
             where: { userId },
         });
     }
 
-    /**
-     * Возвращает активный PENDING токен или бросает NotFoundException.
-     * Используется в confirm, resend, cancel.
-     */
-    private async getActivePending(userId: string) {
+    private async getActivePending(
+        userId: string,
+    ): Promise<ChangePasswordCodeUser> {
         const token = await this.getToken(userId);
 
         if (
@@ -464,29 +520,45 @@ export class ChangePasswordUserService {
             token.status !== ChangePasswordCodeStatus.PENDING ||
             token.expiresAt < new Date()
         ) {
-            throw new NotFoundException("change_password_request_not_found");
+            throw new NotFoundException();
         }
 
         return token;
     }
 
     private generateCode(): { code: string; codeHash: string } {
-        const code = this.otpService.generate({ length: CHANGE_PASSWORD_OTP_LENGTH });
+        const code = this.otpService.generate({
+            length: CHANGE_PASSWORD_OTP_LENGTH,
+        });
         return { code, codeHash: this.hash.sha256(code) };
     }
 
     private makeExpiresAt(): Date {
-        return new Date(Date.now() + this.expires);
+        return new Date(Date.now() + this.cfg.expires);
     }
 
-    // ── Private: юзер ────────────────────────────────────────────────────────
+    // ── Private: отправка ─────────────────────────────────────────────────────
 
-    private getUserOrThrow(userId: string) {
-        return this.prisma.user.findUniqueOrThrow({
-            where: { id: userId },
-            select: { id: true, email: true, passwordHash: true },
-        });
+    private async sendCodeOrRollback(
+        userId: string,
+        email: string,
+        code: string,
+    ): Promise<void> {
+        try {
+            await this.mailService.sendChangePasswordCode({
+                to: email,
+                code,
+                expires: this.cfg.expires,
+            });
+        } catch (error) {
+            await this.prisma.changePasswordCodeUser.delete({
+                where: { userId },
+            });
+            throw error;
+        }
     }
+
+    // ── Private: утилиты ──────────────────────────────────────────────────────
 
     private maskEmail(email: string): string {
         const [local, domain] = email.split("@");

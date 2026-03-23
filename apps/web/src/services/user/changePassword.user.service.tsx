@@ -1,21 +1,25 @@
 import { FetchCustom, FetchCustomReturn } from "@/utils/api";
-import { AvailableMode } from "@/theme/theme";
-import { UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
-import { AvailableLanguage } from "@myorg/shared/i18n";
 import {
     UserChangePasswordCodeDtoOutput,
     UserChangePasswordDtoOutput,
     UserChangePasswordSettingsDtoOutput,
 } from "@myorg/shared/form";
 
-const { path, status, confirm, resend, init, initWithoutPassword, cancel } =
+const { status, confirm, resend, init, initWithoutPassword, cancel } =
     FULL_PATH_ENDPOINT.user.changePassword;
 
 export type MailSendSuccess = {
     email: string;
     time: number;
     cooldown: number | false;
+};
+
+export type ChangePasswordStatus = {
+    withoutPassword: boolean;
+    pending: MailSendSuccess | null;
+    blocked: { time: number } | null;
+    cooldown: { time: number } | null;
 };
 
 export default class ChangePasswordUserService {
@@ -28,7 +32,7 @@ export default class ChangePasswordUserService {
     cancel: () => FetchCustomReturn<void>;
     resend: () => FetchCustomReturn<MailSendSuccess>;
     confirm: (body: UserChangePasswordCodeDtoOutput) => FetchCustomReturn<void>;
-    // status: () => FetchCustomReturn<void>;
+    status: () => FetchCustomReturn<ChangePasswordStatus>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {
         this.init = async (body) => {
@@ -46,7 +50,7 @@ export default class ChangePasswordUserService {
             if (this.abortController) this.abortController.abort();
             const controller = new AbortController();
             this.abortController = controller;
-            const res = await api<MailSendSuccess>(init.path, {
+            const res = await api<MailSendSuccess>(initWithoutPassword.path, {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
@@ -71,6 +75,15 @@ export default class ChangePasswordUserService {
             const res = await api<MailSendSuccess>(resend.path, {
                 signal: controller.signal,
                 method: "POST",
+            });
+            return res;
+        };
+        this.status = async () => {
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api<ChangePasswordStatus>(status.path, {
+                signal: controller.signal,
             });
             return res;
         };

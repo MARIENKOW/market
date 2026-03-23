@@ -6,15 +6,18 @@ import { StyledButton } from "@/components/ui/StyledButton";
 import { formatDuration } from "@/utils/formatDuration";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { MailSendSuccess } from "@/services/user/changePassword.user.service";
+import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 
 interface Props {
     onResend: () => Promise<MailSendSuccess>;
     initialCooldown: number | false;
+    onCancel: () => void;
 }
 
 export default function ResendPasswordChange({
     onResend,
     initialCooldown,
+    onCancel,
 }: Props) {
     const t = useTranslations();
     const [cooldown, setCooldown] = useState<number | false>(initialCooldown);
@@ -51,21 +54,40 @@ export default function ResendPasswordChange({
             const data = await onResend();
             startTimer(data.cooldown);
         } catch (error) {
-            errorHandler({ error, t });
+            errorHandler({
+                error,
+                t,
+                fallback: {
+                    notfound: {
+                        callback: () => {
+                            onCancel();
+                        },
+                    },
+                    validation: {
+                        callback() {
+                            let { data } = error as ApiErrorResponse;
+                            let { root } = data as ErrorsWithMessages;
+                            console.log(root?.[0]?.data);
+                            if (root?.[0]?.data?.return) onCancel();
+                        },
+                    },
+                },
+            });
         } finally {
             setResending(false);
         }
     };
 
+    if (cooldown === false) return null;
     return (
         <StyledButton
             variant="text"
             size="small"
-            disabled={cooldown === false || cooldown > 0}
+            disabled={cooldown > 0}
             onClick={handleClick}
             loading={resending}
         >
-            {cooldown === false || cooldown <= 0
+            {cooldown <= 0
                 ? t("pages.profile.settings.password.resend")
                 : t("pages.profile.settings.password.resendIn", {
                       time: formatDuration(cooldown, locale),

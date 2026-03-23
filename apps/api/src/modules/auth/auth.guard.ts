@@ -56,7 +56,11 @@ export class AuthGuard implements CanActivate {
         const req = ctx.switchToHttp().getRequest<Request>();
         const xType = req.headers["x-type"] as string | undefined;
 
-        const actorType = this.resolveActorType(xType, allowedRoles,req.cookies);
+        const actorType = this.resolveActorType(
+            xType,
+            allowedRoles,
+            req.cookies,
+        );
         if (!actorType) throw new UnauthorizedException();
 
         const actor =

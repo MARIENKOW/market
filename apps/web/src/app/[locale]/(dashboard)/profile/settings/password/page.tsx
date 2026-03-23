@@ -4,9 +4,23 @@ import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
+import ChangePasswordUserService from "@/services/user/changePassword.user.service";
+import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
+import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
+
+const changePassword = new ChangePasswordUserService($apiUserServer);
 
 export default async function Page() {
     const t = await getTranslations();
+    let data;
+    let error;
+    try {
+        const body = await changePassword.status();
+        data = body.data;
+    } catch (e) {
+        error = e;
+    }
+
     return (
         <Box>
             <Box sx={{ p: { xs: 2, sm: 4 } }}>
@@ -33,15 +47,16 @@ export default async function Page() {
                 <StyledTypography variant="body2" color="text.secondary" mb={4}>
                     {t("pages.profile.settings.password.subtitle")}
                 </StyledTypography>
-
-                <ChangePasswordForm
-                    initialSuccess={{
-                        email: "dasdsad",
-                        time: 10000,
-                        cooldown: 2000,
-                    }}
-                    initialStep={0}
-                />
+                {error ? (
+                    <ErrorHandlerElement error={error} />
+                ) : (
+                    data && (
+                        <ChangePasswordForm
+                            initialMailSendSuccess={data?.pending}
+                            withoutPassword={data?.withoutPassword}
+                        />
+                    )
+                )}
             </Box>
         </Box>
     );

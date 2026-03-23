@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body } from "@nestjs/common";
+import { Controller, Get, Post, Delete, Body, Res } from "@nestjs/common";
 import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { UserActor } from "@/modules/auth/auth.type";
 import {
@@ -12,9 +12,12 @@ import {
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
 import {
+    ChangePasswordStatus,
     ChangePasswordUserService,
     MailSendSuccess,
 } from "@/modules/user/ChangePasswordCode/changePassword.user.service";
+import { Response } from "express";
+import { COOKIE_CONFIG } from "@/modules/auth/user/auth.user.controller";
 
 const { path } = FULL_PATH_ENDPOINT.user.changePassword;
 const { status, confirm, resend, init, initWithoutPassword, cancel } =
@@ -28,8 +31,8 @@ export class ChangePasswordUserController {
     ) {}
 
     @Get(status.path)
-    getStatus(@CurrentActor() actor: UserActor) {
-        return this.changePasswordService.getStatus(actor.user.id);
+    getStatus(@CurrentActor() actor: UserActor): Promise<ChangePasswordStatus> {
+        return this.changePasswordService.getStatus(actor.user);
     }
 
     @Post(init.path)
@@ -38,7 +41,7 @@ export class ChangePasswordUserController {
         @Body(new ZodValidationPipe(UserChangePasswordSettingsSchema))
         body: UserChangePasswordSettingsDtoOutput,
     ): Promise<MailSendSuccess> {
-        return this.changePasswordService.initiate(actor.user.id, body);
+        return this.changePasswordService.initiate(actor.user, body);
     }
 
     @Post(initWithoutPassword.path)
@@ -48,23 +51,26 @@ export class ChangePasswordUserController {
         body: UserChangePasswordDtoOutput,
     ): Promise<MailSendSuccess> {
         return this.changePasswordService.initiateWithoutPassword(
-            actor.user.id,
+            actor.user,
             body,
         );
     }
 
     @Post(confirm.path)
-    confirm(
+    async confirm(
         @CurrentActor() actor: UserActor,
         @Body(new ZodValidationPipe(UserChangePasswordCodeSchema))
         body: UserChangePasswordCodeDtoOutput,
+        @Res({ passthrough: true }) res: Response,
     ): Promise<void> {
-        return this.changePasswordService.confirm(actor.user.id, body);
+        await this.changePasswordService.confirm(actor.user.id, body);
+        res.cookie("accessTokenUser", "", COOKIE_CONFIG);
+        res.cookie("refreshTokenUser", "", COOKIE_CONFIG);
     }
 
     @Post(resend.path)
     resend(@CurrentActor() actor: UserActor): Promise<MailSendSuccess> {
-        return this.changePasswordService.resend(actor.user.id);
+        return this.changePasswordService.resend(actor.user);
     }
 
     @Delete(cancel.path)

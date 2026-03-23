@@ -75,7 +75,6 @@ export class AuthUserController {
     @Public()
     async login(
         @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
-        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         const { accessToken, refreshToken } = await this.authUser.login(body);
@@ -87,7 +86,6 @@ export class AuthUserController {
     @Public()
     async google(
         @Body() body: { code: string },
-        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         const { accessToken, refreshToken } = await this.authUser.google(body);

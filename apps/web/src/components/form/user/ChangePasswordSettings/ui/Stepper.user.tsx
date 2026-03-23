@@ -13,7 +13,6 @@ import {
 import {
     LockOutlined,
     MailOutline,
-    CheckCircleOutline,
     CheckRounded,
 } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
@@ -29,16 +28,8 @@ export const STEPS: { labelKey: MessageKeyType; icon: React.ReactNode }[] = [
         labelKey: "pages.profile.settings.password.step2",
         icon: <MailOutline fontSize="small" />,
     },
-    {
-        labelKey: "pages.profile.settings.password.step3",
-        icon: <CheckCircleOutline fontSize="small" />,
-    },
 ];
 
-// ── Кастомная иконка шага ─────────────────────────────────────────────────────
-// completed → галочка с цветом primary
-// active    → иконка шага с цветом primary
-// default   → иконка шага приглушённая
 function StepIcon({
     active,
     completed,

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
 import { MailOutline } from "@mui/icons-material";
 import { useLocale, useTranslations } from "next-intl";
+import { Dispatch, SetStateAction } from "react";
 
 import FormProvider from "@/components/wrappers/form/FormProvider";
 import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -20,35 +21,27 @@ import {
 import { StyledAlert } from "@/components/ui/StyledAlert";
 import FormOtpInput from "@/components/features/form/fields/controlled/FormOtpInput";
 import { formatDuration } from "@/utils/formatDuration";
-import ChangePasswordUserService, {
-    MailSendSuccess,
-} from "@/services/user/changePassword.user.service";
-import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
-import CancelPasswordChange from "@/components/form/user/ChangePasswordSettings/features/CancelPasswordChange";
-import ResendPasswordChange from "@/components/form/user/ChangePasswordSettings/features/ResendPasswordChange";
-import { FetchCustomReturn } from "@/utils/api";
-import { Dispatch, SetStateAction } from "react";
-import {
-    isApiErrorResponse,
-    isValidationFailedError,
-} from "@/helpers/error/error.type.helper";
+import { MailSendSuccess } from "@/services/user/changePassword.user.service";
+import CancelPasswordChange from "../features/CancelPasswordChange";
+import ResendPasswordChange from "../features/ResendPasswordChange";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
-import { useRouter } from "@/i18n/navigation";
-import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 
 interface Props {
-    setMailSendSuccess: Dispatch<SetStateAction<MailSendSuccess>>;
     mailSendSuccess: MailSendSuccess;
+    setMailSendSuccess: Dispatch<SetStateAction<MailSendSuccess>>;
     onCancel: () => void;
+    onConfirm: (dto: UserChangePasswordCodeDtoOutput) => Promise<void>;
+    onResend: () => Promise<MailSendSuccess>;
+    onCancelRequest: () => Promise<void>;
 }
 
-const changePassword = new ChangePasswordUserService($apiUserClient);
-const resendChangePassword = new ChangePasswordUserService($apiUserClient);
-
-export default function ChangePasswordSettingsStep2User({
-    setMailSendSuccess,
+export default function Step2({
     mailSendSuccess,
+    setMailSendSuccess,
     onCancel,
+    onConfirm,
+    onResend,
+    onCancelRequest,
 }: Props) {
     const t = useTranslations();
     const locale = useLocale();
@@ -57,15 +50,12 @@ export default function ChangePasswordSettingsStep2User({
         resolver: zodResolver(UserChangePasswordCodeSchema),
         defaultValues: { code: "" },
     });
-    const router = useRouter();
 
     const onSubmit: CustomSubmitHandler<
         UserChangePasswordCodeDtoOutput
     > = async (formValues, { setError }) => {
         try {
-            await changePassword.confirm(formValues);
-            snackbarSuccess(t("features.changePassword.success"));
-            router.refresh();
+            await onConfirm(formValues);
         } catch (error) {
             errorFormHandlerWithAlert({
                 error,
@@ -74,15 +64,12 @@ export default function ChangePasswordSettingsStep2User({
                 formValues,
                 fallback: {
                     notfound: {
-                        callback: () => {
-                            onCancel();
-                        },
+                        callback: onCancel,
                     },
                     validation: {
                         callback() {
                             const { data } = error as ApiErrorResponse;
                             const { root } = data as ErrorsWithMessages;
-                            console.log(root?.[0]?.data);
                             if (root?.[0]?.data?.return) onCancel();
                         },
                     },
@@ -126,13 +113,15 @@ export default function ChangePasswordSettingsStep2User({
                                 initialCooldown={mailSendSuccess.cooldown}
                                 onCancel={onCancel}
                                 onResend={async () => {
-                                    const { data } =
-                                        await resendChangePassword.resend();
+                                    const data = await onResend();
                                     setMailSendSuccess(data);
                                     return data;
                                 }}
                             />
-                            <CancelPasswordChange onCancel={onCancel} />
+                            <CancelPasswordChange
+                                onCancel={onCancel}
+                                onCancelRequest={onCancelRequest}
+                            />
                         </Box>
                         <SubmitButton />
                     </Box>

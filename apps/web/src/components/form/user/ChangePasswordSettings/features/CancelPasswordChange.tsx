@@ -4,10 +4,13 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
+import ChangePasswordUserService from "@/services/user/changePassword.user.service";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 interface Props {
-    onCancel: () => Promise<void>;
+    onCancel: () => void;
 }
+const cancelChangePassword = new ChangePasswordUserService($apiUserClient);
 
 export default function CancelPasswordChange({ onCancel }: Props) {
     const t = useTranslations();
@@ -16,9 +19,19 @@ export default function CancelPasswordChange({ onCancel }: Props) {
     const handleClick = async () => {
         setCancelling(true);
         try {
-            await onCancel();
+            await cancelChangePassword.cancel();
+            onCancel();
         } catch (error) {
-            errorHandler({ error, t });
+            console.log(error);
+            errorHandler({
+                error,
+                t,
+                fallback: {
+                    notfound: {
+                        callback: onCancel,
+                    },
+                },
+            });
         } finally {
             setCancelling(false);
         }
@@ -26,8 +39,9 @@ export default function CancelPasswordChange({ onCancel }: Props) {
 
     return (
         <StyledButton
-            variant="text"
+            variant='outlined'
             color="error"
+            size='small'
             onClick={handleClick}
             loading={cancelling}
         >
