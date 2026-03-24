@@ -2,19 +2,22 @@
 
 import { useState } from "react";
 import { Box, Collapse } from "@mui/material";
-import { ChangePasswordFormProps } from "./types";
-import ChangePasswordStepper from "./ui/Stepper.user";
-import Step1 from "./steps/Step1";
+import Step1 from "@/components/form/user/ChangePasswordSettings/steps/Step1";
 import Step1WithoutPassword from "./steps/Step1WithoutPassword";
-import Step2 from "./steps/Step2";
 import { MailSendSuccess } from "@myorg/shared/dto";
+import Step2 from "@/components/form/user/ChangePasswordSettings/steps/Step2";
+import ChangePasswordStepper from "@/components/form/user/ChangePasswordSettings/ui/Stepper.user";
 
 type Step = 0 | 1;
+
+export interface ChangePasswordFormProps {
+    initialMailSendSuccess: MailSendSuccess | null;
+    withoutPassword: boolean;
+}
 
 export default function ChangePasswordForm({
     initialMailSendSuccess,
     withoutPassword,
-    actions,
 }: ChangePasswordFormProps) {
     const [step, setStep] = useState<Step>(initialMailSendSuccess ? 1 : 0);
     const [mailSendSuccess, setMailSendSuccess] = useState<MailSendSuccess>(
@@ -40,15 +43,9 @@ export default function ChangePasswordForm({
             <Box width={"100%"} maxWidth={400} mx={"auto"}>
                 <Collapse in={step === 0} unmountOnExit>
                     {withoutPassword ? (
-                        <Step1WithoutPassword
-                            onSuccess={handleStep1Success}
-                            onInit={actions.initWithoutPassword!}
-                        />
+                        <Step1WithoutPassword onSuccess={handleStep1Success} />
                     ) : (
-                        <Step1
-                            onSuccess={handleStep1Success}
-                            onInit={actions.init!}
-                        />
+                        <Step1 onSuccess={handleStep1Success} />
                     )}
                 </Collapse>
 
@@ -57,9 +54,6 @@ export default function ChangePasswordForm({
                         mailSendSuccess={mailSendSuccess}
                         setMailSendSuccess={setMailSendSuccess}
                         onCancel={handleCancel}
-                        onConfirm={actions.confirm}
-                        onResend={actions.resend}
-                        onCancelRequest={actions.cancel}
                     />
                 </Collapse>
             </Box>

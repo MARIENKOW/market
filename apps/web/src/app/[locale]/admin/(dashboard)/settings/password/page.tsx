@@ -5,7 +5,7 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 import ChangePasswordAdminService from "@/services/admin/changePassword.admin.service";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
-import ChangePasswordSettingsForm from "@/components/form/admin/ChangePasswordSettnigsForm";
+import ChangePasswordSettings from "@/components/form/admin/ChangePasswordSettings";
 import { $apiAdminServer } from "@/utils/api/admin/fetch.admin.server";
 
 const changePassword = new ChangePasswordAdminService($apiAdminServer);
@@ -55,7 +55,7 @@ export default async function Page() {
                 <ErrorHandlerElement error={error} />
             ) : (
                 data && (
-                    <ChangePasswordSettingsForm
+                    <ChangePasswordSettings
                         initialMailSendSuccess={data?.pending}
                         withoutPassword={data?.withoutPassword}
                     />

@@ -1,5 +1,5 @@
 import { FetchCustom, FetchCustomReturn } from "@/utils/api";
-import { SessionUserDto, SessionUserViewDto, UserDto } from "@myorg/shared/dto";
+import { SessionUserViewDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 
 const { path } = FULL_PATH_ENDPOINT.auth.user.session;

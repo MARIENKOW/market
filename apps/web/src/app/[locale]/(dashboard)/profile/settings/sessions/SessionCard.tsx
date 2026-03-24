@@ -11,13 +11,13 @@ import {
     useMediaQuery,
 } from "@mui/material";
 import { Close, AccessTime, Shield } from "@mui/icons-material";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { SessionUserViewDto } from "@myorg/shared/dto";
 import { OsIcon } from "./icons/OsIcon";
 import { DeviceIcon } from "./icons/DeviceIcon";
-import RelativeTime from "./RelativeTime";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { StyledButton } from "@/components/ui/StyledButton";
+import { relativeTime } from "@/utils/relativeTime";
 
 interface SessionCardProps {
     session: SessionUserViewDto;
@@ -25,10 +25,11 @@ interface SessionCardProps {
 
 export const SessionCard = ({ session }: SessionCardProps) => {
     const theme = useTheme();
+    const locale = useLocale();
     const t = useTranslations("components.sessionList");
     const { device, location, isCurrent, lastUsedAt, id } = session;
 
-    const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+    const date = new Date(Math.min(new Date(lastUsedAt).getTime(), Date.now()));
 
     return (
         <Box
@@ -86,6 +87,25 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                         flexWrap: "wrap",
                     }}
                 >
+                    {isCurrent && (
+                        <Chip
+                            icon={
+                                <Shield sx={{ fontSize: "12px !important" }} />
+                            }
+                            label={t("thisDevice")}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                            sx={{
+                                display: { xs: "flex", sm: "none" },
+                                height: 20,
+                                fontSize: 11,
+                                fontWeight: 600,
+                                "& .MuiChip-label": { px: 0.75, lineHeight: 2 },
+                                "& .MuiChip-icon": { ml: 0.5, mr: 0 },
+                            }}
+                        />
+                    )}
                     <Box
                         sx={{
                             display: "flex",
@@ -132,10 +152,11 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                             color="primary"
                             variant="outlined"
                             sx={{
+                                display: { xs: "none", sm: "flex" },
                                 height: 20,
                                 fontSize: 11,
                                 fontWeight: 600,
-                                "& .MuiChip-label": { px: 0.75, lineHeight: 2 },
+                                "& .MuiChip-label": { px: 0.75, lineHeight: 1 },
                                 "& .MuiChip-icon": { ml: 0.5, mr: 0 },
                             }}
                         />
@@ -182,38 +203,47 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                         }}
                     >
                         <AccessTime sx={{ fontSize: 12 }} />
-                        <RelativeTime date={lastUsedAt} />
+                        <Tooltip
+                            title={new Date(lastUsedAt).toLocaleString()}
+                            placement="top"
+                            arrow
+                        >
+                            <Typography
+                                component="span"
+                                variant="caption"
+                                sx={{ cursor: "default" }}
+                            >
+                                {relativeTime({
+                                    date,
+                                    locale,
+                                })}
+                            </Typography>
+                        </Tooltip>
                     </Box>
                 </Box>
             </Box>
 
             {/* Кнопка завершить */}
             {!isCurrent && (
-                <StyledButton
-                    fullWidth={isSmall}
-                    size="small"
-                    variant={isSmall ? "outlined" : "text"}
-                    color="error"
-                >
-                    {t("revokeSession")}
-                </StyledButton>
-                // <Tooltip title={} placement="left" arrow>
-                //     <IconButton
-                //         size="small"
-                //         // onClick={() => onRevoke(id)}
-                //         // disabled={loading}
-                //         sx={{
-                //             flexShrink: 0,
-                //             color: "text.disabled",
-                //             "&:hover": {
-                //                 color: "error.main",
-                //                 bgcolor: alpha(theme.palette.error.main, 0.08),
-                //             },
-                //         }}
-                //     >
-                //         <Close fontSize="small" />
-                //     </IconButton>
-                // </Tooltip>
+                <>
+                    <StyledButton
+                        sx={{ display: { xs: "flex", sm: "none" } }}
+                        fullWidth
+                        size="small"
+                        variant={"outlined"}
+                        color="error"
+                    >
+                        {t("revokeSession")}
+                    </StyledButton>
+                    <StyledButton
+                        sx={{ display: { xs: "none", sm: "flex" } }}
+                        size="small"
+                        variant={"text"}
+                        color="error"
+                    >
+                        {t("revokeSession")}
+                    </StyledButton>
+                </>
             )}
         </Box>
     );

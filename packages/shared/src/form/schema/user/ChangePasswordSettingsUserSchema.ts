@@ -1,8 +1,8 @@
 import z from "zod";
-import { Password } from "../fields";
-import { getMessageKey } from "../../i18n";
+import { Password } from "../../fields";
+import { getMessageKey } from "../../../i18n";
 
-export const ChangePasswordSettingsSchema = z
+export const ChangePasswordSettingsUserSchema = z
     .object({
         currentPassword: Password,
         newPassword: Password,
@@ -17,9 +17,9 @@ export const ChangePasswordSettingsSchema = z
         path: ["newPassword"],
     });
 
-export type ChangePasswordSettingsDtoInput = z.input<
-    typeof ChangePasswordSettingsSchema
+export type ChangePasswordSettingsUserDtoInput = z.input<
+    typeof ChangePasswordSettingsUserSchema
 >;
-export type ChangePasswordSettingsDtoOutput = z.output<
-    typeof ChangePasswordSettingsSchema
+export type ChangePasswordSettingsUserDtoOutput = z.output<
+    typeof ChangePasswordSettingsUserSchema
 >;

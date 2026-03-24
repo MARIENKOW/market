@@ -5,9 +5,9 @@ import {
 } from "@nestjs/common";
 import { AdminService } from "@/modules/admin/admin.service";
 import {
-    ChangePasswordDtoOutput,
-    ForgotPasswordDtoOutput,
-    AdminLoginDtoOutput,
+    ChangePasswordAdminDtoOutput,
+    ForgotPasswordAdminDtoOutput,
+    LoginAdminDtoOutput,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
@@ -42,19 +42,19 @@ export class AuthAdminService {
     }
 
     async login(
-        body: AdminLoginDtoOutput,
+        body: LoginAdminDtoOutput,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const { email, password } = body;
 
         const admin = await this.admin.findByEmail(email);
         if (!admin) {
-            throw new ValidationException<AdminLoginDtoOutput>({
+            throw new ValidationException<LoginAdminDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
         }
 
         if (!admin.passwordHash) {
-            throw new ValidationException<AdminLoginDtoOutput>({
+            throw new ValidationException<LoginAdminDtoOutput>({
                 root: [
                     {
                         message: this.i18n.t(
@@ -75,7 +75,7 @@ export class AuthAdminService {
 
         const isValid = await this.hash.compare(password, admin.passwordHash);
         if (!isValid) {
-            throw new ValidationException<AdminLoginDtoOutput>({
+            throw new ValidationException<LoginAdminDtoOutput>({
                 fields: { password: ["form.password.invalid"] },
             });
         }
@@ -146,10 +146,10 @@ export class AuthAdminService {
         };
     }
 
-    async forgotPassword({ email }: ForgotPasswordDtoOutput): Promise<string> {
+    async forgotPassword({ email }: ForgotPasswordAdminDtoOutput): Promise<string> {
         const admin = await this.admin.findByEmail(email);
         if (!admin) {
-            throw new ValidationException<ForgotPasswordDtoOutput>({
+            throw new ValidationException<ForgotPasswordAdminDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
         }
@@ -196,7 +196,7 @@ export class AuthAdminService {
     }
 
     async changePassword(
-        { password }: ChangePasswordDtoOutput,
+        { password }: ChangePasswordAdminDtoOutput,
         { token }: { token: string },
     ): Promise<true> {
         const decoded = decodeURIComponent(token);

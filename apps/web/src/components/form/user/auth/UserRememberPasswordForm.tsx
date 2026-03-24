@@ -11,9 +11,9 @@ import SimpleForm from "@/components/wrappers/form/SimpleForm";
 import { Link, useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
 import {
-    ForgotPasswordDtoInput,
-    ForgotPasswordDtoOutput,
-    ForgotPasswordSchema,
+    ForgotPasswordUserDtoInput,
+    ForgotPasswordUserDtoOutput,
+    ForgotPasswordUserSchema,
 } from "@myorg/shared/form";
 import { $apiClient } from "@/utils/api/fetch.client";
 
@@ -27,7 +27,7 @@ export default function UserRememberPasswordForm() {
     const router = useRouter();
     const t = useTranslations();
 
-    const onSubmit: CustomSubmitHandler<ForgotPasswordDtoOutput> = async (
+    const onSubmit: CustomSubmitHandler<ForgotPasswordUserDtoOutput> = async (
         formValues,
         { setError },
     ) => {
@@ -40,16 +40,16 @@ export default function UserRememberPasswordForm() {
     };
 
     return (
-        <SimpleForm<ForgotPasswordDtoInput>
+        <SimpleForm<ForgotPasswordUserDtoInput>
             params={{
-                resolver: zodResolver(ForgotPasswordSchema),
+                resolver: zodResolver(ForgotPasswordUserSchema),
                 defaultValues: {
                     email: "",
                 },
             }}
             onSubmit={onSubmit}
         >
-            <FormFilledTextField<ForgotPasswordDtoInput>
+            <FormFilledTextField<ForgotPasswordUserDtoInput>
                 label={"form.email.label"}
                 name={"email"}
             />

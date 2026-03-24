@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import ChangePasswordUserService from "@/services/user/changePassword.user.service";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
-import ChangePasswordSettingsForm from "@/components/form/user/ChangePasswordSettnigsForm";
+import ChangePasswordSettings from "@/components/form/user/ChangePasswordSettings";
 
 const changePassword = new ChangePasswordUserService($apiUserServer);
 
@@ -55,7 +55,7 @@ export default async function Page() {
                 <ErrorHandlerElement error={error} />
             ) : (
                 data && (
-                    <ChangePasswordSettingsForm
+                    <ChangePasswordSettings
                         initialMailSendSuccess={data?.pending}
                         withoutPassword={data?.withoutPassword}
                     />

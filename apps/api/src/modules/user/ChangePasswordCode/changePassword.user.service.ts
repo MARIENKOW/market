@@ -14,9 +14,9 @@ import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { OtpService } from "@/infrastructure/otp/otp.service";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import {
-    ChangePasswordCodeDtoOutput,
-    ChangePasswordSettingsDtoOutput,
-    ChangePasswordDtoOutput,
+    ChangePasswordCodeUserDtoOutput,
+    ChangePasswordSettingsUserDtoOutput,
+    ChangePasswordUserDtoOutput,
     CHANGE_PASSWORD_OTP_LENGTH,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
@@ -169,7 +169,7 @@ export class ChangePasswordUserService {
 
     async initiate(
         user: User,
-        dto: ChangePasswordSettingsDtoOutput,
+        dto: ChangePasswordSettingsUserDtoOutput,
     ): Promise<MailSendSuccess> {
         if (!user.passwordHash) {
             throw new InternalServerErrorException();
@@ -186,7 +186,7 @@ export class ChangePasswordUserService {
             user.passwordHash,
         );
         if (!isCurrentValid) {
-            throw new ValidationException<ChangePasswordSettingsDtoOutput>({
+            throw new ValidationException<ChangePasswordSettingsUserDtoOutput>({
                 fields: { currentPassword: ["form.currentPassword.invalid"] },
             });
         }
@@ -211,7 +211,7 @@ export class ChangePasswordUserService {
 
     async initiateWithoutPassword(
         user: User,
-        dto: ChangePasswordDtoOutput,
+        dto: ChangePasswordUserDtoOutput,
     ): Promise<MailSendSuccess> {
         if (user.passwordHash) {
             throw new InternalServerErrorException();
@@ -240,7 +240,7 @@ export class ChangePasswordUserService {
 
     async confirm(
         userId: string,
-        dto: ChangePasswordCodeDtoOutput,
+        dto: ChangePasswordCodeUserDtoOutput,
     ): Promise<void> {
         const token = await this.prisma.changePasswordCodeUser.findFirst({
             where: {

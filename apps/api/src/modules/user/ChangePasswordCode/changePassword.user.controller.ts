@@ -2,12 +2,12 @@ import { Controller, Get, Post, Delete, Body, Res } from "@nestjs/common";
 import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { UserActor } from "@/modules/auth/auth.type";
 import {
-    ChangePasswordCodeDtoOutput,
-    ChangePasswordCodeSchema,
-    ChangePasswordDtoOutput,
-    ChangePasswordSchema,
-    ChangePasswordSettingsDtoOutput,
-    ChangePasswordSettingsSchema,
+    ChangePasswordCodeUserDtoOutput,
+    ChangePasswordCodeUserSchema,
+    ChangePasswordUserDtoOutput,
+    ChangePasswordUserSchema,
+    ChangePasswordSettingsUserDtoOutput,
+    ChangePasswordSettingsUserSchema,
 } from "@myorg/shared/form";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
@@ -35,8 +35,8 @@ export class ChangePasswordUserController {
     @Post(init.path)
     initiate(
         @CurrentActor() actor: UserActor,
-        @Body(new ZodValidationPipe(ChangePasswordSettingsSchema))
-        body: ChangePasswordSettingsDtoOutput,
+        @Body(new ZodValidationPipe(ChangePasswordSettingsUserSchema))
+        body: ChangePasswordSettingsUserDtoOutput,
     ): Promise<MailSendSuccess> {
         return this.changePasswordService.initiate(actor.user, body);
     }
@@ -44,8 +44,8 @@ export class ChangePasswordUserController {
     @Post(initWithoutPassword.path)
     initiateWithoutPassword(
         @CurrentActor() actor: UserActor,
-        @Body(new ZodValidationPipe(ChangePasswordSchema))
-        body: ChangePasswordDtoOutput,
+        @Body(new ZodValidationPipe(ChangePasswordUserSchema))
+        body: ChangePasswordUserDtoOutput,
     ): Promise<MailSendSuccess> {
         return this.changePasswordService.initiateWithoutPassword(
             actor.user,
@@ -56,8 +56,8 @@ export class ChangePasswordUserController {
     @Post(confirm.path)
     async confirm(
         @CurrentActor() actor: UserActor,
-        @Body(new ZodValidationPipe(ChangePasswordCodeSchema))
-        body: ChangePasswordCodeDtoOutput,
+        @Body(new ZodValidationPipe(ChangePasswordCodeUserSchema))
+        body: ChangePasswordCodeUserDtoOutput,
         @Res({ passthrough: true }) res: Response,
     ): Promise<void> {
         await this.changePasswordService.confirm(actor.user.id, body);

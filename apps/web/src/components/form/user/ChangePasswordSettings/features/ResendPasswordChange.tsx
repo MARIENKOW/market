@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { formatDuration } from "@/utils/formatDuration";
@@ -10,18 +10,21 @@ import {
     ErrorsWithMessages,
     MailSendSuccess,
 } from "@myorg/shared/dto";
-import { FetchCustomReturn } from "@/utils/api";
+import ChangePasswordUserService from "@/services/user/changePassword.user.service";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 interface Props {
-    onResend: () => FetchCustomReturn<MailSendSuccess>;
     initialCooldown: number | false;
     onCancel: () => void;
+    setMailSendSuccess: Dispatch<SetStateAction<MailSendSuccess>>;
 }
 
+const { resend } = new ChangePasswordUserService($apiUserClient);
+
 export default function ResendPasswordChange({
-    onResend,
     initialCooldown,
     onCancel,
+    setMailSendSuccess,
 }: Props) {
     const t = useTranslations();
     const [cooldown, setCooldown] = useState<number | false>(initialCooldown);
@@ -53,7 +56,8 @@ export default function ResendPasswordChange({
     const handleClick = async () => {
         setResending(true);
         try {
-            const body = await onResend();
+            const body = await resend();
+            setMailSendSuccess(body.data);
             startTimer(body.data.cooldown);
         } catch (error) {
             errorHandler({

@@ -10,9 +10,9 @@ import FormAlert from "@/components/features/form/FormAlert";
 import SimpleForm from "@/components/wrappers/form/SimpleForm";
 import AuthAdminService from "@/services/auth/admin/auth.admin.service";
 import {
-    ForgotPasswordDtoInput,
-    ForgotPasswordDtoOutput,
-    ForgotPasswordSchema,
+    ForgotPasswordAdminDtoInput,
+    ForgotPasswordAdminDtoOutput,
+    ForgotPasswordAdminSchema,
 } from "@myorg/shared/form";
 import { $apiClient } from "@/utils/api/fetch.client";
 
@@ -25,7 +25,7 @@ const authAdmin = new AuthAdminService($apiClient);
 export default function AdminRememberPasswordForm() {
     const t = useTranslations();
 
-    const onSubmit: CustomSubmitHandler<ForgotPasswordDtoOutput> = async (
+    const onSubmit: CustomSubmitHandler<ForgotPasswordAdminDtoOutput> = async (
         formValues,
         { setError },
     ) => {
@@ -38,16 +38,16 @@ export default function AdminRememberPasswordForm() {
     };
 
     return (
-        <SimpleForm<ForgotPasswordDtoInput>
+        <SimpleForm<ForgotPasswordAdminDtoInput>
             params={{
-                resolver: zodResolver(ForgotPasswordSchema),
+                resolver: zodResolver(ForgotPasswordAdminSchema),
                 defaultValues: {
                     email: "",
                 },
             }}
             onSubmit={onSubmit}
         >
-            <FormFilledTextField<ForgotPasswordDtoInput>
+            <FormFilledTextField<ForgotPasswordAdminDtoInput>
                 label={"form.email.label"}
                 name={"email"}
             />

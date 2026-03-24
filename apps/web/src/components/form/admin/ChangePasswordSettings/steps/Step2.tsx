@@ -14,56 +14,52 @@ import useForm from "@/hooks/useForm";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import {
     CHANGE_PASSWORD_OTP_LENGTH,
-    ChangePasswordCodeDtoInput,
-    ChangePasswordCodeDtoOutput,
-    ChangePasswordCodeSchema,
+    ChangePasswordCodeAdminDtoInput,
+    ChangePasswordCodeAdminDtoOutput,
+    ChangePasswordCodeAdminSchema,
 } from "@myorg/shared/form";
 import { StyledAlert } from "@/components/ui/StyledAlert";
 import FormOtpInput from "@/components/features/form/fields/controlled/FormOtpInput";
 import { formatDuration } from "@/utils/formatDuration";
-import CancelPasswordChange from "../features/CancelPasswordChange";
-import ResendPasswordChange from "../features/ResendPasswordChange";
 import {
     ApiErrorResponse,
     ErrorsWithMessages,
     MailSendSuccess,
 } from "@myorg/shared/dto";
-import { FetchCustomReturn } from "@/utils/api";
 import { useRouter } from "@/i18n/navigation";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
+import ChangePasswordAdminService from "@/services/admin/changePassword.admin.service";
+import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
+import ResendPasswordChange from "@/components/form/admin/ChangePasswordSettings/features/ResendPasswordChange";
+import CancelPasswordChange from "@/components/form/admin/ChangePasswordSettings/features/CancelPasswordChange";
 
 interface Props {
     mailSendSuccess: MailSendSuccess;
     setMailSendSuccess: Dispatch<SetStateAction<MailSendSuccess>>;
     onCancel: () => void;
-    onConfirm: (dto: ChangePasswordCodeDtoOutput) => FetchCustomReturn<void>;
-    onResend: () => FetchCustomReturn<MailSendSuccess>;
-    onCancelRequest: () => FetchCustomReturn<void>;
 }
+
+const { confirm } = new ChangePasswordAdminService($apiAdminClient);
 
 export default function Step2({
     mailSendSuccess,
     setMailSendSuccess,
     onCancel,
-    onConfirm,
-    onResend,
-    onCancelRequest,
 }: Props) {
     const t = useTranslations();
     const locale = useLocale();
     const router = useRouter();
 
-    const form = useForm<ChangePasswordCodeDtoInput>({
-        resolver: zodResolver(ChangePasswordCodeSchema),
+    const form = useForm<ChangePasswordCodeAdminDtoInput>({
+        resolver: zodResolver(ChangePasswordCodeAdminSchema),
         defaultValues: { code: "" },
     });
 
-    const onSubmit: CustomSubmitHandler<ChangePasswordCodeDtoOutput> = async (
-        formValues,
-        { setError },
-    ) => {
+    const onSubmit: CustomSubmitHandler<
+        ChangePasswordCodeAdminDtoOutput
+    > = async (formValues, { setError }) => {
         try {
-            await onConfirm(formValues);
+            await confirm(formValues);
             snackbarSuccess(t("features.changePassword.success"));
             router.refresh();
         } catch (error) {
@@ -89,8 +85,11 @@ export default function Step2({
     };
 
     return (
-        <FormProvider<ChangePasswordCodeDtoInput> form={form}>
-            <Form<ChangePasswordCodeDtoInput> form={form} onSubmit={onSubmit}>
+        <FormProvider<ChangePasswordCodeAdminDtoInput> form={form}>
+            <Form<ChangePasswordCodeAdminDtoInput>
+                form={form}
+                onSubmit={onSubmit}
+            >
                 <Box display="flex" flexDirection="column" gap={6}>
                     <StyledAlert
                         severity="info"
@@ -119,16 +118,9 @@ export default function Step2({
                             <ResendPasswordChange
                                 initialCooldown={mailSendSuccess.cooldown}
                                 onCancel={onCancel}
-                                onResend={async () => {
-                                    const data = await onResend();
-                                    setMailSendSuccess(data.data);
-                                    return data;
-                                }}
+                                setMailSendSuccess={setMailSendSuccess}
                             />
-                            <CancelPasswordChange
-                                onCancel={onCancel}
-                                onCancelRequest={onCancelRequest}
-                            />
+                            <CancelPasswordChange onCancel={onCancel} />
                         </Box>
                         <SubmitButton />
                     </Box>

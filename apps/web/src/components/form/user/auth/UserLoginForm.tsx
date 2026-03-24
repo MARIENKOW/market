@@ -11,7 +11,7 @@ import FormPassword from "@/components/features/form/fields/controlled/FormPassw
 import SimpleForm from "@/components/wrappers/form/SimpleForm";
 import { useRouter } from "@/i18n/navigation";
 import AuthUserService from "@/services/auth/user/auth.user.service";
-import { UserLoginDtoInput, UserLoginSchema } from "@myorg/shared/form";
+import { LoginUserDtoInput, LoginUserSchema } from "@myorg/shared/form";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
@@ -29,7 +29,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     const [isShowButton, setIsShowButton] = useState<boolean>(false);
     const [email, setEmail] = useState<string>("");
 
-    const onSubmit: CustomSubmitHandler<UserLoginDtoInput> = async (
+    const onSubmit: CustomSubmitHandler<LoginUserDtoInput> = async (
         formValues,
         { setError },
     ) => {
@@ -40,7 +40,7 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
             if (redirectTo) router.push(redirectTo);
             router.refresh();
         } catch (error) {
-            errorFormHandlerWithAlert<UserLoginDtoInput>({
+            errorFormHandlerWithAlert<LoginUserDtoInput>({
                 error,
                 setError,
                 formValues,
@@ -62,9 +62,9 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
     };
 
     return (
-        <SimpleForm<UserLoginDtoInput>
+        <SimpleForm<LoginUserDtoInput>
             params={{
-                resolver: zodResolver(UserLoginSchema),
+                resolver: zodResolver(LoginUserSchema),
                 defaultValues: {
                     email: "",
                     password: "",
@@ -72,11 +72,11 @@ export default function UserLoginForm({ redirectTo }: { redirectTo?: string }) {
             }}
             onSubmit={onSubmit}
         >
-            <FormFilledTextField<UserLoginDtoInput>
+            <FormFilledTextField<LoginUserDtoInput>
                 label={"form.email.label"}
                 name={"email"}
             />
-            <FormPassword<UserLoginDtoInput>
+            <FormPassword<LoginUserDtoInput>
                 name="password"
                 label="form.password.label"
             />

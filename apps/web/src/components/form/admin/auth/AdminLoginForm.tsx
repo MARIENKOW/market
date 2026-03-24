@@ -11,14 +11,10 @@ import FormPassword from "@/components/features/form/fields/controlled/FormPassw
 import SimpleForm from "@/components/wrappers/form/SimpleForm";
 import { useRouter } from "@/i18n/navigation";
 import AuthAdminService from "@/services/auth/admin/auth.admin.service";
-import { AdminLoginDtoInput, AdminLoginSchema } from "@myorg/shared/form";
+import { LoginAdminDtoInput, LoginAdminSchema } from "@myorg/shared/form";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
-import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
-import { useState } from "react";
-import ActivateButton from "@/components/features/auth/user/ActivateButton";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import GoogleAuthButton from "@/components/features/auth/user/GoogleAuthButton.user";
 import { $apiClient } from "@/utils/api/fetch.client";
 import GoogleAuthButtonAdmin from "@/components/features/auth/admin/GoogleAuthButton.admin";
 
@@ -31,14 +27,11 @@ export default function AdminLoginForm({
 }) {
     const router = useRouter();
     const t = useTranslations();
-    const [isShowButton, setIsShowButton] = useState<boolean>(false);
-    const [email, setEmail] = useState<string>("");
 
-    const onSubmit: CustomSubmitHandler<AdminLoginDtoInput> = async (
+    const onSubmit: CustomSubmitHandler<LoginAdminDtoInput> = async (
         formValues,
         { setError },
     ) => {
-        setIsShowButton(false);
         try {
             await authAdmin.login(formValues);
             snackbarSuccess(
@@ -47,31 +40,19 @@ export default function AdminLoginForm({
             if (redirectTo) router.push(redirectTo);
             router.refresh();
         } catch (error) {
-            errorFormHandlerWithAlert<AdminLoginDtoInput>({
+            errorFormHandlerWithAlert<LoginAdminDtoInput>({
                 error,
                 setError,
                 formValues,
-                fallback: {
-                    validation: {
-                        callback: () => {
-                            const { data }: { data: ErrorsWithMessages } =
-                                error as ApiErrorResponse;
-                            if (data.root?.[0]?.data?.isShowButton) {
-                                setIsShowButton(true);
-                                setEmail(formValues.email);
-                            }
-                        },
-                    },
-                },
                 t,
             });
         }
     };
 
     return (
-        <SimpleForm<AdminLoginDtoInput>
+        <SimpleForm<LoginAdminDtoInput>
             params={{
-                resolver: zodResolver(AdminLoginSchema),
+                resolver: zodResolver(LoginAdminSchema),
                 defaultValues: {
                     email: "",
                     password: "",
@@ -79,22 +60,16 @@ export default function AdminLoginForm({
             }}
             onSubmit={onSubmit}
         >
-            <FormFilledTextField<AdminLoginDtoInput>
+            <FormFilledTextField<LoginAdminDtoInput>
                 label={"form.email.label"}
                 name={"email"}
             />
-            <FormPassword<AdminLoginDtoInput>
+            <FormPassword<LoginAdminDtoInput>
                 name="password"
                 label="form.password.label"
             />
             <Box mt={2} gap={2} display={"flex"} flexDirection={"column"}>
                 <FormAlert />
-                {isShowButton && (
-                    <ActivateButton
-                        afterFetch={() => setIsShowButton(false)}
-                        email={email}
-                    />
-                )}
                 <SubmitButton />
             </Box>
             <StyledDivider />

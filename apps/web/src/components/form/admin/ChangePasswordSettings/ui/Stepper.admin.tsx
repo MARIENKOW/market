@@ -10,11 +10,7 @@ import {
     useTheme,
     StepIconProps,
 } from "@mui/material";
-import {
-    LockOutlined,
-    MailOutline,
-    CheckRounded,
-} from "@mui/icons-material";
+import { LockOutlined, MailOutline, CheckRounded } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
@@ -89,7 +85,6 @@ export default function ChangePasswordStepper({ activeStep }: Props) {
         <>
             <Stepper
                 activeStep={activeStep}
-                // alternativeLabel
                 sx={{
                     display: { xs: "none", sm: "flex" },
                     // Линия между шагами

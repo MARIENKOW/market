@@ -5,10 +5,10 @@ import {
 } from "@nestjs/common";
 import { UserService } from "@/modules/user/user.service";
 import {
-    ChangePasswordDtoOutput,
-    ForgotPasswordDtoOutput,
-    UserLoginDtoOutput,
-    UserRegisterDtoOutput,
+    ChangePasswordUserDtoOutput,
+    ForgotPasswordUserDtoOutput,
+    LoginUserDtoOutput,
+    RegisterUserDtoOutput,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
@@ -44,12 +44,12 @@ export class AuthUserService {
         );
     }
 
-    async register(body: UserRegisterDtoOutput): Promise<string> {
+    async register(body: RegisterUserDtoOutput): Promise<string> {
         const { password, email } = body;
 
         const existing = await this.user.findByEmail(email);
         if (existing) {
-            throw new ValidationException<UserRegisterDtoOutput>({
+            throw new ValidationException<RegisterUserDtoOutput>({
                 fields: { email: ["form.email.unique"] },
             });
         }
@@ -72,19 +72,19 @@ export class AuthUserService {
     }
 
     async login(
-        body: UserLoginDtoOutput,
+        body: LoginUserDtoOutput,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const { email, password } = body;
 
         const user = await this.user.findByEmail(email);
         if (!user) {
-            throw new ValidationException<UserLoginDtoOutput>({
+            throw new ValidationException<LoginUserDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
         }
 
         if (!user.passwordHash) {
-            throw new ValidationException<UserLoginDtoOutput>({
+            throw new ValidationException<LoginUserDtoOutput>({
                 root: [
                     {
                         message: this.i18n.t(
@@ -105,7 +105,7 @@ export class AuthUserService {
 
         const isValid = await this.hash.compare(password, user.passwordHash);
         if (!isValid) {
-            throw new ValidationException<UserLoginDtoOutput>({
+            throw new ValidationException<LoginUserDtoOutput>({
                 fields: { password: ["form.password.invalid"] },
             });
         }
@@ -247,10 +247,10 @@ export class AuthUserService {
         return true;
     }
 
-    async forgotPassword({ email }: ForgotPasswordDtoOutput): Promise<string> {
+    async forgotPassword({ email }: ForgotPasswordUserDtoOutput): Promise<string> {
         const user = await this.user.findByEmail(email);
         if (!user) {
-            throw new ValidationException<ForgotPasswordDtoOutput>({
+            throw new ValidationException<ForgotPasswordUserDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
             });
         }
@@ -297,7 +297,7 @@ export class AuthUserService {
     }
 
     async changePassword(
-        { password }: ChangePasswordDtoOutput,
+        { password }: ChangePasswordUserDtoOutput,
         { token }: { token: string },
     ): Promise<true> {
         const decoded = decodeURIComponent(token);

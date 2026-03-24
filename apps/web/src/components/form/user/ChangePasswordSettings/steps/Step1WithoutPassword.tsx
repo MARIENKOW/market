@@ -5,7 +5,6 @@ import { useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
-
 import FormProvider from "@/components/wrappers/form/FormProvider";
 import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
 import FormPassword from "@/components/features/form/fields/controlled/FormPassword";
@@ -14,25 +13,25 @@ import FormAlert from "@/components/features/form/FormAlert";
 import useForm from "@/hooks/useForm";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import {
-    ChangePasswordDtoInput,
-    ChangePasswordDtoOutput,
-    ChangePasswordSchema,
+    ChangePasswordUserDtoInput,
+    ChangePasswordUserDtoOutput,
+    ChangePasswordUserSchema,
 } from "@myorg/shared/form";
-import { FetchCustomReturn } from "@/utils/api";
 import { MailSendSuccess } from "@myorg/shared/dto";
+import ChangePasswordUserService from "@/services/user/changePassword.user.service";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 interface Props {
     onSuccess: (success: MailSendSuccess) => void;
-    onInit: (
-        dto: ChangePasswordDtoOutput,
-    ) => FetchCustomReturn<MailSendSuccess>;
 }
 
-export default function Step1WithoutPassword({ onSuccess, onInit }: Props) {
+const { initWithoutPassword } = new ChangePasswordUserService($apiUserClient);
+
+export default function Step1WithoutPassword({ onSuccess }: Props) {
     const t = useTranslations();
 
-    const form = useForm<ChangePasswordDtoInput>({
-        resolver: zodResolver(ChangePasswordSchema),
+    const form = useForm<ChangePasswordUserDtoInput>({
+        resolver: zodResolver(ChangePasswordUserSchema),
         defaultValues: { password: "", rePassword: "" },
     });
 
@@ -48,12 +47,12 @@ export default function Step1WithoutPassword({ onSuccess, onInit }: Props) {
         trigger("rePassword");
     }, [password, rePassword, trigger]);
 
-    const onSubmit: CustomSubmitHandler<ChangePasswordDtoOutput> = async (
+    const onSubmit: CustomSubmitHandler<ChangePasswordUserDtoOutput> = async (
         formValues,
         { setError },
     ) => {
         try {
-            const { data } = await onInit(formValues);
+            const { data } = await initWithoutPassword(formValues);
             onSuccess(data);
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError, t, formValues });
@@ -61,14 +60,14 @@ export default function Step1WithoutPassword({ onSuccess, onInit }: Props) {
     };
 
     return (
-        <FormProvider<ChangePasswordDtoInput> form={form}>
-            <Form<ChangePasswordDtoInput> form={form} onSubmit={onSubmit}>
+        <FormProvider<ChangePasswordUserDtoInput> form={form}>
+            <Form<ChangePasswordUserDtoInput> form={form} onSubmit={onSubmit}>
                 <Box display="flex" flexDirection="column" gap={2}>
-                    <FormPassword<ChangePasswordDtoInput>
+                    <FormPassword<ChangePasswordUserDtoInput>
                         name="password"
                         label="form.newPassword.label"
                     />
-                    <FormPassword<ChangePasswordDtoInput>
+                    <FormPassword<ChangePasswordUserDtoInput>
                         name="rePassword"
                         label="form.rePassword.label"
                     />

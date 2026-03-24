@@ -12,14 +12,14 @@ import {
 import { AuthUserService } from "@/modules/auth/user/auth.user.service";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
-    ChangePasswordDtoOutput,
-    ChangePasswordSchema,
-    ForgotPasswordDtoOutput,
-    ForgotPasswordSchema,
-    UserLoginDtoOutput,
-    UserLoginSchema,
-    UserRegisterDtoOutput,
-    UserRegisterSchema,
+    ChangePasswordUserDtoOutput,
+    ChangePasswordUserSchema,
+    ForgotPasswordUserDtoOutput,
+    ForgotPasswordUserSchema,
+    LoginUserDtoOutput,
+    LoginUserSchema,
+    RegisterUserDtoOutput,
+    RegisterUserSchema,
 } from "@myorg/shared/form";
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
 import { CookieOptions, Request, Response } from "express";
@@ -48,8 +48,8 @@ export class AuthUserController {
     @Post(register.path)
     @Public()
     async register(
-        @Body(new ZodValidationPipe(UserRegisterSchema))
-        body: UserRegisterDtoOutput,
+        @Body(new ZodValidationPipe(RegisterUserSchema))
+        body: RegisterUserDtoOutput,
     ): Promise<string> {
         return this.authUser.register(body);
     }
@@ -74,7 +74,7 @@ export class AuthUserController {
     @Post(login.path)
     @Public()
     async login(
-        @Body(new ZodValidationPipe(UserLoginSchema)) body: UserLoginDtoOutput,
+        @Body(new ZodValidationPipe(LoginUserSchema)) body: LoginUserDtoOutput,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         const { accessToken, refreshToken } = await this.authUser.login(body);
@@ -98,8 +98,8 @@ export class AuthUserController {
     @Post(forgotPassword.path)
     @Public()
     async forgotPassword(
-        @Body(new ZodValidationPipe(ForgotPasswordSchema))
-        body: ForgotPasswordDtoOutput,
+        @Body(new ZodValidationPipe(ForgotPasswordUserSchema))
+        body: ForgotPasswordUserDtoOutput,
     ): Promise<string> {
         return await this.authUser.forgotPassword(body);
     }
@@ -107,8 +107,8 @@ export class AuthUserController {
     @Post(forgotPassword.path + "/:token")
     @Public()
     async changePassword(
-        @Body(new ZodValidationPipe(ChangePasswordSchema))
-        body: ChangePasswordDtoOutput,
+        @Body(new ZodValidationPipe(ChangePasswordUserSchema))
+        body: ChangePasswordUserDtoOutput,
         @Param("token") token: string,
     ): Promise<true> {
         return await this.authUser.changePassword(body, { token });

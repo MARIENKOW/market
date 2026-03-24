@@ -2,9 +2,9 @@ import { FetchCustom, FetchCustomReturn } from "@/utils/api";
 import { ChangePasswordStatus, MailSendSuccess } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
-    ChangePasswordCodeDtoOutput,
-    ChangePasswordDtoOutput,
-    ChangePasswordSettingsDtoOutput,
+    ChangePasswordCodeAdminDtoOutput,
+    ChangePasswordAdminDtoOutput,
+    ChangePasswordSettingsAdminDtoOutput,
 } from "@myorg/shared/form";
 
 const { status, confirm, resend, init, initWithoutPassword, cancel } =
@@ -12,14 +12,14 @@ const { status, confirm, resend, init, initWithoutPassword, cancel } =
 
 export default class ChangePasswordAdminService {
     init: (
-        body: ChangePasswordSettingsDtoOutput,
+        body: ChangePasswordSettingsAdminDtoOutput,
     ) => FetchCustomReturn<MailSendSuccess>;
     initWithoutPassword: (
-        body: ChangePasswordDtoOutput,
+        body: ChangePasswordAdminDtoOutput,
     ) => FetchCustomReturn<MailSendSuccess>;
     cancel: () => FetchCustomReturn<void>;
     resend: () => FetchCustomReturn<MailSendSuccess>;
-    confirm: (body: ChangePasswordCodeDtoOutput) => FetchCustomReturn<void>;
+    confirm: (body: ChangePasswordCodeAdminDtoOutput) => FetchCustomReturn<void>;
     status: () => FetchCustomReturn<ChangePasswordStatus>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {

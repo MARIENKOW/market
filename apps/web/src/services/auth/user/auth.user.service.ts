@@ -1,26 +1,26 @@
 import { FetchCustom, FetchCustomReturn } from "@/utils/api";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
-    UserLoginDtoOutput,
-    UserRegisterDtoOutput,
-    ForgotPasswordDtoOutput,
-    ChangePasswordDtoOutput,
+    LoginUserDtoOutput,
+    RegisterUserDtoOutput,
+    ForgotPasswordUserDtoOutput,
+    ChangePasswordUserDtoOutput,
 } from "@myorg/shared/form";
 
 const { login, register, logout, forgotPassword, activate, refresh, google } =
     FULL_PATH_ENDPOINT.auth.user;
 
 export default class AuthUserService {
-    login: (body: UserLoginDtoOutput) => FetchCustomReturn<true>;
+    login: (body: LoginUserDtoOutput) => FetchCustomReturn<true>;
     google: (body: { code: string }) => FetchCustomReturn<true>;
     logout: () => FetchCustomReturn<true>;
     refresh: () => FetchCustomReturn<true>;
-    register: (body: UserRegisterDtoOutput) => FetchCustomReturn<string>;
+    register: (body: RegisterUserDtoOutput) => FetchCustomReturn<string>;
     forgotPassword: (
-        body: ForgotPasswordDtoOutput,
+        body: ForgotPasswordUserDtoOutput,
     ) => FetchCustomReturn<string>;
     changePassword: (
-        body: ChangePasswordDtoOutput,
+        body: ChangePasswordUserDtoOutput,
         { token }: { token: string },
     ) => FetchCustomReturn<true>;
     activate: ({ token }: { token: string }) => FetchCustomReturn<true>;

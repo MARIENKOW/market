@@ -1,9 +1,9 @@
 "use client";
 
 import {
-    UserRegisterDtoInput,
-    UserRegisterDtoOutput,
-    UserRegisterSchema,
+    RegisterUserDtoInput,
+    RegisterUserDtoOutput,
+    RegisterUserSchema,
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
@@ -32,8 +32,8 @@ export default function UserRegisterForm() {
     const t = useTranslations();
     const router = useRouter();
 
-    const form = useForm<UserRegisterDtoInput>({
-        resolver: zodResolver(UserRegisterSchema),
+    const form = useForm<RegisterUserDtoInput>({
+        resolver: zodResolver(RegisterUserSchema),
         defaultValues: {
             email: "",
             password: "",
@@ -43,11 +43,11 @@ export default function UserRegisterForm() {
 
     const { trigger, control } = form;
 
-    const password = useWatch<UserRegisterDtoInput>({
+    const password = useWatch<RegisterUserDtoInput>({
         name: "password",
         control,
     });
-    const rePassword = useWatch<UserRegisterDtoInput>({
+    const rePassword = useWatch<RegisterUserDtoInput>({
         name: "rePassword",
         control,
     });
@@ -57,7 +57,7 @@ export default function UserRegisterForm() {
         trigger("rePassword");
     }, [password, trigger, rePassword]);
 
-    const onSubmit: CustomSubmitHandler<UserRegisterDtoOutput> = async (
+    const onSubmit: CustomSubmitHandler<RegisterUserDtoOutput> = async (
         formValues,
         { setError },
     ) => {
@@ -71,17 +71,17 @@ export default function UserRegisterForm() {
     };
 
     return (
-        <FormProvider<UserRegisterDtoInput> form={form}>
-            <Form<UserRegisterDtoInput> form={form} onSubmit={onSubmit}>
-                <FormFilledTextField<UserRegisterDtoInput>
+        <FormProvider<RegisterUserDtoInput> form={form}>
+            <Form<RegisterUserDtoInput> form={form} onSubmit={onSubmit}>
+                <FormFilledTextField<RegisterUserDtoInput>
                     label={"form.email.label"}
                     name={"email"}
                 />
-                <FormPassword<UserRegisterDtoInput>
+                <FormPassword<RegisterUserDtoInput>
                     name="password"
                     label="form.password.label"
                 />
-                <FormPassword<UserRegisterDtoInput>
+                <FormPassword<RegisterUserDtoInput>
                     name="rePassword"
                     label="form.rePassword.label"
                 />

@@ -14,26 +14,26 @@ import FormAlert from "@/components/features/form/FormAlert";
 import useForm from "@/hooks/useForm";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import {
-    ChangePasswordSettingsDtoInput,
-    ChangePasswordSettingsDtoOutput,
-    ChangePasswordSettingsSchema,
+    ChangePasswordSettingsUserDtoInput,
+    ChangePasswordSettingsUserDtoOutput,
+    ChangePasswordSettingsUserSchema,
 } from "@myorg/shared/form";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import { FetchCustomReturn } from "@/utils/api";
 import { MailSendSuccess } from "@myorg/shared/dto";
+import ChangePasswordUserService from "@/services/user/changePassword.user.service";
+import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 
 interface Props {
     onSuccess: (success: MailSendSuccess) => void;
-    onInit: (
-        dto: ChangePasswordSettingsDtoOutput,
-    ) => FetchCustomReturn<MailSendSuccess>;
 }
 
-export default function Step1({ onSuccess, onInit }: Props) {
+const { init } = new ChangePasswordUserService($apiUserClient);
+
+export default function Step1({ onSuccess }: Props) {
     const t = useTranslations();
 
-    const form = useForm<ChangePasswordSettingsDtoInput>({
-        resolver: zodResolver(ChangePasswordSettingsSchema),
+    const form = useForm<ChangePasswordSettingsUserDtoInput>({
+        resolver: zodResolver(ChangePasswordSettingsUserSchema),
         defaultValues: { currentPassword: "", newPassword: "", rePassword: "" },
     });
 
@@ -55,10 +55,10 @@ export default function Step1({ onSuccess, onInit }: Props) {
     }, [newPassword, rePassword, trigger]);
 
     const onSubmit: CustomSubmitHandler<
-        ChangePasswordSettingsDtoOutput
+        ChangePasswordSettingsUserDtoOutput
     > = async (formValues, { setError }) => {
         try {
-            const { data } = await onInit(formValues);
+            const { data } = await init(formValues);
             onSuccess(data);
         } catch (error) {
             errorFormHandlerWithAlert({ error, setError, t, formValues });
@@ -66,22 +66,22 @@ export default function Step1({ onSuccess, onInit }: Props) {
     };
 
     return (
-        <FormProvider<ChangePasswordSettingsDtoInput> form={form}>
-            <Form<ChangePasswordSettingsDtoInput>
+        <FormProvider<ChangePasswordSettingsUserDtoInput> form={form}>
+            <Form<ChangePasswordSettingsUserDtoInput>
                 form={form}
                 onSubmit={onSubmit}
             >
                 <Box display="flex" flexDirection="column" gap={2}>
-                    <FormPassword<ChangePasswordSettingsDtoInput>
+                    <FormPassword<ChangePasswordSettingsUserDtoInput>
                         name="currentPassword"
                         label="form.currentPassword.label"
                     />
                     <StyledDivider />
-                    <FormPassword<ChangePasswordSettingsDtoInput>
+                    <FormPassword<ChangePasswordSettingsUserDtoInput>
                         name="newPassword"
                         label="form.newPassword.label"
                     />
-                    <FormPassword<ChangePasswordSettingsDtoInput>
+                    <FormPassword<ChangePasswordSettingsUserDtoInput>
                         name="rePassword"
                         label="form.rePassword.label"
                     />

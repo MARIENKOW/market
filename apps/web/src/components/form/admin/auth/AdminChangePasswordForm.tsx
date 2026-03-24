@@ -1,9 +1,9 @@
 "use client";
 
 import {
-    ChangePasswordDtoInput,
-    ChangePasswordDtoOutput,
-    ChangePasswordSchema,
+    ChangePasswordAdminDtoInput,
+    ChangePasswordAdminDtoOutput,
+    ChangePasswordAdminSchema,
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
@@ -22,7 +22,6 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Box } from "@mui/material";
 import { useSearchParams } from "next/navigation";
-import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { $apiClient } from "@/utils/api/fetch.client";
@@ -35,8 +34,8 @@ export default function AdminChangePasswordForm() {
     const searchParams = useSearchParams();
     const [isShowButton, setIsShowButton] = useState<boolean>(false);
 
-    const form = useForm<ChangePasswordDtoInput>({
-        resolver: zodResolver(ChangePasswordSchema),
+    const form = useForm<ChangePasswordAdminDtoInput>({
+        resolver: zodResolver(ChangePasswordAdminSchema),
         defaultValues: {
             password: "",
             rePassword: "",
@@ -45,11 +44,11 @@ export default function AdminChangePasswordForm() {
 
     const { trigger, control } = form;
 
-    const password = useWatch<ChangePasswordDtoInput>({
+    const password = useWatch<ChangePasswordAdminDtoInput>({
         name: "password",
         control,
     });
-    const rePassword = useWatch<ChangePasswordDtoInput>({
+    const rePassword = useWatch<ChangePasswordAdminDtoInput>({
         name: "rePassword",
         control,
     });
@@ -59,7 +58,7 @@ export default function AdminChangePasswordForm() {
         trigger("rePassword");
     }, [password, trigger, rePassword]);
 
-    const onSubmit: CustomSubmitHandler<ChangePasswordDtoOutput> = async (
+    const onSubmit: CustomSubmitHandler<ChangePasswordAdminDtoOutput> = async (
         formValues,
         { setError },
     ) => {
@@ -95,13 +94,13 @@ export default function AdminChangePasswordForm() {
     };
 
     return (
-        <FormProvider<ChangePasswordDtoInput> form={form}>
-            <Form<ChangePasswordDtoInput> form={form} onSubmit={onSubmit}>
-                <FormPassword<ChangePasswordDtoInput>
+        <FormProvider<ChangePasswordAdminDtoInput> form={form}>
+            <Form<ChangePasswordAdminDtoInput> form={form} onSubmit={onSubmit}>
+                <FormPassword<ChangePasswordAdminDtoInput>
                     name="password"
                     label="form.password.label"
                 />
-                <FormPassword<ChangePasswordDtoInput>
+                <FormPassword<ChangePasswordAdminDtoInput>
                     name="rePassword"
                     label="form.rePassword.label"
                 />

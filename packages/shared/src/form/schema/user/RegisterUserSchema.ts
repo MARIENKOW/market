@@ -1,8 +1,8 @@
-import { Email,Password } from "../fields";
-import { getMessageKey } from "../../i18n";
+import { Email, Password } from "../../fields";
+import { getMessageKey } from "../../../i18n";
 import z from "zod";
 
-export const UserRegisterSchema = z
+export const RegisterUserSchema = z
     .object({
         password: Password,
         rePassword: Password,
@@ -14,5 +14,5 @@ export const UserRegisterSchema = z
         path: ["rePassword"],
     });
 
-export type UserRegisterDtoInput = z.input<typeof UserRegisterSchema>;
-export type UserRegisterDtoOutput = z.infer<typeof UserRegisterSchema>;
+export type RegisterUserDtoInput = z.input<typeof RegisterUserSchema>;
+export type RegisterUserDtoOutput = z.infer<typeof RegisterUserSchema>;

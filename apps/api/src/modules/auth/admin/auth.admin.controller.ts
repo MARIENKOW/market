@@ -11,12 +11,12 @@ import {
 } from "@nestjs/common";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
-    ChangePasswordDtoOutput,
-    ChangePasswordSchema,
-    ForgotPasswordDtoOutput,
-    ForgotPasswordSchema,
-    AdminLoginDtoOutput,
-    AdminLoginSchema,
+    ChangePasswordAdminDtoOutput,
+    ChangePasswordAdminSchema,
+    ForgotPasswordAdminDtoOutput,
+    ForgotPasswordAdminSchema,
+    LoginAdminDtoOutput,
+    LoginAdminSchema,
 } from "@myorg/shared/form";
 import { ZodValidationPipe } from "@/common/pipe/zod-validation";
 import { CookieOptions, Request, Response } from "express";
@@ -62,8 +62,8 @@ export class AuthAdminController {
     @Post(login.path)
     @Public()
     async login(
-        @Body(new ZodValidationPipe(AdminLoginSchema))
-        body: AdminLoginDtoOutput,
+        @Body(new ZodValidationPipe(LoginAdminSchema))
+        body: LoginAdminDtoOutput,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         const { accessToken, refreshToken } = await this.authAdmin.login(body);
@@ -88,8 +88,8 @@ export class AuthAdminController {
     @Post(forgotPassword.path)
     @Public()
     async forgotPassword(
-        @Body(new ZodValidationPipe(ForgotPasswordSchema))
-        body: ForgotPasswordDtoOutput,
+        @Body(new ZodValidationPipe(ForgotPasswordAdminSchema))
+        body: ForgotPasswordAdminDtoOutput,
     ): Promise<string> {
         return await this.authAdmin.forgotPassword(body);
     }
@@ -97,8 +97,8 @@ export class AuthAdminController {
     @Post(forgotPassword.path + "/:token")
     @Public()
     async changePassword(
-        @Body(new ZodValidationPipe(ChangePasswordSchema))
-        body: ChangePasswordDtoOutput,
+        @Body(new ZodValidationPipe(ChangePasswordAdminSchema))
+        body: ChangePasswordAdminDtoOutput,
         @Param("token") token: string,
     ): Promise<true> {
         return await this.authAdmin.changePassword(body, { token });

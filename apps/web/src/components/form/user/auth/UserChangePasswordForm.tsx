@@ -1,9 +1,9 @@
 "use client";
 
 import {
-    ChangePasswordDtoInput,
-    ChangePasswordDtoOutput,
-    ChangePasswordSchema,
+    ChangePasswordUserDtoInput,
+    ChangePasswordUserDtoOutput,
+    ChangePasswordUserSchema,
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
@@ -35,8 +35,8 @@ export default function UserChangePasswordForm() {
     const searchParams = useSearchParams();
     const [isShowButton, setIsShowButton] = useState<boolean>(false);
 
-    const form = useForm<ChangePasswordDtoInput>({
-        resolver: zodResolver(ChangePasswordSchema),
+    const form = useForm<ChangePasswordUserDtoInput>({
+        resolver: zodResolver(ChangePasswordUserSchema),
         defaultValues: {
             password: "",
             rePassword: "",
@@ -45,11 +45,11 @@ export default function UserChangePasswordForm() {
 
     const { trigger, control } = form;
 
-    const password = useWatch<ChangePasswordDtoInput>({
+    const password = useWatch<ChangePasswordUserDtoInput>({
         name: "password",
         control,
     });
-    const rePassword = useWatch<ChangePasswordDtoInput>({
+    const rePassword = useWatch<ChangePasswordUserDtoInput>({
         name: "rePassword",
         control,
     });
@@ -59,7 +59,7 @@ export default function UserChangePasswordForm() {
         trigger("rePassword");
     }, [password, trigger, rePassword]);
 
-    const onSubmit: CustomSubmitHandler<ChangePasswordDtoOutput> = async (
+    const onSubmit: CustomSubmitHandler<ChangePasswordUserDtoOutput> = async (
         formValues,
         { setError },
     ) => {
@@ -95,13 +95,13 @@ export default function UserChangePasswordForm() {
     };
 
     return (
-        <FormProvider<ChangePasswordDtoInput> form={form}>
-            <Form<ChangePasswordDtoInput> form={form} onSubmit={onSubmit}>
-                <FormPassword<ChangePasswordDtoInput>
+        <FormProvider<ChangePasswordUserDtoInput> form={form}>
+            <Form<ChangePasswordUserDtoInput> form={form} onSubmit={onSubmit}>
+                <FormPassword<ChangePasswordUserDtoInput>
                     name="password"
                     label="form.password.label"
                 />
-                <FormPassword<ChangePasswordDtoInput>
+                <FormPassword<ChangePasswordUserDtoInput>
                     name="rePassword"
                     label="form.rePassword.label"
                 />
