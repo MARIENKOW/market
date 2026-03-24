@@ -1,12 +1,28 @@
+import { SessionList } from "@/app/[locale]/(dashboard)/profile/settings/sessions/SessionList";
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
+import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import { StyledPaper } from "@/components/ui/StyledPaper";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import SessionServiceUser from "@/services/auth/user/session.service.user";
+import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
 import { Box, Paper, Typography } from "@mui/material";
+import { SessionUserDto, SessionUserViewDto } from "@myorg/shared/dto";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 
+const session = new SessionServiceUser($apiUserServer);
+
 export default async function Page() {
     const t = await getTranslations();
+    let data;
+    let error: unknown;
+    try {
+        const body = await session.getMe();
+        data = body.data;
+    } catch (e) {
+        error = e;
+    }
+
     return (
         <Box
             display={"flex"}
@@ -34,27 +50,11 @@ export default async function Page() {
             <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
                 {t("pages.profile.settings.sessions.name")}
             </StyledTypography>
-            <StyledTypography variant="body2" color="text.secondary" mb={4}>
-                Имя, фото, контакты
-            </StyledTypography>
-
-            <StyledPaper
-                variant="outlined"
-                sx={{
-                    p: 3,
-                    borderRadius: 3,
-                    borderStyle: "dashed",
-                    borderColor: "divider",
-                }}
-            >
-                <StyledTypography
-                    color="text.secondary"
-                    textAlign="center"
-                    fontSize={14}
-                >
-                    Контент страницы
-                </StyledTypography>
-            </StyledPaper>
+            {error ? (
+                <ErrorHandlerElement error={error} />
+            ) : (
+                <SessionList sessions={data} />
+            )}
         </Box>
     );
 }

@@ -316,6 +316,15 @@ export const ru = {
             ignore: "Если вы не запрашивали смену пароля — проигнорируйте это письмо.",
         },
     },
+    components: {
+        sessionList: {
+            currentSession: "Текущая сессия",
+            otherSessions: "Другие сессии · {count}",
+            thisDevice: "Это устройство",
+            revokeSession: "Завершить сессию",
+            empty: "Активных сессий не найдено",
+        },
+    },
 };
 
 export type MessageStructure = typeof ru;

@@ -1,4 +1,4 @@
-import { SessionAdmin } from "@/generated/prisma";
+import { Admin, SessionAdmin } from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
@@ -6,6 +6,8 @@ import * as crypto from "crypto";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { env } from "@/config";
 import { RequestContextService } from "@/common/request-context/request-context.service";
+import { SessionAdminDto } from "@myorg/shared/dto";
+import { mapSessionAdmin } from "@/modules/auth/admin/session/session.admin.mapper";
 
 export type AccessTokenAdminPayload = { adminId: string; sessionId: string };
 export type RefreshTokenAdminPayload = { adminId: string; sessionId: string };
@@ -20,6 +22,13 @@ export class SessionAdminService {
 
     private ACCESS_TOKEN_EXPIRES = 10;
     private REFRESH_TOKEN_EXPIRES = 30 * 24 * 60 * 60;
+
+    async getMe(admin: Admin): Promise<SessionAdminDto[]> {
+        const sessions = await this.prisma.sessionAdmin.findMany({
+            where: { adminId: admin.id },
+        });
+        return sessions.map(mapSessionAdmin);
+    }
 
     findById(id: string): Promise<SessionAdmin | null> {
         return this.prisma.sessionAdmin.findUnique({

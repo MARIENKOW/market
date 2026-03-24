@@ -7,6 +7,9 @@ export const ENDPOINT = {
         path: "auth",
         user: {
             path: "user",
+            session: {
+                path: "session",
+            },
             login: {
                 path: "login",
             },
@@ -37,6 +40,9 @@ export const ENDPOINT = {
         },
         admin: {
             path: "admin",
+            session: {
+                path: "session",
+            },
             login: {
                 path: "login",
             },

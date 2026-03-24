@@ -6,6 +6,7 @@ import {
     useCallback,
     KeyboardEvent,
     CompositionEvent,
+    ClipboardEvent,
 } from "react";
 import { Box, SxProps, Theme, useTheme } from "@mui/material";
 import { StyledTextField } from "@/components/ui/StyledTextField";
@@ -36,6 +37,8 @@ export default function OtpInput({
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
     const isComposingRef = useRef(false);
     const backspaceHandledAtRef = useRef<number>(0);
+    // Prevents autoFocus effect from fighting with user focus after mount
+    const hasAutoFocusedRef = useRef(false);
 
     const safeValue = value.slice(0, length);
     const digits = Array.from({ length }, (_, i) => safeValue[i] ?? "");
@@ -48,18 +51,23 @@ export default function OtpInput({
             const el = inputsRef.current[clamped];
             if (!el) return;
             el.focus();
+            // select() нужен чтобы iOS заменял существующую цифру, а не дописывал
             setTimeout(() => el.select(), 0);
         },
         [length],
     );
 
-    // ── Автофокус ─────────────────────────────────────────────────────────────
+    // ── Автофокус — только один раз при маунте ────────────────────────────────
+    // БАГ БЫЛО: зависимость от `value` означала что effect запускался на каждый
+    // keystroke и перебрасывал фокус на первую пустую ячейку (ломало iPhone).
 
     useEffect(() => {
-        if (!autoFocus) return;
+        if (!autoFocus || hasAutoFocusedRef.current) return;
+        hasAutoFocusedRef.current = true;
         const firstEmpty = digits.findIndex((d) => !d);
         focus(firstEmpty === -1 ? length - 1 : firstEmpty);
-    }, [autoFocus, value]); // eslint-disable-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // ── Emit ──────────────────────────────────────────────────────────────────
 
@@ -69,21 +77,22 @@ export default function OtpInput({
             if (val === safeValue) return;
             onChange(val);
             if (next.every(Boolean)) {
-                setTimeout(() => {
-                    inputsRef.current[length - 1]?.blur();
-                    onComplete?.(val);
-                }, 0);
+                // БАГ БЫЛО: blur() убирал фокус с формы → Enter не сабмитил.
+                // Теперь фокус остаётся на последней ячейке; onComplete сам решает.
+                setTimeout(() => onComplete?.(val), 0);
             }
         },
-        [onChange, onComplete, safeValue, length],
+        [onChange, onComplete, safeValue],
     );
 
-    // ── onChange — только одиночный ввод ─────────────────────────────────────
+    // ── onChange ──────────────────────────────────────────────────────────────
+    // БАГ БЫЛО: `if (raw.length > 1) return` ломал iOS — когда ячейка уже
+    // заполнена и выделение не сработало, браузер отдаёт "57" вместо "7".
+    // Теперь берём последний валидный символ независимо от длины строки.
 
     const handleChange = useCallback(
         (idx: number, raw: string) => {
-            // paste обрабатывается нативным listener'ом ниже — игнорируем
-            if (raw.length > 1) return;
+            if (isComposingRef.current) return;
 
             const char = raw.replace(/\D/g, "").slice(-1);
             const next = [...digits];
@@ -155,10 +164,10 @@ export default function OtpInput({
         [digits, emit, focus, length],
     );
 
-    // ── Paste — нативный listener напрямую на <input> ─────────────────────────
-    // onPaste на StyledTextField вешается на внешний div — e.preventDefault()
-    // не останавливает браузер от вставки в input до того как мы обработаем.
-    // Нативный listener с { capture: false } на самом input решает проблему.
+    // ── Paste — через slotProps.htmlInput напрямую в <input> ──────────────────
+    // БАГ БЫЛО: нативный addEventListener вешался в useEffect на рефы.
+    // Если рефы менялись между рендерами — слушатели слетали и Ctrl+V переставал
+    // работать. React-обработчик в slotProps надёжнее и чище.
 
     const digitsRef = useRef(digits);
     digitsRef.current = digits;
@@ -169,34 +178,24 @@ export default function OtpInput({
     const focusRef = useRef(focus);
     focusRef.current = focus;
 
-    useEffect(() => {
-        const listeners: Array<() => void> = [];
+    const handlePaste = useCallback(
+        (idx: number, e: ClipboardEvent<HTMLInputElement>) => {
+            e.preventDefault();
+            const text = e.clipboardData?.getData("text") ?? "";
+            const pasted = text.replace(/\D/g, "").slice(0, length);
+            if (!pasted) return;
 
-        inputsRef.current.forEach((el, idx) => {
-            if (!el) return;
+            const next = [...digitsRef.current];
+            pasted.split("").forEach((char, i) => {
+                if (idx + i < length) next[idx + i] = char;
+            });
+            emitRef.current(next);
 
-            const handler = (e: ClipboardEvent) => {
-                e.preventDefault();
-                const text = e.clipboardData?.getData("text") ?? "";
-                const pasted = text.replace(/\D/g, "").slice(0, length);
-                if (!pasted) return;
-
-                const next = [...digitsRef.current];
-                pasted.split("").forEach((char, i) => {
-                    if (idx + i < length) next[idx + i] = char;
-                });
-                emitRef.current(next);
-
-                const nextEmpty = next.findIndex((d, i) => i >= idx && !d);
-                focusRef.current(nextEmpty === -1 ? length - 1 : nextEmpty);
-            };
-
-            el.addEventListener("paste", handler);
-            listeners.push(() => el.removeEventListener("paste", handler));
-        });
-
-        return () => listeners.forEach((remove) => remove());
-    }, [length]);
+            const nextEmpty = next.findIndex((d, i) => i >= idx && !d);
+            focusRef.current(nextEmpty === -1 ? length - 1 : nextEmpty);
+        },
+        [length],
+    );
 
     // ── Android backspace fallback ─────────────────────────────────────────────
 
@@ -263,11 +262,13 @@ export default function OtpInput({
                     error={error}
                     slotProps={{
                         htmlInput: {
-                            maxLength: 1,
+                            maxLength: 2, // 2 вместо 1: позволяет iOS прислать "старая+новая" цифра
                             inputMode: "numeric" as const,
                             pattern: "[0-9]*",
                             autoComplete: idx === 0 ? "one-time-code" : "off",
                             "aria-label": `Digit ${idx + 1} of ${length}`,
+                            onPaste: (e: ClipboardEvent<HTMLInputElement>) =>
+                                handlePaste(idx, e),
                             style: {
                                 textAlign: "center" as const,
                                 fontSize: theme.typography.h5.fontSize,
