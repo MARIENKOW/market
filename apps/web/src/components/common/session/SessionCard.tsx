@@ -1,35 +1,69 @@
 "use client";
-
-import {
-    Box,
-    Typography,
-    IconButton,
-    Chip,
-    Tooltip,
-    alpha,
-    useTheme,
-    useMediaQuery,
-} from "@mui/material";
-import { Close, AccessTime, Shield } from "@mui/icons-material";
+import { Box, Typography, Chip, Tooltip, useTheme } from "@mui/material";
+import { AccessTime, Shield } from "@mui/icons-material";
 import { useLocale, useTranslations } from "next-intl";
-import { SessionUserViewDto } from "@myorg/shared/dto";
-import { OsIcon } from "./icons/OsIcon";
-import { DeviceIcon } from "./icons/DeviceIcon";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
-import { StyledButton } from "@/components/ui/StyledButton";
 import { relativeTime } from "@/utils/relativeTime";
 
-interface SessionCardProps {
-    session: SessionUserViewDto;
+import { RevokeSessionButton } from "@/components/features/auth/session/RevokeSessionButton";
+import { Window, Apple, Android, HelpOutline } from "@mui/icons-material";
+import { LaptopMac, PhoneIphone, TabletMac } from "@mui/icons-material";
+import { SvgIconProps } from "@mui/material";
+import { SessionUserViewDto, SessionViewDto } from "@myorg/shared/dto";
+import { FetchCustomReturn } from "@/utils/api";
+
+interface DeviceIconProps extends SvgIconProps {
+    type: SessionUserViewDto["device"]["type"];
 }
 
-export const SessionCard = ({ session }: SessionCardProps) => {
+export const DeviceIcon = ({ type, sx, ...rest }: DeviceIconProps) => {
+    const Icon =
+        type === "mobile"
+            ? PhoneIphone
+            : type === "tablet"
+              ? TabletMac
+              : LaptopMac;
+
+    return <Icon sx={sx} {...rest} />;
+};
+
+interface OsIconProps {
+    icon: SessionUserViewDto["device"]["icon"];
+    size?: number;
+}
+
+export const OsIcon = ({ icon, size = 20 }: OsIconProps) => {
+    const props = { sx: { fontSize: size } };
+    switch (icon) {
+        case "windows":
+            return <Window {...props} />;
+        case "macos":
+            return <Apple {...props} />;
+        case "ios":
+            return <Apple {...props} />;
+        case "android":
+            return <Android {...props} />;
+        default:
+            return <HelpOutline {...props} />;
+    }
+};
+
+interface SessionCardProps<T extends SessionViewDto> {
+    session: T;
+    onRevoke?: (id: string) => FetchCustomReturn<void>;
+}
+
+export const SessionCard = <T extends SessionViewDto>({
+    session,
+    onRevoke,
+}: SessionCardProps<T>) => {
     const theme = useTheme();
+    const v = theme.vars!;
     const locale = useLocale();
     const t = useTranslations("components.sessionList");
     const { device, location, isCurrent, lastUsedAt, id } = session;
-
-    const date = new Date(Math.min(new Date(lastUsedAt).getTime(), Date.now()));
+    // const date = new Date(Math.min(new Date(lastUsedAt).getTime(), Date.now()));
+    const date = new Date(lastUsedAt);
 
     return (
         <Box
@@ -42,14 +76,13 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                 borderRadius: 3,
                 border: "1px solid",
                 borderColor: isCurrent
-                    ? alpha(theme.palette.primary.main, 0.4)
+                    ? `rgba(${v.palette.primary.mainChannel} / 0.4)`
                     : "divider",
                 bgcolor: isCurrent
-                    ? alpha(theme.palette.primary.main, 0.08)
+                    ? `rgba(${v.palette.primary.mainChannel} / 0.08)`
                     : "background.paper",
             }}
         >
-            {/* Иконка устройства */}
             <Box
                 sx={{
                     width: { xs: 68, sm: 48 },
@@ -60,8 +93,8 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                     justifyContent: "center",
                     flexShrink: 0,
                     bgcolor: isCurrent
-                        ? alpha(theme.palette.primary.main, 0.1)
-                        : alpha(theme.palette.text.primary, 0.05),
+                        ? `rgba(${v.palette.primary.mainChannel} / 0.1)`
+                        : `rgba(${v.palette.text.primaryChannel} / 0.05)`,
                     color: isCurrent ? "primary.main" : "text.secondary",
                 }}
             >
@@ -71,10 +104,9 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                 />
             </Box>
 
-            {/* Основная информация */}
             <Box
-                display={"flex"}
-                flexDirection={"column"}
+                display="flex"
+                flexDirection="column"
                 gap={1}
                 sx={{ flex: 1, minWidth: 0 }}
             >
@@ -122,7 +154,6 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                         >
                             {device.browser}
                         </StyledTypography>
-
                         <Box
                             sx={{
                                 display: "flex",
@@ -141,7 +172,6 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                             </StyledTypography>
                         </Box>
                     </Box>
-
                     {isCurrent && (
                         <Chip
                             icon={
@@ -171,7 +201,6 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                         flexWrap: "wrap",
                     }}
                 >
-                    {/* Геолокация */}
                     <StyledTypography
                         variant="caption"
                         color="text.secondary"
@@ -181,7 +210,6 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                             .filter(Boolean)
                             .join(", ") || location.ip}
                     </StyledTypography>
-
                     <Box
                         component="span"
                         sx={{
@@ -192,8 +220,6 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                             flexShrink: 0,
                         }}
                     />
-
-                    {/* Последняя активность */}
                     <Box
                         sx={{
                             display: "flex",
@@ -209,40 +235,31 @@ export const SessionCard = ({ session }: SessionCardProps) => {
                             arrow
                         >
                             <Typography
+                                suppressHydrationWarning
                                 component="span"
                                 variant="caption"
                                 sx={{ cursor: "default" }}
                             >
-                                {relativeTime({
-                                    date,
-                                    locale,
-                                })}
+                                {relativeTime({ date, locale })}
                             </Typography>
                         </Tooltip>
                     </Box>
                 </Box>
             </Box>
 
-            {/* Кнопка завершить */}
-            {!isCurrent && (
+            {!isCurrent && onRevoke && (
                 <>
-                    <StyledButton
-                        sx={{ display: { xs: "flex", sm: "none" } }}
+                    <RevokeSessionButton
+                        onRevoke={() => onRevoke(id)}
                         fullWidth
-                        size="small"
-                        variant={"outlined"}
-                        color="error"
-                    >
-                        {t("revokeSession")}
-                    </StyledButton>
-                    <StyledButton
+                        variant="outlined"
+                        sx={{ display: { xs: "flex", sm: "none" } }}
+                    />
+                    <RevokeSessionButton
+                        onRevoke={() => onRevoke(id)}
+                        variant="text"
                         sx={{ display: { xs: "none", sm: "flex" } }}
-                        size="small"
-                        variant={"text"}
-                        color="error"
-                    >
-                        {t("revokeSession")}
-                    </StyledButton>
+                    />
                 </>
             )}
         </Box>

@@ -322,7 +322,15 @@ export const en: MessageStructure = {
             otherSessions: "Other sessions · {count}",
             thisDevice: "This device",
             revokeSession: "Revoke session",
+            revokeSuccess: "Session revoked success",
             empty: "No active sessions found",
         },
+        confirmDialog: {
+            title: "Confirm action",
+        },
+    },
+    common: {
+        cancel: "Сancel",
+        сonfirm: "сonfirm",
     },
 };

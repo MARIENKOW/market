@@ -1,17 +1,18 @@
 import { Box, Typography } from "@mui/material";
-import { SessionUserViewDto } from "@myorg/shared/dto";
+import { SessionAdminViewDto } from "@myorg/shared/dto";
 import { getTranslations } from "next-intl/server";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
-import { SessionCardUser } from "@/app/[locale]/(dashboard)/profile/settings/sessions/SessionCardUser";
+import { SessionCardAdmin } from "@/app/[locale]/admin/(dashboard)/settings/sessions/SessionCardAdmin";
 
 interface SessionListProps {
-    sessions?: SessionUserViewDto[];
+    sessions?: SessionAdminViewDto[];
     onRevoke?: (id: string) => void;
 }
 
 export const SessionList = async ({ sessions }: SessionListProps) => {
     const t = await getTranslations("components.sessionList");
 
+    console.log(sessions);
     const current = sessions?.find((s) => s.isCurrent);
     const others = sessions?.filter((s) => !s.isCurrent) ?? [];
 
@@ -40,7 +41,7 @@ export const SessionList = async ({ sessions }: SessionListProps) => {
                     >
                         {t("currentSession")}
                     </StyledTypography>
-                    <SessionCardUser session={current} />
+                    <SessionCardAdmin session={current} />
                 </Box>
             )}
 
@@ -63,7 +64,7 @@ export const SessionList = async ({ sessions }: SessionListProps) => {
                         }}
                     >
                         {others.map((session) => (
-                            <SessionCardUser
+                            <SessionCardAdmin
                                 key={session.id}
                                 session={session}
                             />

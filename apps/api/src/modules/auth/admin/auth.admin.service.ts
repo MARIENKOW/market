@@ -237,7 +237,7 @@ export class AuthAdminService {
         return true;
     }
 
-    async logout(sessionId: string): Promise<true> {
+    async logout(sessionId: string): Promise<void> {
         return this.session.delete(sessionId);
     }
 }

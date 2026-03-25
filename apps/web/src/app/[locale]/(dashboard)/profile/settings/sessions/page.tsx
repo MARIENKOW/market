@@ -1,12 +1,10 @@
 import { SessionList } from "@/app/[locale]/(dashboard)/profile/settings/sessions/SessionList";
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
-import { StyledPaper } from "@/components/ui/StyledPaper";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import SessionServiceUser from "@/services/auth/user/session.service.user";
 import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
-import { Box, Paper, Typography } from "@mui/material";
-import { SessionUserDto, SessionUserViewDto } from "@myorg/shared/dto";
+import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 

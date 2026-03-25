@@ -1,12 +1,15 @@
 import { Prisma, SessionUser, User } from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import * as crypto from "crypto";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { env } from "@/config";
 import { RequestContextService } from "@/common/request-context/request-context.service";
-import { mapSessionUser, mapSessionUserView } from "@/modules/auth/user/session/session.user.mapper";
+import {
+    mapSessionUser,
+    mapSessionUserView,
+} from "@/modules/auth/user/session/session.user.mapper";
 import { SessionUserDto, SessionUserViewDto } from "@myorg/shared/dto";
 
 export type AccessTokenUserPayload = { userId: string; sessionId: string };
@@ -23,14 +26,17 @@ export class SessionUserService {
     private ACCESS_TOKEN_EXPIRES = 10;
     private REFRESH_TOKEN_EXPIRES = 30 * 24 * 60 * 60;
 
-async getMe(user: User, currentSessionId: string): Promise<SessionUserViewDto[]> {
-    const sessions = await this.prisma.sessionUser.findMany({
-        where: { userId: user.id },
-        orderBy: { lastUsedAt: "desc" }, // текущая скорее всего первой
-    });
+    async getMe(
+        user: User,
+        currentSessionId: string,
+    ): Promise<SessionUserViewDto[]> {
+        const sessions = await this.prisma.sessionUser.findMany({
+            where: { userId: user.id },
+            orderBy: { lastUsedAt: "desc" }, // текущая скорее всего первой
+        });
 
-    return sessions.map(s => mapSessionUserView(s, currentSessionId));
-}
+        return sessions.map((s) => mapSessionUserView(s, currentSessionId));
+    }
 
     findById(id: string): Promise<SessionUser | null> {
         return this.prisma.sessionUser.findUnique({
@@ -173,8 +179,19 @@ async getMe(user: User, currentSessionId: string): Promise<SessionUserViewDto[]>
 
         return { refreshToken, accessToken };
     }
-    async delete(sessionId: string): Promise<true> {
+    async revoke({
+        sessionId,
+        currentSession,
+    }: {
+        sessionId: string;
+        currentSession: string;
+    }): Promise<void> {
+        if (sessionId === currentSession) throw new ForbiddenException();
+        const data = await this.findById(sessionId);
+        if (!data) throw new NotFoundException();
+        await this.delete(sessionId);
+    }
+    async delete(sessionId: string): Promise<void> {
         await this.prisma.sessionUser.delete({ where: { id: sessionId } });
-        return true;
     }
 }

@@ -1,10 +1,16 @@
 // src/modules/auth/auth.controller.ts
-import { Controller, Get } from "@nestjs/common";
+import {
+    Controller,
+    Delete,
+    ForbiddenException,
+    Get,
+    Param,
+} from "@nestjs/common";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 
 import { AdminActor } from "@/modules/auth/auth.type";
-import { SessionAdminDto } from "@myorg/shared/dto";
+import { SessionAdminDto, SessionAdminViewDto } from "@myorg/shared/dto";
 import { SessionAdminService } from "@/modules/auth/admin/session/session.admin.service";
 
 const { path } = FULL_PATH_ENDPOINT.auth.admin.session;
@@ -18,7 +24,18 @@ export class SessionAdminController {
     async getMe(
         @CurrentActor()
         actor: AdminActor,
-    ): Promise<SessionAdminDto[]> {
-        return this.session.getMe(actor.admin);
+    ): Promise<SessionAdminViewDto[]> {
+        return this.session.getMe(actor.admin, actor.sessionId);
+    }
+    @Delete(":id")
+    @Auth("ADMIN")
+    async revoke(
+        @CurrentActor() actor: AdminActor,
+        @Param("id") id: string,
+    ): Promise<void> {
+        return this.session.revoke({
+            sessionId: id,
+            currentSession: actor.sessionId,
+        });
     }
 }

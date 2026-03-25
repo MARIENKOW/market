@@ -12,8 +12,10 @@ export const StyledToaster = ({
     serverMode: AvailableMode;
 }) => {
     const { themeMode } = useThemeContext(serverMode);
-    const { palette: p, typography, shape } = useTheme();
+    const theme = useTheme();
     const isDark = themeMode === "dark";
+    const v = theme.vars!;
+    const { typography, shape } = theme;
 
     return (
         <Toaster
@@ -30,37 +32,37 @@ export const StyledToaster = ({
                     "--border-radius": `${Number(shape.borderRadius) * 1.5}px`,
 
                     // ── Normal ────────────────────────────────────
-                    "--normal-bg": p.background.paper,
-                    "--normal-text": p.text.primary,
-                    "--normal-border": p.divider,
+                    "--normal-bg": v.palette.background.paper,
+                    "--normal-text": v.palette.text.primary,
+                    "--normal-border": v.palette.divider,
 
                     // ── Success ───────────────────────────────────
                     "--success-bg": isDark
-                        ? alpha(p.success.dark, 0.3)
-                        : alpha(p.success.light, 0.25),
-                    "--success-text": isDark ? p.success.light : p.success.dark,
-                    "--success-border": alpha(p.success.main, 0.4),
+                        ? `rgba(${v.palette.success.darkChannel} / 0.4)`
+                        : `rgba(${v.palette.success.lightChannel} / 0.5)`,
+                    "--success-text": v.palette.success.main,
+                    "--success-border": `rgba(${v.palette.success.mainChannel} / 0.4)`,
 
                     // ── Error ─────────────────────────────────────
                     "--error-bg": isDark
-                        ? alpha(p.error.dark, 0.3)
-                        : alpha(p.error.light, 0.22),
-                    "--error-text": isDark ? p.error.light : p.error.dark,
-                    "--error-border": alpha(p.error.main, 0.4),
+                        ? `rgba(${v.palette.error.darkChannel} / 0.4)`
+                        : `rgba(${v.palette.error.lightChannel} / 0.5)`,
+                    "--error-text": v.palette.error.main,
+                    "--error-border": `rgba(${v.palette.error.mainChannel} / 0.4)`,
 
                     // ── Warning ───────────────────────────────────
                     "--warning-bg": isDark
-                        ? alpha(p.warning.dark, 0.3)
-                        : alpha(p.warning.light, 0.22),
-                    "--warning-text": isDark ? p.warning.light : p.warning.dark,
-                    "--warning-border": alpha(p.warning.main, 0.4),
+                        ? `rgba(${v.palette.warning.darkChannel} / 0.4)`
+                        : `rgba(${v.palette.warning.lightChannel} / 0.5)`,
+                    "--warning-text": v.palette.warning.main,
+                    "--warning-border": `rgba(${v.palette.warning.mainChannel} / 0.4)`,
 
                     // ── Info ──────────────────────────────────────
                     "--info-bg": isDark
-                        ? alpha(p.info.dark, 0.3)
-                        : alpha(p.info.light, 0.22),
-                    "--info-text": isDark ? p.info.light : p.info.dark,
-                    "--info-border": alpha(p.info.main, 0.4),
+                        ? `rgba(${v.palette.info.darkChannel} / 0.4)`
+                        : `rgba(${v.palette.info.lightChannel} / 0.5)`,
+                    "--info-text": v.palette.info.main,
+                    "--info-border": `rgba(${v.palette.info.mainChannel} / 0.4)`,
                 } as React.CSSProperties
             }
         />

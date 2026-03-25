@@ -322,8 +322,16 @@ export const ru = {
             otherSessions: "Другие сессии · {count}",
             thisDevice: "Это устройство",
             revokeSession: "Завершить сессию",
+            revokeSuccess: "Сессия удачно завершена",
             empty: "Активных сессий не найдено",
         },
+        confirmDialog: {
+            title: "Подтвердите действие",
+        },
+    },
+    common: {
+        cancel: "Отменить",
+        сonfirm: "Подтвердить",
     },
 };
 
