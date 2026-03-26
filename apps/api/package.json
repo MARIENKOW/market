@@ -37,7 +37,6 @@
         "dotenv": "^17.3.1",
         "geoip-lite": "^2.0.1",
         "google-auth-library": "^10.6.1",
-        "humanize-duration": "^3.33.2",
         "nestjs-i18n": "^10.6.0",
         "nodemailer": "^7.0.12",
         "pg": "^8.16.3",

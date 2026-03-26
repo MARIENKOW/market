@@ -22,8 +22,8 @@ import {
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 import { MessageStructure } from "@myorg/shared/i18n";
-import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { ChangePasswordStatus, MailSendSuccess } from "@myorg/shared/dto";
+import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
 
 // ── Конфигурация ──────────────────────────────────────────────────────────────
 
@@ -106,7 +106,9 @@ export class ChangePasswordAdminService {
                         message: this.i18n.t(
                             "features.changePassword.changeCooldown",
                             {
-                                args: { time: i18nFormatDuration(remaining) },
+                                args: {
+                                    time: i18nFormatDuration(remaining),
+                                },
                             },
                         ),
                         type: "error",
@@ -186,9 +188,13 @@ export class ChangePasswordAdminService {
             admin.passwordHash,
         );
         if (!isCurrentValid) {
-            throw new ValidationException<ChangePasswordSettingsAdminDtoOutput>({
-                fields: { currentPassword: ["form.currentPassword.invalid"] },
-            });
+            throw new ValidationException<ChangePasswordSettingsAdminDtoOutput>(
+                {
+                    fields: {
+                        currentPassword: ["form.currentPassword.invalid"],
+                    },
+                },
+            );
         }
 
         const { code, token } = await this.createToken(

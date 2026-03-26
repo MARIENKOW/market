@@ -3,7 +3,6 @@ import { Box, Typography, Chip, Tooltip, useTheme } from "@mui/material";
 import { AccessTime, Shield } from "@mui/icons-material";
 import { useLocale, useTranslations } from "next-intl";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
-import { relativeTime } from "@/utils/relativeTime";
 
 import { RevokeSessionButton } from "@/components/features/auth/session/RevokeSessionButton";
 import { Window, Apple, Android, HelpOutline } from "@mui/icons-material";
@@ -59,11 +58,9 @@ export const SessionCard = <T extends SessionViewDto>({
 }: SessionCardProps<T>) => {
     const theme = useTheme();
     const v = theme.vars!;
-    const locale = useLocale();
     const t = useTranslations("components.sessionList");
-    const { device, location, isCurrent, lastUsedAt, id } = session;
-    // const date = new Date(Math.min(new Date(lastUsedAt).getTime(), Date.now()));
-    const date = new Date(lastUsedAt);
+    const { device, location, isCurrent, lastUsedAt, id, lastUsedAtFM } =
+        session;
 
     return (
         <Box
@@ -78,9 +75,7 @@ export const SessionCard = <T extends SessionViewDto>({
                 borderColor: isCurrent
                     ? `rgba(${v.palette.primary.mainChannel} / 0.4)`
                     : "divider",
-                bgcolor: isCurrent
-                    ? `rgba(${v.palette.primary.mainChannel} / 0.08)`
-                    : "background.paper",
+                bgcolor: "background.paper",
             }}
         >
             <Box
@@ -235,12 +230,11 @@ export const SessionCard = <T extends SessionViewDto>({
                             arrow
                         >
                             <Typography
-                                suppressHydrationWarning
                                 component="span"
                                 variant="caption"
                                 sx={{ cursor: "default" }}
                             >
-                                {relativeTime({ date, locale })}
+                                {lastUsedAtFM}
                             </Typography>
                         </Tooltip>
                     </Box>

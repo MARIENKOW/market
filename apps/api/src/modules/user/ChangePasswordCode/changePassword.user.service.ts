@@ -20,10 +20,10 @@ import {
     CHANGE_PASSWORD_OTP_LENGTH,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { I18nService } from "nestjs-i18n";
-import { MessageStructure } from "@myorg/shared/i18n";
-import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
+import { I18nContext, I18nService } from "nestjs-i18n";
+import { AvailableLanguage, MessageStructure } from "@myorg/shared/i18n";
 import { ChangePasswordStatus, MailSendSuccess } from "@myorg/shared/dto";
+import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
 
 // ── Конфигурация ──────────────────────────────────────────────────────────────
 
@@ -106,7 +106,9 @@ export class ChangePasswordUserService {
                         message: this.i18n.t(
                             "features.changePassword.changeCooldown",
                             {
-                                args: { time: i18nFormatDuration(remaining) },
+                                args: {
+                                    time: i18nFormatDuration(remaining),
+                                },
                             },
                         ),
                         type: "error",

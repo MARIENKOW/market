@@ -11,9 +11,8 @@ import {
     RegisterUserDtoOutput,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
-import { MessageStructure } from "@myorg/shared/i18n";
-import { I18nService } from "nestjs-i18n";
+import { AvailableLanguage, MessageStructure } from "@myorg/shared/i18n";
+import { I18nContext, I18nService } from "nestjs-i18n";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 import { OAuth2Client } from "google-auth-library";
@@ -23,6 +22,7 @@ import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { env } from "@/config";
 import { ActivateTokenUserService } from "@/modules/auth/user/activateToken/activate.token.user.service";
 import { ResetPasswordTokenUserService } from "./resetPasswordToken/reset.password.token.user.service";
+import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
 
 @Injectable()
 export class AuthUserService {
@@ -64,7 +64,9 @@ export class AuthUserService {
         if (user.status === "NOACTIVE") {
             await this.sendActivationEmail(user.id, user.email);
             return this.i18n.t("pages.register.feedback.success.mailSend", {
-                args: { time: i18nFormatDuration(this.activateToken.expires) },
+                args: {
+                    time: i18nFormatDuration(this.activateToken.expires),
+                },
             });
         }
 
@@ -205,7 +207,9 @@ export class AuthUserService {
 
         const { expires } = await this.sendActivationEmail(user.id, user.email);
         return this.i18n.t("features.activate.success.sendSuccess", {
-            args: { time: i18nFormatDuration(expires) },
+            args: {
+                time: i18nFormatDuration(expires),
+            },
         });
     }
 
@@ -247,7 +251,9 @@ export class AuthUserService {
         return true;
     }
 
-    async forgotPassword({ email }: ForgotPasswordUserDtoOutput): Promise<string> {
+    async forgotPassword({
+        email,
+    }: ForgotPasswordUserDtoOutput): Promise<string> {
         const user = await this.user.findByEmail(email);
         if (!user) {
             throw new ValidationException<ForgotPasswordUserDtoOutput>({
@@ -292,7 +298,9 @@ export class AuthUserService {
         }
 
         return this.i18n.t("pages.forgotPassword.feedback.success", {
-            args: { time: i18nFormatDuration(this.resetToken.expires) },
+            args: {
+                time: i18nFormatDuration(this.resetToken.expires),
+            },
         });
     }
 

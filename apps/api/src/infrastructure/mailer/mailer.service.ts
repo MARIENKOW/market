@@ -2,9 +2,9 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import nodemailer from "nodemailer";
 import { I18nService } from "nestjs-i18n";
-import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { env } from "@/config";
+import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
 
 export interface SendForgotPasswordOptions {
     to: string;

@@ -10,7 +10,6 @@ import {
     LoginAdminDtoOutput,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { i18nFormatDuration } from "@/lib/i18n/i18n.formatDuration";
 import { MessageStructure } from "@myorg/shared/i18n";
 import { I18nService } from "nestjs-i18n";
 import { HashService } from "@/infrastructure/hash/hash.service";
@@ -21,6 +20,7 @@ import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { env } from "@/config";
 import { ResetPasswordTokenAdminService } from "@/modules/auth/admin/resetPasswordToken/reset.password.token.admin.service";
+import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
 
 @Injectable()
 export class AuthAdminService {
@@ -146,7 +146,9 @@ export class AuthAdminService {
         };
     }
 
-    async forgotPassword({ email }: ForgotPasswordAdminDtoOutput): Promise<string> {
+    async forgotPassword({
+        email,
+    }: ForgotPasswordAdminDtoOutput): Promise<string> {
         const admin = await this.admin.findByEmail(email);
         if (!admin) {
             throw new ValidationException<ForgotPasswordAdminDtoOutput>({
@@ -191,7 +193,9 @@ export class AuthAdminService {
         }
 
         return this.i18n.t("pages.forgotPassword.feedback.success", {
-            args: { time: i18nFormatDuration(this.resetToken.expires) },
+            args: {
+                time: i18nFormatDuration(this.resetToken.expires),
+            },
         });
     }
 

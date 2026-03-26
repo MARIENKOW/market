@@ -3,7 +3,6 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { StyledButton } from "@/components/ui/StyledButton";
-import { formatDuration } from "@/utils/formatDuration";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 import {
     ApiErrorResponse,
@@ -12,6 +11,7 @@ import {
 } from "@myorg/shared/dto";
 import ChangePasswordUserService from "@/services/user/changePassword.user.service";
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
+import { formatDuration } from "@myorg/shared/utils";
 
 interface Props {
     initialCooldown: number | false;

@@ -14,4 +14,5 @@ export interface SessionViewDto {
     };
     createdAt: string;
     lastUsedAt: string;
+    lastUsedAtFM: string;
 }

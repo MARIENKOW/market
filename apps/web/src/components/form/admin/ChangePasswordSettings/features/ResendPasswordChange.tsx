@@ -3,13 +3,13 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { StyledButton } from "@/components/ui/StyledButton";
-import { formatDuration } from "@/utils/formatDuration";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 import {
     ApiErrorResponse,
     ErrorsWithMessages,
     MailSendSuccess,
 } from "@myorg/shared/dto";
+import { formatDuration } from "@myorg/shared/utils";
 import ChangePasswordAdminService from "@/services/admin/changePassword.admin.service";
 import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
 

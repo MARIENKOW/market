@@ -1,9 +1,8 @@
-"use client";
 
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, } from "date-fns";
 import type { Locale } from "date-fns";
 import { enUS, ru } from "date-fns/locale";
-import { AvailableLanguage } from "@myorg/shared/i18n";
+import { AvailableLanguage } from "../i18n";
 
 export const DATE_FNS_LOCALES: Record<AvailableLanguage, Locale> = {
     ru,

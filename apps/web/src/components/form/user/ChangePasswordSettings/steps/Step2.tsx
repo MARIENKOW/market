@@ -20,7 +20,6 @@ import {
 } from "@myorg/shared/form";
 import { StyledAlert } from "@/components/ui/StyledAlert";
 import FormOtpInput from "@/components/features/form/fields/controlled/FormOtpInput";
-import { formatDuration } from "@/utils/formatDuration";
 import {
     ApiErrorResponse,
     ErrorsWithMessages,
@@ -32,6 +31,7 @@ import ChangePasswordUserService from "@/services/user/changePassword.user.servi
 import { $apiUserClient } from "@/utils/api/user/fetch.user.client";
 import ResendPasswordChange from "@/components/form/user/ChangePasswordSettings/features/ResendPasswordChange";
 import CancelPasswordChange from "@/components/form/user/ChangePasswordSettings/features/CancelPasswordChange";
+import { formatDuration } from "@myorg/shared/utils";
 
 interface Props {
     mailSendSuccess: MailSendSuccess;

@@ -1,7 +1,12 @@
 import { Prisma, SessionUser, User } from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
-import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import {
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from "@nestjs/common";
 import * as crypto from "crypto";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { env } from "@/config";
@@ -11,6 +16,12 @@ import {
     mapSessionUserView,
 } from "@/modules/auth/user/session/session.user.mapper";
 import { SessionUserDto, SessionUserViewDto } from "@myorg/shared/dto";
+import { I18nContext, I18nService } from "nestjs-i18n";
+import {
+    AvailableLanguage,
+    defaultLanguage,
+    languages,
+} from "@myorg/shared/i18n";
 
 export type AccessTokenUserPayload = { userId: string; sessionId: string };
 export type RefreshTokenUserPayload = { userId: string; sessionId: string };

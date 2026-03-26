@@ -2,6 +2,8 @@ import * as geoip from "geoip-lite";
 import { SessionUser } from "@/generated/prisma";
 import { SessionUserDto, SessionUserViewDto } from "@myorg/shared/dto";
 import { UAParser } from "ua-parser-js";
+import { AvailableLanguage } from "@myorg/shared/i18n";
+import i18nRelativeTime from "@/lib/i18n/i18nRelativeTime";
 
 export const mapSessionUser = (SessionUser: SessionUser): SessionUserDto => ({
     id: SessionUser.id,
@@ -23,7 +25,6 @@ const DEVICE_TYPE_MAP: Record<string, SessionUserViewDto["device"]["type"]> = {
     mobile: "mobile",
     tablet: "tablet",
 };
-
 
 export const mapSessionUserView = (
     session: SessionUser,
@@ -72,5 +73,6 @@ export const mapSessionUserView = (
         location,
         createdAt: session.createdAt.toISOString(),
         lastUsedAt: session.lastUsedAt.toISOString(),
+        lastUsedAtFM: i18nRelativeTime(session.lastUsedAt),
     };
 };
