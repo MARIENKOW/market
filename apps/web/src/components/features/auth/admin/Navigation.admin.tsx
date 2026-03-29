@@ -44,7 +44,9 @@ export default function NavigationAdmin() {
                     sx={{ overflow: "hidden", borderRadius: 999 }}
                     onClick={handleOpen}
                 >
-                    <StyledAvatar></StyledAvatar>
+                    <StyledAvatar
+                    src={admin?.avatar?.url}
+                    ></StyledAvatar>
                 </StyledIconButton>
             </StyledTooltip>
             <StyledMenu
