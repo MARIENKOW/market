@@ -32,24 +32,23 @@ export default async function Page() {
                 <BreadcrumbsComponent
                     options={[
                         {
-                            name: t("pages.profile.settings.name"),
-                            href: FULL_PATH_ROUTE.profile.settings.path,
+                            name: t("pages.admin.settings.name"),
+                            href: FULL_PATH_ROUTE.admin.settings.path,
                             key: "sett",
                         },
                         {
-                            name: t("pages.profile.settings.password.name"),
-                            href: FULL_PATH_ROUTE.profile.settings.password
-                                .path,
+                            name: t("pages.admin.settings.password.name"),
+                            href: FULL_PATH_ROUTE.admin.settings.password.path,
                             key: "sett2",
                         },
                     ]}
                 />
             </Box>
             <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
-                {t("pages.profile.settings.password.name")}
+                {t("pages.admin.settings.password.name")}
             </StyledTypography>
             <StyledTypography variant="body2" color="text.secondary" mb={4}>
-                {t("pages.profile.settings.password.subtitle")}
+                {t("pages.admin.settings.password.subtitle")}
             </StyledTypography>
             {error ? (
                 <ErrorHandlerElement error={error} />
