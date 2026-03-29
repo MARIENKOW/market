@@ -10,6 +10,9 @@ export * from "./schema/admin/ChangePasswordCodeAdminSchema";
 export * from "./schema/admin/ChangePasswordSettingsAdminSchema";
 export * from "./schema/admin/ForgotPasswordAdminSchema";
 export * from "./schema/admin/LoginAdminSchema";
+export * from "./schema/user/AvatarUserSchema";
+export * from "./schema/admin/AvatarAdminSchema";
 
+export * from "./types";
 export * from "./constants";
 export * from "./fields";

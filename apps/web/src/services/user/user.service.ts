@@ -1,10 +1,11 @@
 import { FetchCustom, FetchCustomReturn } from "@/utils/api";
 import { AvailableMode } from "@/theme/theme";
-import { UserDto } from "@myorg/shared/dto";
+import { ImageDto, UserDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import { AvailableLanguage } from "@myorg/shared/i18n";
+import { AvatarUserInput } from "@myorg/shared/form";
 
-const { me, theme, locale } = FULL_PATH_ENDPOINT.user;
+const { me, theme, locale, avatar } = FULL_PATH_ENDPOINT.user;
 
 export default class UserService {
     me: () => FetchCustomReturn<UserDto>;
@@ -18,6 +19,8 @@ export default class UserService {
     }: {
         locale: AvailableLanguage;
     }) => FetchCustomReturn<true>;
+    changeAvatar: (body: AvatarUserInput) => FetchCustomReturn<ImageDto>;
+    deleteAvatar: () => FetchCustomReturn<void>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {
         this.me = async () => {
@@ -38,6 +41,9 @@ export default class UserService {
                 signal: controller.signal,
                 method: "PUT",
                 body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
             return res;
         };
@@ -48,7 +54,35 @@ export default class UserService {
             const res = await api<true>(locale.path, {
                 signal: controller.signal,
                 method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
+            });
+            return res;
+        };
+        this.changeAvatar = async (body) => {
+            const formData = new FormData();
+            for (const [key, value] of Object.entries(body)) {
+                formData.append(key, value);
+            }
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api<ImageDto>(avatar.path, {
+                signal: controller.signal,
+                method: "POST",
+                body: formData,
+            });
+            return res;
+        };
+        this.deleteAvatar = async () => {
+            if (this.abortController) this.abortController.abort();
+            const controller = new AbortController();
+            this.abortController = controller;
+            const res = await api<void>(avatar.path, {
+                signal: controller.signal,
+                method: "DELETE",
             });
             return res;
         };

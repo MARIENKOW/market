@@ -1,36 +1,43 @@
 "use client";
 
 import { AdminDto } from "@myorg/shared/dto";
-import { createContext, useContext } from "react";
+import {
+    createContext,
+    Dispatch,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 
 type AdminAuthContext = {
     admin: AdminDto | null;
     error: boolean;
+    setAdmin: Dispatch<SetStateAction<AdminDto | null>>;
 };
 
 const AdminAuthContext = createContext<AdminAuthContext>({
     admin: null,
     error: false,
+    setAdmin: () => {},
 });
 
 export default function AdminAuthProvider({
     children,
-    admin,
+    admin: initialAdmin,
     error,
 }: {
     error: boolean;
     admin: AdminDto | null;
     children: React.ReactNode;
 }) {
-    // const t = useTranslations();
-    // useEffect(() => {
-    //     console.log(error);
-    //     if (error) {
-    //         snackbarError(t("api.auth"));
-    //     }
-    // }, [error]);
+    const [admin, setAdmin] = useState<AdminDto | null>(initialAdmin);
+
+    useEffect(() => {
+        setAdmin(initialAdmin);
+    }, [initialAdmin]);
     return (
-        <AdminAuthContext.Provider value={{ admin, error }}>
+        <AdminAuthContext.Provider value={{ admin, setAdmin, error }}>
             {children}
         </AdminAuthContext.Provider>
     );

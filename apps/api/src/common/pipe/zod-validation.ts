@@ -9,7 +9,6 @@ export function zodIssuesToFieldErrors(error: ZodError) {
     const fieldErrors: Record<string, MessageKeyType[]> = {};
 
     for (const issue of error.issues) {
-        console.log(issue.path);
         const field = issue.path.join(".") || "root.server";
 
         if (!fieldErrors[field]) {

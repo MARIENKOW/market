@@ -3,7 +3,9 @@ import {
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
     CHANGE_PASSWORD_OTP_LENGTH,
+    AVATAR_CONFIG,
 } from "../../form/constants";
+import { formatBytes } from "../../utils";
 
 export const ru = {
     form: {
@@ -29,6 +31,10 @@ export const ru = {
             length: `Код должен содержать ${CHANGE_PASSWORD_OTP_LENGTH} цифр`,
             digits: "Только цифры",
             label: "Код подтверждения",
+        },
+        avatar: {
+            tooLarge: `Максимально допустимый размер файла: ${formatBytes(AVATAR_CONFIG.maxFileSizeBytes)}`,
+            unsupportedType: "Данный формат не поддерживается",
         },
         email: {
             max: `максимум ${EMAIL_MAX_LENGTH} символов`,
@@ -294,7 +300,13 @@ export const ru = {
                     "Неверный код. Смена пароля запрещена. Повторите через: {time}",
             },
         },
+        avatar: {
+            change: "Изменить",
+            upload: "Добавить",
+            delete: "Удалить",
+        },
     },
+
     mail: {
         resetPassword: {
             title: "Восстановление пароля",

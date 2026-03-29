@@ -131,6 +131,12 @@ export class AuthAdminService {
         //         ],
         //     });
         // }
+        if (payload.picture && !admin.avatarId) {
+            await this.admin.saveOauthImage({
+                adminId: admin.id,
+                url: payload.picture,
+            });
+        }
 
         return this.session.create({ adminId: admin.id });
     }

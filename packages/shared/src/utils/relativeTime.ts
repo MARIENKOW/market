@@ -6,7 +6,7 @@ import { AvailableLanguage } from "../i18n";
 
 export const DATE_FNS_LOCALES: Record<AvailableLanguage, Locale> = {
     ru,
-    en: enUS,
+    // en: enUS,
 };
 
 export const DEFAULT_LOCALE = enUS;

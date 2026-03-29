@@ -14,7 +14,7 @@ export default async function AuthNavigationAdmin() {
     const { admin, error } = await getAdminAuth();
     const t = await getTranslations();
     if (error) return <SkeletonAuthHeader />;
-    if (!!admin) return <NavigationAdmin admin={admin} />;
+    if (!!admin) return <NavigationAdmin />;
 
     return (
         <Box display={"flex"} gap={1}>

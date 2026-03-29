@@ -79,7 +79,6 @@ export class AuthAdminController {
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
         const { accessToken, refreshToken } = await this.authAdmin.google(body);
-        console.log(accessToken, refreshToken);
         res.cookie("accessTokenAdmin", accessToken, COOKIE_CONFIG);
         res.cookie("refreshTokenAdmin", refreshToken, COOKIE_CONFIG);
         return true;

@@ -32,6 +32,9 @@ export default class AuthAdminService {
             const res = await api<true>(login.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -43,6 +46,9 @@ export default class AuthAdminService {
             const res = await api<true>(google.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -65,6 +71,9 @@ export default class AuthAdminService {
             this.abortController = controller;
             const res = await api<true>(logout.path, {
                 signal: controller.signal,
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 method: "POST",
             });
             return res;

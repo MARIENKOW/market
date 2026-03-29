@@ -31,6 +31,9 @@ export default class ChangePasswordUserService {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
             return res;
         };
@@ -42,6 +45,9 @@ export default class ChangePasswordUserService {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
             return res;
         };
@@ -53,6 +59,9 @@ export default class ChangePasswordUserService {
                 signal: controller.signal,
                 method: "POST",
                 body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
             return res;
         };
@@ -63,6 +72,9 @@ export default class ChangePasswordUserService {
             const res = await api<MailSendSuccess>(resend.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
             });
             return res;
         };

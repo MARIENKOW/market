@@ -19,7 +19,9 @@ export default class ChangePasswordAdminService {
     ) => FetchCustomReturn<MailSendSuccess>;
     cancel: () => FetchCustomReturn<void>;
     resend: () => FetchCustomReturn<MailSendSuccess>;
-    confirm: (body: ChangePasswordCodeAdminDtoOutput) => FetchCustomReturn<void>;
+    confirm: (
+        body: ChangePasswordCodeAdminDtoOutput,
+    ) => FetchCustomReturn<void>;
     status: () => FetchCustomReturn<ChangePasswordStatus>;
     abortController: AbortController | null = null;
     constructor(api: FetchCustom) {
@@ -29,6 +31,9 @@ export default class ChangePasswordAdminService {
             this.abortController = controller;
             const res = await api<MailSendSuccess>(init.path, {
                 signal: controller.signal,
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 method: "POST",
                 body: JSON.stringify(body),
             });
@@ -41,6 +46,9 @@ export default class ChangePasswordAdminService {
             const res = await api<MailSendSuccess>(initWithoutPassword.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -52,6 +60,9 @@ export default class ChangePasswordAdminService {
             const res = await api<void>(confirm.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -62,6 +73,9 @@ export default class ChangePasswordAdminService {
             this.abortController = controller;
             const res = await api<MailSendSuccess>(resend.path, {
                 signal: controller.signal,
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 method: "POST",
             });
             return res;

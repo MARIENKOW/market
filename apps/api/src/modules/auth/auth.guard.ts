@@ -102,8 +102,6 @@ export class AuthGuard implements CanActivate {
         return null;
     }
 
-    // 2. expiresAt — уже обсудили
-    // 3. console.log убрать — уже обсудили
 
     // Проверяем что роль актора входит в разрешённые для этого роута
     private assertRoleAllowed(actor: Actor, allowedRoles: AuthRole[]): void {

@@ -4,9 +4,10 @@ import { PrismaModule } from "@/infrastructure/prisma/prisma.module";
 import { UserController } from "@/modules/user/user.controller";
 import { UserService } from "@/modules/user/user.service";
 import { Module } from "@nestjs/common";
+import { ImageModule } from "@/infrastructure/img/image.module";
 
 @Module({
-    imports: [PrismaModule, SessionUserModule],
+    imports: [PrismaModule, SessionUserModule, ImageModule],
     providers: [UserService, HashService],
     controllers: [UserController],
     exports: [UserService],

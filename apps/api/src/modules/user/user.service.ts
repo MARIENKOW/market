@@ -1,19 +1,82 @@
-import { Prisma, User } from "@/generated/prisma";
+import { ImageEntityType, Prisma, User } from "@/generated/prisma";
 import { SessionUserService } from "@/modules/auth/user/session/session.user.service";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+    Injectable,
+    Logger,
+    NotFoundException,
+    UnauthorizedException,
+} from "@nestjs/common";
+import { ImageDto, UserDto } from "@myorg/shared/dto";
+import { mapUser } from "@/modules/user/user.mapper";
+import { ImageService } from "@/infrastructure/img/image.service";
+import { Multer } from "multer";
 
 @Injectable()
 export class UserService {
     constructor(
         private prisma: PrismaService,
         private sessionUser: SessionUserService,
+        private image: ImageService,
         private hash: HashService,
     ) {}
+    private readonly logger = new Logger(UserService.name);
 
     findById(id: string): Promise<User | null> {
         return this.find({ where: { id } });
+    }
+    async me(user: User): Promise<UserDto> {
+        const userData = await this.prisma.user.findUnique({
+            where: { id: user.id },
+            include: { avatar: true },
+        });
+        if (!userData) throw new NotFoundException();
+        return mapUser(userData);
+    }
+    async changeAvatar({
+        user,
+        file,
+    }: {
+        user: User;
+        file: Express.Multer.File;
+    }): Promise<ImageDto> {
+        // Stage 1: загружаем новый файл
+        const newImage = await this.image.upload(file, ImageEntityType.AVATAR, {
+            mode: 'original',
+        });
+
+        // Stage 2: привязываем к юзеру — если упало, откатываем новый файл
+        try {
+            await this.prisma.user.update({
+                where: { id: user.id },
+                data: { avatarId: newImage.id },
+            });
+        } catch (error) {
+            await this.image.delete(newImage.id);
+            throw error;
+        }
+
+        // Stage 3: удаляем старый — если упало, не страшно
+        // юзер уже привязан к новому, старый станет сиротой
+        if (user.avatarId) {
+            await this.image
+                .delete(user.avatarId)
+                .catch((e) =>
+                    this.logger.warn(
+                        `Failed to delete old avatar: ${user.avatarId}`,
+                        e,
+                    ),
+                );
+        }
+
+        return newImage;
+    }
+    async deleteAvatar(user: User): Promise<void> {
+        if (!user.avatarId) throw new NotFoundException();
+        const image = await this.image.findById(user.avatarId);
+        if (!image) throw new NotFoundException();
+        await this.image.delete(image.id);
     }
     async changeTheme({
         id,
@@ -34,6 +97,40 @@ export class UserService {
     }): Promise<true> {
         await this.prisma.user.update({ where: { id }, data: { locale } });
         return true;
+    }
+    async saveOauthImage({ url, userId }: { url: string; userId: string }) {
+        try {
+            const response = await fetch(url);
+            const buffer = Buffer.from(await response.arrayBuffer());
+
+            const file: Express.Multer.File = {
+                buffer,
+                mimetype: "image/jpeg",
+                originalname: "avatar.jpg",
+                size: buffer.length,
+                // остальные поля multer если нужны
+            } as Express.Multer.File;
+
+            const image = await this.image.upload(
+                file,
+                ImageEntityType.AVATAR,
+                {
+                    mode: "webp",
+                },
+            );
+
+            try {
+                return this.prisma.user.update({
+                    where: { id: userId },
+                    data: { avatarId: image.id },
+                });
+            } catch (error) {
+                await this.image.delete(image.id);
+                throw error;
+            }
+        } catch (error) {
+            this.logger.warn(`Failed to save oauth image`, error);
+        }
     }
     async changePassword({
         password,

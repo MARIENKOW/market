@@ -1,4 +1,4 @@
-import { Prisma, SessionUser, User } from "@/generated/prisma";
+import { SessionUser, User } from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import {
@@ -11,17 +11,8 @@ import * as crypto from "crypto";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { env } from "@/config";
 import { RequestContextService } from "@/common/request-context/request-context.service";
-import {
-    mapSessionUser,
-    mapSessionUserView,
-} from "@/modules/auth/user/session/session.user.mapper";
-import { SessionUserDto, SessionUserViewDto } from "@myorg/shared/dto";
-import { I18nContext, I18nService } from "nestjs-i18n";
-import {
-    AvailableLanguage,
-    defaultLanguage,
-    languages,
-} from "@myorg/shared/i18n";
+import { mapSessionUserView } from "@/modules/auth/user/session/session.user.mapper";
+import { SessionUserViewDto } from "@myorg/shared/dto";
 
 export type AccessTokenUserPayload = { userId: string; sessionId: string };
 export type RefreshTokenUserPayload = { userId: string; sessionId: string };
@@ -34,7 +25,7 @@ export class SessionUserService {
         private requestContext: RequestContextService,
     ) {}
 
-    private ACCESS_TOKEN_EXPIRES = 10;
+    private ACCESS_TOKEN_EXPIRES = 10 * 60 * 30;
     private REFRESH_TOKEN_EXPIRES = 30 * 24 * 60 * 60;
 
     async getMe(

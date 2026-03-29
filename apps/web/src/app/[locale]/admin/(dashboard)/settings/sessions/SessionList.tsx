@@ -12,7 +12,6 @@ interface SessionListProps {
 export const SessionList = async ({ sessions }: SessionListProps) => {
     const t = await getTranslations("components.sessionList");
 
-    console.log(sessions);
     const current = sessions?.find((s) => s.isCurrent);
     const others = sessions?.filter((s) => !s.isCurrent) ?? [];
 

@@ -11,8 +11,8 @@ import {
     RegisterUserDtoOutput,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { AvailableLanguage, MessageStructure } from "@myorg/shared/i18n";
-import { I18nContext, I18nService } from "nestjs-i18n";
+import { MessageStructure } from "@myorg/shared/i18n";
+import { I18nService } from "nestjs-i18n";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 import { OAuth2Client } from "google-auth-library";
@@ -151,6 +151,12 @@ export class AuthUserService {
 
         if (user.status !== "ACTIVE") {
             await this.user.activate(user.id);
+        }
+        if (payload.picture && !user.avatarId) {
+            await this.user.saveOauthImage({
+                userId: user.id,
+                url: payload.picture,
+            });
         }
 
         return this.sessionUser.create({ userId: user.id });

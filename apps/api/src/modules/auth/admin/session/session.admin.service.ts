@@ -13,7 +13,6 @@ import { env } from "@/config";
 import { RequestContextService } from "@/common/request-context/request-context.service";
 import { SessionAdminDto, SessionAdminViewDto } from "@myorg/shared/dto";
 import {
-    mapSessionAdmin,
     mapSessionAdminView,
 } from "@/modules/auth/admin/session/session.admin.mapper";
 

@@ -1,19 +1,117 @@
-import { Prisma, Admin } from "@/generated/prisma";
+import { Prisma, Admin, ImageEntityType } from "@/generated/prisma";
 import { SessionAdminService } from "@/modules/auth/admin/session/session.admin.service";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+    Injectable,
+    Logger,
+    NotFoundException,
+    UnauthorizedException,
+} from "@nestjs/common";
+import { ImageService } from "@/infrastructure/img/image.service";
+import { AdminDto, ImageDto } from "@myorg/shared/dto";
+import { mapAdmin } from "@/modules/admin/admin.mapper";
 
 @Injectable()
 export class AdminService {
     constructor(
         private prisma: PrismaService,
         private session: SessionAdminService,
+        private image: ImageService,
+
         private hash: HashService,
     ) {}
+    private readonly logger = new Logger(AdminService.name);
 
     findById(id: string): Promise<Admin | null> {
         return this.find({ where: { id } });
+    }
+    async me(admin: Admin): Promise<AdminDto> {
+        const adminData = await this.prisma.admin.findUnique({
+            where: { id: admin.id },
+            include: { avatar: true },
+        });
+        if (!adminData) throw new NotFoundException();
+        return mapAdmin(adminData);
+    }
+    async changeAvatar({
+        admin,
+        file,
+    }: {
+        admin: Admin;
+        file: Express.Multer.File;
+    }): Promise<ImageDto> {
+        // Stage 1: загружаем новый файл
+        const newImage = await this.image.upload(file, ImageEntityType.AVATAR, {
+            mode: "original",
+        });
+
+        // Stage 2: привязываем к юзеру — если упало, откатываем новый файл
+        try {
+            await this.prisma.admin.update({
+                where: { id: admin.id },
+                data: { avatarId: newImage.id },
+            });
+        } catch (error) {
+            await this.image.delete(newImage.id);
+            throw error;
+        }
+
+        // Stage 3: удаляем старый — если упало, не страшно
+        // юзер уже привязан к новому, старый станет сиротой
+        if (admin.avatarId) {
+            await this.image
+                .delete(admin.avatarId)
+                .catch((e) =>
+                    this.logger.warn(
+                        `Failed to delete old avatar: ${admin.avatarId}`,
+                        e,
+                    ),
+                );
+        }
+
+        return newImage;
+    }
+    async deleteAvatar(admin: Admin): Promise<void> {
+        if (!admin.avatarId) throw new NotFoundException();
+        const image = await this.image.findById(admin.avatarId);
+        if (!image) throw new NotFoundException();
+        await this.image.delete(image.id);
+    }
+
+    async saveOauthImage({ url, adminId }: { url: string; adminId: string }) {
+        try {
+            const response = await fetch(url);
+            const buffer = Buffer.from(await response.arrayBuffer());
+
+            const file: Express.Multer.File = {
+                buffer,
+                mimetype: "image/jpeg",
+                originalname: "avatar.jpg",
+                size: buffer.length,
+                // остальные поля multer если нужны
+            } as Express.Multer.File;
+
+            const image = await this.image.upload(
+                file,
+                ImageEntityType.AVATAR,
+                {
+                    mode: "webp",
+                },
+            );
+
+            try {
+                return this.prisma.admin.update({
+                    where: { id: adminId },
+                    data: { avatarId: image.id },
+                });
+            } catch (error) {
+                await this.image.delete(image.id);
+                throw error;
+            }
+        } catch (error) {
+            this.logger.warn(`Failed to save oauth image`, error);
+        }
     }
     async changeTheme({
         id,

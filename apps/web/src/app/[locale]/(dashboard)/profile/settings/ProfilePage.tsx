@@ -1,7 +1,7 @@
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
-import { StyledPaper } from "@/components/ui/StyledPaper";
+import UserAvatarForm from "@/components/form/user/UserAvatarForm";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 
@@ -33,27 +33,13 @@ export default async function ProfilePage() {
             <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
                 {t("pages.profile.settings.profile.name")}
             </StyledTypography>
-            <StyledTypography variant="body2" color="text.secondary" mb={4}>
-                Имя, фото, контакты
-            </StyledTypography>
-
-            <StyledPaper
-                variant="outlined"
-                sx={{
-                    p: 3,
-                    borderRadius: 3,
-                    borderStyle: "dashed",
-                    borderColor: "divider",
-                }}
+            <Box
+                display={"flex"}
+                mt={2}
+                justifyContent={{ xs: "center", sm: "flex-start" }}
             >
-                <StyledTypography
-                    color="text.secondary"
-                    textAlign="center"
-                    fontSize={14}
-                >
-                    Контент страницы
-                </StyledTypography>
-            </StyledPaper>
+                <UserAvatarForm />
+            </Box>
         </Box>
     );
 }

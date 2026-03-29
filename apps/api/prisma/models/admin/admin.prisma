@@ -14,6 +14,9 @@ model Admin {
   updatedAt     DateTime  @updatedAt
   passwordChangedAt    DateTime?
 
+  avatarId          String?   @unique 
+  avatar Image? @relation(fields: [avatarId], references: [id], onDelete:SetNull)
+
   sessions      SessionAdmin[]
   changePasswordCode      ChangePasswordCodeAdmin?
   resetPasswordToken      ResetPasswordTokenAdmin?

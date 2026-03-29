@@ -64,29 +64,19 @@ export const ENDPOINT = {
         },
     },
     user: {
-        changePassword: {
-            path: "change-password",
-            status: { path: "status" },
-            confirm: { path: "confirm" },
-            resend: { path: "resend" },
-            init: { path: "init" },
-            initWithoutPassword: { path: "initWithoutPassword" },
-            cancel: {
-                path: "cancel",
-            },
-        },
         path: "user",
         me: {
             path: "me",
         },
+        avatar: {
+            path: "avatar",
+        },
         theme: {
             path: "theme",
         },
         locale: {
             path: "locale",
         },
-    },
-    admin: {
         changePassword: {
             path: "change-password",
             status: { path: "status" },
@@ -98,7 +88,12 @@ export const ENDPOINT = {
                 path: "cancel",
             },
         },
+    },
+    admin: {
         path: "admin",
+        avatar: {
+            path: "avatar",
+        },
         me: {
             path: "me",
         },
@@ -107,6 +102,17 @@ export const ENDPOINT = {
         },
         locale: {
             path: "locale",
+        },
+        changePassword: {
+            path: "change-password",
+            status: { path: "status" },
+            confirm: { path: "confirm" },
+            resend: { path: "resend" },
+            init: { path: "init" },
+            initWithoutPassword: { path: "initWithoutPassword" },
+            cancel: {
+                path: "cancel",
+            },
         },
     },
     resetPasswordToken: {

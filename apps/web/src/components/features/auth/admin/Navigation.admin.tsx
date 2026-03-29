@@ -20,10 +20,12 @@ import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import StarPurple500Icon from "@mui/icons-material/StarPurple500";
+import { useAdminAuth } from "@/components/wrappers/auth/AdminAuthProvider";
 
-export default function NavigationAdmin({ admin }: { admin: AdminDto }) {
+export default function NavigationAdmin() {
     const [open, setOpen] = useState<boolean>(false);
     const t = useTranslations();
+    const { admin } = useAdminAuth();
     const menuRef = useRef(null);
     const handleOpen = () => {
         setOpen(true);
@@ -76,13 +78,13 @@ export default function NavigationAdmin({ admin }: { admin: AdminDto }) {
                                     color="primary"
                                     variant="body2"
                                 >
-                                    {admin.role}
+                                    {admin?.role}
                                 </StyledTypography>
-                                {admin.role === "SUPERADMIN" && (
+                                {admin?.role === "SUPERADMIN" && (
                                     <StarPurple500Icon color="primary" />
                                 )}
                             </Box>
-                            <StyledTypography>{admin.email}</StyledTypography>
+                            <StyledTypography>{admin?.email}</StyledTypography>
                         </Box>
                     </Box>
                 </Box>

@@ -14,7 +14,7 @@ export default async function AuthNavigation() {
     const { user, error } = await getUserAuth();
     const t = await getTranslations();
     if (error) return <SkeletonAuthHeader />;
-    if (!!user) return <UserNavigation user={user} />;
+    if (!!user) return <UserNavigation />;
 
     return (
         <Box display={"flex"} gap={1}>

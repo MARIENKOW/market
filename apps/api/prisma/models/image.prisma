@@ -1,0 +1,20 @@
+// Добавить в schema.prisma
+
+enum ImageEntityType {
+    AVATAR
+}
+
+model Image {
+    id         String          @id @default(uuid())
+    entityType ImageEntityType // определяет папку и уровень доступа
+    filename   String          // UUID.webp / UUID.jpg
+    mimeType   String          // image/webp / image/jpeg
+    width      Int
+    user User? // обратная связь — без неё Prisma не скомпилирует
+    admin Admin? // обратная связь — без неё Prisma не скомпилирует
+    height     Int
+    size       Int             // байты
+    createdAt  DateTime        @default(now())
+
+    @@index([entityType])
+}

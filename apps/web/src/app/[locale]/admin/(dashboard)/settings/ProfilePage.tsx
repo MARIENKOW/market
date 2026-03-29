@@ -1,4 +1,5 @@
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
+import AdminAvatarForm from "@/components/form/admin/AdminAvatarForm";
 import { StyledPaper } from "@/components/ui/StyledPaper";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import { Box } from "@mui/material";
@@ -35,27 +36,13 @@ export default async function ProfilePage() {
             <StyledTypography variant="h5" fontWeight={700} mb={0.5}>
                 {t("pages.admin.settings.profile.name")}
             </StyledTypography>
-            <StyledTypography variant="body2" color="text.secondary" mb={4}>
-                Имя, фото, контакты
-            </StyledTypography>
-
-            <StyledPaper
-                variant="outlined"
-                sx={{
-                    p: 3,
-                    borderRadius: 3,
-                    borderStyle: "dashed",
-                    borderColor: "divider",
-                }}
+            <Box
+                display={"flex"}
+                mt={2}
+                justifyContent={{ xs: "center", sm: "flex-start" }}
             >
-                <StyledTypography
-                    color="text.secondary"
-                    textAlign="center"
-                    fontSize={14}
-                >
-                    Контент страницы
-                </StyledTypography>
-            </StyledPaper>
+                <AdminAvatarForm />
+            </Box>
         </Box>
     );
 }

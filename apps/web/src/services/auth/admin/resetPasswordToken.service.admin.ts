@@ -13,8 +13,10 @@ export default class ResetPasswordTokenServiceAdmin {
             this.abortController = controller;
             const res = await api<true>(check.path, {
                 signal: controller.signal,
-                cache: "no-store",
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(data),
             });
             return res;

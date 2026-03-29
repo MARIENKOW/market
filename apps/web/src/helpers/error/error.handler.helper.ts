@@ -36,6 +36,7 @@ export function errorHandler({
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: FallbackType;
 }) {
+    console.log(error);
     const context = getErrorContext(error);
     const { root } = normalizeError({ error, t });
 
@@ -88,6 +89,50 @@ export function errorFormHandlerWithAlert<T extends FieldValues>({
         setError("root.server", {
             type: "server",
             message: root[0].message,
+        });
+    }
+
+    if (fields) {
+        const newFields = fields as FieldValues;
+        for (const key in newFields) {
+            if (key in formValues) {
+                setError(key as Path<T>, {
+                    type: "server",
+                    message: fields[key]?.[0],
+                });
+            }
+        }
+    }
+}
+export function errorFormHandler<T extends FieldValues>({
+    error,
+    setError,
+    formValues,
+    fallback,
+    t,
+}: {
+    error: unknown;
+    setError: UseFormSetError<T>;
+    formValues: T;
+    fallback?: FallbackFormType;
+    t: (key: MessageKeyType, options?: Record<string, any>) => string;
+}) {
+    console.log(error);
+    const context = getErrorContext(error);
+    const { root, fields } = normalizeError<T>({ error, t });
+
+    const options = fallback?.[context];
+
+    if (options?.callback) options?.callback();
+
+    if (root && root.length !== 0) {
+        // setError("root.server", {
+        //     type: "server",
+        //     message: root[0].message,
+        // });
+        root.forEach((err) => {
+            const snackbar = SnackbarByErrorType[err.type];
+            snackbar(err.message);
         });
     }
 

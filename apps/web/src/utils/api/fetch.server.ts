@@ -7,9 +7,7 @@ import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/utils/api";
 
 const BASE_URL = `${serverEnv.API_ORIGIN_SERVER}/${clientEnv.NEXT_PUBLIC_API_GLOBAL_PREFIX}`;
 
-const DEFAULT_HEADERS: FetchBaseOptions["headers"] = {
-    "Content-Type": "application/json",
-};
+const DEFAULT_HEADERS: FetchBaseOptions["headers"] = {};
 
 export const $apiServer = async <T>(
     path: string,

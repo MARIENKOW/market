@@ -1,41 +1,46 @@
 "use client";
 
 import { UserDto } from "@myorg/shared/dto";
-import { createContext, useContext } from "react";
+import {
+    createContext,
+    Dispatch,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 
 type UserAuthContext = {
     user: UserDto | null;
     error: boolean;
+    setUser: Dispatch<SetStateAction<UserDto | null>>;
 };
 
 const UserAuthContext = createContext<UserAuthContext>({
     user: null,
     error: false,
+    setUser: () => {},
 });
 
 export default function UserAuthProvider({
     children,
-    user,
+    user: initialUser,
     error,
 }: {
     error: boolean;
     user: UserDto | null;
     children: React.ReactNode;
 }) {
-    // const t = useTranslations();
-    // useEffect(() => {
-    //     console.log(error);
-    //     if (error) {
-    //         snackbarError(t("api.auth"));
-    //     }
-    // }, [error]);
+    const [user, setUser] = useState<UserDto | null>(initialUser);
+
+    useEffect(() => {
+        setUser(initialUser);
+    }, [initialUser]);
     return (
-        <UserAuthContext.Provider value={{ user, error }}>
+        <UserAuthContext.Provider value={{ user, error, setUser }}>
             {children}
         </UserAuthContext.Provider>
     );
 }
 
-export const useUserAuth = () => {
-    return useContext(UserAuthContext);
-};
+export const useUserAuth = () => useContext(UserAuthContext);

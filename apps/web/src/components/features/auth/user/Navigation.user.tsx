@@ -19,10 +19,12 @@ import { StyledDivider } from "@/components/ui/StyledDivider";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypograpty";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import { useUserAuth } from "@/components/wrappers/auth/UserAuthProvider";
 
-export default function NavigationUser({ user }: { user: UserDto }) {
+export default function NavigationUser() {
     const [open, setOpen] = useState<boolean>(false);
     const t = useTranslations();
+    const { user } = useUserAuth();
     const menuRef = useRef(null);
     const handleOpen = () => {
         setOpen(true);
@@ -41,7 +43,9 @@ export default function NavigationUser({ user }: { user: UserDto }) {
                     sx={{ overflow: "hidden", borderRadius: 999 }}
                     onClick={handleOpen}
                 >
-                    <StyledAvatar></StyledAvatar>
+                    <StyledAvatar
+                        src={user?.avatar?.url ?? undefined}
+                    ></StyledAvatar>
                 </StyledIconButton>
             </StyledTooltip>
             <StyledMenu
@@ -62,7 +66,7 @@ export default function NavigationUser({ user }: { user: UserDto }) {
                     <Box alignItems={"center"} display={"flex"} gap={2}>
                         <Box>
                             <StyledTypography p={1}>
-                                {user.email}
+                                {user?.email}
                             </StyledTypography>
                         </Box>
                     </Box>

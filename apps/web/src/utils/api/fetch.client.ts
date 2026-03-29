@@ -5,9 +5,7 @@ const BASE_URL = `${clientEnv.NEXT_PUBLIC_API_ORIGIN_CLIENT}/${clientEnv.NEXT_PU
 
 const DEFAULT_OPTIONS: FetchBaseOptions = {
     credentials: "include",
-    headers: {
-        "Content-Type": "application/json",
-    },
+
 };
 
 export const $apiClient = <T>(

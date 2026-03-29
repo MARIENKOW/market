@@ -35,6 +35,9 @@ export default class AuthUserService {
             const res = await api<true>(login.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -46,6 +49,9 @@ export default class AuthUserService {
             const res = await api<true>(google.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -67,8 +73,10 @@ export default class AuthUserService {
             this.abortController = controller;
             const res = await api<true>(activate.path, {
                 signal: controller.signal,
-                cache: "no-store",
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(data),
             });
             return res;
@@ -79,8 +87,10 @@ export default class AuthUserService {
             this.abortController = controller;
             const res = await api<string>(activate.send.path, {
                 signal: controller.signal,
-                cache: "no-store",
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(data),
             });
             return res;
@@ -91,6 +101,9 @@ export default class AuthUserService {
             this.abortController = controller;
             const res = await api<true>(logout.path, {
                 signal: controller.signal,
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 method: "POST",
             });
             return res;
@@ -102,6 +115,9 @@ export default class AuthUserService {
             const res = await api<string>(register.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -113,6 +129,9 @@ export default class AuthUserService {
             const res = await api<string>(forgotPassword.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
@@ -124,6 +143,9 @@ export default class AuthUserService {
             const res = await api<true>(forgotPassword.path + "/" + token, {
                 signal: controller.signal,
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify(body),
             });
             return res;
