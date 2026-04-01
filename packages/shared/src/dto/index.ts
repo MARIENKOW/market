@@ -6,3 +6,4 @@ export * from "./session/user";
 export * from "./session/admin";
 export * from "./ChangePasswordDto";
 export * from "./ImageDto";
+export * from "./VideoDto";

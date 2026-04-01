@@ -1,4 +1,4 @@
-import { ImageEntityType, Prisma, User } from "@/generated/prisma";
+import { FileEntityType, Prisma, User } from "@/generated/prisma";
 import { SessionUserService } from "@/modules/auth/user/session/session.user.service";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
@@ -42,8 +42,8 @@ export class UserService {
         file: Express.Multer.File;
     }): Promise<ImageDto> {
         // Stage 1: загружаем новый файл
-        const newImage = await this.image.upload(file, ImageEntityType.AVATAR, {
-            mode: 'original',
+        const newImage = await this.image.upload(file, FileEntityType.AVATAR, {
+            mode: "original",
         });
 
         // Stage 2: привязываем к юзеру — если упало, откатываем новый файл
@@ -111,13 +111,9 @@ export class UserService {
                 // остальные поля multer если нужны
             } as Express.Multer.File;
 
-            const image = await this.image.upload(
-                file,
-                ImageEntityType.AVATAR,
-                {
-                    mode: "webp",
-                },
-            );
+            const image = await this.image.upload(file, FileEntityType.AVATAR, {
+                mode: "webp",
+            });
 
             try {
                 return this.prisma.user.update({

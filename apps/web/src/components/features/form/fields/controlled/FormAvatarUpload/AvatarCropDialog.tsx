@@ -51,7 +51,7 @@ export default function AvatarCropDialog({
     }, []);
 
     const handleConfirm = async () => {
-        if (!src || !croppedAreaPixels) return;
+        if (!src || !croppedAreaPixels) return errorHandler({ error:{}, t });
 
         setIsProcessing(true);
         try {

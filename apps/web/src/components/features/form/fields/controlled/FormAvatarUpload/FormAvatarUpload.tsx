@@ -181,7 +181,6 @@ export default function FormAvatarUpload<T extends FieldValues>({
                             {/* Аватар — клик всегда открывает файловый диалог */}
                             <StyledAvatar
                                 src={urlPreview}
-                                alt="avatar"
                                 onClick={handleAvatarClick}
                                 sx={{
                                     width: 96,

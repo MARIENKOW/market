@@ -50,6 +50,8 @@ export const serverEnvSchema = z
         // Google OAuth
         GOOGLE_CLIENT_ID: z.string().min(1),
         GOOGLE_CLIENT_SECRET: z.string().min(1),
+        
+        FILE_SECRET: z.string().min(1),
 
         SUPERADMIN_EMAIL: Email.or(z.literal("")),
         SUPERADMIN_PASSWORD: Password.or(z.literal("")),

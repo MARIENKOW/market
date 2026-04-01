@@ -1,5 +1,5 @@
 import { mapImage } from "@/infrastructure/img/image.mapper";
-import { UserWithAvatar } from "@/modules/user/types";
+import { UserWithAvatar } from "@/modules/user/user.types";
 import { UserDto } from "@myorg/shared/dto";
 
 export const mapUser = (user: UserWithAvatar): UserDto => ({

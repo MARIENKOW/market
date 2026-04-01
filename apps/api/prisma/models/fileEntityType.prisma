@@ -1,0 +1,7 @@
+enum FileEntityType {
+    BLOG_UPLOAD_VIDEO
+    BLOG_UPLOAD_IMAGE
+    BLOG_IN_VIDEO
+    BLOG_IN_IMAGE
+    AVATAR
+}

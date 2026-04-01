@@ -1,10 +1,3 @@
-// ── Конфиг обработки — передаётся на каждый upload-вызов ─────────────────────
-
-
-export type ImageEntityConfig = {
-    folder: string;
-};
-
 export type ImageProcessingConfig =
     | { mode: "original" } // сохранить как есть
     | { mode: "webp"; quality?: number } // конвертировать в WebP

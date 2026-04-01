@@ -1,4 +1,4 @@
-import { Prisma, Admin, ImageEntityType } from "@/generated/prisma";
+import { Prisma, Admin, FileEntityType } from "@/generated/prisma";
 import { SessionAdminService } from "@/modules/auth/admin/session/session.admin.service";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
@@ -42,7 +42,7 @@ export class AdminService {
         file: Express.Multer.File;
     }): Promise<ImageDto> {
         // Stage 1: загружаем новый файл
-        const newImage = await this.image.upload(file, ImageEntityType.AVATAR, {
+        const newImage = await this.image.upload(file, FileEntityType.AVATAR, {
             mode: "original",
         });
 
@@ -92,13 +92,9 @@ export class AdminService {
                 // остальные поля multer если нужны
             } as Express.Multer.File;
 
-            const image = await this.image.upload(
-                file,
-                ImageEntityType.AVATAR,
-                {
-                    mode: "webp",
-                },
-            );
+            const image = await this.image.upload(file, FileEntityType.AVATAR, {
+                mode: "webp",
+            });
 
             try {
                 return this.prisma.admin.update({

@@ -1,14 +1,16 @@
 import { env } from "@/config";
 import { Image } from "@/generated/prisma";
-import { IMAGE_ENTITY_CONFIG, UPLOADS_IMAGE_ROOT } from "@/infrastructure/img/image.config";
+import { FILE_CONFIG, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
+import { signPath } from "@/infrastructure/file/file-sign.utils";
 import { ImageDto } from "@myorg/shared/dto";
 
 export const mapImage = (image: Image): ImageDto => {
-    const config = IMAGE_ENTITY_CONFIG[image.entityType];
+    const config = FILE_CONFIG[image.entityType];
 
     const base = env.NEXT_PUBLIC_API_ORIGIN_CLIENT.replace(/\/$/, "");
     const prefix = env.NEXT_PUBLIC_API_GLOBAL_PREFIX.replace(/^\//, "");
-    const url = `${base}/${prefix}/${UPLOADS_IMAGE_ROOT}/${config.folder}/${image.filename}`;
+    const relative = `${config.folder}/${image.filename}`;
+    const url = `${base}/${prefix}/${UPLOADS_ROOT}/${config.private ? signPath(relative) : relative}`;
 
     return {
         id: image.id,

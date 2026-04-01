@@ -115,6 +115,7 @@ export const ENDPOINT = {
             },
         },
     },
+    blog: { path: "blog", video: { path: "video" } },
     resetPasswordToken: {
         path: "reset-password-token",
         user: {

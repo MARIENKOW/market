@@ -12,6 +12,9 @@ import { AuthAdminModule } from "@/modules/auth/admin/auth.admin.module";
 import { ChangePasswordUserModule } from "@/modules/user/ChangePasswordCode/changePassword.user.module";
 import { ChangePasswordAdminModule } from "@/modules/admin/ChangePasswordCode/changePassword.admin.module";
 import { ImageModule } from "@/infrastructure/img/image.module";
+import { VideoModule } from "@/infrastructure/video/video.module";
+import { BlogModule } from "@/modules/blog/blog.module";
+import { FileModule } from "@/infrastructure/file/file.module";
 @Module({
     imports: [
         CoreModule,
@@ -20,7 +23,8 @@ import { ImageModule } from "@/infrastructure/img/image.module";
         ChangePasswordUserModule,
         ChangePasswordAdminModule,
         RequestContextModule,
-        ImageModule,
+        FileModule,
+        BlogModule,
         I18nModule.forRoot({
             loaderOptions: {},
             fallbackLanguage: defaultLanguage,

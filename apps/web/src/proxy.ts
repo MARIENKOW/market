@@ -82,7 +82,8 @@ export default async function Mid(req: NextRequest) {
                             cookieRes,
                         );
                     });
-                } catch (error) {
+                } catch (error) { 
+                    console.log('error :',error);
                     // if (isEqualPath(PRIVATE_USER_PATH, pathname)) {
                     //     const loginUrl = new URL(
                     //         locale

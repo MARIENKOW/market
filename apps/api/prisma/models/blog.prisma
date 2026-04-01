@@ -1,0 +1,23 @@
+model Blog {
+    id          String      @id @default(uuid())
+    title       String
+    subtitle    String?
+    body        String      @db.Text
+    date        DateTime    @db.Date
+    time        DateTime    @db.Time(0)
+    isMain      Boolean     @default(false) 
+    isImportant Boolean     @default(false) 
+    isShort     Boolean     @default(false) 
+    createdAt   DateTime    @default(now()) 
+    updatedAt   DateTime    @updatedAt      
+
+    imageId     String?     @unique
+    image       Image?      @relation(fields: [imageId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+    // videos      BlogVideo[]
+
+    @@index([isMain])
+    @@index([isImportant])
+    @@index([date])
+    @@map("blogs")
+}

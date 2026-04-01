@@ -3,18 +3,14 @@ import sharp from "sharp";
 import * as fs from "fs/promises";
 import * as path from "path";
 
-import {
-    IMAGE_ENTITY_CONFIG,
-    MIME_TO_EXT,
-    UPLOADS_IMAGE_ROOT,
-} from "./image.config";
-import { ImageProcessingConfig } from "./image.types";
-import { Image, ImageEntityType } from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { randomUUID as uuidv4 } from "crypto";
-import { env } from "@/config";
 import { ImageDto } from "@myorg/shared/dto";
 import { mapImage } from "@/infrastructure/img/image.mapper";
+import { FileEntityType } from "@/generated/prisma";
+import { ImageProcessingConfig } from "@/infrastructure/img/image.types";
+import { MIME_TO_EXT } from "@/infrastructure/img/image.config";
+import { FILE_CONFIG, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
 
 interface ProcessedFile {
     id: string;
@@ -35,7 +31,7 @@ export class ImageService {
 
     async upload(
         file: Express.Multer.File,
-        entityType: ImageEntityType,
+        entityType: FileEntityType,
         options: ImageProcessingConfig,
     ): Promise<ImageDto> {
         const folder = this.resolveFolder(entityType);
@@ -60,7 +56,7 @@ export class ImageService {
 
     async uploadMany(
         files: Express.Multer.File[],
-        entityType: ImageEntityType,
+        entityType: FileEntityType,
         options: ImageProcessingConfig,
     ): Promise<ImageDto[]> {
         const folder = this.resolveFolder(entityType);
@@ -226,8 +222,8 @@ export class ImageService {
         );
     }
 
-    private resolveFolder(entityType: ImageEntityType): string {
-        const config = IMAGE_ENTITY_CONFIG[entityType];
-        return path.resolve(process.cwd(), UPLOADS_IMAGE_ROOT, config.folder);
+    private resolveFolder(entityType: FileEntityType): string {
+        const config = FILE_CONFIG[entityType];
+        return path.resolve(process.cwd(), UPLOADS_ROOT, config.folder);
     }
 }

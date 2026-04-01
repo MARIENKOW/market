@@ -25,7 +25,7 @@ export class SessionUserService {
         private requestContext: RequestContextService,
     ) {}
 
-    private ACCESS_TOKEN_EXPIRES = 10 * 60 * 30;
+    private ACCESS_TOKEN_EXPIRES = 10;
     private REFRESH_TOKEN_EXPIRES = 30 * 24 * 60 * 60;
 
     async getMe(
@@ -98,7 +98,6 @@ export class SessionUserService {
         } catch (error) {
             throw new UnauthorizedException();
         }
-
         const sessionData = await this.findById(payload.sessionId);
         if (!sessionData) throw new UnauthorizedException();
 
