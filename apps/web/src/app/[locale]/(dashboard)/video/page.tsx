@@ -1,136 +1,73 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-
 import { Box, Stack, Divider, Grid } from "@mui/material";
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
-import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
 import { VideoDto } from "@myorg/shared/dto";
-import { errorHandler } from "@/helpers/error/error.handler.helper";
-import { useTranslations } from "next-intl";
 import { VideoControll } from "@/app/[locale]/(dashboard)/video/VideoControll";
-import {
-    UploadDrawer,
-    UploadFn,
-    UploadTriggerButton,
-    useVideoUpload,
-} from "@/app/[locale]/(dashboard)/video/upload1/upload-ts";
-import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
-import { snackbarError } from "@/utils/snackbar/snackbar.error";
+import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
+import EmptyElement from "@/components/feedback/EmptyElement";
+import VideoUploaderBlog from "@/app/[locale]/(dashboard)/video/VideoUploaderBlog";
+import { $apiAxiosServer } from "@/utils/api/axios.server";
+import { StyledDivider } from "@/components/ui/StyledDivider";
+import DeleteAllVideoBlog from "@/app/[locale]/(dashboard)/video/DeleteAllVideoBlog";
 
-const { upload } = new BlogVideoService($apiUserAxiosClient);
-
-const uploadVideoFn: UploadFn<VideoDto> = async (
-    file,
-    { signal, onProgress },
-) => {
-    const { data } = await upload(
-        { video: file },
-        {
-            headers: { "Content-Type": "multipart/form-data" },
-            signal,
-            onUploadProgress: (e) => {
-                onProgress({ loaded: e.loaded, total: e.total ?? 0 });
-            },
-        },
-    );
-
-    return data;
-};
-
-const { getAll } = new BlogVideoService($apiUserAxiosClient);
-export default function Page() {
-    const [data, setData] = useState<VideoDto[]>([]);
-    const t = useTranslations();
-
-    useEffect(() => {
-        async function getVideos() {
-            try {
-                const { data } = await getAll({ page: 1 });
-                console.log(data);
-                setData(data);
-            } catch (error) {
-                errorHandler({ error, t });
-            }
-        }
-        getVideos();
-    }, []);
-
-    const [drawerOpen, setDrawerOpen] = useState(false);
-
-    const {
-        uploads,
-        processFiles,
-        removeUpload,
-        clearFinished,
-        cancelUpload,
-        cancelAll,
-    } = useVideoUpload<VideoDto>({
-        uploadFn: uploadVideoFn,
-
-        // onSuccess — что делать после успешной загрузки
-        onSuccess: (result, item) => {
-            snackbarSuccess(`${item.file.name} загружено`);
-        },
-
-        onError: (error, item) => {
-            errorHandler({ error, t });
-        },
-    });
-
+const { getAll } = new BlogVideoService($apiAxiosServer);
+export default async function Page() {
+    let data: VideoDto[] = [];
+    let error: unknown;
+    try {
+        const body = await getAll({ page: 1 });
+        data = body.data;
+    } catch (e) {
+        error = e;
+    }
     return (
-        <>
+        <Box
+            display="flex"
+            flexDirection="column"
+            flex={1}
+            height="100%"
+            gap={2}
+            mt={2}
+        >
+            {/* Top bar */}
+
             <Box
-                display="flex"
-                flexDirection="column"
-                flex={1}
-                height="100%"
-                gap={2}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                gap={1}
+                flexWrap={"wrap"}
             >
-                {/* Top bar */}
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    flexShrink={0}
-                >
-                    <Stack direction="row" gap={1} alignItems="center">
-                        <UploadTriggerButton
-                            uploads={uploads}
-                            onClick={() => setDrawerOpen(true)}
-                        />
-                    </Stack>
-                </Stack>
-
-                <Divider flexItem />
-
-                {data.length > 0 && (
-                    <Box display="flex" flexDirection="column" flex={1}>
-                        <Grid
-                            container
-                            spacing={1.5}
-                            columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
-                        >
-                            {data.map((e) => (
-                                <Grid size={1} key={e.id}>
-                                    <VideoControll video={e} />
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Box>
-                )}
+                <VideoUploaderBlog />
+                {data.length > 0 ? <DeleteAllVideoBlog /> : ""}
             </Box>
+            <StyledDivider />
+            <VideoList data={data} error={error} />
+        </Box>
+    );
+}
 
-            <UploadDrawer
-                open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-                uploads={uploads}
-                onFiles={processFiles}
-                onRemove={removeUpload}
-                onCancel={cancelUpload}
-                onCancelAll={cancelAll}
-                onClearFinished={clearFinished}
-            />
-        </>
+async function VideoList({
+    data,
+    error,
+}: {
+    data: VideoDto[];
+    error: unknown;
+}) {
+    if (error) return <ErrorHandlerElement error={error} />;
+    if (data.length == 0) return <EmptyElement />;
+    return (
+        <Box display="flex" flexDirection="column" flex={1}>
+            <Grid
+                container
+                spacing={1.5}
+                columns={{ xs: 1, sm: 2, md: 3, lg: 4 }}
+            >
+                {data.map((e) => (
+                    <Grid size={1} key={e.id}>
+                        <VideoControll video={e} />
+                    </Grid>
+                ))}
+            </Grid>
+        </Box>
     );
 }

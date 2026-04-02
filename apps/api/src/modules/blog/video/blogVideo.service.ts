@@ -1,6 +1,6 @@
 import { FileEntityType } from "@/generated/prisma";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { VideoDto } from "@myorg/shared/dto";
 import { VideoService } from "@/infrastructure/file/video/video.service";
 import { mapVideo } from "@/infrastructure/file/video/video.mapper";
@@ -25,5 +25,20 @@ export class BlogVideoService {
             },
         });
         return videos.map(mapVideo);
+    }
+    async delete(id: string): Promise<void> {
+        const video = await this.prisma.video.findFirst({
+            where: { id, entityType: FileEntityType.BLOG_UPLOAD_VIDEO },
+        });
+        if (!video) throw new NotFoundException();
+        await this.video.delete(video.id);
+    }
+    async deleteAll(): Promise<void> {
+        const videos = await this.prisma.video.findMany({
+            where: { entityType: FileEntityType.BLOG_UPLOAD_VIDEO },
+        });
+        for (const video of videos) {
+            await this.video.delete(video.id);
+        }
     }
 }

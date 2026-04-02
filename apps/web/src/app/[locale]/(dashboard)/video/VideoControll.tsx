@@ -1,13 +1,25 @@
+"use client";
+
 import { StyledButton } from "@/components/ui/StyledButton";
+import { errorHandler } from "@/helpers/error/error.handler.helper";
+import { useConfirm } from "@/hooks/useConfirm";
+import { useRouter } from "@/i18n/navigation";
+import BlogVideoService from "@/services/blog/video/blogVideo.service";
+import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Card, CardHeader } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { VideoDto } from "@myorg/shared/dto";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-// const video = new VideoService();
+const videoS = new BlogVideoService($apiUserAxiosClient);
 
 export const VideoControll = ({ video }: { video: VideoDto }) => {
     const [loadingDelete, setLoadingDelete] = useState(false);
+    const { confirm, confirmDialog } = useConfirm();
+    const t = useTranslations();
+    const router = useRouter();
 
     // const handleAdd = () => {
     //     setVideos_id((prevArr) => [...prevArr, e.id]);
@@ -23,27 +35,23 @@ export const VideoControll = ({ video }: { video: VideoDto }) => {
     //     handleClose();
     // };
 
-    // const handleDelete = async () => {
-    //     try {
-    //         if (!confirm("Удалить видео?")) return;
-    //         setLoadingDelete(true);
-    //         await video.delete(e.id);
-    //         await refetch();
-    //         enqueueSnackbar("Видео удалено", {
-    //             variant: "success",
-    //         });
-    //     } catch (e) {
-    //         if (e?.response?.status === 403)
-    //             return enqueueSnackbar("Видео используется в другом блоге", {
-    //                 variant: "error",
-    //             });
-    //         enqueueSnackbar("Упс! что-то пошло не так", { variant: "error" });
-    //     } finally {
-    //         setLoadingDelete(false);
-    //     }
-    // };
+    const handleDelete = async () => {
+        try {
+            const isConfirm = await confirm("Удалить видео?");
+            if (!isConfirm) return;
+            setLoadingDelete(true);
+            await videoS.delete(video.id);
+            router.refresh();
+            snackbarSuccess("Видео удалено");
+        } catch (error) {
+            errorHandler({ error, t });
+        } finally {
+            setLoadingDelete(false);
+        }
+    };
     return (
         <Card>
+            {confirmDialog}
             <CardHeader
                 sx={{
                     bgcolor: grey[900],
@@ -63,7 +71,7 @@ export const VideoControll = ({ video }: { video: VideoDto }) => {
                         loading={loadingDelete}
                         size="small"
                         color="error"
-                        // onClick={handleDelete}
+                        onClick={handleDelete}
                     >
                         Удалить
                     </StyledButton>

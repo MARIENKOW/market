@@ -3,7 +3,9 @@ import { VideoDto } from "@myorg/shared/dto";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     Controller,
+    Delete,
     Get,
+    Param,
     Post,
     UploadedFile,
     UseInterceptors,
@@ -41,8 +43,18 @@ export class BlogVideoController {
         return this.blogVideo.upload(file);
     }
     @Get()
-    @Auth('USER')
-    async getAll():Promise<VideoDto[]>{
-        return this.blogVideo.getAll()
-    }   
+    @Auth("USER")
+    async getAll(): Promise<VideoDto[]> {
+        return this.blogVideo.getAll();
+    }
+    @Delete()
+    @Auth("USER")
+    async deleteAll(): Promise<void> {
+        return this.blogVideo.deleteAll();
+    }
+    @Delete(":id")
+    @Auth("USER")
+    async delete(@Param("id") id: string): Promise<void> {
+        return this.blogVideo.delete(id);
+    }
 }

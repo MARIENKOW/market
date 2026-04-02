@@ -13,11 +13,16 @@ export default class BlogVideoService {
         { video }: { video: File },
         options: AxiosRequestConfig,
     ) => Promise<AxiosResponse<VideoDto>>;
+    delete: (id: string) => Promise<AxiosResponse<void>>;
     getAll: ({ page }: { page: number }) => Promise<AxiosResponse<VideoDto[]>>;
+    deleteAll: () => Promise<AxiosResponse<void>>;
     constructor(api: AxiosInstance) {
         this.upload = async (body, options) => {
             const res = await api.post<VideoDto>(path, body, options);
             return res;
+        };
+        this.delete = async (id) => {
+            return await api.delete<void>(path + "/" + id);
         };
         this.getAll = async (body) => {
             const search = new URLSearchParams();
@@ -32,6 +37,9 @@ export default class BlogVideoService {
             const newPath = query ? `${path}?${query}` : path;
             const res = await api.get<VideoDto[]>(newPath);
             return res;
+        };
+        this.deleteAll = async () => {
+            return await api.delete<void>(path);
         };
     }
 }
