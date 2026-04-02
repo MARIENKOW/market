@@ -5,8 +5,8 @@ import { env } from "@/config";
 
 import { FileController } from "@/infrastructure/file/file.controller";
 import { FILE_PUBLIC, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
-import { ImageModule } from "@/infrastructure/img/image.module";
-import { VideoModule } from "@/infrastructure/video/video.module";
+import { ImageModule } from "@/infrastructure/file/img/image.module";
+import { VideoModule } from "@/infrastructure/file/video/video.module";
 import { FileSignService } from "@/infrastructure/file/file-sign.service";
 
 // Генерируем ServeStaticModule.forRoot() для каждой публичной папки

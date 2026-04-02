@@ -13,11 +13,10 @@ import * as ffprobeInstaller from "@ffprobe-installer/ffprobe";
 import { VIDEO_MIME_TO_EXT, VIDEO_TRANSCODE_TIMEOUT_MS } from "./video.config";
 import { VideoProcessingConfig } from "./video.types";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
-import { ImageService } from "@/infrastructure/img/image.service";
+import { ImageService } from "@/infrastructure/file/img/image.service";
 import { randomUUID as uuidv4 } from "crypto";
 import { ImageDto, VideoDto } from "@myorg/shared/dto";
-import { mapVideo } from "@/infrastructure/video/video.mapper";
-import { mapImage } from "@/infrastructure/img/image.mapper";
+import { mapVideo } from "@/infrastructure/file/video/video.mapper";
 import { FileEntityType } from "@/generated/prisma";
 import { FILE_CONFIG, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
 

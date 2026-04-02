@@ -4,7 +4,7 @@ import { HashService } from "@/infrastructure/hash/hash.service";
 import { PrismaModule } from "@/infrastructure/prisma/prisma.module";
 import { AdminController } from "@/modules/admin/admin.controller";
 import { Module } from "@nestjs/common";
-import { ImageModule } from "@/infrastructure/img/image.module";
+import { ImageModule } from "@/infrastructure/file/img/image.module";
 
 @Module({
     imports: [PrismaModule, SessionAdminModule, ImageModule],

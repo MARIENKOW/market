@@ -8,7 +8,7 @@ import {
     NotFoundException,
     UnauthorizedException,
 } from "@nestjs/common";
-import { ImageService } from "@/infrastructure/img/image.service";
+import { ImageService } from "@/infrastructure/file/img/image.service";
 import { AdminDto, ImageDto } from "@myorg/shared/dto";
 import { mapAdmin } from "@/modules/admin/admin.mapper";
 

@@ -1,4 +1,4 @@
-import { mapImage } from "@/infrastructure/img/image.mapper";
+import { mapImage } from "@/infrastructure/file/img/image.mapper";
 import { UserWithAvatar } from "@/modules/user/user.types";
 import { UserDto } from "@myorg/shared/dto";
 

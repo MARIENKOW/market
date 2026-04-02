@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { VideoService } from "./video.service";
-import { ImageModule } from "@/infrastructure/img/image.module";
+import { ImageModule } from "@/infrastructure/file/img/image.module";
 
 @Module({
     imports: [

@@ -1,8 +1,8 @@
 import { env } from "@/config";
 import { FILE_CONFIG, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
 import { signPath } from "@/infrastructure/file/file-sign.utils";
-import { mapImage } from "@/infrastructure/img/image.mapper";
-import { VideoWithImage } from "@/infrastructure/video/video.types";
+import { mapImage } from "@/infrastructure/file/img/image.mapper";
+import { VideoWithImage } from "@/infrastructure/file/video/video.types";
 import { VideoDto } from "@myorg/shared/dto";
 
 export const mapVideo = (video: VideoWithImage): VideoDto => {

@@ -6,10 +6,10 @@ import * as path from "path";
 import { PrismaService } from "@/infrastructure/prisma/prisma.service";
 import { randomUUID as uuidv4 } from "crypto";
 import { ImageDto } from "@myorg/shared/dto";
-import { mapImage } from "@/infrastructure/img/image.mapper";
+import { mapImage } from "@/infrastructure/file/img/image.mapper";
 import { FileEntityType } from "@/generated/prisma";
-import { ImageProcessingConfig } from "@/infrastructure/img/image.types";
-import { MIME_TO_EXT } from "@/infrastructure/img/image.config";
+import { ImageProcessingConfig } from "@/infrastructure/file/img/image.types";
+import { MIME_TO_EXT } from "@/infrastructure/file/img/image.config";
 import { FILE_CONFIG, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
 
 interface ProcessedFile {

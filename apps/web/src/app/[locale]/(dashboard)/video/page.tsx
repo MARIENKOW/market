@@ -71,13 +71,10 @@ export default function Page() {
         // onSuccess — что делать после успешной загрузки
         onSuccess: (result, item) => {
             snackbarSuccess(`${item.file.name} загружено`);
-            // queryClient.invalidateQueries({ queryKey: ["videos"] });
-            // result — это VideoDto, можно добавить в стейт формы и т.д.
-            console.log("uploaded:", result.id);
         },
 
-        onError: (_err, item) => {
-            snackbarError(`Ошибка: ${item.file.name}`);
+        onError: (error, item) => {
+            errorHandler({ error, t });
         },
     });
 

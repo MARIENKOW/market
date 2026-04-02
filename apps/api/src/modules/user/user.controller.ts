@@ -19,7 +19,7 @@ import { Request } from "express";
 import { isUserActor, UserActor } from "@/modules/auth/auth.type";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
-import { AvatarValidationPipe } from "@/infrastructure/img/pipes/avatar.pipe";
+import { AvatarValidationPipe } from "@/infrastructure/file/img/pipes/avatar.pipe";
 
 const { me, theme, locale, avatar } = ENDPOINT.user;
 const { path } = FULL_PATH_ENDPOINT.user;

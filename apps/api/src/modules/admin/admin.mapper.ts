@@ -1,5 +1,5 @@
 import { Admin } from "@/generated/prisma";
-import { mapImage } from "@/infrastructure/img/image.mapper";
+import { mapImage } from "@/infrastructure/file/img/image.mapper";
 import { AdminWithAvatar } from "@/modules/admin/types";
 import { AdminDto } from "@myorg/shared/dto";
 

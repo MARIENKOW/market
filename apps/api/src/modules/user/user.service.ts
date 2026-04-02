@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { ImageDto, UserDto } from "@myorg/shared/dto";
 import { mapUser } from "@/modules/user/user.mapper";
-import { ImageService } from "@/infrastructure/img/image.service";
+import { ImageService } from "@/infrastructure/file/img/image.service";
 import { Multer } from "multer";
 
 @Injectable()
