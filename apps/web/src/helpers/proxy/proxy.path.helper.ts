@@ -2,7 +2,7 @@ import { AvailableLanguage, languages } from "@myorg/shared/i18n";
 
 export function isEqualPath(PRIVATE_PATHS: string[], pathname: string) {
     return PRIVATE_PATHS.some(
-        (path) => pathname === path || pathname.startsWith(`${path}`),
+        (path) => pathname === path || pathname.startsWith(`${path}/`),
     );
 }
 
@@ -13,7 +13,7 @@ export function getPathnameWithoutLocale(pathnameDirty: string): {
     for (const locale of languages) {
         if (
             pathnameDirty === `/${locale}` ||
-            pathnameDirty.startsWith(`/${locale}`)
+            pathnameDirty.startsWith(`/${locale}/`)
         ) {
             return {
                 pathname: pathnameDirty.slice(locale.length + 1),

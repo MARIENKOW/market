@@ -18,6 +18,9 @@ import { $apiServer } from "@/utils/api/fetch.server";
 import { isTokenExpired } from "@/helpers/jwt-token.helper";
 import { parseSetCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
+const adminAuth = new AuthAdminService($apiServer);
+const userAuth = new AuthUserService($apiServer);
+
 const forwardSetCookies = (source: Response, target: NextResponse) => {
     source.headers.getSetCookie()?.forEach((cookie) => {
         const cookieRes = parseSetCookie(cookie);
@@ -36,10 +39,9 @@ export default async function Mid(req: NextRequest) {
         if (accessTokenAdmin) {
             if (isTokenExpired(accessTokenAdmin)) {
                 try {
-                    const adminAuth = new AuthAdminService($apiServer);
                     const refreshResponse = await adminAuth.refresh();
                     forwardSetCookies(refreshResponse, res);
-                } catch (error) {
+                } catch {
                     // if (isEqualPath(PRIVATE_ADMIN_PATH, pathname)) {
                     //     const loginUrl = new URL(
                     //         locale
@@ -69,7 +71,6 @@ export default async function Mid(req: NextRequest) {
         if (accessTokenUser) {
             if (isTokenExpired(accessTokenUser)) {
                 try {
-                    const userAuth = new AuthUserService($apiServer);
                     const refreshResponse = await userAuth.refresh();
                     forwardSetCookies(refreshResponse, res);
                 } catch {
