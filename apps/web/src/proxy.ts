@@ -18,6 +18,14 @@ import { $apiServer } from "@/utils/api/fetch.server";
 import { isTokenExpired } from "@/helpers/jwt-token.helper";
 import { parseSetCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
+const forwardSetCookies = (source: Response, target: NextResponse) => {
+    source.headers.getSetCookie()?.forEach((cookie) => {
+        const cookieRes = parseSetCookie(cookie);
+        if (!cookieRes) return;
+        target.cookies.set(cookieRes.name, cookieRes.value, cookieRes);
+    });
+};
+
 export default async function Mid(req: NextRequest) {
     const { pathname, locale } = getPathnameWithoutLocale(req.nextUrl.pathname);
 
@@ -30,16 +38,7 @@ export default async function Mid(req: NextRequest) {
                 try {
                     const adminAuth = new AuthAdminService($apiServer);
                     const refreshResponse = await adminAuth.refresh();
-                    const setCookies = refreshResponse.headers.getSetCookie();
-                    setCookies?.forEach((cookie) => {
-                        const cookieRes = parseSetCookie(cookie);
-                        if (!cookieRes) return;
-                        res.cookies.set(
-                            cookieRes.name,
-                            cookieRes.value,
-                            cookieRes,
-                        );
-                    });
+                    forwardSetCookies(refreshResponse, res);
                 } catch (error) {
                     // if (isEqualPath(PRIVATE_ADMIN_PATH, pathname)) {
                     //     const loginUrl = new URL(
@@ -72,18 +71,8 @@ export default async function Mid(req: NextRequest) {
                 try {
                     const userAuth = new AuthUserService($apiServer);
                     const refreshResponse = await userAuth.refresh();
-                    const setCookies = refreshResponse.headers.getSetCookie();
-                    setCookies?.forEach((cookie) => {
-                        const cookieRes = parseSetCookie(cookie);
-                        if (!cookieRes) return;
-                        res.cookies.set(
-                            cookieRes.name,
-                            cookieRes.value,
-                            cookieRes,
-                        );
-                    });
-                } catch (error) { 
-                    console.log('error :',error);
+                    forwardSetCookies(refreshResponse, res);
+                } catch {
                     // if (isEqualPath(PRIVATE_USER_PATH, pathname)) {
                     //     const loginUrl = new URL(
                     //         locale

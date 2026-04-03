@@ -1,7 +1,5 @@
-import { clientEnv } from "@/config/env.client";
 import { FetchBaseOptions, fetchCustom, FetchCustomReturn } from "@/utils/api";
-
-const BASE_URL = `${clientEnv.NEXT_PUBLIC_API_ORIGIN_CLIENT}/${clientEnv.NEXT_PUBLIC_API_GLOBAL_PREFIX}`;
+import { API_CLIENT_BASE_URL } from "@/utils/api/urls.client";
 
 const DEFAULT_OPTIONS: FetchBaseOptions = {
     credentials: "include",
@@ -12,7 +10,7 @@ export const $apiClient = <T>(
     path: string,
     options: FetchBaseOptions,
 ): FetchCustomReturn<T> =>
-    fetchCustom<T>(`${BASE_URL}${path}`, {
+    fetchCustom<T>(`${API_CLIENT_BASE_URL}${path}`, {
         ...DEFAULT_OPTIONS,
         ...options,
         headers: { ...DEFAULT_OPTIONS.headers, ...options.headers },

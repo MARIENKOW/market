@@ -1,11 +1,11 @@
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
-import { $apiAxiosServer } from "@/utils/api/axios.server";
+import { $apiUserAxiosServer } from "@/utils/api/user/axios.user.server";
 import { getQueryClient } from "@/lib/tanstack/queryClient";
 import VideoComponentBlog from "@/app/[locale]/(dashboard)/video/VideoComponentBlog";
 import { videoKeys } from "@/lib/tanstack/keys";
 import { Hydrate } from "@/lib/tanstack/Hydrate";
 
-const { getAll } = new BlogVideoService($apiAxiosServer);
+const { getAll } = new BlogVideoService($apiUserAxiosServer);
 export default async function Page() {
     const queryClient = getQueryClient();
 
