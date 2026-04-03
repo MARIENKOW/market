@@ -55,7 +55,7 @@ export class MailerService implements OnModuleInit {
             <h2>${this.i18n.t("mail.resetPassword.title")}</h2>
             <p><a href="${url}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.resetPassword.button")}</a></p>
             <hr>
-            <p>${this.i18n.t("mail.resetPassword.exsited", { args: { time: i18nFormatDuration(expires) } })}</p>
+            <p>${this.i18n.t("mail.resetPassword.expires", { args: { time: i18nFormatDuration(expires) } })}</p>
             </body>
             </html>`;
         await this.transporter.sendMail({
@@ -75,7 +75,7 @@ export class MailerService implements OnModuleInit {
             <h2>${this.i18n.t("mail.activate.title")}</h2>
             <p><a href="${url}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.activate.button")}</a></p>
             <hr>
-            <p>${this.i18n.t("mail.activate.exsited", { args: { time: i18nFormatDuration(expires) } })}</p>
+            <p>${this.i18n.t("mail.activate.expires", { args: { time: i18nFormatDuration(expires) } })}</p>
             </body>
             </html>`;
         await this.transporter.sendMail({

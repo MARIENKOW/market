@@ -41,7 +41,8 @@ export const FULL_PATH_ROUTE = buildFullPaths<Route>(ROUTE);
 
 export const PRIVATE_USER_PATH: string[] = [FULL_PATH_ROUTE.profile.path];
 export const PRIVATE_ADMIN_PATH: string[] = [
-    FULL_PATH_ROUTE.admin.profile.path, //!неправильно
+    FULL_PATH_ROUTE.admin.profile.path,
+    FULL_PATH_ROUTE.admin.settings.path,
 ];
 export const ADMIN_PATH: string[] = [FULL_PATH_ROUTE.admin.path];
 
