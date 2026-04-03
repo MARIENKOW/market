@@ -1,12 +1,15 @@
 import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
-import { VideoDto } from "@myorg/shared/dto";
+import { PagedResult, VideoDto } from "@myorg/shared/dto";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import {
     Controller,
+    DefaultValuePipe,
     Delete,
     Get,
     Param,
+    ParseIntPipe,
     Post,
+    Query,
     Req,
     UnauthorizedException,
     UploadedFile,
@@ -68,8 +71,11 @@ export class BlogVideoController {
     }
     @Get()
     @Auth("USER")
-    async getAll(): Promise<VideoDto[]> {
-        return this.blogVideo.getAll();
+    async getAll(
+        @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query("limit", new DefaultValuePipe(12), ParseIntPipe) limit: number,
+    ): Promise<PagedResult<VideoDto>> {
+        return this.blogVideo.getAll(page, limit);
     }
     @Delete()
     @Auth("USER")

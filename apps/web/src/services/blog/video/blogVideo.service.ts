@@ -1,4 +1,4 @@
-import { VideoDto } from "@myorg/shared/dto";
+import { PagedResult, VideoDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
@@ -10,7 +10,7 @@ export default class BlogVideoService {
         options: AxiosRequestConfig,
     ) => Promise<AxiosResponse<VideoDto>>;
     delete: (id: string) => Promise<AxiosResponse<void>>;
-    getAll: ({ page }: { page: number }) => Promise<AxiosResponse<VideoDto[]>>;
+    getAll: ({ page, limit }: { page: number; limit?: number }) => Promise<AxiosResponse<PagedResult<VideoDto>>>;
     deleteAll: () => Promise<AxiosResponse<void>>;
     constructor(api: AxiosInstance) {
         this.upload = async (body, options) => {
@@ -37,7 +37,7 @@ export default class BlogVideoService {
 
             const query = search.toString();
             const newPath = query ? `${path}?${query}` : path;
-            const res = await api.get<VideoDto[]>(newPath);
+            const res = await api.get<PagedResult<VideoDto>>(newPath);
             return res;
         };
         this.deleteAll = async () => {

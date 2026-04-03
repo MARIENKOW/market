@@ -1,40 +1,39 @@
 "use client";
 
 import DeleteAllVideoBlog from "@/app/[locale]/(dashboard)/video/DeleteAllVideoBlog";
-
 import { VideoList } from "@/app/[locale]/(dashboard)/video/VideoList";
 import VideoUploaderBlog from "@/app/[locale]/(dashboard)/video/VideoUploaderBlog";
+import { PaginationComponent } from "@/components/features/PaginationComponent";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import { useVideos } from "@/hooks/tanstack/useVideo";
 import { Box, LinearProgress } from "@mui/material";
 
 export default function VideoComponentBlog() {
-    const { data, isLoading, isError, error, refetch, isPending, isFetching } =
-        useVideos({
-            page: 1,
-        });
+    const { data, isLoading, error, isFetching, page, setPage } = useVideos();
+
     return (
         <Box display="flex" flexDirection="column" flex={1} height="100%">
             <Box
-                display={"flex"}
+                display="flex"
                 p={2}
-                justifyContent={"space-between"}
-                alignItems={"center"}
+                justifyContent="space-between"
+                alignItems="center"
                 gap={1}
-                flexWrap={"wrap"}
+                flexWrap="wrap"
             >
                 <VideoUploaderBlog />
-                {data && data.length > 0 ? <DeleteAllVideoBlog /> : ""}
+                {data && data.data.length > 0 ? <DeleteAllVideoBlog /> : ""}
             </Box>
             <StyledDivider />
             <Box
                 flex={1}
-                display={"flex"}
-                flexDirection={"column"}
-                position={"relative"}
+                display="flex"
+                flexDirection="column"
+                position="relative"
+                gap={2}
                 p={2}
             >
-                {isLoading && (
+                {isFetching && (
                     <LinearProgress
                         sx={{
                             position: "absolute",
@@ -44,7 +43,13 @@ export default function VideoComponentBlog() {
                         }}
                     />
                 )}
-                <VideoList data={data} error={error} />
+                <VideoList data={data?.data} error={error} />
+                <PaginationComponent
+                    page={page}
+                    count={data?.meta.pageCount ?? 1}
+                    onChange={setPage}
+                    disabled={isFetching}
+                />
             </Box>
         </Box>
     );

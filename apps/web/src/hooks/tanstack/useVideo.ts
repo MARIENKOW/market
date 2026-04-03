@@ -1,17 +1,16 @@
 // hooks/useVideos.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePaginatedQuery } from "@/hooks/tanstack/usePaginatedQuery";
 import { videoKeys } from "@/lib/tanstack/keys";
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
 import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
 
 const { getAll } = new BlogVideoService($apiUserAxiosClient);
 
-export function useVideos(filters: { page: number }) {
-    return useQuery({
-        queryKey: videoKeys.list(filters),
-        queryFn: async () => (await getAll(filters)).data,
-        placeholderData: (prev) => prev, // убирает мигание при смене фильтров
-    });
+export function useVideos() {
+    return usePaginatedQuery(
+        (page) => videoKeys.list({ page }),
+        (page) => getAll({ page }).then((r) => r.data),
+    );
 }
 
 // export function useVideo(id: string) {

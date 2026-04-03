@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 import { env } from "@/config";
 
-const TTL_MS = 3 * 60 * 60 * 1_000; // 1 час
+const TTL_MS = 3 * 60 * 60 * 1_000; // 3 часа
 
 export function signPath(relativePath: string, ttlMs = TTL_MS): string {
     const exp = Date.now() + ttlMs;

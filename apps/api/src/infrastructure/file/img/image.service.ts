@@ -10,7 +10,11 @@ import { mapImage } from "@/infrastructure/file/img/image.mapper";
 import { FileEntityType } from "@/generated/prisma";
 import { ImageProcessingConfig } from "@/infrastructure/file/img/image.types";
 import { MIME_TO_EXT } from "@/infrastructure/file/img/image.config";
-import { FILE_CONFIG, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
+import {
+    moveFile,
+    resolveFolder,
+    cleanupFiles,
+} from "@/infrastructure/file/file.utils";
 
 interface ProcessedFile {
     id: string;
@@ -34,7 +38,7 @@ export class ImageService {
         entityType: FileEntityType,
         options: ImageProcessingConfig,
     ): Promise<ImageDto> {
-        const folder = this.resolveFolder(entityType);
+        const folder = resolveFolder(entityType);
         await fs.mkdir(folder, { recursive: true });
 
         // Stage 1: write file to disk
@@ -47,7 +51,7 @@ export class ImageService {
             });
             return mapImage(image);
         } catch (err) {
-            await this.cleanupFiles(folder, [processed.filename]);
+            await cleanupFiles(folder, [processed.filename], this.logger.warn.bind(this.logger));
             throw err;
         }
     }
@@ -59,7 +63,7 @@ export class ImageService {
         entityType: FileEntityType,
         options: ImageProcessingConfig,
     ): Promise<ImageDto[]> {
-        const folder = this.resolveFolder(entityType);
+        const folder = resolveFolder(entityType);
         await fs.mkdir(folder, { recursive: true });
 
         const processed: ProcessedFile[] = [];
@@ -71,9 +75,10 @@ export class ImageService {
                 const result = await this.processFile(file, folder, options);
                 processed.push(result);
             } catch (err) {
-                await this.cleanupFiles(
+                await cleanupFiles(
                     folder,
                     processed.map((p) => p.filename),
+                    this.logger.warn.bind(this.logger),
                 );
                 throw err;
             }
@@ -90,9 +95,10 @@ export class ImageService {
             );
             return images.map((img) => mapImage(img));
         } catch (err) {
-            await this.cleanupFiles(
+            await cleanupFiles(
                 folder,
                 processed.map((p) => p.filename),
+                this.logger.warn.bind(this.logger),
             );
             throw err;
         }
@@ -104,7 +110,11 @@ export class ImageService {
         const image = await this.prisma.image.findUnique({ where: { id } });
         if (!image) throw new NotFoundException("image.notFound");
 
-        const folder = this.resolveFolder(image.entityType);
+        const folder = resolveFolder(image.entityType);
+
+        // БД удаляем первой: если упадёт — файл цел, запись не осталась.
+        // Файл удаляем после: ошибка здесь не критична — только логируем.
+        await this.prisma.image.delete({ where: { id } });
         await fs
             .unlink(path.join(folder, image.filename))
             .catch((e) =>
@@ -113,7 +123,42 @@ export class ImageService {
                     e,
                 ),
             );
-        await this.prisma.image.delete({ where: { id } });
+    }
+
+    // ── Move ──────────────────────────────────────────────────────────────────
+
+    /**
+     * Перемещает файл картинки в папку нового entityType и обновляет БД.
+     * Файл переносится первым: fs.rename атомарен и легко обратим.
+     * При ошибке обновления БД файл откатывается на место.
+     */
+    async move(id: string, newEntityType: FileEntityType): Promise<ImageDto> {
+        const image = await this.prisma.image.findUnique({ where: { id } });
+        if (!image) throw new NotFoundException("image.notFound");
+        if (image.entityType === newEntityType) return mapImage(image);
+
+        const srcPath = path.join(
+            resolveFolder(image.entityType),
+            image.filename,
+        );
+        const destFolder = resolveFolder(newEntityType);
+        await fs.mkdir(destFolder, { recursive: true });
+        const destPath = path.join(destFolder, image.filename);
+
+        await moveFile(srcPath, destPath);
+
+        try {
+            const updated = await this.prisma.image.update({
+                where: { id },
+                data: { entityType: newEntityType },
+            });
+            return mapImage(updated);
+        } catch (err) {
+            await moveFile(destPath, srcPath).catch((e) =>
+                this.logger.warn("Failed to rollback image file on move", e),
+            );
+            throw err;
+        }
     }
 
     // ── Find ──────────────────────────────────────────────────────────────────
@@ -201,29 +246,4 @@ export class ImageService {
         }
     }
 
-    /**
-     * Удаляет список файлов параллельно. Ошибки не пробрасывает — только логирует.
-     */
-    private async cleanupFiles(
-        folder: string,
-        filenames: string[],
-    ): Promise<void> {
-        await Promise.all(
-            filenames.map((filename) =>
-                fs
-                    .unlink(path.join(folder, filename))
-                    .catch((e) =>
-                        this.logger.warn(
-                            `Failed to cleanup file: ${filename}`,
-                            e,
-                        ),
-                    ),
-            ),
-        );
-    }
-
-    private resolveFolder(entityType: FileEntityType): string {
-        const config = FILE_CONFIG[entityType];
-        return path.resolve(process.cwd(), UPLOADS_ROOT, config.folder);
-    }
 }

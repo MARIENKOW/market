@@ -5,7 +5,6 @@ import {
     OnModuleInit,
 } from "@nestjs/common";
 import * as fs from "fs/promises";
-import * as fsS from "fs";
 import * as path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
@@ -19,11 +18,12 @@ import { randomUUID as uuidv4 } from "crypto";
 import { ImageDto, VideoDto } from "@myorg/shared/dto";
 import { mapVideo } from "@/infrastructure/file/video/video.mapper";
 import { FileEntityType } from "@/generated/prisma";
+import { TMP_PATH } from "@/infrastructure/file/file.config";
 import {
-    FILE_CONFIG,
-    TMP_PATH,
-    UPLOADS_ROOT,
-} from "@/infrastructure/file/file.config";
+    moveFile,
+    resolveFolder,
+    cleanupFiles,
+} from "@/infrastructure/file/file.utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,8 +56,8 @@ export class VideoService implements OnModuleInit {
 
     private offsetPercent = 10;
 
-    onModuleInit(): void {
-        fsS.mkdirSync(TMP_PATH, { recursive: true });
+    async onModuleInit(): Promise<void> {
+        await fs.mkdir(TMP_PATH, { recursive: true });
         ffmpeg.setFfmpegPath(ffmpegInstaller.path);
         ffmpeg.setFfprobePath(ffprobeInstaller.path);
         this.logger.log(`ffmpeg  → ${ffmpegInstaller.path}`);
@@ -71,7 +71,7 @@ export class VideoService implements OnModuleInit {
         entityType: FileEntityType,
         options: VideoProcessingConfig,
     ): Promise<VideoDto> {
-        const folder = this.resolveFolder(entityType);
+        const folder = resolveFolder(entityType);
         await fs.mkdir(folder, { recursive: true });
 
         // Шаг 1: обработка видео-файла на диск
@@ -86,7 +86,7 @@ export class VideoService implements OnModuleInit {
                 entityType,
             );
         } catch (err) {
-            await this.cleanupFiles(folder, [processed.filename]);
+            await cleanupFiles(folder, [processed.filename], this.logger.warn.bind(this.logger));
             throw err;
         }
 
@@ -99,7 +99,7 @@ export class VideoService implements OnModuleInit {
             // imageDto уже есть — лишний SELECT не нужен
             return mapVideo(video);
         } catch (err) {
-            await this.cleanupFiles(folder, [processed.filename]);
+            await cleanupFiles(folder, [processed.filename], this.logger.warn.bind(this.logger));
             await this.imageService
                 .delete(imageDto.id)
                 .catch((e) => this.logger.warn("Failed to rollback image", e));
@@ -116,7 +116,7 @@ export class VideoService implements OnModuleInit {
     ): Promise<VideoDto[]> {
         if (files.length === 0) return [];
 
-        const folder = this.resolveFolder(entityType);
+        const folder = resolveFolder(entityType);
         await fs.mkdir(folder, { recursive: true });
 
         // Шаг 1: обработка видео-файлов (sequential — транскодирование CPU-bound,
@@ -126,9 +126,10 @@ export class VideoService implements OnModuleInit {
             try {
                 processed.push(await this.processFile(file, folder, options));
             } catch (err) {
-                await this.cleanupFiles(
+                await cleanupFiles(
                     folder,
                     processed.map((p) => p.filename),
+                    this.logger.warn.bind(this.logger),
                 );
                 throw err;
             }
@@ -146,9 +147,10 @@ export class VideoService implements OnModuleInit {
                     ),
                 );
             } catch (err) {
-                await this.cleanupFiles(
+                await cleanupFiles(
                     folder,
                     processed.map((p) => p.filename),
+                    this.logger.warn.bind(this.logger),
                 );
                 await this.rollbackImages(imageDtos);
                 throw err;
@@ -165,11 +167,12 @@ export class VideoService implements OnModuleInit {
                     }),
                 ),
             );
-            return videos.map((v, i) => mapVideo(v));
+            return videos.map((v) => mapVideo(v));
         } catch (err) {
-            await this.cleanupFiles(
+            await cleanupFiles(
                 folder,
                 processed.map((p) => p.filename),
+                this.logger.warn.bind(this.logger),
             );
             await this.rollbackImages(imageDtos);
             throw err;
@@ -182,7 +185,7 @@ export class VideoService implements OnModuleInit {
         const video = await this.prisma.video.findUnique({ where: { id } });
         if (!video) throw new NotFoundException("video.notFound");
 
-        const folder = this.resolveFolder(video.entityType);
+        const folder = resolveFolder(video.entityType);
 
         // ПОРЯДОК ВАЖЕН: Video ссылается на Image через FK (imageId).
         // Нельзя удалить Image пока Video существует — получим FK violation.
@@ -207,6 +210,76 @@ export class VideoService implements OnModuleInit {
                       )
                 : Promise.resolve(),
         ]);
+    }
+
+    // ── Move ──────────────────────────────────────────────────────────────────
+
+    /**
+     * Перемещает видео (и его превью) в папку нового entityType.
+     *
+     * Порядок:
+     *   1. Переносим видео-файл на диск.
+     *   2. Переносим превью через imageService.move (файл + БД image).
+     *      При ошибке откатываем видео-файл.
+     *   3. Обновляем entityType видео в БД.
+     *      При ошибке откатываем оба файла и entityType image.
+     */
+    async move(id: string, newEntityType: FileEntityType): Promise<VideoDto> {
+        const video = await this.prisma.video.findUnique({
+            where: { id },
+            include: { image: true },
+        });
+        if (!video) throw new NotFoundException("video.notFound");
+        if (video.entityType === newEntityType) return mapVideo(video);
+
+        const srcFolder = resolveFolder(video.entityType);
+        const destFolder = resolveFolder(newEntityType);
+        await fs.mkdir(destFolder, { recursive: true });
+
+        const srcVideoPath = path.join(srcFolder, video.filename);
+        const destVideoPath = path.join(destFolder, video.filename);
+
+        // Шаг 1: переносим видео-файл
+        await moveFile(srcVideoPath, destVideoPath);
+
+        // Шаг 2: переносим превью через imageService (файл + БД image)
+        if (video.image) {
+            try {
+                await this.imageService.move(video.image.id, newEntityType);
+            } catch (err) {
+                await moveFile(destVideoPath, srcVideoPath).catch((e) =>
+                    this.logger.warn("Failed to rollback video file on move", e),
+                );
+                throw err;
+            }
+        }
+
+        // Шаг 3: обновляем entityType видео в БД
+        try {
+            const updated = await this.prisma.video.update({
+                where: { id },
+                data: { entityType: newEntityType },
+                include: { image: true },
+            });
+            return mapVideo(updated);
+        } catch (err) {
+            await Promise.all([
+                moveFile(destVideoPath, srcVideoPath).catch((e) =>
+                    this.logger.warn("Failed to rollback video file on move", e),
+                ),
+                video.image
+                    ? this.imageService
+                          .move(video.image.id, video.entityType)
+                          .catch((e) =>
+                              this.logger.warn(
+                                  "Failed to rollback image on move",
+                                  e,
+                              ),
+                          )
+                    : Promise.resolve(),
+            ]);
+            throw err;
+        }
     }
 
     // ── Find ──────────────────────────────────────────────────────────────────
@@ -360,14 +433,19 @@ export class VideoService implements OnModuleInit {
                 size,
             };
         } catch (err) {
-            await fs
-                .unlink(outputPath)
-                .catch((e) =>
-                    this.logger.warn(
-                        `Failed to cleanup output after error: ${outputFilename}`,
-                        e,
+            await Promise.all([
+                fs
+                    .unlink(outputPath)
+                    .catch((e) =>
+                        this.logger.warn(
+                            `Failed to cleanup output after error: ${outputFilename}`,
+                            e,
+                        ),
                     ),
-                );
+                // Чистим temp-файл multer: при ошибке транскодирования
+                // он не удаляется в основном потоке
+                fs.unlink(file.path).catch(() => undefined),
+            ]);
             throw err;
         }
     }
@@ -555,28 +633,6 @@ export class VideoService implements OnModuleInit {
     }
 
     /**
-     * Удаляет список файлов параллельно.
-     * Ошибки не пробрасывает — только логирует.
-     */
-    private async cleanupFiles(
-        folder: string,
-        filenames: string[],
-    ): Promise<void> {
-        await Promise.all(
-            filenames.map((filename) =>
-                fs
-                    .unlink(path.join(folder, filename))
-                    .catch((e) =>
-                        this.logger.warn(
-                            `Failed to cleanup file: ${filename}`,
-                            e,
-                        ),
-                    ),
-            ),
-        );
-    }
-
-    /**
      * Откатывает уже сохранённые Image-записи при ошибке в uploadMany.
      */
     private async rollbackImages(imageDtos: ImageDto[]): Promise<void> {
@@ -590,27 +646,5 @@ export class VideoService implements OnModuleInit {
             ),
         );
     }
-
-    private resolveFolder(entityType: FileEntityType): string {
-        const config = FILE_CONFIG[entityType];
-        return path.resolve(process.cwd(), UPLOADS_ROOT, config.folder);
-    }
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Атомарный перенос файла.
- * rename() — O(1): переименование inode, данные не копируются.
- * EXDEV (temp и dest на разных устройствах / разных FS) → fallback:
- * copyFile + unlink. Стоимость = полная копия файла, но это редкий случай.
- */
-async function moveFile(src: string, dest: string): Promise<void> {
-    try {
-        await fs.rename(src, dest);
-    } catch (err: any) {
-        if (err.code !== "EXDEV") throw err;
-        await fs.copyFile(src, dest);
-        await fs.unlink(src).catch(() => undefined);
-    }
-}

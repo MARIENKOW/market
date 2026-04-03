@@ -1,5 +1,17 @@
 import { MessageKeyType } from "../../i18n";
 
+export interface PaginationMeta {
+    page: number;
+    limit: number;
+    total: number;
+    pageCount: number;
+}
+
+export interface PagedResult<T> {
+    data: T[];
+    meta: PaginationMeta;
+}
+
 export interface ApiErrorResponse {
     status: number;
     message: string;

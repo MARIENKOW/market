@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import {
     Box,
     Typography,
@@ -82,8 +82,16 @@ export function VideoUploader<TResult = unknown>({
     const [open, setOpen] = useState(false);
     const [uploads, setUploads] = useState<UploadItem[]>([]);
     const abortRefs = useRef<Record<string, AbortController>>({});
+    const smoothedSpeed = useRef<Record<string, number>>({});
     const inputRef = useRef<HTMLInputElement>(null);
     const [dragging, setDragging] = useState(false);
+
+    // Правка 1: отменяем все активные загрузки при анмаунте
+    useEffect(() => {
+        return () => {
+            Object.values(abortRefs.current).forEach((c) => c.abort());
+        };
+    }, []);
 
     // ── Хелпер: точечное обновление item ─────────────────────────────────────
 
@@ -108,10 +116,14 @@ export function VideoUploader<TResult = unknown>({
                     onProgress: ({ loaded, total }) => {
                         const now = Date.now();
                         const dt = (now - lastTime) / 1000;
-                        const speed =
-                            dt > 0.1 ? (loaded - lastLoaded) / dt : undefined;
-                        lastLoaded = loaded;
-                        lastTime = now;
+                        if (dt > 0.1) {
+                            const instant = (loaded - lastLoaded) / dt;
+                            // Правка 5: EMA сглаживание скорости (α=0.3)
+                            const prev = smoothedSpeed.current[item.id] ?? instant;
+                            smoothedSpeed.current[item.id] = 0.3 * instant + 0.7 * prev;
+                            lastLoaded = loaded;
+                            lastTime = now;
+                        }
                         patch(item.id, {
                             progress:
                                 total > 0
@@ -120,12 +132,13 @@ export function VideoUploader<TResult = unknown>({
                                           100,
                                       )
                                     : 0,
-                            ...(speed !== undefined ? { speed } : {}),
+                            speed: smoothedSpeed.current[item.id] ?? 0,
                         });
                     },
                 });
 
                 patch(item.id, { status: "done", progress: 100, speed: 0 });
+                delete smoothedSpeed.current[item.id];
                 onSuccess?.(result, { ...item, status: "done" });
             } catch (err) {
                 const cancelled =
@@ -667,7 +680,8 @@ function UploadItemRow({
 }) {
     const theme = useTheme();
 
-    const cfgMap: Record<
+    // Правка 3: мемоизация — пересчёт только при смене статуса/прогресса/темы
+    const cfgMap = useMemo<Record<
         UploadStatus,
         {
             color: string;
@@ -676,7 +690,7 @@ function UploadItemRow({
             chip: "default" | "info" | "success" | "error";
             bar: "inherit" | "info" | "success" | "error";
         }
-    > = {
+    >>(() => ({
         waiting: {
             color: theme.palette.text.disabled,
             icon: <HourglassTopIcon sx={{ fontSize: 14 }} />,
@@ -717,7 +731,7 @@ function UploadItemRow({
             chip: "default",
             bar: "inherit",
         },
-    };
+    }), [theme, item.progress, item.status]);
 
     const cfg = cfgMap[item.status];
 
