@@ -10,6 +10,8 @@ import {
 const { login, register, logout, forgotPassword, activate, refresh, google } =
     FULL_PATH_ENDPOINT.auth.user;
 
+let refreshPromise: FetchCustomReturn<true> | null = null;
+
 export default class AuthUserService {
     login: (body: LoginUserDtoOutput) => FetchCustomReturn<true>;
     google: (body: { code: string }) => FetchCustomReturn<true>;
@@ -57,15 +59,17 @@ export default class AuthUserService {
             return res;
         };
         this.refresh = async () => {
-            if (this.abortController) this.abortController.abort();
-            const controller = new AbortController();
-            this.abortController = controller;
-            const res = await api<true>(refresh.path, {
-                signal: controller.signal,
+            // Уже идёт рефреш — возвращаем тот же промис, не делаем новый запрос
+            if (refreshPromise) return refreshPromise;
+
+            refreshPromise = api<true>(refresh.path, {
                 credentials: "include",
                 method: "GET",
+            }).finally(() => {
+                refreshPromise = null;
             });
-            return res;
+
+            return refreshPromise;
         };
         this.activate = async (data) => {
             if (this.abortController) this.abortController.abort();

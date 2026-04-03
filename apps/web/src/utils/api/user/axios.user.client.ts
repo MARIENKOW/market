@@ -13,21 +13,9 @@ const isUnauthorized = (error: unknown): boolean =>
     isAxiosError(error) && error.response?.status === 401;
 
 // ─── Singleton ───────────────────────────────────────────────────
-const authService = new AuthUserService($apiClient);
+const { refresh } = new AuthUserService($apiClient);
 
 // ─── Refresh queue — защита от параллельных рефрешей ─────────────
-let refreshPromise: FetchCustomReturn<true> | null = null;
-
-const tryRefresh = async (): Promise<void> => {
-    if (!refreshPromise) {
-        refreshPromise = authService.refresh();
-    }
-    try {
-        await refreshPromise;
-    } finally {
-        refreshPromise = null;
-    }
-};
 
 // ─── Instance ────────────────────────────────────────────────────
 export const $apiUserAxiosClient = axios.create({
@@ -59,7 +47,7 @@ $apiUserAxiosClient.interceptors.response.use(
 
         // 401 — пробуем рефреш
         try {
-            await tryRefresh();
+            await refresh();
         } catch (refreshError) {
             dispatchCustomEvent(EVENTS_KEYS.UNAUTHORIZED);
             throw refreshError;

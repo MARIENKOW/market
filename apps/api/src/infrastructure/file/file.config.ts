@@ -4,6 +4,7 @@ import path from "path";
 
 export const UPLOADS_ROOT = "uploads";
 export const UPLOADS_BASE_PATH = path.resolve(process.cwd(), UPLOADS_ROOT);
+export const TMP_PATH = path.resolve(process.cwd(), UPLOADS_ROOT + "/tmp");
 
 export const FILE_CONFIG: Record<FileEntityType, FileEntityConfig> = {
     [FileEntityType.AVATAR]: { folder: "avatars", private: false },

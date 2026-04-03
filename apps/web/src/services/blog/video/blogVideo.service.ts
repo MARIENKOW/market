@@ -1,12 +1,8 @@
-import { FetchCustom, FetchCustomReturn } from "@/utils/api";
-import { AvailableMode } from "@/theme/theme";
-import { ImageDto, UserDto, VideoDto } from "@myorg/shared/dto";
+import { VideoDto } from "@myorg/shared/dto";
 import { FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
-import { AvailableLanguage } from "@myorg/shared/i18n";
-import { AvatarUserInput } from "@myorg/shared/form";
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
-const { path } = FULL_PATH_ENDPOINT.blog.video;
+const { path, upload } = FULL_PATH_ENDPOINT.blog.video;
 
 export default class BlogVideoService {
     upload: (
@@ -18,8 +14,14 @@ export default class BlogVideoService {
     deleteAll: () => Promise<AxiosResponse<void>>;
     constructor(api: AxiosInstance) {
         this.upload = async (body, options) => {
-            const res = await api.post<VideoDto>(path, body, options);
-            return res;
+            const { data } = await api.get<{ uploadToken: string }>(
+                upload.path,
+            );
+            return await api.post<VideoDto>(
+                upload.path + "?" + `uploadToken=${data.uploadToken}`,
+                body,
+                options,
+            );
         };
         this.delete = async (id) => {
             return await api.delete<void>(path + "/" + id);

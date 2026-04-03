@@ -115,7 +115,13 @@ export const ENDPOINT = {
             },
         },
     },
-    blog: { path: "blog", video: { path: "video" } },
+    blog: {
+        path: "blog",
+        video: {
+            path: "video",
+            upload: { path: "upload" },
+        },
+    },
     resetPasswordToken: {
         path: "reset-password-token",
         user: {

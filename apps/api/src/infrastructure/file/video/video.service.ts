@@ -5,10 +5,11 @@ import {
     OnModuleInit,
 } from "@nestjs/common";
 import * as fs from "fs/promises";
+import * as fsS from "fs";
 import * as path from "path";
 import ffmpeg from "fluent-ffmpeg";
-import * as ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
-import * as ffprobeInstaller from "@ffprobe-installer/ffprobe";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import ffprobeInstaller from "@ffprobe-installer/ffprobe";
 
 import { VIDEO_MIME_TO_EXT, VIDEO_TRANSCODE_TIMEOUT_MS } from "./video.config";
 import { VideoProcessingConfig } from "./video.types";
@@ -18,7 +19,11 @@ import { randomUUID as uuidv4 } from "crypto";
 import { ImageDto, VideoDto } from "@myorg/shared/dto";
 import { mapVideo } from "@/infrastructure/file/video/video.mapper";
 import { FileEntityType } from "@/generated/prisma";
-import { FILE_CONFIG, UPLOADS_ROOT } from "@/infrastructure/file/file.config";
+import {
+    FILE_CONFIG,
+    TMP_PATH,
+    UPLOADS_ROOT,
+} from "@/infrastructure/file/file.config";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -52,6 +57,7 @@ export class VideoService implements OnModuleInit {
     private offsetPercent = 10;
 
     onModuleInit(): void {
+        fsS.mkdirSync(TMP_PATH, { recursive: true });
         ffmpeg.setFfmpegPath(ffmpegInstaller.path);
         ffmpeg.setFfprobePath(ffprobeInstaller.path);
         this.logger.log(`ffmpeg  → ${ffmpegInstaller.path}`);

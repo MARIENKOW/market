@@ -9,6 +9,8 @@ import {
 const { login, logout, forgotPassword, refresh, google } =
     FULL_PATH_ENDPOINT.auth.admin;
 
+let refreshPromise: FetchCustomReturn<true> | null = null;
+
 export default class AuthAdminService {
     login: (body: LoginAdminDtoOutput) => FetchCustomReturn<true>;
     google: (body: { code: string }) => FetchCustomReturn<true>;
@@ -54,15 +56,17 @@ export default class AuthAdminService {
             return res;
         };
         this.refresh = async () => {
-            if (this.abortController) this.abortController.abort();
-            const controller = new AbortController();
-            this.abortController = controller;
-            const res = await api<true>(refresh.path, {
-                signal: controller.signal,
+            // Уже идёт рефреш — возвращаем тот же промис, не делаем новый запрос
+            if (refreshPromise) return refreshPromise;
+
+            refreshPromise = api<true>(refresh.path, {
                 credentials: "include",
                 method: "GET",
+            }).finally(() => {
+                refreshPromise = null;
             });
-            return res;
+
+            return refreshPromise;
         };
 
         this.logout = async () => {

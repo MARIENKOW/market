@@ -7,6 +7,8 @@ import {
     Get,
     Param,
     Post,
+    Req,
+    UnauthorizedException,
     UploadedFile,
     UseInterceptors,
 } from "@nestjs/common";
@@ -15,30 +17,52 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import multer from "multer";
 import { BlogVideoService } from "@/modules/blog/video/blogVideo.service";
 import { randomUUID } from "crypto";
-import * as os from "os";
+import {
+    signUploadToken,
+    verifyUploadToken,
+} from "@/infrastructure/file/file-sign.utils";
+import { Public } from "@/modules/auth/decorators/public.decorator";
+import { TMP_PATH } from "@/infrastructure/file/file.config";
 
-const {} = ENDPOINT.blog.video;
+const { upload } = ENDPOINT.blog.video;
 const { path } = FULL_PATH_ENDPOINT.blog.video;
 
 @Controller(path)
 export class BlogVideoController {
     constructor(private blogVideo: BlogVideoService) {}
-    @Post()
+
+    @Get(upload.path)
     @Auth("USER")
+    authorize(@CurrentActor() actor: UserActor): { uploadToken: string } {
+        return { uploadToken: signUploadToken(actor.user.id) };
+    }
+
+    // ── 2. Загрузка — токен проверяется в fileFilter ──────────────
+    // До записи файла на диск — но после открытия соединения.
+    // После проверки файл грузится сколько угодно.
+    @Post(upload.path)
+    @Public()
     @UseInterceptors(
         FileInterceptor("video", {
             storage: multer.diskStorage({
-                // os.tmpdir() — стандартная temp-директория ОС, всегда существует
-                destination: os.tmpdir(),
-                // UUID — без originalname: user-controlled строка, path traversal риск
+                destination: TMP_PATH,
                 filename: (_req, _file, cb) => cb(null, randomUUID()),
             }),
+            fileFilter: (req: any, _file, cb) => {
+                try {
+                    const actorId = verifyUploadToken(req.query.uploadToken);
+                    req.actorId = actorId;
+                    cb(null, true);
+                } catch {
+                    cb(new UnauthorizedException("upload.tokenInvalid"), false);
+                }
+            },
         }),
     )
     async upload(
+        @Req() req: Request & { actorId: string },
         @UploadedFile()
         file: Express.Multer.File,
-        @CurrentActor() actor: UserActor,
     ): Promise<VideoDto> {
         return this.blogVideo.upload(file);
     }

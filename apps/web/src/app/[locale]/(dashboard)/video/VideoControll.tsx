@@ -4,12 +4,14 @@ import { StyledButton } from "@/components/ui/StyledButton";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { useConfirm } from "@/hooks/useConfirm";
 import { useRouter } from "@/i18n/navigation";
+import { videoKeys } from "@/lib/tanstack/keys";
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
 import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Card, CardHeader } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { VideoDto } from "@myorg/shared/dto";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -19,7 +21,7 @@ export const VideoControll = ({ video }: { video: VideoDto }) => {
     const [loadingDelete, setLoadingDelete] = useState(false);
     const { confirm, confirmDialog } = useConfirm();
     const t = useTranslations();
-    const router = useRouter();
+    const queryClient = useQueryClient();
 
     // const handleAdd = () => {
     //     setVideos_id((prevArr) => [...prevArr, e.id]);
@@ -41,7 +43,7 @@ export const VideoControll = ({ video }: { video: VideoDto }) => {
             if (!isConfirm) return;
             setLoadingDelete(true);
             await videoS.delete(video.id);
-            router.refresh();
+            queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
             snackbarSuccess("Видео удалено");
         } catch (error) {
             errorHandler({ error, t });
