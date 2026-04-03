@@ -2,7 +2,7 @@
 
 // import LogoutErrorButton from "@/components/features/auth/LogoutErrorButton";
 import { StyledButton } from "@/components/ui/StyledButton";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { useRouter } from "@/i18n/navigation";
 import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";

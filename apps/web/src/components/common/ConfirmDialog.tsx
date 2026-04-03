@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { StyledDialog } from "@/components/ui/StyledDialog";
 import { StyledButton } from "@/components/ui/StyledButton";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { useTranslations } from "next-intl";
 
 interface ConfirmDialogProps {
@@ -73,7 +73,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                     color="primary"
                     sx={{ minWidth: 100 }}
                 >
-                    {t("common.сonfirm")}
+                    {t("common.confirm")}
                 </StyledButton>
             </DialogActions>
         </StyledDialog>

@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 
 export default function EmptyElement() {
     const t = useTranslations();

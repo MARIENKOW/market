@@ -7,7 +7,7 @@ import style from "./breadcrumbs.module.css";
 import { StyledLink } from "@/components/ui/StyledLink";
 import { Link } from "@/i18n/navigation";
 import { ReactNode } from "react";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
 import { Box } from "@mui/material";

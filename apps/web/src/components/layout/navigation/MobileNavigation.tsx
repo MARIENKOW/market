@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { StyledPaper } from "@/components/ui/StyledPaper";
 import { StyledListItemButton } from "@/components/ui/StyledListItemButton";
 import { StyledDivider } from "@/components/ui/StyledDivider";

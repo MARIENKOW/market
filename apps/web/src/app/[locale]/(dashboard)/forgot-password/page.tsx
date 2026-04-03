@@ -1,7 +1,7 @@
 import UserSignInForm from "@/components/form/user/auth/UserLoginForm";
 import UserRememberPasswordForm from "@/components/form/user/auth/UserRememberPasswordForm";
 import { ContainerComponent } from "@/components/ui/Container";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { Link } from "@/i18n/navigation";
 import { Box, Typography } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";

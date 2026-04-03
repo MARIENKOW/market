@@ -13,7 +13,7 @@ import {
 import { LockOutlined, MailOutline, CheckRounded } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { MessageKeyType } from "@myorg/shared/i18n";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 
 export const STEPS: { labelKey: MessageKeyType; icon: React.ReactNode }[] = [
     {

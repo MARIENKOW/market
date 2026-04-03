@@ -8,6 +8,8 @@
         "dev": "tsc -b --force && tsc -b --watch"
     },
     "dependencies": {
+        "date-fns": "^4.1.0",
+        "humanize-duration": "^3.33.2",
         "zod": "^4.1.12"
     },
     "exports": {

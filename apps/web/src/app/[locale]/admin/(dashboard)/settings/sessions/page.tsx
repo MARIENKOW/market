@@ -2,7 +2,7 @@ import { SessionList } from "@/app/[locale]/admin/(dashboard)/settings/sessions/
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import { StyledPaper } from "@/components/ui/StyledPaper";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import SessionServiceAdmin from "@/services/auth/admin/session.service.admin";
 import { $apiAdminServer } from "@/utils/api/admin/fetch.admin.server";
 import { Box } from "@mui/material";

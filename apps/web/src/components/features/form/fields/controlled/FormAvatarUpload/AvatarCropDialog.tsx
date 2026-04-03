@@ -178,7 +178,7 @@ export default function AvatarCropDialog({
                         ) : undefined
                     }
                 >
-                    {t("common.сonfirm")}
+                    {t("common.confirm")}
                 </StyledButton>
             </DialogActions>
         </StyledDialog>

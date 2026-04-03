@@ -1,7 +1,7 @@
 "use client";
 
 import { StyledButton } from "@/components/ui/StyledButton";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { isApiErrorResponse } from "@/helpers/error/error.type.helper";
 import { Link } from "@/i18n/navigation";
 import { Box } from "@mui/material";

@@ -8,7 +8,7 @@ import ResetPasswordTokenService from "@/services/auth/user/resetPasswordToken.s
 import { Box, Typography } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getLocale, getTranslations } from "next-intl/server";
-import RedirectWithMessage from "@/components/features/RedirectWithMessage";
+import RedirectWithMessage from "@/components/common/RedirectWithMessage";
 
 const resetPassword = new ResetPasswordTokenService($apiServer);
 

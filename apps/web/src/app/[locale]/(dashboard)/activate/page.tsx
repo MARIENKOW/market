@@ -1,4 +1,4 @@
-import RedirectWithMessage from "@/components/features/RedirectWithMessage";
+import RedirectWithMessage from "@/components/common/RedirectWithMessage";
 import ActivateErrorElement from "@/app/[locale]/(dashboard)/activate/ActivateErrorElement";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import { redirect } from "@/i18n/navigation";

@@ -1,5 +1,5 @@
-import { LanguageChange } from "@/components/features/LanguageChange";
-import ThemeChange from "@/components/features/ThemeChange";
+import { LanguageChange } from "@/components/common/LanguageChange";
+import ThemeChange from "@/components/common/ThemeChange";
 import { ContainerComponent } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { getThemeMode } from "@/theme/themeMode";

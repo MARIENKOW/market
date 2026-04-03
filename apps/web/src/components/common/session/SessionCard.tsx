@@ -2,7 +2,7 @@
 import { Box, Typography, Chip, Tooltip, useTheme } from "@mui/material";
 import { AccessTime, Shield } from "@mui/icons-material";
 import { useLocale, useTranslations } from "next-intl";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 
 import { RevokeSessionButton } from "@/components/features/auth/session/RevokeSessionButton";
 import { Window, Apple, Android, HelpOutline } from "@mui/icons-material";

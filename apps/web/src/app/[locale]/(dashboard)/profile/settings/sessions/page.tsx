@@ -1,7 +1,7 @@
 import { SessionList } from "@/app/[locale]/(dashboard)/profile/settings/sessions/SessionList";
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import SessionServiceUser from "@/services/auth/user/session.service.user";
 import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
 import { Box } from "@mui/material";

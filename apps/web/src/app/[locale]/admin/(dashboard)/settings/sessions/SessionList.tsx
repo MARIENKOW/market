@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { SessionAdminViewDto } from "@myorg/shared/dto";
 import { getTranslations } from "next-intl/server";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { SessionCardAdmin } from "@/app/[locale]/admin/(dashboard)/settings/sessions/SessionCardAdmin";
 
 interface SessionListProps {

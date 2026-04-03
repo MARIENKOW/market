@@ -2,7 +2,7 @@ import { FormFieldProps } from "@/components/features/form/fields/types";
 import OtpInput from "@/components/features/form/fields/uncontrolled/OtpInput";
 import { StyledFormHelperText } from "@/components/ui/StyledFormHelperText";
 import { StyledTextField } from "@/components/ui/StyledTextField";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import FieldControll from "@/components/wrappers/form/FieldControll";
 import { useFormConfig } from "@/components/wrappers/form/FormConfigProvider";
 import { Box } from "@mui/material";

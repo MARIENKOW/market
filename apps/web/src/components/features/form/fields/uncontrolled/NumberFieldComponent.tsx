@@ -19,7 +19,7 @@ type PasswordComponentProps = {
     onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 };
 
-export const NumberFieldCommponent = ({
+export const NumberFieldComponent = ({
     label,
     error,
     helperText,

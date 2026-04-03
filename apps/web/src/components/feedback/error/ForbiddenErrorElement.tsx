@@ -1,6 +1,6 @@
 "use client";
 
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 

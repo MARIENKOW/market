@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import { StyledList } from "@/components/ui/StyledList";
 import SidebarLink from "@/components/layout/navigation/SidebarLink";

@@ -17,7 +17,7 @@ import { useRef, useState } from "react";
 import HomeFilledIcon from "@mui/icons-material/HomeFilled";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import { StyledButton } from "@/components/ui/StyledButton";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import StarPurple500Icon from "@mui/icons-material/StarPurple500";
 import { useAdminAuth } from "@/components/wrappers/auth/AdminAuthProvider";

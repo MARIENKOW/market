@@ -3,7 +3,7 @@
 import DeleteAllVideoBlog from "@/app/[locale]/(dashboard)/video/DeleteAllVideoBlog";
 import { VideoList } from "@/app/[locale]/(dashboard)/video/VideoList";
 import VideoUploaderBlog from "@/app/[locale]/(dashboard)/video/VideoUploaderBlog";
-import { PaginationComponent } from "@/components/features/PaginationComponent";
+import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import { useVideos } from "@/hooks/tanstack/useVideo";
 import { Box, LinearProgress } from "@mui/material";

@@ -2,7 +2,7 @@
 
 import ActivateButton from "@/components/features/auth/user/ActivateButton";
 import { StyledButton } from "@/components/ui/StyledButton";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { isApiErrorResponse } from "@/helpers/error/error.type.helper";
 import { Box } from "@mui/material";
 import { ApiErrorResponse, ErrorsWithMessages } from "@myorg/shared/dto";

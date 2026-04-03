@@ -1,7 +1,7 @@
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import AdminAvatarForm from "@/components/form/admin/AdminAvatarForm";
 import { StyledPaper } from "@/components/ui/StyledPaper";
-import { StyledTypography } from "@/components/ui/StyledTypograpty";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
