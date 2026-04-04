@@ -4,10 +4,11 @@ import { Module } from "@nestjs/common";
 import { BlogVideoService } from "@/modules/blog/video/blogVideo.service";
 import { BlogVideoController } from "@/modules/blog/video/blogVideo.controller";
 import { VideoModule } from "@/infrastructure/file/video/video.module";
+import { BlogVideoValidationPipe } from "@/infrastructure/file/video/pipes/blogVideo.pipe";
 
 @Module({
     imports: [PrismaModule, VideoModule],
-    providers: [BlogVideoService, HashService],
+    providers: [BlogVideoService, HashService,BlogVideoValidationPipe],
     controllers: [BlogVideoController],
     exports: [BlogVideoService],
 })

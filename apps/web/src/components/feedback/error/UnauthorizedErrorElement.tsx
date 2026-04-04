@@ -8,11 +8,16 @@ import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 
-type MessageProp = { message?: string };
+type MessageProp = { message?: string; reset?: () => void };
 
-export default function UnauthorizedErrorElement({ message }: MessageProp) {
+export default function UnauthorizedErrorElement({
+    message,
+    reset,
+}: MessageProp) {
     const t = useTranslations();
     const router = useRouter();
+    const resetFn = reset || router.refresh;
+
     const [loading, transition] = useTransition();
     return (
         <Box
@@ -51,7 +56,7 @@ export default function UnauthorizedErrorElement({ message }: MessageProp) {
             <Box display={"flex"} gap={1} flexDirection={"column"}>
                 <StyledButton
                     loading={loading}
-                    onClick={() => transition(router.refresh)}
+                    onClick={() => transition(resetFn)}
                     variant="contained"
                 >
                     {t("feedback.error.unauthorized.reload")}

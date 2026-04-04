@@ -1,6 +1,8 @@
 import { Auth, CurrentActor } from "@/modules/auth/decorators/auth.decorator";
 import { PagedResult, VideoDto } from "@myorg/shared/dto";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
+import { BLOG_VIDEO_CONFIG } from "@myorg/shared/form";
+import { BlogVideoValidationPipe } from "@/infrastructure/file/video/pipes/blogVideo.pipe";
 import {
     Controller,
     DefaultValuePipe,
@@ -26,13 +28,17 @@ import {
 } from "@/infrastructure/file/file-sign.utils";
 import { Public } from "@/modules/auth/decorators/public.decorator";
 import { TMP_PATH } from "@/infrastructure/file/file.config";
+import { I18nService } from "nestjs-i18n";
 
 const { upload } = ENDPOINT.blog.video;
 const { path } = FULL_PATH_ENDPOINT.blog.video;
 
 @Controller(path)
 export class BlogVideoController {
-    constructor(private blogVideo: BlogVideoService) {}
+    constructor(
+        private blogVideo: BlogVideoService,
+        private readonly videoPipe: BlogVideoValidationPipe,
+    ) {}
 
     @Get(upload.path)
     @Auth("USER")
@@ -51,6 +57,7 @@ export class BlogVideoController {
                 destination: TMP_PATH,
                 filename: (_req, _file, cb) => cb(null, randomUUID()),
             }),
+            limits: { fileSize: BLOG_VIDEO_CONFIG.maxFileSizeBytes },
             fileFilter: (req: any, _file, cb) => {
                 try {
                     const actorId = verifyUploadToken(req.query.uploadToken);
@@ -67,7 +74,8 @@ export class BlogVideoController {
         @UploadedFile()
         file: Express.Multer.File,
     ): Promise<VideoDto> {
-        return this.blogVideo.upload(file);
+        const validated = await this.videoPipe.transform(file);
+        return this.blogVideo.upload(validated);
     }
     @Get()
     @Auth("USER")

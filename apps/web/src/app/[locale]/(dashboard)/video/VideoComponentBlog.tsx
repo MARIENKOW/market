@@ -2,14 +2,15 @@
 
 import DeleteAllVideoBlog from "@/app/[locale]/(dashboard)/video/DeleteAllVideoBlog";
 import { VideoList } from "@/app/[locale]/(dashboard)/video/VideoList";
-import VideoUploaderBlog from "@/app/[locale]/(dashboard)/video/VideoUploaderBlog";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
+import { BlogVideoUploader } from "@/components/features/Uploader/BlogVideoUploader";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import { useVideos } from "@/hooks/tanstack/useVideo";
 import { Box, LinearProgress } from "@mui/material";
 
 export default function VideoComponentBlog() {
-    const { data, isLoading, error, isFetching, page, setPage } = useVideos();
+    const { data,  error, isFetching, page, setPage } = useVideos();
+    console.log(data);
 
     return (
         <Box display="flex" flexDirection="column" flex={1} height="100%">
@@ -21,7 +22,7 @@ export default function VideoComponentBlog() {
                 gap={1}
                 flexWrap="wrap"
             >
-                <VideoUploaderBlog />
+                <BlogVideoUploader />
                 {data && data.data.length > 0 ? <DeleteAllVideoBlog /> : ""}
             </Box>
             <StyledDivider />
@@ -43,7 +44,7 @@ export default function VideoComponentBlog() {
                         }}
                     />
                 )}
-                
+
                 <VideoList data={data?.data} error={error} />
                 <PaginationComponent
                     page={page}

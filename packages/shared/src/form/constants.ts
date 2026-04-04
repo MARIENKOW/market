@@ -5,39 +5,24 @@ export const PASSWORD_MAX_LENGTH = 30;
 export const EMAIL_MAX_LENGTH = 50;
 export const CHANGE_PASSWORD_OTP_LENGTH = 5;
 export const ALLOWED_IMAGE_MIME_TYPES = [
-    // 📸 базовые (must-have)
+    // Основные — поддерживаются всеми браузерами
     "image/jpeg",
     "image/png",
     "image/webp",
     "image/gif",
 
-    // 🆕 современные
+    // Современные
     "image/avif",
-    "image/heic",
-    "image/heif",
+    "image/heif", // HEIC/HEIF — file-type возвращает именно это
 
-    // 🎨 вектор
-    "image/svg+xml",
-
-    // 🖼️ bitmap / старые форматы
-    "image/bmp",
-    "image/x-ms-bmp",
-    "image/tiff",
-
-    // 📷 камеры / RAW (иногда приходят)
-    "image/x-canon-cr2",
-    "image/x-nikon-nef",
-    "image/x-sony-arw",
-
-    // 🧪 редкие / экзотика
+    // Иконки (если нужны)
     "image/x-icon",
-    "image/vnd.microsoft.icon",
+    "image/heic", // file-type распознаёт как image/heif — они могут не совпасть
+    "image/tiff", // браузеры не отображают нативно, смысл на блоге?
+    "image/jp2",
 
-    // Apple специфичное
-    "image/jp2", // JPEG 2000 (Safari любит)
-
-    // старые/альтернативные jpeg
-    "image/pjpeg",
+    // BMP (если нужна совместимость)
+    "image/bmp",
 ];
 export const AVATAR_CONFIG: ImageValidationConfig = {
     maxFileSizeBytes: 50 * 1024 * 1024, // 50MB
@@ -45,38 +30,27 @@ export const AVATAR_CONFIG: ImageValidationConfig = {
 };
 
 export const ALLOWED_VIDEO_MIME_TYPES = [
-    // 🎬 базовые (must-have)
-    "video/mp4", // H.264 / H.265
-    "video/webm", // VP8 / VP9 / AV1
-    "video/ogg", // Ogg Theora
+    // Основные
+    "video/mp4",
+    "video/webm",
+    "video/ogg",
 
-    // 🆕 современные
-    "video/av1", // AV1 (редко напрямую как mime, но пусть будет)
-    "video/mp4; codecs=av01", // AV1 в mp4 (иногда приходит так)
-
-    // 🍎 Apple / Safari
+    // Apple
     "video/quicktime", // .mov
-    "video/mp4v-es", // иногда старые mp4 кодеки
 
-    // 🖥️ старые / legacy
+    // Современные контейнеры
+    "video/x-matroska", // .mkv
+    "video/x-m4v", // .m4v
+
+    // Legacy (если нужна обратная совместимость)
     "video/x-msvideo", // .avi
     "video/x-ms-wmv", // .wmv
     "video/x-flv", // .flv
-
-    // 📦 контейнеры
-    "video/x-matroska", // .mkv
-    "video/3gpp", // .3gp
+    "video/mpeg", // .mpeg
+    "video/3gpp", // .3gp (мобильные)
     "video/3gpp2", // .3g2
-
-    // 📡 стриминг / HLS / DASH (если вдруг)
-    "application/vnd.apple.mpegurl", // .m3u8
-    "application/x-mpegURL",
-    "video/mp2t", // .ts (HLS сегменты)
-
-    // 🧪 редкие / экзотика
-    "video/x-ogm",
 ];
 export const BLOG_VIDEO_CONFIG: VideoValidationConfig = {
     maxFileSizeBytes: 500 * 1024 * 1024, // 500MB
-    allowedMimeTypes: ALLOWED_IMAGE_MIME_TYPES,
+    allowedMimeTypes: ALLOWED_VIDEO_MIME_TYPES,
 };

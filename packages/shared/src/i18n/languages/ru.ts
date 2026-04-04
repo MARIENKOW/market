@@ -41,6 +41,7 @@ export const ru = {
                 tooLarge: `Максимально допустимый размер файла: ${formatBytes(BLOG_VIDEO_CONFIG.maxFileSizeBytes)}`,
             },
             unsupportedType: "Данный формат не поддерживается",
+            unreadable: "Не удалось прочитать файл",
         },
         email: {
             max: `максимум ${EMAIL_MAX_LENGTH} символов`,

@@ -1,36 +1,39 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Box, Typography, Stack, IconButton, Drawer } from "@mui/material";
+import { Box, IconButton, Stack } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import VideoFileIcon from "@mui/icons-material/VideoFile";
 import { useTranslations } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import * as uuid from "uuid";
 
+import { MessageKeyType } from "@myorg/shared/i18n";
+import { BlogVideosSchema, BLOG_VIDEO_CONFIG } from "@myorg/shared/form";
 import { DropZone } from "@/components/features/form/fields/uncontrolled/DropZone";
 import { UploadTrigger } from "@/components/features/Uploader/UploadTrigger";
 import { UploadQueue } from "@/components/features/Uploader/UploadQueue";
-import VideoFileIcon from "@mui/icons-material/VideoFile";
-import {
-    UploadItem,
-    UploaderProps,
-} from "@/components/features/Uploader/types";
+import { UploadItem, UploadStatus } from "@/components/features/Uploader/types";
 import { StyledDrawer } from "@/components/ui/StyledDrawer";
 import { StyledTypography } from "@/components/ui/StyledTypography";
+import BlogVideoService from "@/services/blog/video/blogVideo.service";
+import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
+import { errorHandler } from "@/helpers/error/error.handler.helper";
+import { videoKeys } from "@/lib/tanstack/keys";
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
+import { snackbarError } from "@/utils/snackbar/snackbar.error";
 
-const DEFAULT_ACCEPT = ["video/mp4", "video/webm", "video/quicktime"];
+const { upload } = new BlogVideoService($apiUserAxiosClient);
+
 const DRAWER_WIDTH = 340;
 
 const isFinished = (s: UploadItem["status"]) =>
     s === "done" || s === "error" || s === "cancelled";
 
-export function VideoUploader<TResult = unknown>({
-    uploadFn,
-    onSuccess,
-    onError,
-    accept = DEFAULT_ACCEPT,
-}: UploaderProps<TResult>) {
+export function BlogVideoUploader() {
     const t = useTranslations();
+    const queryClient = useQueryClient();
 
     const [open, setOpen] = useState(false);
     const [uploads, setUploads] = useState<UploadItem[]>([]);
@@ -50,75 +53,117 @@ export function VideoUploader<TResult = unknown>({
             let lastTime = Date.now();
 
             try {
-                const result = await uploadFn(item.file, {
-                    signal: abortRefs.current[item.id]?.signal,
-                    onProgress: ({ loaded, total }) => {
-                        const now = Date.now();
-                        const dt = (now - lastTime) / 1000;
-                        if (dt > 0.1) {
-                            const instant = (loaded - lastLoaded) / dt;
-                            const prev =
-                                smoothedSpeed.current[item.id] ?? instant;
-                            smoothedSpeed.current[item.id] =
-                                0.3 * instant + 0.7 * prev;
-                            lastLoaded = loaded;
-                            lastTime = now;
-                        }
-                        patch(item.id, {
-                            progress:
-                                total > 0
-                                    ? Math.min(
-                                          Math.round((loaded / total) * 100),
-                                          100,
-                                      )
-                                    : 0,
-                            speed: smoothedSpeed.current[item.id] ?? 0,
-                        });
+                await upload(
+                    { video: item.file },
+                    {
+                        signal: abortRefs.current[item.id]?.signal,
+                        headers: { "Content-Type": "multipart/form-data" },
+                        onUploadProgress: (e) => {
+                            const loaded = e.loaded;
+                            const total = e.total ?? 0;
+                            const now = Date.now();
+                            const dt = (now - lastTime) / 1000;
+                            if (dt > 0.1) {
+                                const instant = (loaded - lastLoaded) / dt;
+                                const prev =
+                                    smoothedSpeed.current[item.id] ?? instant;
+                                smoothedSpeed.current[item.id] =
+                                    0.3 * instant + 0.7 * prev;
+                                lastLoaded = loaded;
+                                lastTime = now;
+                            }
+                            patch(item.id, {
+                                progress:
+                                    total > 0
+                                        ? Math.min(
+                                              Math.round(
+                                                  (loaded / total) * 100,
+                                              ),
+                                              100,
+                                          )
+                                        : 0,
+                                speed: smoothedSpeed.current[item.id] ?? 0,
+                            });
+                        },
                     },
-                });
+                );
                 patch(item.id, { status: "done", progress: 100, speed: 0 });
                 delete smoothedSpeed.current[item.id];
-                onSuccess?.(result, { ...item, status: "done" });
+                snackbarSuccess(
+                    t("video.uploader.uploadSuccess", {
+                        name: item.file.name,
+                    }),
+                );
+                queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
             } catch (err) {
-                const cancelled =
-                    (err instanceof Error &&
-                        (err.name === "CanceledError" ||
-                            err.name === "AbortError")) ||
-                    (err as { code?: string })?.code === "ERR_CANCELED" ||
-                    abortRefs.current[item.id]?.signal?.aborted;
-
+                let status: UploadStatus = "error";
+                errorHandler({
+                    error: err,
+                    t,
+                    fallback: {
+                        cancel: {
+                            hideMessage: true,
+                            callback: () => {
+                                status = "cancelled";
+                            },
+                        },
+                    },
+                });
                 patch(item.id, {
-                    status: cancelled ? "cancelled" : "error",
+                    status,
                     speed: 0,
                 });
-                if (!cancelled) onError?.(err, { ...item, status: "error" });
             } finally {
                 delete abortRefs.current[item.id];
             }
         },
-        [uploadFn, onSuccess, onError, patch],
+        [patch, queryClient, t],
     );
 
-    const processFiles = useCallback(
+    const handleFiles = useCallback(
         (files: File[]) => {
-            if (!files.length) return;
-            const items: UploadItem[] = files.map((file) => ({
-                id: uuid.v4(),
-                file,
-                status: "waiting",
-                progress: 0,
-                speed: 0,
-            }));
-            items.forEach((item) => {
+            const fileSchema = BlogVideosSchema.shape.videos.element;
+            const validItems: UploadItem[] = [];
+            const errorItems: UploadItem[] = [];
+            const seen = new Set<string>();
+
+            files.forEach((file) => {
+                const result = fileSchema.safeParse(file);
+                if (result.success) {
+                    validItems.push({
+                        id: uuid.v4(),
+                        file,
+                        status: "waiting",
+                        progress: 0,
+                        speed: 0,
+                    });
+                } else {
+                    errorItems.push({
+                        id: uuid.v4(),
+                        file,
+                        status: "error",
+                        progress: 0,
+                        speed: 0,
+                    });
+                    const msg = result.error.issues[0]?.message;
+                    if (msg && !seen.has(msg)) {
+                        seen.add(msg);
+                        snackbarError(t(msg as MessageKeyType));
+                    }
+                }
+            });
+
+            const allItems = [...validItems, ...errorItems];
+            if (allItems.length === 0) return;
+
+            validItems.forEach((item) => {
                 abortRefs.current[item.id] = new AbortController();
             });
-            setUploads((prev) => [...items, ...prev]);
-            void Promise.allSettled(items.map(uploadOne));
+            setUploads((prev) => [...allItems, ...prev]);
+            void Promise.allSettled(validItems.map(uploadOne));
         },
-        [uploadOne],
+        [uploadOne, t],
     );
-
-    // ── Stats ─────────────────────────────────────────────────────────────────
 
     const total = uploads.length;
     const done = uploads.filter((u) => u.status === "done").length;
@@ -132,8 +177,6 @@ export function VideoUploader<TResult = unknown>({
     const avgProgress = active.length
         ? Math.round(active.reduce((s, u) => s + u.progress, 0) / active.length)
         : 0;
-
-    const sublabel = `${accept.map((type) => type.split("/")[1]?.toUpperCase()).join(", ")} · ${t("video.uploader.multipleFiles")}`;
 
     return (
         <>
@@ -203,11 +246,9 @@ export function VideoUploader<TResult = unknown>({
                     }}
                 >
                     <DropZone
-                        onFiles={processFiles}
-                        accept={accept}
-                        labelActive={t("video.uploader.dropActive")}
-                        labelIdle={t("video.uploader.dropIdle")}
-                        sublabel={sublabel}
+                        onFiles={handleFiles}
+                        accept={BLOG_VIDEO_CONFIG.allowedMimeTypes}
+                        multiple
                     />
                     <UploadQueue
                         uploads={uploads}

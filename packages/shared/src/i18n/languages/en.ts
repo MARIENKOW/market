@@ -42,6 +42,7 @@ export const en: MessageStructure = {
                 tooLarge: `Maximum allowed file size: ${formatBytes(BLOG_VIDEO_CONFIG.maxFileSizeBytes)}`,
             },
             unsupportedType: "This format is not supported",
+            unreadable: "Failed to read the file",
         },
         email: {
             max: `maximum ${EMAIL_MAX_LENGTH} characters`,

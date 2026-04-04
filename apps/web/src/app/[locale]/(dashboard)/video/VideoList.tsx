@@ -1,8 +1,10 @@
 import { VideoControl } from "@/app/[locale]/(dashboard)/video/VideoControl";
 import EmptyElement from "@/components/feedback/EmptyElement";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
+import { videoKeys } from "@/lib/tanstack/keys";
 import { Box, Grid } from "@mui/material";
 import { VideoDto } from "@myorg/shared/dto";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function VideoList({
     data,
@@ -11,7 +13,19 @@ export function VideoList({
     data?: VideoDto[];
     error: unknown;
 }) {
-    if (error) return <ErrorHandlerElement error={error} />;
+    const queryClient = useQueryClient();
+    console.log(data,error);
+    if (error && (!data || data.length === 0))
+        return (
+            <ErrorHandlerElement
+                reset={() =>
+                    queryClient.invalidateQueries({
+                        queryKey: videoKeys.lists(),
+                    })
+                }
+                error={error}
+            />
+        );
     if (data && data.length == 0) return <EmptyElement />;
     return (
         <Box display="flex" flexDirection="column" flex={1}>

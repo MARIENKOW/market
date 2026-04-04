@@ -36,7 +36,7 @@ export function errorHandler({
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
     fallback?: FallbackType;
 }) {
-    console.log(error);
+    console.dir(error);
     const context = getErrorContext(error);
     const { root } = normalizeError({ error, t });
 
@@ -61,7 +61,10 @@ export function errorHandler({
 }
 
 export type FallbackFormType = {
-    [K in ErrorNormalizeContext]?: { callback?: () => void };
+    [K in ErrorNormalizeContext]?: {
+        callback?: () => void;
+        hideMessage?: boolean;
+    };
 };
 
 export function errorFormHandlerWithAlert<T extends FieldValues>({
@@ -77,15 +80,17 @@ export function errorFormHandlerWithAlert<T extends FieldValues>({
     fallback?: FallbackFormType;
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
 }) {
-    console.log(error);
     const context = getErrorContext(error);
     const { root, fields } = normalizeError<T>({ error, t });
 
     const options = fallback?.[context];
 
-    if (options?.callback) options?.callback();
+    if (options?.hideMessage) {
+        options.callback?.();
+        return;
+    }
 
-    if (root?.[0]) {
+    if (root?.[0] && !options?.hideMessage) {
         setError("root.server", {
             type: "server",
             message: root[0].message,
@@ -103,6 +108,7 @@ export function errorFormHandlerWithAlert<T extends FieldValues>({
             }
         }
     }
+    options?.callback?.();
 }
 export function errorFormHandler<T extends FieldValues>({
     error,
@@ -117,19 +123,17 @@ export function errorFormHandler<T extends FieldValues>({
     fallback?: FallbackFormType;
     t: (key: MessageKeyType, options?: Record<string, any>) => string;
 }) {
-    console.log(error);
     const context = getErrorContext(error);
     const { root, fields } = normalizeError<T>({ error, t });
 
     const options = fallback?.[context];
 
-    if (options?.callback) options?.callback();
+    if (options?.hideMessage) {
+        options.callback?.();
+        return;
+    }
 
     if (root && root.length !== 0) {
-        // setError("root.server", {
-        //     type: "server",
-        //     message: root[0].message,
-        // });
         root.forEach((err) => {
             const snackbar = SnackbarByErrorType[err.type];
             snackbar(err.message);
@@ -147,4 +151,5 @@ export function errorFormHandler<T extends FieldValues>({
             }
         }
     }
+    options?.callback?.();
 }

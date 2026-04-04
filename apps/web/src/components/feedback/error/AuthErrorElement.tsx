@@ -8,11 +8,12 @@ import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 
-type MessageProp = { message?: string };
+type MessageProp = { message?: string; reset?: () => void };
 
-export default function AuthErrorElement({ message }: MessageProp) {
+export default function AuthErrorElement({ message, reset }: MessageProp) {
     const t = useTranslations();
     const router = useRouter();
+    const resetFn = reset || router.refresh;
     const [isLoading, transition] = useTransition();
     return (
         <Box
@@ -51,7 +52,7 @@ export default function AuthErrorElement({ message }: MessageProp) {
             <Box display={"flex"} gap={1} flexDirection={"column"}>
                 <StyledButton
                     loading={isLoading}
-                    onClick={() => transition(router.refresh)}
+                    onClick={() => transition(resetFn)}
                     variant="contained"
                 >
                     {t("feedback.error.auth.reload")}

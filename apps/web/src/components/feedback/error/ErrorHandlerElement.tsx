@@ -22,9 +22,11 @@ type Fallback = {
 export default function ErrorHandlerElement({
     error,
     fallback,
+    reset,
 }: {
     error: unknown;
     fallback?: Fallback;
+    reset?: () => void;
 }): React.ReactNode {
     console.log(error);
     const context = getErrorContext(error);
@@ -32,29 +34,34 @@ export default function ErrorHandlerElement({
     if (options?.element) return options.element;
     const message = options?.message;
     if (context === "cancel") {
-        return <ErrorElement message={message} />;
+        return <ErrorElement reset={reset} message={message} />;
     }
     if (context === "forbidden") {
         return <ForbiddenErrorElement message={message} />;
     }
     if (context === "internal") {
-        return <ErrorElement message={message} />;
+        return <ErrorElement reset={reset} message={message} />;
     }
     if (context === "network") {
-        return <NetworkErrorElement message={message} />;
+        return <NetworkErrorElement reset={reset} message={message} />;
     }
     if (context === "notfound") {
         return <NotFoundElement message={message} />;
     }
     if (context === "unauthorized") {
-        return <UnauthorizedErrorElement message={message} />;
+        return <UnauthorizedErrorElement reset={reset} message={message} />;
     }
     if (context === "validation") {
         const apiError = error as ApiErrorResponse;
         const { root } = apiError.data as ErrorsWithMessages;
-        return <ErrorElement message={message || root?.[0]?.message} />;
+        return (
+            <ErrorElement
+                reset={reset}
+                message={message || root?.[0]?.message}
+            />
+        );
     }
     if (context === "unknown") {
-        return <ErrorElement message={message} />;
+        return <ErrorElement reset={reset} message={message} />;
     }
 }

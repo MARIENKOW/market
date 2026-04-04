@@ -1,10 +1,18 @@
 "use client";
 
+import { useEffect } from "react";
 import { DropZone } from "@/components/features/form/fields/uncontrolled/DropZone";
 import { StyledFormHelperText } from "@/components/ui/StyledFormHelperText";
 import { MessageKeyType } from "@myorg/shared/i18n";
 import { useTranslations } from "next-intl";
-import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
+import {
+    Controller,
+    FieldError,
+    FieldValues,
+    Path,
+    useFormContext,
+} from "react-hook-form";
+import { snackbarError } from "@/utils/snackbar/snackbar.error";
 
 interface FormDropZoneProps<T extends FieldValues> {
     name: Path<T>;
@@ -20,8 +28,24 @@ export default function FormDropZone<T extends FieldValues>({
     disabled,
 }: FormDropZoneProps<T>) {
     const t = useTranslations();
-    const { control } = useFormContext<T>();
+    const {
+        control,
+        formState: { errors },
+    } = useFormContext<T>();
 
+    const fieldErrors = errors[name];
+
+    useEffect(() => {
+        if (!Array.isArray(fieldErrors)) return;
+        const messages = [
+            ...new Set(
+                (fieldErrors as Array<FieldError | undefined>)
+                    .filter((e) => e?.message)
+                    .map((e) => e!.message!),
+            ),
+        ];
+        messages.forEach((msg) => snackbarError(t(msg as MessageKeyType)));
+    }, [fieldErrors, t]);
     return (
         <Controller
             name={name}
@@ -30,7 +54,7 @@ export default function FormDropZone<T extends FieldValues>({
                 <>
                     <DropZone
                         onFiles={(files) =>
-                            onChange(multiple ? files : files[0] ?? null)
+                            onChange(multiple ? files : (files[0] ?? null))
                         }
                         accept={accept}
                         multiple={multiple}

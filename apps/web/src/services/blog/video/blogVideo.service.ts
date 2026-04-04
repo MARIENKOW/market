@@ -10,7 +10,13 @@ export default class BlogVideoService {
         options: AxiosRequestConfig,
     ) => Promise<AxiosResponse<VideoDto>>;
     delete: (id: string) => Promise<AxiosResponse<void>>;
-    getAll: ({ page, limit }: { page: number; limit?: number }) => Promise<AxiosResponse<PagedResult<VideoDto>>>;
+    getAll: ({
+        page,
+        limit,
+    }: {
+        page: number;
+        limit?: number;
+    }) => Promise<AxiosResponse<PagedResult<VideoDto>>>;
     deleteAll: () => Promise<AxiosResponse<void>>;
     constructor(api: AxiosInstance) {
         this.upload = async (body, options) => {
