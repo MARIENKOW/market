@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable } from "@nestjs/common";
 import { fromBuffer } from "file-type";
-import { AllowedMimeType } from "../image.config";
+import { AllowedImageMimeType } from "../image.config";
 import { AVATAR_CONFIG, AvatarUserInput } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
 
@@ -32,25 +32,24 @@ export class AvatarValidationPipe implements PipeTransform {
         if (
             !detected ||
             !AVATAR_CONFIG.allowedMimeTypes.includes(
-                detected.mime as AllowedMimeType,
+                detected.mime as AllowedImageMimeType,
             )
         ) {
             throw new ValidationException<AvatarUserInput>({
                 fields: {
-                    image: ["form.avatar.unsupportedType"],
+                    image: ["form.file.unsupportedType"],
                 },
             });
         }
 
         // Подменяем mimetype на реальный — не тот что прислал клиент
         file.mimetype = detected.mime;
-        
 
         // Проверка размера по конфигу сущности
 
         if (file.size > AVATAR_CONFIG.maxFileSizeBytes) {
             throw new ValidationException<AvatarUserInput>({
-                fields: { image: ["form.avatar.tooLarge"] },
+                fields: { image: ["form.file.avatar.tooLarge"] },
             });
         }
 

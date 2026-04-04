@@ -1,4 +1,4 @@
-import { VideoControll } from "@/app/[locale]/(dashboard)/video/VideoControll";
+import { VideoControl } from "@/app/[locale]/(dashboard)/video/VideoControl";
 import EmptyElement from "@/components/feedback/EmptyElement";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import { Box, Grid } from "@mui/material";
@@ -22,7 +22,7 @@ export function VideoList({
             >
                 {data?.map((e) => (
                     <Grid size={1} key={e.id}>
-                        <VideoControll video={e} />
+                        <VideoControl video={e} />
                     </Grid>
                 ))}
             </Grid>

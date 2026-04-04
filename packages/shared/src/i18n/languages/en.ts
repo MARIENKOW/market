@@ -5,6 +5,7 @@ import {
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
     AVATAR_CONFIG,
+    BLOG_VIDEO_CONFIG,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -33,8 +34,13 @@ export const en: MessageStructure = {
             digits: "Digits only",
             label: "Verification code",
         },
-        avatar: {
-            tooLarge: `Maximum allowed file size: ${formatBytes(AVATAR_CONFIG.maxFileSizeBytes)}`,
+        file: {
+            avatar: {
+                tooLarge: `Maximum allowed file size: ${formatBytes(AVATAR_CONFIG.maxFileSizeBytes)}`,
+            },
+            blogVideo: {
+                tooLarge: `Maximum allowed file size: ${formatBytes(BLOG_VIDEO_CONFIG.maxFileSizeBytes)}`,
+            },
             unsupportedType: "This format is not supported",
         },
         email: {
@@ -49,6 +55,10 @@ export const en: MessageStructure = {
             same: "Passwords do not match",
             min: `minimum ${PASSWORD_MIN_LENGTH} characters`,
             max: `maximum ${PASSWORD_MAX_LENGTH} characters`,
+        },
+        dropzone: {
+            dropActive: "Drop the file",
+            dropIdle: "Drag file here or click",
         },
         required: "Required field",
         submit: "Submit",
@@ -120,7 +130,8 @@ export const en: MessageStructure = {
                             changeSuccess: "Password changed successfully!",
                         },
                         errors: {
-                            timeout: "Reset link expired! Please request a new one",
+                            timeout:
+                                "Reset link expired! Please request a new one",
                             notFound: "Invalid link! Please request a new one",
                         },
                     },
@@ -332,5 +343,40 @@ export const en: MessageStructure = {
     common: {
         cancel: "Cancel",
         confirm: "Confirm",
+    },
+    uploader: {
+        openQueue: "Open upload queue",
+        uploading: "Uploading…",
+        cancelAll: "Cancel all ({count})",
+        queueTitle: "Queue ({count})",
+        errorsCount: "{count} errors",
+        clear: "clear",
+        cancel: "Cancel",
+        statusWaiting: "Waiting",
+        statusDone: "Done",
+        statusError: "Error",
+        statusCancelled: "Cancelled",
+        summaryUploading: "Uploading {active} of {total}",
+        summaryDone: "Done · {done}",
+        summaryPartial: "{done} of {total} · {errors} errors",
+        summaryProgress: "~{progress}% · {waiting} left in queue",
+        summaryOpenHint: "click to open",
+    },
+    video: {
+        uploader: {
+            trigger: "Upload video",
+            drawerTitle: "Video upload",
+            dropActive: "Drop to upload",
+            dropIdle: "Drag video here or click",
+            multipleFiles: "multiple files",
+            uploadSuccess: "{name} uploaded",
+        },
+        control: {
+            delete: "Delete",
+            deleteConfirm: "Delete video?",
+            deleteSuccess: "Video deleted",
+            deleteAll: "Delete all",
+            deleteAllConfirm: "Delete all videos?",
+        },
     },
 };

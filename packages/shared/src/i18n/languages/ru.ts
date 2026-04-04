@@ -4,6 +4,7 @@ import {
     PASSWORD_MIN_LENGTH,
     CHANGE_PASSWORD_OTP_LENGTH,
     AVATAR_CONFIG,
+    BLOG_VIDEO_CONFIG,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -32,8 +33,13 @@ export const ru = {
             digits: "Только цифры",
             label: "Код подтверждения",
         },
-        avatar: {
-            tooLarge: `Максимально допустимый размер файла: ${formatBytes(AVATAR_CONFIG.maxFileSizeBytes)}`,
+        file: {
+            avatar: {
+                tooLarge: `Максимально допустимый размер файла: ${formatBytes(AVATAR_CONFIG.maxFileSizeBytes)}`,
+            },
+            blogVideo: {
+                tooLarge: `Максимально допустимый размер файла: ${formatBytes(BLOG_VIDEO_CONFIG.maxFileSizeBytes)}`,
+            },
             unsupportedType: "Данный формат не поддерживается",
         },
         email: {
@@ -48,6 +54,10 @@ export const ru = {
             same: "Пароли не совпадают",
             min: `минимум ${PASSWORD_MIN_LENGTH} символов`,
             max: `максимум ${PASSWORD_MAX_LENGTH} символов`,
+        },
+        dropzone: {
+            dropActive: "Отпустите файл",
+            dropIdle: "Перетащите файл или нажмите",
         },
         required: "обязательное поле",
         submit: "Подтвердить",
@@ -344,6 +354,41 @@ export const ru = {
     common: {
         cancel: "Отменить",
         confirm: "Подтвердить",
+    },
+    uploader: {
+        openQueue: "Открыть очередь загрузки",
+        uploading: "Загрузка…",
+        cancelAll: "Отменить все ({count})",
+        queueTitle: "Очередь ({count})",
+        errorsCount: "{count} ошибок",
+        clear: "очистить",
+        cancel: "Отменить",
+        statusWaiting: "В очереди",
+        statusDone: "Готово",
+        statusError: "Ошибка",
+        statusCancelled: "Отменено",
+        summaryUploading: "Загружается {active} из {total}",
+        summaryDone: "Готово · {done}",
+        summaryPartial: "{done} из {total} · {errors} ошибок",
+        summaryProgress: "~{progress}% · осталось {waiting} в очереди",
+        summaryOpenHint: "нажмите, чтобы открыть",
+    },
+    video: {
+        uploader: {
+            trigger: "Загрузить видео",
+            drawerTitle: "Загрузка видео",
+            dropActive: "Отпустите для загрузки",
+            dropIdle: "Перетащите видео или нажмите",
+            multipleFiles: "несколько файлов",
+            uploadSuccess: "{name} загружено",
+        },
+        control: {
+            delete: "Удалить",
+            deleteConfirm: "Удалить видео?",
+            deleteSuccess: "Видео удалено",
+            deleteAll: "Удалить все",
+            deleteAllConfirm: "Удалить все видео?",
+        },
     },
 };
 

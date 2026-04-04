@@ -8,10 +8,10 @@ export const AvatarAdminSchema = z.object({
         .instanceof(File, { message: getMessageKey("form.required") })
         .refine((f) => {
             return f.size <= AVATAR_CONFIG.maxFileSizeBytes;
-        }, getMessageKey("form.avatar.tooLarge"))
+        }, getMessageKey("form.file.avatar.tooLarge"))
         .refine(
             (f) => AVATAR_CONFIG.allowedMimeTypes.includes(f.type),
-            getMessageKey("form.avatar.unsupportedType"),
+            getMessageKey("form.file.unsupportedType"),
         ),
 });
 

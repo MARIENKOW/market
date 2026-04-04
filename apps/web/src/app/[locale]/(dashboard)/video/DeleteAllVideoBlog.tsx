@@ -20,7 +20,7 @@ export default function DeleteAllVideoBlog() {
     const handleDeleteAll = async () => {
         setLoading(true);
         try {
-            const isConfirm = await confirm("удалить все видео?");
+            const isConfirm = await confirm(t("video.control.deleteAllConfirm"));
             if (!isConfirm) return;
             await deleteAll();
             queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
@@ -39,7 +39,7 @@ export default function DeleteAllVideoBlog() {
                 loading={loading}
                 onClick={handleDeleteAll}
             >
-                Удалить все
+                {t("video.control.deleteAll")}
             </StyledButton>
         </>
     );

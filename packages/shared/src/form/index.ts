@@ -12,6 +12,7 @@ export * from "./schema/admin/ForgotPasswordAdminSchema";
 export * from "./schema/admin/LoginAdminSchema";
 export * from "./schema/user/AvatarUserSchema";
 export * from "./schema/admin/AvatarAdminSchema";
+export * from "./schema/blog/video/BlogVideoSchema";
 
 export * from "./types";
 export * from "./constants";

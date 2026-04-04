@@ -1,6 +1,6 @@
-import { ALLOWED_MIME_TYPES } from "@myorg/shared/form";
+import { ALLOWED_IMAGE_MIME_TYPES } from "@myorg/shared/form";
 
-export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
+export type AllowedImageMimeType = (typeof ALLOWED_IMAGE_MIME_TYPES)[number];
 
 // Расширение файла по mimetype — для сохранения оригинала
 export const MIME_TO_EXT: Record<string, string> = {

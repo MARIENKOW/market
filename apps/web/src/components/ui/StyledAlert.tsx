@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
 import { Alert, styled } from "@mui/material";
 
 export const StyledAlert = styled(Alert)(({ theme }) => ({
     "&.MuiAlert-filledError": {
-        background: theme.palette.error.main,
-        color: theme.palette.error.contrastText,
+        background: theme.vars?.palette.error.main,
+        color: theme.vars?.palette.error.contrastText,
         "& .MuiAlert-icon": {
-            color: theme.palette.error.light,
+            color: theme.vars?.palette.error.light,
         },
     },
 }));

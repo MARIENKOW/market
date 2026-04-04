@@ -17,40 +17,27 @@ import { useState } from "react";
 
 const videoS = new BlogVideoService($apiUserAxiosClient);
 
-export const VideoControll = ({ video }: { video: VideoDto }) => {
+export const VideoControl = ({ video }: { video: VideoDto }) => {
     const [loadingDelete, setLoadingDelete] = useState(false);
     const { confirm, confirmDialog } = useConfirm();
     const t = useTranslations();
     const queryClient = useQueryClient();
 
-    // const handleAdd = () => {
-    //     setVideos_id((prevArr) => [...prevArr, e.id]);
-    //     editor
-    //         .chain()
-    //         .focus()
-    //         .setVideo({
-    //             src: e.path,
-    //             "data-id": e.id,
-    //             poster: e?.img?.path,
-    //         })
-    //         .run();
-    //     handleClose();
-    // };
-
     const handleDelete = async () => {
         try {
-            const isConfirm = await confirm("Удалить видео?");
+            const isConfirm = await confirm(t("video.control.deleteConfirm"));
             if (!isConfirm) return;
             setLoadingDelete(true);
             await videoS.delete(video.id);
             queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
-            snackbarSuccess("Видео удалено");
+            snackbarSuccess(t("video.control.deleteSuccess"));
         } catch (error) {
             errorHandler({ error, t });
         } finally {
             setLoadingDelete(false);
         }
     };
+
     return (
         <Card>
             {confirmDialog}
@@ -75,7 +62,7 @@ export const VideoControll = ({ video }: { video: VideoDto }) => {
                         color="error"
                         onClick={handleDelete}
                     >
-                        Удалить
+                        {t("video.control.delete")}
                     </StyledButton>
                 }
             />
@@ -90,7 +77,6 @@ export const VideoControll = ({ video }: { video: VideoDto }) => {
                 controls
                 preload="none"
                 width={"100%"}
-                // className="rounded-md max-w-full"
             />
         </Card>
     );

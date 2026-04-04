@@ -48,8 +48,8 @@ export const dark: ThemeOptions = {
         },
         text: {
             primary: "#e8dcc0",
-            secondary: "#7a6848",
-            disabled: "#3e3828",
+            secondary: "#9a8460",
+            disabled: "#6a5c44",
         },
         divider: "#302a1e",
         action: {

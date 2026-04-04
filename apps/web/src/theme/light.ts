@@ -47,7 +47,7 @@ export const light: ThemeOptions = {
         text: {
             primary: "#2a1f0e",
             secondary: "#7a6848",
-            disabled: "#c0b090",
+            disabled: "#a89070",
         },
         divider: "#d8ccb0",
         action: {

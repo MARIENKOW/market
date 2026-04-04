@@ -43,6 +43,7 @@ export default function VideoComponentBlog() {
                         }}
                     />
                 )}
+                
                 <VideoList data={data?.data} error={error} />
                 <PaginationComponent
                     page={page}
