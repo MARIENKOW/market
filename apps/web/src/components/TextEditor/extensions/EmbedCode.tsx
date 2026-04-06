@@ -87,7 +87,11 @@ export const EmbedCode = Node.create({
     },
 
     parseHTML() {
-        return [{ tag: "div[data-embed-code]" }];
+        return [
+            { tag: "div[data-embed-code]" },
+            // backward compat: old format had data-embed-code on the inner element (iframe, etc.)
+            { tag: "[data-embed-code]:not(div)" },
+        ];
     },
 
     renderHTML({ HTMLAttributes }) {
@@ -95,29 +99,23 @@ export const EmbedCode = Node.create({
         const align: Align = (HTMLAttributes["data-align"] as Align) ?? "left";
         const justify = JUSTIFY[align];
 
-        // Output the actual embed HTML so it renders anywhere without JS,
-        // plus data-embed-code for reliable round-tripping back into the editor.
+        const wrapperAttrs = {
+            "data-embed-code": encodeURIComponent(code),
+            "data-align": align,
+            style: `display: flex; justify-content: ${justify};`,
+        };
+
         if (typeof document !== "undefined" && code) {
             const tmp = document.createElement("div");
             tmp.innerHTML = code.trim();
             const el = tmp.firstElementChild as HTMLElement | null;
             if (el) {
-                el.setAttribute("data-embed-code", encodeURIComponent(code));
-                el.setAttribute("data-align", align);
                 el.style.maxWidth = "100%";
-                return ["div", { style: `display: flex; justify-content: ${justify};` }, el];
+                return ["div", wrapperAttrs, el];
             }
         }
 
-        // SSR / empty fallback
-        return [
-            "div",
-            {
-                "data-embed-code": encodeURIComponent(code),
-                "data-align": align,
-                style: `display: flex; justify-content: ${justify};`,
-            },
-        ];
+        return ["div", wrapperAttrs];
     },
 
     addNodeView() {

@@ -1,18 +1,18 @@
 // schemas/avatar-upload.schema.ts
 import { z } from "zod";
 import { getMessageKey } from "../../../../i18n";
-import { BLOG_VIDEO_CONFIG } from "../../../constants";
+import { BLOG_IMAGE_CONFIG } from "../../../constants";
 
 export const BlogImageSchema = z.object({
-    videos: z
+    images: z
         .array(
             z
                 .instanceof(File, { message: getMessageKey("form.required") })
                 .refine((f) => {
-                    return f.size <= BLOG_VIDEO_CONFIG.maxFileSizeBytes;
+                    return f.size <= BLOG_IMAGE_CONFIG.maxFileSizeBytes;
                 }, getMessageKey("form.file.blogImage.tooLarge"))
                 .refine(
-                    (f) => BLOG_VIDEO_CONFIG.allowedMimeTypes.includes(f.type),
+                    (f) => BLOG_IMAGE_CONFIG.allowedMimeTypes.includes(f.type),
                     getMessageKey("form.file.unsupportedType"),
                 ),
         )

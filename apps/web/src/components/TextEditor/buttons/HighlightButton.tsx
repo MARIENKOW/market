@@ -8,16 +8,17 @@ import { useTiptap, useTiptapState } from "@tiptap/react";
 import { Selection } from "@tiptap/pm/state";
 import { StyledPopover } from "@/components/ui/StyledPopover";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
+import * as uuid from "uuid";
 
 const COLORS = [
-    { label: "None", value: null },
-    { label: "Yellow", value: "#fef08a" },
-    { label: "Orange", value: "#fed7aa" },
-    { label: "Pink", value: "#fecdd3" },
-    { label: "Purple", value: "#e9d5ff" },
-    { label: "Blue", value: "#bfdbfe" },
-    { label: "Green", value: "#bbf7d0" },
-    { label: "Gray", value: "#e5e7eb" },
+    { label: "None", value: null, id: uuid.v4() },
+    { label: "Yellow", value: "#fef08a", id: uuid.v4() },
+    { label: "Orange", value: "#fed7aa", id: uuid.v4() },
+    { label: "Pink", value: "#fecdd3", id: uuid.v4() },
+    { label: "Purple", value: "#e9d5ff", id: uuid.v4() },
+    { label: "Blue", value: "#bfdbfe", id: uuid.v4() },
+    { label: "Green", value: "#bbf7d0", id: uuid.v4() },
+    { label: "Gray", value: "#e5e7eb", id: uuid.v4() },
 ];
 
 export default function HighlightButton() {
@@ -90,8 +91,9 @@ export default function HighlightButton() {
                         gap: 0.5,
                     }}
                 >
-                    {COLORS.map(({ label, value }) => (
+                    {COLORS.map(({ label, value, id }) => (
                         <Box
+                            key={id}
                             onClick={() => handleSelect(value)}
                             sx={{
                                 width: 24,

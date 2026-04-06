@@ -1,34 +1,30 @@
 import { Box } from "@mui/material";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 
-import BoldButton from "../buttons/BoldButton";
-import ItalicButton from "../buttons/ItalicButton";
-import StrikeButton from "../buttons/StrikeButton";
-import UnderlineButton from "../buttons/UnderlineButton";
-import SubscriptButton from "../buttons/SubscriptButton";
-import SuperscriptButton from "../buttons/SuperscriptButton";
-import ClearMarksButton from "../buttons/ClearMarksButton";
-import AlignButton from "../buttons/AlignButton";
-import BulletListButton from "../buttons/BulletListButton";
-import OrderedListButton from "../buttons/OrderedListButton";
-import LinkButton from "../buttons/LinkButton";
-import ImageUrlButton from "../buttons/ImageUrlButton";
-import VideoButton from "../buttons/VideoButton";
-import EmbedCodeButton from "../buttons/EmbedCodeButton";
-import ColorButton from "../buttons/ColorButton";
-import HighlightButton from "../buttons/HighlightButton";
-import FontsButton from "../buttons/FontsButton";
-import FontSizeButton from "../buttons/FontSizeButton";
-import StyleButton from "../buttons/StyleButton";
+
+import ImageButton from "@/components/TextEditor/buttons/ImageButton";
+import BoldButton from "@/components/TextEditor/buttons/BoldButton";
+import ItalicButton from "@/components/TextEditor/buttons/ItalicButton";
+import StrikeButton from "@/components/TextEditor/buttons/StrikeButton";
+import UnderlineButton from "@/components/TextEditor/buttons/UnderlineButton";
+import SubscriptButton from "@/components/TextEditor/buttons/SubscriptButton";
+import SuperscriptButton from "@/components/TextEditor/buttons/SuperscriptButton";
+import ClearMarksButton from "@/components/TextEditor/buttons/ClearMarksButton";
+import ColorButton from "@/components/TextEditor/buttons/ColorButton";
+import HighlightButton from "@/components/TextEditor/buttons/HighlightButton";
+import LinkButton from "@/components/TextEditor/buttons/LinkButton";
+import OrderedListButton from "@/components/TextEditor/buttons/OrderedListButton";
+import BulletListButton from "@/components/TextEditor/buttons/BulletListButton";
+import AlignButton from "@/components/TextEditor/buttons/AlignButton";
+import VideoButton from "@/components/TextEditor/buttons/VideoButton";
+import EmbedCodeButton from "@/components/TextEditor/buttons/EmbedCodeButton";
+import FontsButton from "@/components/TextEditor/buttons/FontsButton";
+import StyleButton from "@/components/TextEditor/buttons/StyleButton";
+import FontSizeButton from "@/components/TextEditor/buttons/FontSizeButton";
 
 export default function BlogToolbar() {
     return (
         <>
-            <ImageUrlButton />
-            <VideoButton />
-            <EmbedCodeButton />
-            <StyledDivider orientation="vertical" flexItem />
-
             <BoldButton />
             <ItalicButton />
             <StrikeButton />
@@ -57,6 +53,11 @@ export default function BlogToolbar() {
             <AlignButton align="center" />
             <AlignButton align="right" />
 
+            <StyledDivider orientation="vertical" flexItem />
+
+            <ImageButton />
+            <VideoButton />
+            <EmbedCodeButton />
             <StyledDivider orientation="vertical" flexItem sx={{ mr: 1 }} />
 
             <Box display="flex" gap={1} alignItems="center" flexWrap="wrap">

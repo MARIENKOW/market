@@ -385,4 +385,22 @@ export const en: MessageStructure = {
             deleteAllConfirm: "Delete all videos?",
         },
     },
+    image: {
+        uploader: {
+            trigger: "Upload image",
+            drawerTitle: "Image upload",
+            dropActive: "Drop to upload",
+            dropIdle: "Drag image here or click",
+            multipleFiles: "multiple files",
+            uploadSuccess: "{name} uploaded",
+        },
+        control: {
+            add: "Add",
+            delete: "Delete",
+            deleteConfirm: "Delete image?",
+            deleteSuccess: "Image deleted",
+            deleteAll: "Delete all",
+            deleteAllConfirm: "Delete all images?",
+        },
+    },
 };

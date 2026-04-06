@@ -18,7 +18,8 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import type { Extensions } from "@tiptap/core";
 import { Video } from "@/components/TextEditor/extensions/Video";
-import ImageUrl from "@/components/TextEditor/extensions/ImageUrl";
+import { VideoUrl } from "@/components/TextEditor/extensions/VideoUrl";
+import { Image } from "@/components/TextEditor/extensions/Image";
 import { CustomLink } from "@/components/TextEditor/extensions/CustomLink";
 import { FontSize } from "@/components/TextEditor/extensions/FontSize";
 import { EmbedCode } from "@/components/TextEditor/extensions/EmbedCode";
@@ -141,6 +142,8 @@ export const blogExtensions: Extensions = [
         blockquote: false,
         codeBlock: false,
         paragraph: false,
+        link: false,
+        underline: false,
     }),
     StyledParagraph,
     StyledBulletList,
@@ -150,6 +153,7 @@ export const blogExtensions: Extensions = [
     StyledBlockquote,
     StyledCodeBlock,
     Video,
+    VideoUrl,
     FontFamily,
     FontSize,
     Color,
@@ -165,7 +169,7 @@ export const blogExtensions: Extensions = [
         autolink: true,
         protocols: ["http", "https", "mailto"],
     }),
-    ImageUrl,
+    Image,
     EmbedCode,
     TextAlign.configure({ types: ["heading", "paragraph", "listItem"] }),
 ];

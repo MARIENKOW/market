@@ -13,6 +13,7 @@ interface TiptapProps {
     value?: string;
     onChange?: (html: string) => void;
     onVideosChange?: (videos: string[]) => void;
+    onImagesChange?: (images: string[]) => void;
     error?: boolean;
     extensions: Extensions;
     children?: ReactNode;
@@ -24,6 +25,7 @@ export default function Tiptap({
     value,
     onChange,
     onVideosChange,
+    onImagesChange,
     error,
     extensions,
     children,
@@ -35,6 +37,8 @@ export default function Tiptap({
     onChangeRef.current = onChange;
     const onVideosChangeRef = useRef(onVideosChange);
     onVideosChangeRef.current = onVideosChange;
+    const onImagesChangeRef = useRef(onImagesChange);
+    onImagesChangeRef.current = onImagesChange;
 
     const editor = useEditor({
         extensions,
@@ -66,6 +70,14 @@ export default function Tiptap({
                         ids.add(node.attrs["data-id"]);
                 });
                 onVideosChangeRef.current(Array.from(ids));
+            }
+            if (onImagesChangeRef.current) {
+                const ids = new Set<string>();
+                editor.state.doc.descendants((node) => {
+                    if (node.type.name === "image" && node.attrs["data-id"])
+                        ids.add(node.attrs["data-id"]);
+                });
+                onImagesChangeRef.current(Array.from(ids));
             }
         },
     });

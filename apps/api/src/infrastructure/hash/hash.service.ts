@@ -8,6 +8,7 @@ export class HashService {
         return crypto.createHash("sha256").update(data).digest("hex");
     }
 
+
     async hash(data: string, saltRounds: number = 12): Promise<string> {
         return bcrypt.hash(this.sha256(data), saltRounds);
     }

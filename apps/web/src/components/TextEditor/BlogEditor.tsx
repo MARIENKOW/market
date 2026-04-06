@@ -8,6 +8,7 @@ interface BlogEditorProps {
     value?: string;
     onChange?: (html: string) => void;
     onVideosChange?: (videos: string[]) => void;
+    onImagesChange?: (images: string[]) => void;
     error?: boolean;
 }
 
@@ -17,6 +18,7 @@ export default function BlogEditor({
     value,
     onChange,
     onVideosChange,
+    onImagesChange,
     error,
 }: BlogEditorProps) {
     return (
@@ -24,6 +26,7 @@ export default function BlogEditor({
             value={value}
             onChange={onChange}
             onVideosChange={onVideosChange}
+            onImagesChange={onImagesChange}
             error={error}
             extensions={blogExtensions}
         >

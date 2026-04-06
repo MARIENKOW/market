@@ -13,6 +13,7 @@ export * from "./schema/admin/LoginAdminSchema";
 export * from "./schema/user/AvatarUserSchema";
 export * from "./schema/admin/AvatarAdminSchema";
 export * from "./schema/blog/video/BlogVideoSchema";
+export * from "./schema/blog/image/BlogImageSchema";
 
 export * from "./types";
 export * from "./constants";

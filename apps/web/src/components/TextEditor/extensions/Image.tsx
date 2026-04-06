@@ -1,17 +1,21 @@
 import { Node, mergeAttributes } from "@tiptap/core";
-import {
-    NodeViewWrapper,
-    ReactNodeViewRenderer,
-    NodeViewProps,
-} from "@tiptap/react";
+import { NodeViewWrapper, ReactNodeViewRenderer, NodeViewProps } from "@tiptap/react";
 import { useResize } from "../hooks/useResize";
 import { useTouchDrag } from "../hooks/useTouchDrag";
 import NodeOverlayControls from "../components/NodeOverlayControls";
 
+interface ImageAttrs {
+    src: string;
+    "data-id": string;
+    alt?: string;
+    width?: string;
+    align?: "left" | "center" | "right";
+}
+
 declare module "@tiptap/core" {
     interface Commands<ReturnType> {
-        imageUrl: {
-            setImageUrl: (options: { src: string; alt?: string; title?: string }) => ReturnType;
+        image: {
+            setImage: (options: ImageAttrs) => ReturnType;
         };
     }
 }
@@ -24,16 +28,9 @@ const JUSTIFY: Record<Align, string> = {
     right: "flex-end",
 };
 
-const ImageComponent = ({
-    node,
-    editor,
-    getPos,
-    updateAttributes,
-}: NodeViewProps) => {
+const ImageComponent = ({ node, editor, getPos, updateAttributes }: NodeViewProps) => {
     const align: Align = (node.attrs.align as Align) ?? "left";
-    const { wrapperRef, onResizeStart } = useResize((width) =>
-        updateAttributes({ width }),
-    );
+    const { wrapperRef, onResizeStart } = useResize((width) => updateAttributes({ width }));
     const { isDragging, onTouchStart, onTouchMove, onTouchEnd } = useTouchDrag(
         getPos,
         () => node.nodeSize,
@@ -49,17 +46,11 @@ const ImageComponent = ({
     };
 
     return (
-        <NodeViewWrapper
-            style={{ display: "block", opacity: isDragging ? 0.4 : 1 }}
-        >
+        <NodeViewWrapper style={{ display: "block", opacity: isDragging ? 0.4 : 1 }}>
             <div style={{ display: "flex", justifyContent: JUSTIFY[align] }}>
                 <div
                     ref={wrapperRef}
-                    style={{
-                        position: "relative",
-                        width: node.attrs.width ?? "auto",
-                        display: "inline-block",
-                    }}
+                    style={{ position: "relative", width: node.attrs.width ?? "auto", display: "inline-block" }}
                 >
                     <NodeOverlayControls
                         align={align}
@@ -74,13 +65,9 @@ const ImageComponent = ({
                     <img
                         src={node.attrs.src as string}
                         alt={(node.attrs.alt as string) ?? ""}
-                        title={(node.attrs.title as string) ?? ""}
+                        data-id={node.attrs["data-id"] as string}
                         draggable={false}
-                        style={{
-                            width: "100%",
-                            display: "block",
-                            maxWidth: "100%",
-                        }}
+                        style={{ width: "100%", display: "block", maxWidth: "100%" }}
                     />
 
                     {/* Resize handle */}
@@ -106,17 +93,17 @@ const ImageComponent = ({
     );
 };
 
-const ImageUrl = Node.create({
-    name: "imageUrl",
+export const Image = Node.create({
+    name: "image",
     group: "block",
-    draggable: true,
     atom: true,
+    draggable: true,
 
     addAttributes() {
         return {
             src: { default: null },
+            "data-id": { default: "" },
             alt: { default: null },
-            title: { default: null },
             width: { default: "auto" },
             align: {
                 default: "left",
@@ -127,7 +114,7 @@ const ImageUrl = Node.create({
     },
 
     parseHTML() {
-        return [{ tag: "img:not([data-id])" }];
+        return [{ tag: "img[data-id]" }];
     },
 
     renderHTML({ HTMLAttributes }) {
@@ -151,8 +138,8 @@ const ImageUrl = Node.create({
 
     addCommands() {
         return {
-            setImageUrl:
-                (options) =>
+            setImage:
+                (options: ImageAttrs) =>
                 ({ commands }) =>
                     commands.insertContent({
                         type: this.name,
@@ -161,5 +148,3 @@ const ImageUrl = Node.create({
         };
     },
 });
-
-export default ImageUrl;

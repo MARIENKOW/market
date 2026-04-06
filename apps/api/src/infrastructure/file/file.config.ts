@@ -10,11 +10,11 @@ export const FILE_CONFIG: Record<FileEntityType, FileEntityConfig> = {
     [FileEntityType.AVATAR]: { folder: "avatars", private: false },
     [FileEntityType.BLOG_IMAGE]: {
         folder: "blog/image",
-        private: true,
+        private: false,
     },
     [FileEntityType.BLOG_VIDEO]: {
         folder: "blog/video",
-        private: true,
+        private: false,
     },
 };
 

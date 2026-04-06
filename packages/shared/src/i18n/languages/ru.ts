@@ -396,6 +396,24 @@ export const ru = {
             deleteAllConfirm: "Удалить все видео?",
         },
     },
+    image: {
+        uploader: {
+            trigger: "Загрузить изображение",
+            drawerTitle: "Загрузка изображений",
+            dropActive: "Отпустите для загрузки",
+            dropIdle: "Перетащите изображение или нажмите",
+            multipleFiles: "несколько файлов",
+            uploadSuccess: "{name} загружено",
+        },
+        control: {
+            add: "Вставить",
+            delete: "Удалить",
+            deleteConfirm: "Удалить изображение?",
+            deleteSuccess: "Изображение удалено",
+            deleteAll: "Удалить все",
+            deleteAllConfirm: "Удалить все изображения?",
+        },
+    },
 };
 
 export type MessageStructure = typeof ru;

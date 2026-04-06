@@ -5,19 +5,20 @@ import { useTiptap, useTiptapState } from "@tiptap/react";
 import { Selection } from "@tiptap/pm/state";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledPopover } from "@/components/ui/StyledPopover";
+import * as uuid from "uuid";
 
 const COLORS = [
-    { label: "Default", value: null },
-    { label: "Gray", value: "#6b7280" },
-    { label: "Red", value: "#ef4444" },
-    { label: "Orange", value: "#f97316" },
-    { label: "Yellow", value: "#eab308" },
-    { label: "Green", value: "#22c55e" },
-    { label: "Teal", value: "#14b8a6" },
-    { label: "Blue", value: "#3b82f6" },
-    { label: "Indigo", value: "#6366f1" },
-    { label: "Purple", value: "#a855f7" },
-    { label: "Pink", value: "#ec4899" },
+    { label: "Default", value: null, id: uuid.v4() },
+    { label: "Gray", value: "#6b7280", id: uuid.v4() },
+    { label: "Red", value: "#ef4444", id: uuid.v4() },
+    { label: "Orange", value: "#f97316", id: uuid.v4() },
+    { label: "Yellow", value: "#eab308", id: uuid.v4() },
+    { label: "Green", value: "#22c55e", id: uuid.v4() },
+    { label: "Teal", value: "#14b8a6", id: uuid.v4() },
+    { label: "Blue", value: "#3b82f6", id: uuid.v4() },
+    { label: "Indigo", value: "#6366f1", id: uuid.v4() },
+    { label: "Purple", value: "#a855f7", id: uuid.v4() },
+    { label: "Pink", value: "#ec4899", id: uuid.v4() },
 ];
 
 export default function ColorButton() {
@@ -90,8 +91,9 @@ export default function ColorButton() {
                         gap: 0.5,
                     }}
                 >
-                    {COLORS.map(({ label, value }) => (
+                    {COLORS.map(({ label, value, id }) => (
                         <Box
+                            key={id}
                             onClick={() => handleSelect(value)}
                             sx={{
                                 width: 24,

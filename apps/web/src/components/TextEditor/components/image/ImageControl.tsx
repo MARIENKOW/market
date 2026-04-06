@@ -3,40 +3,38 @@
 import { StyledButton } from "@/components/ui/StyledButton";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { useConfirm } from "@/hooks/useConfirm";
-import { useRouter } from "@/i18n/navigation";
-import { videoKeys } from "@/lib/tanstack/keys";
-import BlogVideoService from "@/services/blog/video/blogVideo.service";
+import { imageKeys } from "@/lib/tanstack/keys";
+import BlogImageService from "@/services/blog/image/blogImage.service";
 import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Card, CardHeader } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { VideoDto } from "@myorg/shared/dto";
+import { ImageDto } from "@myorg/shared/dto";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { useVideoSelect } from "@/components/TextEditor/components/video/VideoSelectContext";
+import { useImageSelect } from "@/components/TextEditor/components/image/ImageSelectContext";
 
-const videoS = new BlogVideoService($apiUserAxiosClient);
+const imageS = new BlogImageService($apiUserAxiosClient);
 
-export const VideoControl = ({ video }: { video: VideoDto }) => {
+export const ImageControl = ({ image }: { image: ImageDto }) => {
     const [loadingDelete, setLoadingDelete] = useState(false);
     const { confirm, confirmDialog } = useConfirm();
     const t = useTranslations();
     const queryClient = useQueryClient();
-    const { onSelect } = useVideoSelect();
+    const { onSelect } = useImageSelect();
 
     const handleAdd = () => {
-        onSelect?.(video);
+        onSelect?.(image);
     };
 
     const handleDelete = async () => {
         try {
-            const isConfirm = await confirm(t("video.control.deleteConfirm"));
+            const isConfirm = await confirm(t("image.control.deleteConfirm"));
             if (!isConfirm) return;
             setLoadingDelete(true);
-            await videoS.delete(video.id);
-            queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
-            snackbarSuccess(t("video.control.deleteSuccess"));
+            await imageS.delete(image.id);
+            queryClient.invalidateQueries({ queryKey: imageKeys.lists() });
+            snackbarSuccess(t("image.control.deleteSuccess"));
         } catch (error) {
             errorHandler({ error, t });
         } finally {
@@ -63,7 +61,7 @@ export const VideoControl = ({ video }: { video: VideoDto }) => {
                 }}
                 avatar={
                     <StyledButton onClick={handleAdd} size="small">
-                        {t("video.control.add")}
+                        {t("image.control.add")}
                     </StyledButton>
                 }
                 action={
@@ -73,21 +71,19 @@ export const VideoControl = ({ video }: { video: VideoDto }) => {
                         color="error"
                         onClick={handleDelete}
                     >
-                        {t("video.control.delete")}
+                        {t("image.control.delete")}
                     </StyledButton>
                 }
             />
-            <video
+            <img
+                src={image.url}
+                alt=""
                 style={{
-                    aspectRatio: 5 / 3,
-                    background: "#000",
+                    width: "100%",
+                    aspectRatio: "5/3",
+                    objectFit: "contain",
+                    display: "block",
                 }}
-                src={video.url}
-                data-id={video.id}
-                poster={video.image?.url}
-                controls
-                preload="none"
-                width={"100%"}
             />
         </Card>
     );

@@ -14,7 +14,7 @@ export default function ImageUrlButton() {
             title: "Image URL",
         });
         if (url) {
-            editor.chain().focus().setImage({ src: url }).run();
+            editor.chain().focus().setImageUrl({ src: url }).run();
         }
     };
 
