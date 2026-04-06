@@ -54,11 +54,19 @@ export default function FontSizeButton() {
     return (
         <Box display="inline-block" sx={{ minWidth: 80 }}>
             <StyledFormControl size="small" sx={{ minWidth: 80 }} fullWidth>
-                <StyledInputLabel id="font-size-label">Size</StyledInputLabel>
+                <StyledInputLabel
+                    sx={{
+                        display: !activeFontSize ? "block" : "none",
+                    }}
+                    shrink={false}
+                    id="font-size-label"
+                >
+                    Size
+                </StyledInputLabel>
                 <StyledSelect
                     labelId="font-size-label"
                     value={activeFontSize ?? ""}
-                    label="Size"
+                    // label="Size"
                     onOpen={handleOpen}
                     onChange={handleChange}
                 >

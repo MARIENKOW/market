@@ -1,25 +1,19 @@
 import { Node, mergeAttributes } from "@tiptap/core";
-import {
-    NodeViewWrapper,
-    ReactNodeViewRenderer,
-    NodeViewProps,
-} from "@tiptap/react";
+import { NodeViewWrapper, ReactNodeViewRenderer, NodeViewProps } from "@tiptap/react";
 import { useResize } from "../hooks/useResize";
 import { useTouchDrag } from "../hooks/useTouchDrag";
 import NodeOverlayControls from "../components/NodeOverlayControls";
 
-interface VideoAttrs {
+interface VideoUrlAttrs {
     src: string;
-    "data-id"?: string;
-    poster?: string;
     width?: string;
     align?: "left" | "center" | "right";
 }
 
 declare module "@tiptap/core" {
     interface Commands<ReturnType> {
-        video: {
-            setVideo: (options: VideoAttrs) => ReturnType;
+        videoUrl: {
+            setVideoUrl: (options: VideoUrlAttrs) => ReturnType;
         };
     }
 }
@@ -32,16 +26,9 @@ const JUSTIFY: Record<Align, string> = {
     right: "flex-end",
 };
 
-const VideoComponent = ({
-    node,
-    editor,
-    getPos,
-    updateAttributes,
-}: NodeViewProps) => {
+const VideoUrlComponent = ({ node, editor, getPos, updateAttributes }: NodeViewProps) => {
     const align: Align = (node.attrs.align as Align) ?? "left";
-    const { wrapperRef, onResizeStart } = useResize((width) =>
-        updateAttributes({ width }),
-    );
+    const { wrapperRef, onResizeStart } = useResize((width) => updateAttributes({ width }));
     const { isDragging, onTouchStart, onTouchMove, onTouchEnd } = useTouchDrag(
         getPos,
         () => node.nodeSize,
@@ -57,17 +44,11 @@ const VideoComponent = ({
     };
 
     return (
-        <NodeViewWrapper
-            style={{ display: "block", opacity: isDragging ? 0.4 : 1 }}
-        >
+        <NodeViewWrapper style={{ display: "block", opacity: isDragging ? 0.4 : 1 }}>
             <div style={{ display: "flex", justifyContent: JUSTIFY[align] }}>
                 <div
                     ref={wrapperRef}
-                    style={{
-                        position: "relative",
-                        width: node.attrs.width ?? "auto",
-                        display: "block",
-                    }}
+                    style={{ position: "relative", width: node.attrs.width ?? "auto", display: "inline-block" }}
                 >
                     <NodeOverlayControls
                         align={align}
@@ -80,9 +61,7 @@ const VideoComponent = ({
                     />
 
                     <video
-                        src={node.attrs.src}
-                        data-id={node.attrs["data-id"]}
-                        poster={node.attrs.poster}
+                        src={node.attrs.src as string}
                         controls
                         preload="none"
                         draggable={false}
@@ -112,8 +91,8 @@ const VideoComponent = ({
     );
 };
 
-export const Video = Node.create({
-    name: "video",
+export const VideoUrl = Node.create({
+    name: "videoUrl",
     group: "block",
     atom: true,
     draggable: true,
@@ -121,10 +100,7 @@ export const Video = Node.create({
     addAttributes() {
         return {
             src: { default: null },
-            controls: { default: true },
-            "data-id": { default: "" },
             width: { default: "auto" },
-            poster: { default: "/default.png" },
             align: {
                 default: "left",
                 parseHTML: (el) => el.getAttribute("data-align") ?? "left",
@@ -134,7 +110,7 @@ export const Video = Node.create({
     },
 
     parseHTML() {
-        return [{ tag: "video[data-id]" }];
+        return [{ tag: "video:not([data-id])" }];
     },
 
     renderHTML({ HTMLAttributes }) {
@@ -148,19 +124,21 @@ export const Video = Node.create({
                 "video",
                 mergeAttributes(HTMLAttributes, {
                     style: `width: ${width}; max-width: 100%; display: block;`,
+                    controls: true,
+                    preload: "none",
                 }),
             ],
         ];
     },
 
     addNodeView() {
-        return ReactNodeViewRenderer(VideoComponent);
+        return ReactNodeViewRenderer(VideoUrlComponent);
     },
 
     addCommands() {
         return {
-            setVideo:
-                (options: VideoAttrs) =>
+            setVideoUrl:
+                (options: VideoUrlAttrs) =>
                 ({ commands }) =>
                     commands.insertContent({
                         type: this.name,

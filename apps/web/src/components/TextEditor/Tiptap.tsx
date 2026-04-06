@@ -92,7 +92,7 @@ export default function Tiptap({
                 <TiptapWrapper editor={editor}>
                     {/* ── Toolbar ─────────────────────────────────────── */}
                     <Box
-                        py="3px"
+                        py="2px"
                         display="flex"
                         alignItems="center"
                         flexWrap="wrap"

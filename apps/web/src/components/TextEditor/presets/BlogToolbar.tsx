@@ -25,8 +25,7 @@ export default function BlogToolbar() {
         <>
             <ImageUrlButton />
             <VideoButton />
-
-            <StyledDivider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+            <StyledDivider orientation="vertical" flexItem />
 
             <BoldButton />
             <ItalicButton />
@@ -36,27 +35,27 @@ export default function BlogToolbar() {
             <SuperscriptButton />
             <ClearMarksButton />
 
-            <StyledDivider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+            <StyledDivider orientation="vertical" flexItem />
 
             <ColorButton />
             <HighlightButton />
 
-            <StyledDivider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+            <StyledDivider orientation="vertical" flexItem />
 
             <LinkButton />
 
-            <StyledDivider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+            <StyledDivider orientation="vertical" flexItem />
 
             <BulletListButton />
             <OrderedListButton />
 
-            <StyledDivider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+            <StyledDivider orientation="vertical" flexItem />
 
             <AlignButton align="left" />
             <AlignButton align="center" />
             <AlignButton align="right" />
 
-            <StyledDivider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
+            <StyledDivider orientation="vertical" flexItem sx={{ mr: 1 }} />
 
             <Box display="flex" gap={1} alignItems="center" flexWrap="wrap">
                 <FontsButton />

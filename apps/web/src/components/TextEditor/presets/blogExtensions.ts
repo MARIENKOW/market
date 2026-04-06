@@ -21,6 +21,7 @@ import { Video } from "@/components/TextEditor/extensions/Video";
 import ImageUrl from "@/components/TextEditor/extensions/ImageUrl";
 import { CustomLink } from "@/components/TextEditor/extensions/CustomLink";
 import { FontSize } from "@/components/TextEditor/extensions/FontSize";
+import { VideoUrl } from "@/components/TextEditor/extensions/VideoUrl";
 
 // ─── Styled Extensions ────────────────────────────────────────────────────────
 

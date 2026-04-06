@@ -34,7 +34,8 @@ export default function StyleButton() {
     const activeStyle = useTiptapState((ctx): StyleValue => {
         const e = ctx.editor;
         for (let level = 1; level <= 6; level++) {
-            if (e.isActive("heading", { level })) return `h${level}` as StyleValue;
+            if (e.isActive("heading", { level }))
+                return `h${level}` as StyleValue;
         }
         if (e.isActive("blockquote")) return "blockquote";
         if (e.isActive("codeBlock")) return "codeBlock";
@@ -48,25 +49,28 @@ export default function StyleButton() {
 
     const handleChange = (event: SelectChangeEvent<unknown>) => {
         if (savedSelection.current) {
-            editor.view.dispatch(editor.state.tr.setSelection(savedSelection.current));
+            editor.view.dispatch(
+                editor.state.tr.setSelection(savedSelection.current),
+            );
         }
         const value = event.target.value as StyleValue;
         const chain = editor.chain().focus();
         if (value === "paragraph") {
             chain.setParagraph().run();
         } else if (value.startsWith("h")) {
-            chain.setHeading({ level: Number(value[1]) as 1 | 2 | 3 | 4 | 5 | 6 }).run();
+            chain
+                .setHeading({
+                    level: Number(value[1]) as 1 | 2 | 3 | 4 | 5 | 6,
+                })
+                .run();
         }
     };
 
     return (
         <Box display="inline-block" sx={{ minWidth: 120 }}>
             <StyledFormControl size="small" sx={{ minWidth: 120 }} fullWidth>
-                <StyledInputLabel id="style-label">Style</StyledInputLabel>
                 <StyledSelect
-                    labelId="style-label"
                     value={activeStyle ?? "paragraph"}
-                    label="Style"
                     onOpen={handleOpen}
                     onChange={handleChange}
                 >
