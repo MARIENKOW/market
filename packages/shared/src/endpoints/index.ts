@@ -121,6 +121,10 @@ export const ENDPOINT = {
             path: "video",
             upload: { path: "upload" },
         },
+        image: {
+            path: "image",
+            upload: { path: "upload" },
+        },
     },
     resetPasswordToken: {
         path: "reset-password-token",

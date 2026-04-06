@@ -21,7 +21,7 @@ import { Video } from "@/components/TextEditor/extensions/Video";
 import ImageUrl from "@/components/TextEditor/extensions/ImageUrl";
 import { CustomLink } from "@/components/TextEditor/extensions/CustomLink";
 import { FontSize } from "@/components/TextEditor/extensions/FontSize";
-import { VideoUrl } from "@/components/TextEditor/extensions/VideoUrl";
+import { EmbedCode } from "@/components/TextEditor/extensions/EmbedCode";
 
 // ─── Styled Extensions ────────────────────────────────────────────────────────
 
@@ -166,5 +166,6 @@ export const blogExtensions: Extensions = [
         protocols: ["http", "https", "mailto"],
     }),
     ImageUrl,
+    EmbedCode,
     TextAlign.configure({ types: ["heading", "paragraph", "listItem"] }),
 ];

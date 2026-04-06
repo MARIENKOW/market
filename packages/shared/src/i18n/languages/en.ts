@@ -6,6 +6,7 @@ import {
     PASSWORD_MIN_LENGTH,
     AVATAR_CONFIG,
     BLOG_VIDEO_CONFIG,
+    BLOG_IMAGE_CONFIG,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -40,6 +41,9 @@ export const en: MessageStructure = {
             },
             blogVideo: {
                 tooLarge: `Maximum allowed file size: ${formatBytes(BLOG_VIDEO_CONFIG.maxFileSizeBytes)}`,
+            },
+            blogImage: {
+                tooLarge: `Maximum allowed file size: ${formatBytes(BLOG_IMAGE_CONFIG.maxFileSizeBytes)}`,
             },
             unsupportedType: "This format is not supported",
             unreadable: "Failed to read the file",

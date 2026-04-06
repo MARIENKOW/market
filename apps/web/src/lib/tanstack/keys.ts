@@ -1,5 +1,12 @@
 // lib/query/keys.ts
 
+export const imageKeys = {
+    all: ["images"] as const,
+    lists: () => [...imageKeys.all, "list"] as const,
+    list: (filters: ImageFilters) => [...imageKeys.lists(), filters] as const,
+    details: () => [...imageKeys.all, "detail"] as const,
+    detail: (id: string) => [...imageKeys.details(), id] as const,
+};
 /**
  * Centralised key factory.
  * Преимущества:
@@ -26,4 +33,7 @@ interface VideoFilters {
     page?: number;
     category?: string;
     search?: string;
+}
+interface ImageFilters {
+    page?: number;
 }

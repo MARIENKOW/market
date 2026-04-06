@@ -28,6 +28,10 @@ export const AVATAR_CONFIG: ImageValidationConfig = {
     maxFileSizeBytes: 50 * 1024 * 1024, // 50MB
     allowedMimeTypes: ALLOWED_IMAGE_MIME_TYPES,
 };
+export const BLOG_IMAGE_CONFIG: ImageValidationConfig = {
+    maxFileSizeBytes: 50 * 1024 * 1024, // 50MB
+    allowedMimeTypes: ALLOWED_IMAGE_MIME_TYPES,
+};
 
 export const ALLOWED_VIDEO_MIME_TYPES = [
     // Основные

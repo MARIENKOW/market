@@ -1,6 +1,6 @@
 "use client";
 
-import DeleteAllVideoBlog from "@/app/[locale]/(dashboard)/video/DeleteAllVideoBlog";
+import DeleteAllVideoBlog from "@/components/TextEditor/components/video/DeleteAllVideoBlog";
 import { VideoList } from "@/components/TextEditor/components/video/VideoList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { BlogVideoUploader } from "@/components/features/Uploader/BlogVideoUploader";

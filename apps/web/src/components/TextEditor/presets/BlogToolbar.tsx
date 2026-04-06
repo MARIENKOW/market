@@ -14,6 +14,7 @@ import OrderedListButton from "../buttons/OrderedListButton";
 import LinkButton from "../buttons/LinkButton";
 import ImageUrlButton from "../buttons/ImageUrlButton";
 import VideoButton from "../buttons/VideoButton";
+import EmbedCodeButton from "../buttons/EmbedCodeButton";
 import ColorButton from "../buttons/ColorButton";
 import HighlightButton from "../buttons/HighlightButton";
 import FontsButton from "../buttons/FontsButton";
@@ -25,6 +26,7 @@ export default function BlogToolbar() {
         <>
             <ImageUrlButton />
             <VideoButton />
+            <EmbedCodeButton />
             <StyledDivider orientation="vertical" flexItem />
 
             <BoldButton />

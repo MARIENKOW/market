@@ -45,7 +45,7 @@ const EmbedCodeComponent = ({ node, editor, getPos, updateAttributes }: NodeView
     return (
         <NodeViewWrapper style={{ display: "block", opacity: isDragging ? 0.4 : 1 }}>
             <div style={{ display: "flex", justifyContent: JUSTIFY[align] }}>
-                <div style={{ position: "relative", width: "100%", maxWidth: "100%" }}>
+                <div style={{ position: "relative", width: "auto", maxWidth: "100%" }}>
                     <NodeOverlayControls
                         align={align}
                         onAlignChange={(a) => updateAttributes({ align: a })}
@@ -58,7 +58,7 @@ const EmbedCodeComponent = ({ node, editor, getPos, updateAttributes }: NodeView
                     <div
                         // eslint-disable-next-line react/no-danger
                         dangerouslySetInnerHTML={{ __html: code }}
-                        style={{ width: "100%", display: "block" }}
+                        style={{ width: "auto", display: "inline-block" }}
                     />
                 </div>
             </div>

@@ -5,6 +5,7 @@ import {
     CHANGE_PASSWORD_OTP_LENGTH,
     AVATAR_CONFIG,
     BLOG_VIDEO_CONFIG,
+    BLOG_IMAGE_CONFIG,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -39,6 +40,9 @@ export const ru = {
             },
             blogVideo: {
                 tooLarge: `Максимально допустимый размер файла: ${formatBytes(BLOG_VIDEO_CONFIG.maxFileSizeBytes)}`,
+            },
+            blogImage: {
+                tooLarge: `Максимально допустимый размер файла: ${formatBytes(BLOG_IMAGE_CONFIG.maxFileSizeBytes)}`,
             },
             unsupportedType: "Данный формат не поддерживается",
             unreadable: "Не удалось прочитать файл",
