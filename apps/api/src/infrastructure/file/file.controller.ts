@@ -20,13 +20,13 @@ import {
 import { FileSignService } from "@/infrastructure/file/file-sign.service";
 import { Public } from "@/modules/auth/decorators/public.decorator";
 
-const { BLOG_UPLOAD_VIDEO } = FILE_CONFIG;
+const { BLOG_VIDEO } = FILE_CONFIG;
 
 @Controller(UPLOADS_ROOT)
 export class FileController {
     constructor(private readonly fileSign: FileSignService) {}
 
-    @Get(`${BLOG_UPLOAD_VIDEO.folder}/*filepath`)
+    @Get(`${BLOG_VIDEO.folder}/*filepath`)
     @Public()
     async serveFile(
         @Param("filepath") filepath: string | string[],
@@ -44,7 +44,7 @@ export class FileController {
             .normalize(Array.isArray(filepath) ? filepath.join("/") : filepath)
             .replace(/^(\.\.[/\\])+/, "");
 
-        const relativePath = `${BLOG_UPLOAD_VIDEO.folder}/${normalized}`;
+        const relativePath = `${BLOG_VIDEO.folder}/${normalized}`;
         const absolutePath = path.join(UPLOADS_BASE_PATH, relativePath);
 
         if (!absolutePath.startsWith(UPLOADS_BASE_PATH + path.sep)) {
