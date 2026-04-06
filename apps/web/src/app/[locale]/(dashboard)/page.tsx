@@ -1,7 +1,7 @@
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
 import { $apiUserAxiosServer } from "@/utils/api/user/axios.user.server";
 import { getQueryClient } from "@/lib/tanstack/queryClient";
-import VideoComponentBlog from "@/app/[locale]/(dashboard)/video/VideoComponentBlog";
+import VideoComponentBlog from "@/components/TextEditor/components/video/VideoComponentBlog";
 import { videoKeys } from "@/lib/tanstack/keys";
 import { Hydrate } from "@/lib/tanstack/Hydrate";
 

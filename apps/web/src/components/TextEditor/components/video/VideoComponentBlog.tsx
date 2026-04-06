@@ -1,7 +1,7 @@
 "use client";
 
 import DeleteAllVideoBlog from "@/app/[locale]/(dashboard)/video/DeleteAllVideoBlog";
-import { VideoList } from "@/app/[locale]/(dashboard)/video/VideoList";
+import { VideoList } from "@/components/TextEditor/components/video/VideoList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { BlogVideoUploader } from "@/components/features/Uploader/BlogVideoUploader";
 import { StyledDivider } from "@/components/ui/StyledDivider";
@@ -9,8 +9,7 @@ import { useVideos } from "@/hooks/tanstack/useVideo";
 import { Box, LinearProgress } from "@mui/material";
 
 export default function VideoComponentBlog() {
-    const { data,  error, isFetching, page, setPage } = useVideos();
-    console.log(data);
+    const { data, error, isFetching, page, setPage } = useVideos();
 
     return (
         <Box display="flex" flexDirection="column" flex={1} height="100%">

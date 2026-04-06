@@ -384,6 +384,7 @@ export const ru = {
             uploadSuccess: "{name} загружено",
         },
         control: {
+            add: "Вставить",
             delete: "Удалить",
             deleteConfirm: "Удалить видео?",
             deleteSuccess: "Видео удалено",

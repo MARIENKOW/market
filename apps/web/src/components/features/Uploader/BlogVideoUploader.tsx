@@ -195,6 +195,7 @@ export function BlogVideoUploader() {
                 anchor="right"
                 open={open}
                 onClose={() => setOpen(false)}
+                sx={{ zIndex: (theme) => theme.zIndex.modal + 1 }}
                 slotProps={{
                     paper: {
                         sx: {

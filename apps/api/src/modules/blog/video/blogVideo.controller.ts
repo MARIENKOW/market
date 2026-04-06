@@ -81,7 +81,7 @@ export class BlogVideoController {
     @Auth("USER")
     async getAll(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
-        @Query("limit", new DefaultValuePipe(12), ParseIntPipe) limit: number,
+        @Query("limit", new DefaultValuePipe(6), ParseIntPipe) limit: number,
     ): Promise<PagedResult<VideoDto>> {
         return this.blogVideo.getAll(page, limit);
     }

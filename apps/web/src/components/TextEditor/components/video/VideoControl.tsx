@@ -14,6 +14,7 @@ import { VideoDto } from "@myorg/shared/dto";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useVideoSelect } from "@/components/TextEditor/components/video/VideoSelectContext";
 
 const videoS = new BlogVideoService($apiUserAxiosClient);
 
@@ -22,6 +23,11 @@ export const VideoControl = ({ video }: { video: VideoDto }) => {
     const { confirm, confirmDialog } = useConfirm();
     const t = useTranslations();
     const queryClient = useQueryClient();
+    const { onSelect } = useVideoSelect();
+
+    const handleAdd = () => {
+        onSelect?.(video);
+    };
 
     const handleDelete = async () => {
         try {
@@ -55,6 +61,11 @@ export const VideoControl = ({ video }: { video: VideoDto }) => {
                         marginBottom: "0px !important",
                     },
                 }}
+                avatar={
+                    <StyledButton onClick={handleAdd} size="small">
+                        {t("video.control.add")}
+                    </StyledButton>
+                }
                 action={
                     <StyledButton
                         loading={loadingDelete}

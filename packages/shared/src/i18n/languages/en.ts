@@ -373,6 +373,7 @@ export const en: MessageStructure = {
             uploadSuccess: "{name} uploaded",
         },
         control: {
+            add: "Add",
             delete: "Delete",
             deleteConfirm: "Delete video?",
             deleteSuccess: "Video deleted",
