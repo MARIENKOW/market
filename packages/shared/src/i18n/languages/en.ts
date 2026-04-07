@@ -7,6 +7,12 @@ import {
     AVATAR_CONFIG,
     BLOG_VIDEO_CONFIG,
     BLOG_IMAGE_CONFIG,
+    BLOG_TITLE_MIN_LENGTH,
+    BLOG_TITLE_MAX_LENGTH,
+    BLOG_SUBTITLE_MIN_LENGTH,
+    BLOG_SUBTITLE_MAX_LENGTH,
+    BLOG_BODY_MIN_LENGTH,
+    BLOG_BODY_MAX_LENGTH,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -64,6 +70,23 @@ export const en: MessageStructure = {
         dropzone: {
             dropActive: "Drop the file",
             dropIdle: "Drag file here or click",
+        },
+        blog: {
+            body: {
+                min: `minimum ${BLOG_BODY_MIN_LENGTH} characters`,
+                max: `maximum ${BLOG_BODY_MAX_LENGTH} characters`,
+            },
+            title: {
+                label: "Title",
+                min: `minimum ${BLOG_TITLE_MIN_LENGTH} characters`,
+                max: `maximum ${BLOG_TITLE_MAX_LENGTH} characters`,
+            },
+            subtitle: {
+                label: "Subtitle",
+                min: `minimum ${BLOG_SUBTITLE_MIN_LENGTH} characters`,
+                max: `maximum ${BLOG_SUBTITLE_MAX_LENGTH} characters`,
+                helperText: `*optional`,
+            },
         },
         required: "Required field",
         submit: "Submit",

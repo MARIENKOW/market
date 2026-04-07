@@ -4,6 +4,7 @@ import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
 import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
 import HighlightOffTwoToneIcon from "@mui/icons-material/HighlightOffTwoTone";
+import { StyledIconButton } from "@/components/ui/StyledIconButton";
 
 type Align = "left" | "center" | "right";
 
@@ -65,30 +66,50 @@ export default function NodeOverlayControls({
                     padding: "1px",
                 }}
             >
-                <IconButton
+                <StyledIconButton
                     size="small"
-                    sx={{ p: "2px", color: align === "left" ? "primary.main" : "inherit" }}
-                    onMouseDown={(e) => { e.preventDefault(); onAlignChange("left"); }}
+                    sx={{
+                        p: "2px",
+                        color: align === "left" ? "primary.main" : "inherit",
+                    }}
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        onAlignChange("left");
+                    }}
                 >
                     <FormatAlignLeftIcon sx={{ fontSize: 20 }} />
-                </IconButton>
+                </StyledIconButton>
                 <Tooltip title="Center">
-                    <IconButton
+                    <StyledIconButton
                         size="small"
-                        sx={{ p: "2px", color: align === "center" ? "primary.main" : "inherit" }}
-                        onMouseDown={(e) => { e.preventDefault(); onAlignChange("center"); }}
+                        sx={{
+                            p: "2px",
+                            color:
+                                align === "center" ? "primary.main" : "inherit",
+                        }}
+                        onMouseDown={(e) => {
+                            e.preventDefault();
+                            onAlignChange("center");
+                        }}
                     >
                         <FormatAlignCenterIcon sx={{ fontSize: 20 }} />
-                    </IconButton>
+                    </StyledIconButton>
                 </Tooltip>
                 <Tooltip title="Right">
-                    <IconButton
+                    <StyledIconButton
                         size="small"
-                        sx={{ p: "2px", color: align === "right" ? "primary.main" : "inherit" }}
-                        onMouseDown={(e) => { e.preventDefault(); onAlignChange("right"); }}
+                        sx={{
+                            p: "2px",
+                            color:
+                                align === "right" ? "primary.main" : "inherit",
+                        }}
+                        onMouseDown={(e) => {
+                            e.preventDefault();
+                            onAlignChange("right");
+                        }}
                     >
                         <FormatAlignRightIcon sx={{ fontSize: 20 }} />
-                    </IconButton>
+                    </StyledIconButton>
                 </Tooltip>
             </Box>
 
@@ -106,9 +127,13 @@ export default function NodeOverlayControls({
                     padding: "1px",
                 }}
             >
-                <IconButton size="small" sx={{ p: "2px" }} onClick={onDelete}>
+                <StyledIconButton
+                    size="small"
+                    sx={{ p: "2px" }}
+                    onClick={onDelete}
+                >
                     <HighlightOffTwoToneIcon color="error" />
-                </IconButton>
+                </StyledIconButton>
             </Box>
         </>
     );

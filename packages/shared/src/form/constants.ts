@@ -4,6 +4,12 @@ export const PASSWORD_MIN_LENGTH = 5;
 export const PASSWORD_MAX_LENGTH = 30;
 export const EMAIL_MAX_LENGTH = 50;
 export const CHANGE_PASSWORD_OTP_LENGTH = 5;
+export const BLOG_BODY_MIN_LENGTH = 500;
+export const BLOG_BODY_MAX_LENGTH = 10000;
+export const BLOG_TITLE_MIN_LENGTH = 5;
+export const BLOG_TITLE_MAX_LENGTH = 75;
+export const BLOG_SUBTITLE_MIN_LENGTH = 5;
+export const BLOG_SUBTITLE_MAX_LENGTH = 75;
 export const ALLOWED_IMAGE_MIME_TYPES = [
     // Основные — поддерживаются всеми браузерами
     "image/jpeg",

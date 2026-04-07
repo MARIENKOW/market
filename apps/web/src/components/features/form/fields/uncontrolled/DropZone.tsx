@@ -8,21 +8,23 @@ import { StyledPaper } from "@/components/ui/StyledPaper";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 
 export interface DropZoneProps {
-    onFiles: (files: File[]) => void;
-    accept?: string[];
+    accept: string[];
     multiple?: boolean;
     disabled?: boolean;
     labelActive?: string;
     labelIdle?: string;
     sublabel?: string;
+    onFiles: (files: File[]) => void;
+    error?: boolean;
 }
 
 export function DropZone({
     onFiles,
     accept = [],
-    multiple = true,
+    multiple = false,
     disabled = false,
     labelActive,
+    error,
     labelIdle,
     sublabel,
 }: DropZoneProps) {
@@ -73,11 +75,19 @@ export function DropZone({
                 p: 3,
                 display: "flex",
                 flexDirection: "column",
+                flex: 1,
                 alignItems: "center",
+                justifyContent: "center",
                 gap: 1.5,
+                borderRadius: 2,
                 cursor: disabled ? "default" : "pointer",
                 borderStyle: "dashed",
-                borderColor: dragging ? "primary.main" : "divider",
+                opacity: disabled ? 0.5 : 1,
+                borderColor: error
+                    ? "error.main"
+                    : dragging
+                      ? "primary.main"
+                      : "divider",
                 bgcolor: dragging
                     ? `rgba(${vars.palette.primary.mainChannel} / 0.05)`
                     : "background.paper",
@@ -88,7 +98,7 @@ export function DropZone({
                     : "none",
                 ...(!disabled && {
                     "&:hover": {
-                        borderColor: "primary.light",
+                        borderColor: error ? "error.main" : "primary.light",
                         bgcolor: `rgba(${vars.palette.primary.mainChannel} / 0.09)`,
                     },
                 }),
@@ -120,7 +130,11 @@ export function DropZone({
                 <CloudUploadIcon
                     sx={{
                         fontSize: 26,
-                        color: dragging ? "primary.main" : "text.disabled",
+                        color: error
+                            ? "error.main"
+                            : dragging
+                              ? "primary.main"
+                              : "text.disabled",
                         transition: "color 0.2s",
                     }}
                 />

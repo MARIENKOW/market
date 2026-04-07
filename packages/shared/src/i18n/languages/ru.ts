@@ -6,6 +6,12 @@ import {
     AVATAR_CONFIG,
     BLOG_VIDEO_CONFIG,
     BLOG_IMAGE_CONFIG,
+    BLOG_TITLE_MIN_LENGTH,
+    BLOG_TITLE_MAX_LENGTH,
+    BLOG_SUBTITLE_MAX_LENGTH,
+    BLOG_SUBTITLE_MIN_LENGTH,
+    BLOG_BODY_MAX_LENGTH,
+    BLOG_BODY_MIN_LENGTH,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -63,6 +69,23 @@ export const ru = {
         dropzone: {
             dropActive: "Отпустите файл",
             dropIdle: "Перетащите файл или нажмите",
+        },
+        blog: {
+            body: {
+                min: `минимум ${BLOG_BODY_MIN_LENGTH} символов`,
+                max: `максимум ${BLOG_BODY_MAX_LENGTH} символов`,
+            },
+            title: {
+                label: "Заголовок",
+                min: `минимум ${BLOG_TITLE_MIN_LENGTH} символов`,
+                max: `максимум ${BLOG_TITLE_MAX_LENGTH} символов`,
+            },
+            subtitle: {
+                label: "Подзаголовок",
+                min: `минимум ${BLOG_SUBTITLE_MIN_LENGTH} символов`,
+                max: `максимум ${BLOG_SUBTITLE_MAX_LENGTH} символов`,
+                helperText: `*необязательное поле`,
+            },
         },
         required: "обязательное поле",
         submit: "Подтвердить",

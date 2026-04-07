@@ -246,11 +246,13 @@ export function BlogVideoUploader() {
                         gap: 2,
                     }}
                 >
-                    <DropZone
-                        onFiles={handleFiles}
-                        accept={BLOG_VIDEO_CONFIG.allowedMimeTypes}
-                        multiple
-                    />
+                    <Box>
+                        <DropZone
+                            onFiles={handleFiles}
+                            accept={BLOG_VIDEO_CONFIG.allowedMimeTypes}
+                            multiple
+                        />
+                    </Box>
                     <UploadQueue
                         uploads={uploads}
                         busy={active.length > 0 || waiting > 0}

@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import * as uuid from "uuid";
 
 import { MessageKeyType } from "@myorg/shared/i18n";
-import { BLOG_IMAGE_CONFIG,BlogImageSchema } from "@myorg/shared/form";
+import { BLOG_IMAGE_CONFIG, BlogImageSchema } from "@myorg/shared/form";
 import { DropZone } from "@/components/features/form/fields/uncontrolled/DropZone";
 import { UploadTrigger } from "@/components/features/Uploader/UploadTrigger";
 import { UploadQueue } from "@/components/features/Uploader/UploadQueue";
@@ -241,11 +241,13 @@ export function BlogImageUploader() {
                         gap: 2,
                     }}
                 >
-                    <DropZone
-                        onFiles={handleFiles}
-                        accept={BLOG_IMAGE_CONFIG.allowedMimeTypes}
-                        multiple
-                    />
+                    <Box>
+                        <DropZone
+                            onFiles={handleFiles}
+                            accept={BLOG_IMAGE_CONFIG.allowedMimeTypes}
+                            multiple
+                        />
+                    </Box>
                     <UploadQueue
                         uploads={uploads}
                         busy={active.length > 0 || waiting > 0}

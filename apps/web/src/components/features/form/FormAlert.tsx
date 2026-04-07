@@ -8,6 +8,7 @@ export default function FormAlert() {
     const { errors } = useFormState({
         control,
     });
+    console.log(errors);
     if (!errors?.root?.server?.message) return null;
     return (
         <StyledAlert severity="error">{errors.root.server.message}</StyledAlert>
