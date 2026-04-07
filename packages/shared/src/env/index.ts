@@ -13,11 +13,6 @@ const csvString = z.string().transform((v) =>
 export const serverEnvSchema = z
     .object({
         NODE_ENV: z.enum(["development", "production", "test"]),
-        // Folders
-        FOLDER: z.string().startsWith("/"),
-        IMG_FOLDER: z.string().startsWith("/"),
-        VIDEO_FOLDER: z.string().startsWith("/"),
-        DOCUMENT_FOLDER: z.string().startsWith("/"),
 
         // Database
         DB_HOST: z.string().min(1),
