@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import MobileNavigation from "@/components/layout/navigation/MobileNavigation";
-import ProfilePage from "@/app/[locale]/(dashboard)/profile/settings/ProfilePage";
 import { NAV_GROUPS } from "@/app/[locale]/admin/(dashboard)/settings/nav.config";
+import ProfilePage from "@/app/[locale]/admin/(dashboard)/settings/ProfilePage";
 
 export default async function Page() {
     return (
