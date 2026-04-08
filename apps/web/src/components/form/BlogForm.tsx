@@ -88,6 +88,7 @@ const BlogForm = ({
                         <Grid container spacing={{ xs: 3, md: 2 }} columns={10}>
                             <Grid
                                 sx={{
+                                    aspectRatio:'16 / 6',
                                     display: "flex",
                                     flexDirection: "column",
                                 }}
@@ -131,7 +132,7 @@ const BlogForm = ({
                         </Grid>
                         <Box
                             flex={1}
-                            minHeight={200}
+                            minHeight={270}
                             display="flex"
                             flexDirection="column"
                         >
