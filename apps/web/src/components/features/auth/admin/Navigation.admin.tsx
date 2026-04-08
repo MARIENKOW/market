@@ -10,13 +10,10 @@ import { StyledMenuItem } from "@/components/ui/StyledMenuItem";
 import { StyledTooltip } from "@/components/ui/StyledTooltip";
 import { Link } from "@/i18n/navigation";
 import { Box, ButtonBase } from "@mui/material";
-import { AdminDto } from "@myorg/shared/dto";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
-import HomeFilledIcon from "@mui/icons-material/HomeFilled";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import StarPurple500Icon from "@mui/icons-material/StarPurple500";
@@ -44,9 +41,7 @@ export default function NavigationAdmin() {
                     sx={{ overflow: "hidden", borderRadius: 999 }}
                     onClick={handleOpen}
                 >
-                    <StyledAvatar
-                    src={admin?.avatar?.url}
-                    ></StyledAvatar>
+                    <StyledAvatar src={admin?.avatar?.url}></StyledAvatar>
                 </StyledIconButton>
             </StyledTooltip>
             <StyledMenu

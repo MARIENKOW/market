@@ -18,8 +18,14 @@ export const ROUTE = {
     },
     admin: {
         path: "admin",
-        profile: {
-            path: "profile",
+        blog: {
+            path: "blog",
+            create: {
+                path: "create",
+            },
+            update: {
+                path: "update",
+            },
         },
         settings: {
             path: "settings",
@@ -35,15 +41,21 @@ export const ROUTE = {
     },
 } as const;
 
-type Route = typeof ROUTE;
+export function AllPathsFromRoute(route: object): string[] {
+    return Object.entries(route).flatMap(([key, value]) => {
+        if (key === "path" && typeof value === "string") return [value];
+        if (typeof value === "object" && value !== null)
+            return AllPathsFromRoute(value);
+        return [];
+    });
+}
+
+export type Route = typeof ROUTE;
 
 export const FULL_PATH_ROUTE = buildFullPaths<Route>(ROUTE);
 
 export const PRIVATE_USER_PATH: string[] = [FULL_PATH_ROUTE.profile.path];
-export const PRIVATE_ADMIN_PATH: string[] = [
-    FULL_PATH_ROUTE.admin.profile.path,
-    FULL_PATH_ROUTE.admin.settings.path,
-];
+export const PRIVATE_ADMIN_PATH: string[] = [FULL_PATH_ROUTE.admin.path];
 export const ADMIN_PATH: string[] = [FULL_PATH_ROUTE.admin.path];
 
 export const USER_PRIVATE_FALLBACK_ROUTE: string = FULL_PATH_ROUTE.login.path;

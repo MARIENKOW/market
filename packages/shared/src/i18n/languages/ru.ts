@@ -125,6 +125,12 @@ export const ru = {
         },
         admin: {
             name: "Главная",
+            blog: {
+                create: {
+                    name: "Создать",
+                },
+                name: "Блог",
+            },
             settings: {
                 name: "Настройки",
                 groups: {

@@ -1,5 +1,6 @@
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import UserAvatarForm from "@/components/form/user/UserAvatarForm";
+import { ContainerComponent } from "@/components/ui/Container";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
@@ -8,12 +9,7 @@ import { getTranslations } from "next-intl/server";
 export default async function ProfilePage() {
     const t = await getTranslations();
     return (
-        <Box
-            display={"flex"}
-            flexDirection={"column"}
-            flex={1}
-            sx={{ p: { xs: 2, sm: 4 } }}
-        >
+        <ContainerComponent maxWidth={false} marging={false}>
             <Box mb={4} display={{ xs: "flex", md: "none" }}>
                 <BreadcrumbsComponent
                     options={[
@@ -40,6 +36,6 @@ export default async function ProfilePage() {
             >
                 <UserAvatarForm />
             </Box>
-        </Box>
+        </ContainerComponent>
     );
 }

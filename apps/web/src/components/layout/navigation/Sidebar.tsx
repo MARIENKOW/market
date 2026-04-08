@@ -1,45 +1,65 @@
+"use client";
+
 import { Box } from "@mui/material";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { StyledDivider } from "@/components/ui/StyledDivider";
 import { StyledList } from "@/components/ui/StyledList";
 import SidebarLink from "@/components/layout/navigation/SidebarLink";
-import { getTranslations } from "next-intl/server";
 import { NavGroup } from "@/components/layout/navigation/types";
+import { MessageKeyType } from "@myorg/shared/i18n";
+import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 
-export default async function Sidebar({ config }: { config: NavGroup[] }) {
-    const t = await getTranslations();
+export default function Sidebar({
+    config,
+    label,
+    minWidth = 250,
+    hidePaths,
+}: {
+    config: NavGroup[];
+    label?: MessageKeyType;
+    minWidth?: number;
+    hidePaths?: string[];
+}) {
+    const pathname = usePathname();
+    const t = useTranslations();
+    if (hidePaths && hidePaths.includes(pathname)) return null;
 
     return (
         <Box
             display={"inline-flex"}
-            minWidth={250}
+            minWidth={minWidth}
             flexDirection={"column"}
-            sx={{ px: 1 }}
+            sx={{ p: 1 }}
         >
-            <StyledTypography
-                variant="h6"
-                sx={{ px: 1, my: 2, fontWeight: 700 }}
-            >
-                {t("pages.profile.settings.name")}
-            </StyledTypography>
+            {label && (
+                <StyledTypography
+                    variant="h6"
+                    sx={{ px: 1, mb: 2, mt: 1, fontWeight: 700 }}
+                >
+                    {t(label)}
+                </StyledTypography>
+            )}
 
             <Box display={"flex"} flexDirection={"column"} gap={2}>
                 {config.map((group, gi) => (
                     <Box key={gi}>
-                        <StyledTypography
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{
-                                px: 1,
-                                mb: 0.5,
-                                display: "block",
-                                fontWeight: 600,
-                                letterSpacing: "0.08em",
-                                textTransform: "uppercase",
-                            }}
-                        >
-                            {t(group.label)}
-                        </StyledTypography>
+                        {group.label && (
+                            <StyledTypography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{
+                                    px: 1,
+                                    mb: 0.5,
+                                    display: "block",
+                                    fontWeight: 600,
+                                    letterSpacing: "0.08em",
+                                    textTransform: "uppercase",
+                                }}
+                            >
+                                {t(group.label)}
+                            </StyledTypography>
+                        )}
 
                         <StyledList dense disablePadding>
                             {group.items.map((item) => (

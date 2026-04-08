@@ -8,7 +8,7 @@ export type CustomSubmitHandler<
 > = (
     data: TOutputFieldValues,
     methods: UseFormReturn<TFieldValues, any, TOutputFieldValues>,
-    event?: React.BaseSyntheticEvent
+    event?: React.BaseSyntheticEvent,
 ) => void | Promise<void>;
 
 interface Props<
@@ -29,10 +29,11 @@ export default function Form<
             style={{
                 display: "flex",
                 flexDirection: "column",
+                flex: 1,
                 gap: "15px",
             }}
             onSubmit={form.handleSubmit((data, event) =>
-                onSubmit(data, form, event)
+                onSubmit(data, form, event),
             )}
         >
             {children}

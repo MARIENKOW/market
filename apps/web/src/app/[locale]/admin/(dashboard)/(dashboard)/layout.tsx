@@ -1,8 +1,9 @@
-import { NAV_GROUPS } from "@/app/[locale]/(dashboard)/profile/settings/nav.config";
+import { NAV_GROUPS } from "@/app/[locale]/admin/(dashboard)/(dashboard)/nav.config";
 import Sidebar from "@/components/layout/navigation/Sidebar";
 import { Box } from "@mui/material";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 
-export default async function SettingsLayout({
+export default async function Layout({
     children,
 }: {
     children: React.ReactNode;
@@ -22,7 +23,8 @@ export default async function SettingsLayout({
                 }}
             >
                 <Sidebar
-                    label="pages.profile.settings.name"
+                    hidePaths={[FULL_PATH_ROUTE.admin.blog.create.path]}
+                    minWidth={200}
                     config={NAV_GROUPS}
                 />
             </Box>

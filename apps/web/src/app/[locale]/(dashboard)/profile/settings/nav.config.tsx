@@ -40,4 +40,4 @@ export const NAV_GROUPS: NavGroup[] = [
     },
 ];
 
-export const ALL_ITEMS = NAV_GROUPS.flatMap((g) => g.items);
+// export const ALL_ITEMS = NAV_GROUPS.flatMap((g) => g.items);

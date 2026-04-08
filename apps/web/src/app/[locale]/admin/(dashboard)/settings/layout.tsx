@@ -21,7 +21,11 @@ export default async function SettingsLayout({
                     borderColor: "divider",
                 }}
             >
-                <Sidebar config={NAV_GROUPS} />
+                <Sidebar
+                    minWidth={200}
+                    label="pages.admin.settings.name"
+                    config={NAV_GROUPS}
+                />
             </Box>
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                 {children}

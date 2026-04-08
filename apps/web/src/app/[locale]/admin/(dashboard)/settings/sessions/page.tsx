@@ -1,6 +1,7 @@
 import { SessionList } from "@/app/[locale]/admin/(dashboard)/settings/sessions/SessionList";
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
+import { ContainerComponent } from "@/components/ui/Container";
 import { StyledPaper } from "@/components/ui/StyledPaper";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import SessionServiceAdmin from "@/services/auth/admin/session.service.admin";
@@ -21,12 +22,7 @@ export default async function Page() {
         error = e;
     }
     return (
-        <Box
-            display={"flex"}
-            flex={1}
-            flexDirection={"column"}
-            sx={{ p: { xs: 2, sm: 4 } }}
-        >
+        <ContainerComponent marging={false} maxWidth={false}>
             <Box mb={4} display={{ xs: "flex", md: "none" }}>
                 <BreadcrumbsComponent
                     options={[
@@ -51,6 +47,6 @@ export default async function Page() {
             ) : (
                 <SessionList sessions={data} />
             )}
-        </Box>
+        </ContainerComponent>
     );
 }

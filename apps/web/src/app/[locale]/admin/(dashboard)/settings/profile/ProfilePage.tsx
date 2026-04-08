@@ -1,5 +1,6 @@
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import AdminAvatarForm from "@/components/form/admin/AdminAvatarForm";
+import { ContainerComponent } from "@/components/ui/Container";
 import { StyledPaper } from "@/components/ui/StyledPaper";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { Box } from "@mui/material";
@@ -11,12 +12,7 @@ const { path, profile } = FULL_PATH_ROUTE.admin.settings;
 export default async function ProfilePage() {
     const t = await getTranslations();
     return (
-        <Box
-            display={"flex"}
-            flex={1}
-            flexDirection={"column"}
-            sx={{ p: { xs: 2, sm: 4 } }}
-        >
+        <ContainerComponent marging={false} maxWidth={false}>
             <Box mb={4} display={{ xs: "flex", md: "none" }}>
                 <BreadcrumbsComponent
                     options={[
@@ -39,10 +35,10 @@ export default async function ProfilePage() {
             <Box
                 display={"flex"}
                 mt={2}
-                justifyContent={{ xs: "center", sm: "flex-start" }}
+                justifyContent={{ xs: "center", md: "flex-start" }}
             >
                 <AdminAvatarForm />
             </Box>
-        </Box>
+        </ContainerComponent>
     );
 }

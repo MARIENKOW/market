@@ -1,6 +1,7 @@
 import { SessionList } from "@/app/[locale]/(dashboard)/profile/settings/sessions/SessionList";
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
+import { ContainerComponent } from "@/components/ui/Container";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import SessionServiceUser from "@/services/auth/user/session.service.user";
 import { $apiUserServer } from "@/utils/api/user/fetch.user.server";
@@ -22,12 +23,7 @@ export default async function Page() {
     }
 
     return (
-        <Box
-            display={"flex"}
-            flexDirection={"column"}
-            flex={1}
-            sx={{ p: { xs: 2, sm: 4 } }}
-        >
+        <ContainerComponent maxWidth={false} marging={false}>
             <Box mb={4} display={{ xs: "flex", md: "none" }}>
                 <BreadcrumbsComponent
                     options={[
@@ -53,6 +49,6 @@ export default async function Page() {
             ) : (
                 <SessionList sessions={data} />
             )}
-        </Box>
+        </ContainerComponent>
     );
 }

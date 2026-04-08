@@ -23,12 +23,13 @@ import {
     BLOG_IMAGE_CONFIG,
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Box } from "@mui/material";
 
-interface BlogFormProps {
-    defaultValues?: Partial<BlogInput>;
-}
-
-const BlogForm = () => {
+const BlogForm = ({
+    onSuccess,
+}: {
+    onSuccess: (data: BlogOutput) => Promise<void>;
+}) => {
     const t = useTranslations();
     const [preview, setPreview] = useState<string | null>(null);
 
@@ -65,7 +66,7 @@ const BlogForm = () => {
         { setError },
     ) => {
         try {
-            console.log(formValues);
+            await onSuccess(formValues);
         } catch (error) {
             errorFormHandlerWithAlert({ error, t, formValues, setError });
         }
@@ -83,60 +84,73 @@ const BlogForm = () => {
                     onSubmit={handleSubmit}
                     form={form}
                 >
-                    <Grid container spacing={{ xs: 3, md: 2 }} columns={10}>
+                    <Box flex={1} display={"flex"} flexDirection={"column"}>
                         <Grid
-                            sx={{ display: "flex", flexDirection: "column" }}
-                            size={{ xs: 10, md: 5 }}
+                            flex={1}
+                            container
+                            spacing={{ xs: 3, md: 2 }}
+                            columns={10}
                         >
-                            {preview && (
-                                <ImagePreview
-                                    src={preview}
-                                    onDelete={() =>
-                                        form.setValue("image", null)
+                            <Grid
+                                // sx={{
+                                //     display: "flex",
+                                //     flexDirection: "column",
+                                // }}
+                                size={{ xs: 10, md: 5 }}
+                            >
+                                {preview && (
+                                    <ImagePreview
+                                        src={preview}
+                                        onDelete={() =>
+                                            form.setValue("image", null)
+                                        }
+                                    />
+                                )}
+                                {!preview && (
+                                    <FormDropZone
+                                        accept={
+                                            BLOG_IMAGE_CONFIG.allowedMimeTypes
+                                        }
+                                        name="image"
+                                    />
+                                )}
+                            </Grid>
+                            <Grid
+                                display="flex"
+                                flexDirection="column"
+                                gap={2}
+                                size={{ xs: 10, md: 5 }}
+                            >
+                                <FormTextField<BlogInput>
+                                    name="title"
+                                    label="form.blog.title.label"
+                                />
+                                <FormTextField<BlogInput>
+                                    name="subtitle"
+                                    helperText={t(
+                                        "form.blog.subtitle.helperText",
+                                    )}
+                                    label="form.blog.subtitle.label"
+                                />
+                            </Grid>
+                            <Grid
+                                display="flex"
+                                flexDirection="column"
+                                sx={{ flexGrow: 1 }}
+                                size={{ xs: 10 }}
+                            >
+                                <FormBlogEditor<BlogInput>
+                                    name="body"
+                                    onImagesChange={(images) =>
+                                        form.setValue("imagesId", images)
+                                    }
+                                    onVideosChange={(videos) =>
+                                        form.setValue("videosId", videos)
                                     }
                                 />
-                            )}
-                            {!preview && (
-                                <FormDropZone
-                                    accept={BLOG_IMAGE_CONFIG.allowedMimeTypes}
-                                    name="image"
-                                />
-                            )}
+                            </Grid>
                         </Grid>
-                        <Grid
-                            display="flex"
-                            flexDirection="column"
-                            flex={1}
-                            gap={2}
-                            size={{ xs: 10, md: 5 }}
-                        >
-                            <FormTextField<BlogInput>
-                                name="title"
-                                label="form.blog.title.label"
-                            />
-                            <FormTextField<BlogInput>
-                                name="subtitle"
-                                helperText={t("form.blog.subtitle.helperText")}
-                                label="form.blog.subtitle.label"
-                            />
-                        </Grid>
-                        <Grid
-                            display="flex"
-                            flexDirection="column"
-                            minHeight={300}
-                            size={{ xs: 10 }}
-                        >
-                            <FormBlogEditor<BlogInput>
-                                name="body"
-                                onImagesChange={(images) =>
-                                    form.setValue("imagesId", images)
-                                }
-                                onVideosChange={(videos) =>
-                                    form.setValue("videosId", videos)
-                                }
-                            />
-                        </Grid>
-                    </Grid>
+                    </Box>
                     <FormAlert />
                     <SubmitButton />
                 </Form>

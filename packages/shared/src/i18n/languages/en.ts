@@ -125,6 +125,12 @@ export const en: MessageStructure = {
         },
         admin: {
             name: "Home",
+            blog: {
+                create: {
+                    name: "Create",
+                },
+                name: "Blog",
+            },
             settings: {
                 name: "Settings",
                 groups: {

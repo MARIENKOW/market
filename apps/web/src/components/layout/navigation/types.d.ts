@@ -6,6 +6,6 @@ export interface NavItem {
 }
 
 export interface NavGroup {
-    label: MessageKeyType;
+    label?: MessageKeyType;
     items: NavItem[];
 }

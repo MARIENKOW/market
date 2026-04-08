@@ -41,7 +41,7 @@ export class BlogVideoController {
     ) {}
 
     @Get(upload.path)
-    @Auth("USER")
+    @Auth("ADMIN")
     authorize(@CurrentActor() actor: UserActor): { uploadToken: string } {
         return { uploadToken: signUploadToken(actor.user.id) };
     }
@@ -78,7 +78,7 @@ export class BlogVideoController {
         return this.blogVideo.upload(validated);
     }
     @Get()
-    @Auth("USER")
+    @Auth("ADMIN")
     async getAll(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(6), ParseIntPipe) limit: number,
@@ -86,12 +86,12 @@ export class BlogVideoController {
         return this.blogVideo.getAll(page, limit);
     }
     @Delete()
-    @Auth("USER")
+    @Auth("ADMIN")
     async deleteAll(): Promise<void> {
         return this.blogVideo.deleteAll();
     }
     @Delete(":id")
-    @Auth("USER")
+    @Auth("ADMIN")
     async delete(@Param("id") id: string): Promise<void> {
         return this.blogVideo.delete(id);
     }

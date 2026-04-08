@@ -7,6 +7,7 @@ import ChangePasswordAdminService from "@/services/admin/changePassword.admin.se
 import ErrorHandlerElement from "@/components/feedback/error/ErrorHandlerElement";
 import ChangePasswordSettings from "@/components/form/admin/ChangePasswordSettings";
 import { $apiAdminServer } from "@/utils/api/admin/fetch.admin.server";
+import { ContainerComponent } from "@/components/ui/Container";
 
 const changePassword = new ChangePasswordAdminService($apiAdminServer);
 
@@ -22,12 +23,7 @@ export default async function Page() {
     }
 
     return (
-        <Box
-            display={"flex"}
-            flex={1}
-            flexDirection={"column"}
-            sx={{ p: { xs: 2, sm: 4 } }}
-        >
+        <ContainerComponent marging={false} maxWidth={false}>
             <Box mb={4} display={{ xs: "flex", md: "none" }}>
                 <BreadcrumbsComponent
                     options={[
@@ -60,6 +56,6 @@ export default async function Page() {
                     />
                 )
             )}
-        </Box>
+        </ContainerComponent>
     );
 }

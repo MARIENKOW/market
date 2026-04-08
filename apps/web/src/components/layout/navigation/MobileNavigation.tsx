@@ -9,37 +9,47 @@ import { StyledDivider } from "@/components/ui/StyledDivider";
 import { StyledListItemText } from "@/components/ui/StyledListItemText";
 import { StyledListItemIcon } from "@/components/ui/StyledListItemIcon";
 import { NavGroup } from "@/components/layout/navigation/types";
+import { MessageKeyType } from "@myorg/shared/i18n";
+import { ContainerComponent } from "@/components/ui/Container";
 
 export default async function MobileNavigation({
     config,
+    label,
 }: {
+    label?: MessageKeyType | React.ReactNode;
     config: NavGroup[];
 }) {
     const t = await getTranslations();
     return (
-        <Box sx={{ p: 2 }}>
-            <StyledTypography
-                variant="h6"
-                sx={{ px: 1, my: 2, fontWeight: 700 }}
-            >
-                {t("pages.profile.settings.name")}
-            </StyledTypography>
+        <ContainerComponent>
+            {typeof label === "string" ? (
+                <StyledTypography
+                    variant="h6"
+                    sx={{ px: 1, mb: 2, fontWeight: 700 }}
+                >
+                    {t(label as MessageKeyType)}
+                </StyledTypography>
+            ) : (
+                (label ?? null)
+            )}
             {config.map((group, gi) => (
                 <Box key={gi} mb={2}>
-                    <StyledTypography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{
-                            px: 1,
-                            mb: 0.5,
-                            display: "block",
-                            fontWeight: 600,
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                        }}
-                    >
-                        {t(group.label)}
-                    </StyledTypography>
+                    {group.label && (
+                        <StyledTypography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{
+                                px: 1,
+                                mb: 0.5,
+                                display: "block",
+                                fontWeight: 600,
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                            }}
+                        >
+                            {t(group.label)}
+                        </StyledTypography>
+                    )}
 
                     <StyledPaper
                         elevation={0}
@@ -84,6 +94,6 @@ export default async function MobileNavigation({
                     </StyledPaper>
                 </Box>
             ))}
-        </Box>
+        </ContainerComponent>
     );
 }
