@@ -12,6 +12,8 @@ import { AuthAdminModule } from "@/modules/auth/admin/auth.admin.module";
 import { ChangePasswordUserModule } from "@/modules/user/ChangePasswordCode/changePassword.user.module";
 import { ChangePasswordAdminModule } from "@/modules/admin/ChangePasswordCode/changePassword.admin.module";
 import { BlogModule } from "@/modules/blog/blog.module";
+import { BlogImageModule } from "@/modules/blog/image/blogImage.module";
+import { BlogVideoModule } from "@/modules/blog/video/blogVideo.module";
 import { FileModule } from "@/infrastructure/file/file.module";
 @Module({
     imports: [
@@ -22,6 +24,8 @@ import { FileModule } from "@/infrastructure/file/file.module";
         ChangePasswordAdminModule,
         RequestContextModule,
         FileModule,
+        BlogImageModule,
+        BlogVideoModule,
         BlogModule,
         I18nModule.forRoot({
             loaderOptions: {},

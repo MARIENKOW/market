@@ -33,7 +33,7 @@ export class BlogImageController {
     ) {}
 
     @Get(upload.path)
-    @Auth("USER")
+    @Auth('ADMIN')
     authorize(@CurrentActor() actor: UserActor): { uploadToken: string } {
         return { uploadToken: signUploadToken(actor.user.id) };
     }
@@ -44,7 +44,7 @@ export class BlogImageController {
 
     @Post(upload.path)
     @UseInterceptors(FileInterceptor("image", { storage: memoryStorage() }))
-    @Auth("USER")
+    @Auth('ADMIN')
     async upload(
         @UploadedFile()
         file: Express.Multer.File,
@@ -54,20 +54,21 @@ export class BlogImageController {
         return this.blogImage.upload(validation);
     }
     @Get()
-    @Auth("USER")
+    @Auth('ADMIN')
     async getAll(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(6), ParseIntPipe) limit: number,
     ): Promise<PagedResult<ImageDto>> {
+
         return this.blogImage.getAll(page, limit);
     }
     @Delete()
-    @Auth("USER")
+    @Auth('ADMIN')
     async deleteAll(): Promise<void> {
         return this.blogImage.deleteAll();
     }
     @Delete(":id")
-    @Auth("USER")
+    @Auth('ADMIN')
     async delete(@Param("id") id: string): Promise<void> {
         return this.blogImage.delete(id);
     }

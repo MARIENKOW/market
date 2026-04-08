@@ -23,8 +23,9 @@ import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { imageKeys } from "@/lib/tanstack/keys";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { snackbarError } from "@/utils/snackbar/snackbar.error";
+import { $apiAdminAxiosClient } from "@/utils/api/admin/axios.admin.client";
 
-const { upload } = new BlogImageService($apiUserAxiosClient);
+const { upload } = new BlogImageService($apiAdminAxiosClient);
 
 const DRAWER_WIDTH = 340;
 
