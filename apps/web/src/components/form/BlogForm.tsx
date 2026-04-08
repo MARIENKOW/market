@@ -84,18 +84,13 @@ const BlogForm = ({
                     onSubmit={handleSubmit}
                     form={form}
                 >
-                    <Box flex={1} display={"flex"} flexDirection={"column"}>
-                        <Grid
-                            flex={1}
-                            container
-                            spacing={{ xs: 3, md: 2 }}
-                            columns={10}
-                        >
+                    <Box flex={1} display="flex" flexDirection="column" gap={2}>
+                        <Grid container spacing={{ xs: 3, md: 2 }} columns={10}>
                             <Grid
-                                // sx={{
-                                //     display: "flex",
-                                //     flexDirection: "column",
-                                // }}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }}
                                 size={{ xs: 10, md: 5 }}
                             >
                                 {preview && (
@@ -133,23 +128,23 @@ const BlogForm = ({
                                     label="form.blog.subtitle.label"
                                 />
                             </Grid>
-                            <Grid
-                                display="flex"
-                                flexDirection="column"
-                                sx={{ flexGrow: 1 }}
-                                size={{ xs: 10 }}
-                            >
-                                <FormBlogEditor<BlogInput>
-                                    name="body"
-                                    onImagesChange={(images) =>
-                                        form.setValue("imagesId", images)
-                                    }
-                                    onVideosChange={(videos) =>
-                                        form.setValue("videosId", videos)
-                                    }
-                                />
-                            </Grid>
                         </Grid>
+                        <Box
+                            flex={1}
+                            minHeight={200}
+                            display="flex"
+                            flexDirection="column"
+                        >
+                            <FormBlogEditor<BlogInput>
+                                name="body"
+                                onImagesChange={(images) =>
+                                    form.setValue("imagesId", images)
+                                }
+                                onVideosChange={(videos) =>
+                                    form.setValue("videosId", videos)
+                                }
+                            />
+                        </Box>
                     </Box>
                     <FormAlert />
                     <SubmitButton />

@@ -10,8 +10,21 @@ export default function ImagePreview({
     onDelete: () => void;
 }) {
     return (
-        <Box overflow={'hidden'} borderRadius={2} flex={1}  position={"relative"} width={"100%"}>
-            <Box component={"img"} sx={{objectFit:'cover'}} width={"100%"} src={src} />
+        <Box
+            overflow={"hidden"}
+            borderRadius={2}
+            flex={1}
+            height={"100%"}
+            position={"relative"}
+            width={"100%"}
+        >
+            <Box
+                component={"img"}
+                sx={{ objectFit: "cover" }}
+                height={"100%"}
+                width={"100%"}
+                src={src}
+            />
             <Box
                 sx={{
                     position: "absolute",
