@@ -1,4 +1,11 @@
-import { Card, CardHeader, CircularProgress, MenuProps } from "@mui/material";
+import {
+    Box,
+    Card,
+    CardHeader,
+    Chip,
+    CircularProgress,
+    MenuProps,
+} from "@mui/material";
 import { SyntheticEvent, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -12,6 +19,7 @@ import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledMenu } from "@/components/ui/StyledMenu";
 import { StyledMenuItem } from "@/components/ui/StyledMenuItem";
 import { StyledListItemIcon } from "@/components/ui/StyledListItemIcon";
+import { StyledTooltip } from "@/components/ui/StyledTooltip";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { useTranslations } from "next-intl";
 import BlogService from "@/services/blog/blog.service";
@@ -20,6 +28,7 @@ import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { useQueryClient } from "@tanstack/react-query";
 import { blogKeys } from "@/lib/tanstack/keys";
 import { useConfirm } from "@/hooks/useConfirm";
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 
 const blogS = new BlogService($apiAdminClient);
 
@@ -44,6 +53,7 @@ const BlogItem = ({ blog }: { blog: BlogDto }) => {
             const isConfirm = await confirm();
             if (!isConfirm) return;
             await blogS.delete(blog.id);
+            snackbarSuccess(t("pages.admin.blog.feedback.delete"));
             queryClient.invalidateQueries({ queryKey: blogKeys.all });
         } catch (error) {
             errorHandler({ error, t });
@@ -54,38 +64,54 @@ const BlogItem = ({ blog }: { blog: BlogDto }) => {
     const handleClick = (event: SyntheticEvent) => {
         setAnchorEl(event.currentTarget);
     };
-    // const changeImportant = async () => {
-    //     try {
-    //         await blogImportant.setImportant(Blog.id, {
-    //             is_important: !checked,
-    //         });
-    //         setChecked((v) => !v);
-    //         enqueueSnackbar("(важные) Статус новости изменен", {
-    //             variant: "success",
-    //         });
-    //     } catch (error) {
-    //         if (error instanceof CanceledError) return;
-    //         enqueueSnackbar("Упс! что-то пошло не так", {
-    //             variant: "error",
-    //         });
-    //     }
-    // };
-    // const changeShort = async () => {
-    //     try {
-    //         await blogShort.setShort(Blog.id, {
-    //             is_short: !checkedShort,
-    //         });
-    //         setCheckedShort((v) => !v);
-    //         enqueueSnackbar("(короткие) Статус новости изменен", {
-    //             variant: "success",
-    //         });
-    //     } catch (error) {
-    //         if (error instanceof CanceledError) return;
-    //         enqueueSnackbar("Упс! что-то пошло не так", {
-    //             variant: "error",
-    //         });
-    //     }
-    // };
+
+    const handleSetImportant = async () => {
+        try {
+            await blogS.setImportant(blog.id);
+            setChecked((v) => !v);
+            snackbarSuccess(
+                t(
+                    checked
+                        ? "pages.admin.blog.feedback.unsetImportant"
+                        : "pages.admin.blog.feedback.setImportant",
+                ),
+            );
+        } catch (error) {
+            errorHandler({ error, t });
+        }
+    };
+
+    const handleSetShort = async () => {
+        try {
+            await blogS.setShort(blog.id);
+            setCheckedShort((v) => !v);
+            snackbarSuccess(
+                t(
+                    checkedShort
+                        ? "pages.admin.blog.feedback.unsetShort"
+                        : "pages.admin.blog.feedback.setShort",
+                ),
+            );
+        } catch (error) {
+            errorHandler({ error, t });
+        }
+    };
+
+    const handleSetMain = async () => {
+        try {
+            await blogS.setMain(blog.id);
+            snackbarSuccess(
+                t(
+                    blog.isMain
+                        ? "pages.admin.blog.feedback.unsetMain"
+                        : "pages.admin.blog.feedback.setMain",
+                ),
+            );
+            queryClient.invalidateQueries({ queryKey: blogKeys.all });
+        } catch (error) {
+            errorHandler({ error, t });
+        }
+    };
 
     return (
         <Card
@@ -99,18 +125,20 @@ const BlogItem = ({ blog }: { blog: BlogDto }) => {
                 border: "1px solid",
                 borderColor: blog.isMain ? "warning.main" : "divider",
                 borderRadius: 2,
-                transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                "&:hover": {
-                    borderColor: blog.isMain ? "warning.main" : "primary.main",
-                    boxShadow:
-                        "0 4px 16px var(--mui-palette-action-selected, rgba(0,0,0,0.08))",
-                },
+                // transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                // "&:hover": {
+                //     borderColor: blog.isMain ? "warning.main" : "primary.main",
+                //     boxShadow:
+                //         "0 4px 16px var(--mui-palette-action-selected, rgba(0,0,0,0.08))",
+                // },
             }}
         >
             {confirmDialog}
             <CardHeader
                 sx={{
-                    bgcolor: blog.isMain ? "warning.light" : "action.hover",
+                    bgcolor: blog.isMain
+                        ? "rgba(var(--mui-palette-warning-mainChannel) / 0.15)"
+                        : "background.paper",
                     p: "6px 10px !important",
                     "& .MuiCardHeader-action": {
                         marginTop: "0px !important",
@@ -118,20 +146,48 @@ const BlogItem = ({ blog }: { blog: BlogDto }) => {
                     },
                 }}
                 avatar={
-                    <>
-                        <StarCheckbox
-                            getData={() => {
-                                setChecked((v) => !v);
-                            }}
-                            checked={checked}
-                        />
-                        <ShortCheckbox
-                            getData={() => {
-                                setCheckedShort((v) => !v);
-                            }}
-                            checked={checkedShort}
-                        />
-                    </>
+                    <Box display={"flex"} alignItems={"center"}>
+                        {blog.isMain ? (
+                            <Chip
+                                icon={<VerifiedIcon />}
+                                label={t("pages.admin.blog.actions.main")}
+                                size="small"
+                                color="warning"
+                                variant="outlined"
+                                sx={{ fontWeight: 600, fontSize: "0.7rem" }}
+                            />
+                        ) : undefined}
+                        <StyledTooltip
+                            title={t(
+                                checked
+                                    ? "pages.admin.blog.actions.toggleImportantActive"
+                                    : "pages.admin.blog.actions.toggleImportant",
+                            )}
+                            placement="top"
+                        >
+                            <span>
+                                <StarCheckbox
+                                    getData={handleSetImportant}
+                                    checked={checked}
+                                />
+                            </span>
+                        </StyledTooltip>
+                        <StyledTooltip
+                            title={t(
+                                checkedShort
+                                    ? "pages.admin.blog.actions.toggleShortActive"
+                                    : "pages.admin.blog.actions.toggleShort",
+                            )}
+                            placement="top"
+                        >
+                            <span>
+                                <ShortCheckbox
+                                    getData={handleSetShort}
+                                    checked={checkedShort}
+                                />
+                            </span>
+                        </StyledTooltip>
+                    </Box>
                 }
                 action={
                     <StyledIconButton
@@ -155,43 +211,27 @@ const BlogItem = ({ blog }: { blog: BlogDto }) => {
                 anchorEl={anchorEl}
                 sx={{ paddingBottom: 0 }}
             >
-                {blog.isMain ? (
-                    <StyledMenuItem
-                        onClick={() => {
-                            handleClose();
-                            // deleteMainPost(Blog?.id);
-                        }}
+                <StyledMenuItem
+                    onClick={() => {
+                        handleClose();
+                        handleSetMain();
+                    }}
+                >
+                    <StyledListItemIcon>
+                        <VerifiedIcon color="warning" />
+                    </StyledListItemIcon>
+                    <StyledTypography
+                        color="warning"
+                        textTransform="capitalize"
+                        textAlign="center"
                     >
-                        <StyledListItemIcon>
-                            <VerifiedIcon color="warning" />
-                        </StyledListItemIcon>
-                        <StyledTypography
-                            color="warning"
-                            textTransform="capitalize"
-                            textAlign="center"
-                        >
-                            Снять главную новость
-                        </StyledTypography>
-                    </StyledMenuItem>
-                ) : (
-                    <StyledMenuItem
-                        onClick={() => {
-                            handleClose();
-                            // setMainPost(Blog?.id);
-                        }}
-                    >
-                        <StyledListItemIcon>
-                            <VerifiedIcon color="warning" />
-                        </StyledListItemIcon>
-                        <StyledTypography
-                            textTransform="capitalize"
-                            textAlign="center"
-                            color="warning"
-                        >
-                            Сделать главной новостью
-                        </StyledTypography>
-                    </StyledMenuItem>
-                )}
+                        {t(
+                            blog.isMain
+                                ? "pages.admin.blog.actions.unsetMain"
+                                : "pages.admin.blog.actions.setMain",
+                        )}
+                    </StyledTypography>
+                </StyledMenuItem>
                 {/* <Link target="_blank" href={BLOG_ROUTE(token) + "/" + Blog?.id}>
                     <MenuItem onClick={handleClose}>
                         <ListItemIcon>

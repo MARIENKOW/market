@@ -5,6 +5,7 @@ import DeleteAllBlogs from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/De
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledDivider } from "@/components/ui/StyledDivider";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 import { useBlogs } from "@/hooks/tanstack/useBlog";
 import { Link } from "@/i18n/navigation";
 import { Box, LinearProgress } from "@mui/material";
@@ -24,12 +25,18 @@ export default function BlogComponent() {
                 mb={2}
                 flexWrap="wrap"
             >
-                <Link href={FULL_PATH_ROUTE.admin.blog.create.path}>
-                    <StyledButton variant="contained">
-                        {t("pages.admin.blog.create.name")}
-                    </StyledButton>
-                </Link>
-                {data && data.data.length > 0 ? <DeleteAllBlogs /> : ""}
+                <StyledTypography variant="h5" fontWeight={700}>
+                    {t("pages.admin.blog.name")}
+                    {data?.meta.total && ` · ${data?.meta.total}`}
+                </StyledTypography>
+                <Box gap={1} display={"flex"} alignItems={"center"}>
+                    {data && data.data.length > 0 ? <DeleteAllBlogs /> : ""}
+                    <Link href={FULL_PATH_ROUTE.admin.blog.create.path}>
+                        <StyledButton variant="contained">
+                            {t("pages.admin.blog.create.name")}
+                        </StyledButton>
+                    </Link>
+                </Box>
             </Box>
             <StyledDivider />
             <Box

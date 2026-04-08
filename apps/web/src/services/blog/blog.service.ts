@@ -16,6 +16,9 @@ export default class BlogService {
     delete: (id: string) => FetchCustomReturn<void>;
     deleteAll: () => FetchCustomReturn<void>;
     get: (id: string) => FetchCustomReturn<BlogDto>;
+    setMain: (id: string) => FetchCustomReturn<BlogDto>;
+    setImportant: (id: string) => FetchCustomReturn<BlogDto>;
+    setShort: (id: string) => FetchCustomReturn<BlogDto>;
 
     constructor(api: FetchCustom) {
         this.create = (body) =>
@@ -29,8 +32,10 @@ export default class BlogService {
         };
 
         this.delete = (id) => api<void>(`${path}/${id}`, { method: "DELETE" });
-
         this.deleteAll = () => api<void>(path, { method: "DELETE" });
-        this.get = (id) => api<BlogDto>(path + "/" + id, { method: "GET" });
+        this.get = (id) => api<BlogDto>(`${path}/${id}`, { method: "GET" });
+        this.setMain = (id) => api<BlogDto>(`${path}/${id}/main`, { method: "PATCH" });
+        this.setImportant = (id) => api<BlogDto>(`${path}/${id}/important`, { method: "PATCH" });
+        this.setShort = (id) => api<BlogDto>(`${path}/${id}/short`, { method: "PATCH" });
     }
 }

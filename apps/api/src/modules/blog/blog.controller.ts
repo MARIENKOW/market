@@ -10,6 +10,7 @@ import {
     Get,
     Param,
     ParseIntPipe,
+    Patch,
     Post,
     Query,
     UploadedFile,
@@ -71,5 +72,23 @@ export class BlogController {
     @Auth("ADMIN")
     async delete(@Param("id") id: string): Promise<void> {
         return this.blog.delete(id);
+    }
+
+    @Patch(":id/main")
+    @Auth("ADMIN")
+    async setMain(@Param("id") id: string): Promise<BlogDto> {
+        return this.blog.setMain(id);
+    }
+
+    @Patch(":id/important")
+    @Auth("ADMIN")
+    async setImportant(@Param("id") id: string): Promise<BlogDto> {
+        return this.blog.setImportant(id);
+    }
+
+    @Patch(":id/short")
+    @Auth("ADMIN")
+    async setShort(@Param("id") id: string): Promise<BlogDto> {
+        return this.blog.setShort(id);
     }
 }

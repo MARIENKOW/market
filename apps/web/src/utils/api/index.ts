@@ -3,7 +3,7 @@ import { ApiErrorResponse } from "@myorg/shared/dto";
 import { HTTP_STATUSES } from "@myorg/shared/http";
 
 export interface FetchBaseOptions extends RequestInit {
-    method?: "POST" | "GET" | "PUT" | "DELETE";
+    method?: "POST" | "GET" | "PUT" | "DELETE" | "PATCH";
     body?: BodyInit | null;
 }
 

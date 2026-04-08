@@ -62,7 +62,7 @@ export class BlogService {
             this.prisma.blog.count(),
             this.prisma.blog.findMany({
                 include: { image: true },
-                orderBy: { createdAt: "desc" },
+                orderBy: [{ isMain: "desc" }, { createdAt: "desc" }],
                 skip: (page - 1) * limit,
                 take: limit,
             }),
@@ -104,6 +104,60 @@ export class BlogService {
                     error,
                 ),
             );
+    }
+
+    async setMain(id: string): Promise<BlogDto> {
+        const blog = await this.prisma.blog.findUnique({ where: { id } });
+        if (!blog) throw new NotFoundException();
+
+        const newValue = !blog.isMain;
+
+        if (newValue) {
+            const [, updated] = await this.prisma.$transaction([
+                this.prisma.blog.updateMany({
+                    where: { isMain: true, id: { not: id } },
+                    data: { isMain: false },
+                }),
+                this.prisma.blog.update({
+                    where: { id },
+                    data: { isMain: true },
+                    include: { image: true },
+                }),
+            ]);
+            return mapBlog(updated);
+        }
+
+        return mapBlog(
+            await this.prisma.blog.update({
+                where: { id },
+                data: { isMain: false },
+                include: { image: true },
+            }),
+        );
+    }
+
+    async setImportant(id: string): Promise<BlogDto> {
+        const blog = await this.prisma.blog.findUnique({ where: { id } });
+        if (!blog) throw new NotFoundException();
+        return mapBlog(
+            await this.prisma.blog.update({
+                where: { id },
+                data: { isImportant: !blog.isImportant },
+                include: { image: true },
+            }),
+        );
+    }
+
+    async setShort(id: string): Promise<BlogDto> {
+        const blog = await this.prisma.blog.findUnique({ where: { id } });
+        if (!blog) throw new NotFoundException();
+        return mapBlog(
+            await this.prisma.blog.update({
+                where: { id },
+                data: { isShort: !blog.isShort },
+                include: { image: true },
+            }),
+        );
     }
 
     async deleteAll(): Promise<void> {

@@ -4,6 +4,7 @@ import { useConfirm } from "@/hooks/useConfirm";
 import { blogKeys } from "@/lib/tanstack/keys";
 import BlogService from "@/services/blog/blog.service";
 import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -21,6 +22,7 @@ export default function DeleteAllBlogs() {
             const isConfirm = await confirm();
             if (!isConfirm) return;
             await deleteAll();
+            snackbarSuccess(t("pages.admin.blog.feedback.deleteAll"));
             queryClient.invalidateQueries({ queryKey: blogKeys.all });
         } catch (error) {
             errorHandler({ error, t });
