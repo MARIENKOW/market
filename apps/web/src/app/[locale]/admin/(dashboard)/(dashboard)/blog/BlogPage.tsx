@@ -18,10 +18,12 @@ const { getAll } = new BlogService($apiAdminServer);
 
 export default async function BlogPage() {
     const queryClient = getQueryClient();
-    queryClient.prefetchQuery({
-        queryKey: blogKeys.list({ page: 1 }),
-        queryFn: async () => (await getAll({ page: 1 })).data,
-    });
+    try {
+        await queryClient.prefetchQuery({
+            queryKey: blogKeys.list({ page: 1 }),
+            queryFn: async () => (await getAll({ page: 1 })).data,
+        });
+    } catch (error) {}
     const t = await getTranslations();
     return (
         <ContainerComponent maxWidth={false} marging={false}>
