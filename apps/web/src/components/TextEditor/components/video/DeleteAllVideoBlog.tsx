@@ -5,12 +5,12 @@ import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { useConfirm } from "@/hooks/useConfirm";
 import { videoKeys } from "@/lib/tanstack/keys";
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
-import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
+import { $apiAdminAxiosClient } from "@/utils/api/admin/axios.admin.client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-const { deleteAll } = new BlogVideoService($apiUserAxiosClient);
+const { deleteAll } = new BlogVideoService($apiAdminAxiosClient);
 
 export default function DeleteAllVideoBlog() {
     const [loading, setLoading] = useState<boolean>(false);

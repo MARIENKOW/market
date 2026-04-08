@@ -27,7 +27,7 @@ export default function BlogComponent() {
             >
                 <StyledTypography variant="h5" fontWeight={700}>
                     {t("pages.admin.blog.name")}
-                    {data?.meta.total && ` · ${data?.meta.total}`}
+                    {data?.meta.total ? ` · ${data?.meta.total}` : ""}
                 </StyledTypography>
                 <Box gap={1} display={"flex"} alignItems={"center"}>
                     {data && data.data.length > 0 ? <DeleteAllBlogs /> : ""}

@@ -20,7 +20,7 @@ export class BlogService {
     ): Promise<BlogDto> {
         const { id: imageId } = await this.image.upload(
             file,
-            FileEntityType.BLOG_IMAGE,
+            FileEntityType.BLOG_MAIN_IMAGE,
             { mode: "original" },
         );
 

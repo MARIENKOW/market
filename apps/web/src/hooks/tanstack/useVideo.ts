@@ -2,9 +2,9 @@
 import { usePaginatedQuery } from "@/hooks/tanstack/usePaginatedQuery";
 import { videoKeys } from "@/lib/tanstack/keys";
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
-import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
+import { $apiAdminAxiosClient } from "@/utils/api/admin/axios.admin.client";
 
-const { getAll } = new BlogVideoService($apiUserAxiosClient);
+const { getAll } = new BlogVideoService($apiAdminAxiosClient);
 
 export function useVideos() {
     return usePaginatedQuery(

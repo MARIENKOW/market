@@ -2,9 +2,9 @@
 import { usePaginatedQuery } from "@/hooks/tanstack/usePaginatedQuery";
 import { imageKeys } from "@/lib/tanstack/keys";
 import BlogImageService from "@/services/blog/image/blogImage.service";
-import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
+import { $apiAdminAxiosClient } from "@/utils/api/admin/axios.admin.client";
 
-const { getAll } = new BlogImageService($apiUserAxiosClient);
+const { getAll } = new BlogImageService($apiAdminAxiosClient);
 
 export function useImages() {
     return usePaginatedQuery(

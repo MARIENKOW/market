@@ -13,8 +13,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useImageSelect } from "@/components/TextEditor/components/image/ImageSelectContext";
+import { $apiAdminAxiosClient } from "@/utils/api/admin/axios.admin.client";
 
-const imageS = new BlogImageService($apiUserAxiosClient);
+const imageS = new BlogImageService($apiAdminAxiosClient);
 
 export const ImageControl = ({ image }: { image: ImageDto }) => {
     const [loadingDelete, setLoadingDelete] = useState(false);

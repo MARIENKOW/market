@@ -27,7 +27,7 @@ export function BlogList({
         );
     if (data && data.length == 0)
         return (
-            <Box py={10}>
+            <Box display={"flex"} flexDirection={"column"} flex={1} py={10}>
                 <EmptyElement />
             </Box>
         );

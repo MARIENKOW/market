@@ -6,19 +6,29 @@ import { Box, Grid } from "@mui/material";
 import { ImageDto } from "@myorg/shared/dto";
 import { useQueryClient } from "@tanstack/react-query";
 
-export function ImageList({ data, error }: { data?: ImageDto[]; error: unknown }) {
+export function ImageList({
+    data,
+    error,
+}: {
+    data?: ImageDto[];
+    error: unknown;
+}) {
     const queryClient = useQueryClient();
 
     if (error && (!data || data.length === 0))
         return (
             <ErrorHandlerElement
-                reset={() => queryClient.invalidateQueries({ queryKey: imageKeys.lists() })}
+                reset={() =>
+                    queryClient.invalidateQueries({
+                        queryKey: imageKeys.lists(),
+                    })
+                }
                 error={error}
             />
         );
     if (data && data.length === 0)
         return (
-            <Box py={10}>
+            <Box display={"flex"} flexDirection={"column"} flex={1} py={10}>
                 <EmptyElement />
             </Box>
         );
