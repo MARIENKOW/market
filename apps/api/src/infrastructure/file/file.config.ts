@@ -16,6 +16,10 @@ export const FILE_CONFIG: Record<FileEntityType, FileEntityConfig> = {
         folder: "blog/video",
         private: false,
     },
+    [FileEntityType.BLOG_MAIN_IMAGE]: {
+        folder: "blog/main-image",
+        private: false,
+    },
 };
 
 export const FILE_PUBLIC: FileEntityConfig[] = Object.entries(FILE_CONFIG)

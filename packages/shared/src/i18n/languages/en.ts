@@ -376,6 +376,8 @@ export const en: MessageStructure = {
     },
     common: {
         cancel: "Cancel",
+        delete: "Delete",
+        deleteAll: "Delete all",
         confirm: "Confirm",
     },
     uploader: {

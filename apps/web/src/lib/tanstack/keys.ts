@@ -28,6 +28,14 @@ export const userKeys = {
     profile: (id: string) => [...userKeys.all, "profile", id] as const,
 };
 
+export const blogKeys = {
+    all: ["blogs"] as const,
+    lists: () => [...blogKeys.all, "list"] as const,
+    list: (filters: BlogFilters) => [...blogKeys.lists(), filters] as const,
+    details: () => [...blogKeys.all, "detail"] as const,
+    detail: (id: string) => [...blogKeys.details(), id] as const,
+};
+
 // Типы
 interface VideoFilters {
     page?: number;
@@ -35,5 +43,8 @@ interface VideoFilters {
     search?: string;
 }
 interface ImageFilters {
+    page?: number;
+}
+interface BlogFilters {
     page?: number;
 }

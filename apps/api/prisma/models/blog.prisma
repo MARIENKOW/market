@@ -11,8 +11,8 @@ model Blog {
     createdAt   DateTime    @default(now()) 
     updatedAt   DateTime    @updatedAt      
 
-    imageId     String?     @unique
-    image       Image?      @relation(fields: [imageId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    imageId     String     @unique
+    image       Image      @relation(fields: [imageId], references: [id], onDelete:Restrict, onUpdate: Cascade)
 
     // videos      BlogVideo[]
 

@@ -1,14 +1,12 @@
 import { PipeTransform, Injectable } from "@nestjs/common";
 import { fromBuffer } from "file-type";
 import { AllowedImageMimeType } from "../image.config";
-import { BLOG_IMAGE_CONFIG } from "@myorg/shared/form";
+import { BLOG_IMAGE_CONFIG, BlogOutput } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { MessageStructure } from "@myorg/shared/i18n";
-import { I18nService } from "nestjs-i18n";
 
 @Injectable()
-export class BlogImageValidationPipe implements PipeTransform {
-    constructor(private i18n: I18nService<MessageStructure>) {}
+export class blogMainImageValidationPipe implements PipeTransform {
+    constructor() {}
 
     async transform(
         file: Express.Multer.File | undefined,
@@ -20,13 +18,10 @@ export class BlogImageValidationPipe implements PipeTransform {
         file: Express.Multer.File | undefined,
     ): Promise<Express.Multer.File> {
         if (!file) {
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t("form.required"),
-                        type: "error",
-                    },
-                ],
+            throw new ValidationException<BlogOutput>({
+                fields: {
+                    image: ["form.required"],
+                },
             });
         }
 
@@ -39,13 +34,10 @@ export class BlogImageValidationPipe implements PipeTransform {
                 detected.mime as AllowedImageMimeType,
             )
         ) {
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t("form.file.unsupportedType"),
-                        type: "error",
-                    },
-                ],
+            throw new ValidationException<BlogOutput>({
+                fields: {
+                    image: ["form.file.unsupportedType"],
+                },
             });
         }
 
@@ -55,13 +47,10 @@ export class BlogImageValidationPipe implements PipeTransform {
         // Проверка размера по конфигу сущности
 
         if (file.size > BLOG_IMAGE_CONFIG.maxFileSizeBytes) {
-            throw new ValidationException({
-                root: [
-                    {
-                        message: this.i18n.t("form.file.blogImage.tooLarge"),
-                        type: "error",
-                    },
-                ],
+            throw new ValidationException<BlogOutput>({
+                fields: {
+                    image: ["form.file.blogImage.tooLarge"],
+                },
             });
         }
 

@@ -387,6 +387,8 @@ export const ru = {
     },
     common: {
         cancel: "Отменить",
+        delete: "Удалить",
+        deleteAll: "Удалить все",
         confirm: "Подтвердить",
     },
     uploader: {
