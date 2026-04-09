@@ -20,7 +20,6 @@ export const getAdminAuth: () => CachedAdminMeReturn = cache(async () => {
         const res = await adminService.me();
         admin = res.data;
     } catch (e) {
-        console.log(e);
         if (
             !isApiErrorResponse(e) ||
             !isUnauthorizedError(e as ApiErrorResponse)

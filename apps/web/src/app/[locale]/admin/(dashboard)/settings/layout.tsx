@@ -22,7 +22,6 @@ export default async function SettingsLayout({
                 }}
             >
                 <Sidebar
-                    minWidth={200}
                     label="pages.admin.settings.name"
                     config={NAV_GROUPS}
                 />

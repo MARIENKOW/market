@@ -20,7 +20,6 @@ export const getUserAuth: () => CachedUserMeReturn = cache(async () => {
         const res = await userService.me();
         user = res.data;
     } catch (e) {
-        console.log(e);
         if (
             !isApiErrorResponse(e) ||
             !isUnauthorizedError(e as ApiErrorResponse)

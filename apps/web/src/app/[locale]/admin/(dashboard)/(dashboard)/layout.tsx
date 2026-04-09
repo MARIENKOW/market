@@ -2,6 +2,7 @@ import { NAV_GROUPS } from "@/app/[locale]/admin/(dashboard)/(dashboard)/nav.con
 import Sidebar from "@/components/layout/navigation/Sidebar";
 import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { strict } from "assert";
 
 export default async function Layout({
     children,
@@ -23,8 +24,10 @@ export default async function Layout({
                 }}
             >
                 <Sidebar
-                    hidePaths={[FULL_PATH_ROUTE.admin.blog.create.path]}
-                    minWidth={200}
+                    hidePaths={{
+                        strict: [FULL_PATH_ROUTE.admin.blog.create.path],
+                        safe: [FULL_PATH_ROUTE.admin.blog.update.path],
+                    }}
                     config={NAV_GROUPS}
                 />
             </Box>

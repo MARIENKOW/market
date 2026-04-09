@@ -29,6 +29,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { blogKeys } from "@/lib/tanstack/keys";
 import { useConfirm } from "@/hooks/useConfirm";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { Link } from "@/i18n/navigation";
 
 const blogS = new BlogService($apiAdminClient);
 
@@ -125,12 +127,6 @@ const BlogItem = ({ blog }: { blog: BlogDto }) => {
                 border: "1px solid",
                 borderColor: blog.isMain ? "warning.main" : "divider",
                 borderRadius: 2,
-                // transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                // "&:hover": {
-                //     borderColor: blog.isMain ? "warning.main" : "primary.main",
-                //     boxShadow:
-                //         "0 4px 16px var(--mui-palette-action-selected, rgba(0,0,0,0.08))",
-                // },
             }}
         >
             {confirmDialog}
@@ -240,14 +236,18 @@ const BlogItem = ({ blog }: { blog: BlogDto }) => {
                         <Typography>Просмотреть</Typography>
                     </MenuItem>
                 </Link> */}
-                {/* <Link href={ADMIN_BLOG_UPDATE_ROUTE + "/" + Blog?.id}>
-                    <MenuItem onClick={handleClose}>
-                        <ListItemIcon>
+                <Link
+                    href={
+                        FULL_PATH_ROUTE.admin.blog.update.path + "/" + blog.id
+                    }
+                >
+                    <StyledMenuItem onClick={handleClose}>
+                        <StyledListItemIcon>
                             <EditIcon />
-                        </ListItemIcon>
-                        Редактировать
-                    </MenuItem>
-                </Link> */}
+                        </StyledListItemIcon>
+                        {t('common.update')}
+                    </StyledMenuItem>
+                </Link>
                 <StyledMenuItem
                     onClick={() => {
                         handleClose();

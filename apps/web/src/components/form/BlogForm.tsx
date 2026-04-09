@@ -24,24 +24,29 @@ import {
 } from "@myorg/shared/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
+import { BlogDto } from "@myorg/shared/dto";
 
 const BlogForm = ({
-    onSuccess,
+    onRequest,
+    initData,
 }: {
-    onSuccess: (data: BlogOutput) => Promise<void>;
+    initData?: BlogDto;
+    onRequest: (data: BlogOutput) => Promise<void>;
 }) => {
     const t = useTranslations();
-    const [preview, setPreview] = useState<string | null>(null);
+    const [preview, setPreview] = useState<string | null>(
+        initData?.image.url || null,
+    );
 
     const form = useForm<BlogInput, BlogOutput>({
         resolver: zodResolver(BlogSchema),
         defaultValues: {
-            image: null,
-            body: "",
-            title: "",
+            image: initData?.image.url || null,
+            title: initData?.title || "",
+            subtitle: initData?.subtitle || "",
+            body: initData?.body || "",
             videosId: [],
             imagesId: [],
-            subtitle: "",
         },
     });
     const { control } = form;
@@ -66,7 +71,7 @@ const BlogForm = ({
         { setError },
     ) => {
         try {
-            await onSuccess(formValues);
+            await onRequest(formValues);
         } catch (error) {
             errorFormHandlerWithAlert({ error, t, formValues, setError });
         }
@@ -88,7 +93,7 @@ const BlogForm = ({
                         <Grid container spacing={{ xs: 3, md: 2 }} columns={10}>
                             <Grid
                                 sx={{
-                                    aspectRatio:'16 / 6',
+                                    aspectRatio: "16 / 6",
                                     display: "flex",
                                     flexDirection: "column",
                                 }}

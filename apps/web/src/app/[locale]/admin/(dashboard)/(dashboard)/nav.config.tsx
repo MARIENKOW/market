@@ -8,10 +8,13 @@ export const NAV_GROUPS: NavGroup[] = [
             {
                 label: "pages.admin.blog.name",
                 href: FULL_PATH_ROUTE.admin.blog.path,
-                activeLink: [
-                    FULL_PATH_ROUTE.admin.path,
-                    ...AllPathsFromRoute(FULL_PATH_ROUTE.admin.blog),
-                ],
+                activeLink: {
+                    strict: [
+                        FULL_PATH_ROUTE.admin.path,
+                        // ...AllPathsFromRoute(FULL_PATH_ROUTE.admin.blog),
+                    ],
+                    safe: [FULL_PATH_ROUTE.admin.blog.path],
+                },
                 icon: <NewspaperIcon />,
             },
         ],

@@ -21,7 +21,7 @@ export default function BlogComponent() {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                gap={1}
+                // gap={1}
                 mb={2}
                 flexWrap="wrap"
             >
@@ -38,7 +38,7 @@ export default function BlogComponent() {
                     </Link>
                 </Box>
             </Box>
-            <StyledDivider />
+            {/* <StyledDivider /> */}
             <Box
                 flex={1}
                 display="flex"

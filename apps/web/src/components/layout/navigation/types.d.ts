@@ -2,7 +2,10 @@ export interface NavItem {
     label: MessageKeyType;
     href: string;
     icon: ReactNode;
-    activeLink: string[];
+    activeLink?: {
+        strict?: string[];
+        safe?: string[];
+    };
 }
 
 export interface NavGroup {

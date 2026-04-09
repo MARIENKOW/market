@@ -90,6 +90,7 @@ export default class AuthAdminService {
             const res = await api<string>(forgotPassword.path, {
                 signal: controller.signal,
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
             });
             return res;
@@ -101,6 +102,7 @@ export default class AuthAdminService {
             const res = await api<true>(forgotPassword.path + "/" + token, {
                 signal: controller.signal,
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
             });
             return res;

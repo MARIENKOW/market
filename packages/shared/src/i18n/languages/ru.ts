@@ -407,6 +407,7 @@ export const ru = {
     },
     common: {
         cancel: "Отменить",
+        update: "Редактировать",
         delete: "Удалить",
         deleteAll: "Удалить все",
         confirm: "Подтвердить",

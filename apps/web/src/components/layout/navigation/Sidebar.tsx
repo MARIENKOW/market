@@ -19,11 +19,18 @@ export default function Sidebar({
     config: NavGroup[];
     label?: MessageKeyType;
     minWidth?: number;
-    hidePaths?: string[];
+    hidePaths?: {
+        strict?: string[];
+        safe?: string[];
+    };
 }) {
     const pathname = usePathname();
     const t = useTranslations();
-    if (hidePaths && hidePaths.includes(pathname)) return null;
+    if (
+        hidePaths?.strict?.includes(pathname) ||
+        hidePaths?.safe?.some((prefix) => pathname.startsWith(prefix))
+    )
+        return null;
 
     return (
         <Box

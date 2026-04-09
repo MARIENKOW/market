@@ -9,7 +9,9 @@ import { useTranslations } from "next-intl";
 
 export default function SidebarLink({ item }: { item: NavItem }) {
     const pathname = usePathname();
-    const isActive = item.activeLink.includes(pathname);
+    const isActive =
+        item.activeLink?.strict?.includes(pathname) ||
+        item.activeLink?.safe?.some((prefix) => pathname.startsWith(prefix));
     const t = useTranslations();
     return (
         <Link href={item.href}>

@@ -13,16 +13,20 @@ export const NAV_GROUPS: NavGroup[] = [
             {
                 label: "pages.profile.settings.profile.name",
                 href: FULL_PATH_ROUTE.profile.settings.profile.path,
-                activeLink: [
-                    FULL_PATH_ROUTE.profile.settings.profile.path,
-                    FULL_PATH_ROUTE.profile.settings.path,
-                ],
+                activeLink: {
+                    strict: [
+                        FULL_PATH_ROUTE.profile.settings.profile.path,
+                        FULL_PATH_ROUTE.profile.settings.path,
+                    ],
+                },
                 icon: <PersonOutline />,
             },
             {
                 label: "pages.profile.settings.password.name",
                 href: FULL_PATH_ROUTE.profile.settings.password.path,
-                activeLink: [FULL_PATH_ROUTE.profile.settings.password.path],
+                activeLink: {
+                    strict: [FULL_PATH_ROUTE.profile.settings.password.path],
+                },
                 icon: <LockOutlined />,
             },
         ],
@@ -33,7 +37,9 @@ export const NAV_GROUPS: NavGroup[] = [
             {
                 label: "pages.profile.settings.sessions.name",
                 href: FULL_PATH_ROUTE.profile.settings.sessions.path,
-                activeLink: [FULL_PATH_ROUTE.profile.settings.sessions.path],
+                activeLink: {
+                    strict: [FULL_PATH_ROUTE.profile.settings.sessions.path],
+                },
                 icon: <SecurityOutlined />,
             },
         ],

@@ -28,7 +28,6 @@ export default function ErrorHandlerElement({
     fallback?: Fallback;
     reset?: () => void;
 }): React.ReactNode {
-    console.log(error);
     const context = getErrorContext(error);
     const options = fallback?.[context];
     if (options?.element) return options.element;
