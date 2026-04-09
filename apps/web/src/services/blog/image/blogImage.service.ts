@@ -17,7 +17,7 @@ export default class BlogImageService {
         page: number;
         limit?: number;
     }) => Promise<AxiosResponse<PagedResult<ImageDto>>>;
-    deleteAll: () => Promise<AxiosResponse<void>>;
+    deleteAll: () => Promise<AxiosResponse<{ skipped: number }>>;
     constructor(api: AxiosInstance) {
         this.upload = async (body, options) => {
             return await api.post<ImageDto>(upload.path, body, options);
@@ -40,7 +40,7 @@ export default class BlogImageService {
             return res;
         };
         this.deleteAll = async () => {
-            return await api.delete<void>(path);
+            return await api.delete<{ skipped: number }>(path);
         };
     }
 }

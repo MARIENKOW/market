@@ -34,7 +34,7 @@ export const VideoControl = ({ video }: { video: VideoDto }) => {
             setLoadingDelete(true);
             await videoS.delete(video.id);
             queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
-            snackbarSuccess(t("video.control.deleteSuccess"));
+            snackbarSuccess(t("pages.admin.blog.feedback.mediaVideo.deleteSuccess"));
         } catch (error) {
             errorHandler({ error, t });
         } finally {

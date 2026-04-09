@@ -14,6 +14,8 @@ export const mapBlog = (blog: BlogWithImage): BlogDto => ({
     isImportant: blog.isImportant,
     isShort: blog.isShort,
     image: mapImage(blog.image),
+    bodyImagesId: blog.bodyImages.map((i) => i.id),
+    bodyVideosId: blog.bodyVideos.map((v) => v.id),
     createdAt: i18nRelativeTime(blog.createdAt),
     updatedAt: blog.updatedAt.toISOString(),
 });

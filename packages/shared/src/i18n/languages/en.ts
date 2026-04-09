@@ -140,6 +140,7 @@ export const en: MessageStructure = {
                     toggleShortActive: "Remove short mark",
                 },
                 feedback: {
+                    update: "Post updated successfully",
                     create: "Post created successfully",
                     delete: "Post deleted successfully",
                     deleteAll: "All posts deleted",
@@ -149,6 +150,20 @@ export const en: MessageStructure = {
                     unsetImportant: "Blog unmarked as important",
                     setShort: "Blog marked as short",
                     unsetShort: "Blog unmarked as short",
+                    mediaImage: {
+                        notFound: "{count} image(s) not found or already deleted",
+                        linkedToBlog: "This image is used in a blog and cannot be deleted",
+                        deleteAllSkipped: "{count} image(s) were not deleted — used in blogs",
+                        deleteSuccess: "Image deleted",
+                        deleteAllSuccess: "All images deleted",
+                    },
+                    mediaVideo: {
+                        notFound: "{count} video(s) not found or already deleted",
+                        linkedToBlog: "This video is used in a blog and cannot be deleted",
+                        deleteAllSkipped: "{count} video(s) were not deleted — used in blogs",
+                        deleteSuccess: "Video deleted",
+                        deleteAllSuccess: "All videos deleted",
+                    },
                 },
             },
             settings: {

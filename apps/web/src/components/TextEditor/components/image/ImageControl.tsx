@@ -5,7 +5,6 @@ import { errorHandler } from "@/helpers/error/error.handler.helper";
 import { useConfirm } from "@/hooks/useConfirm";
 import { imageKeys } from "@/lib/tanstack/keys";
 import BlogImageService from "@/services/blog/image/blogImage.service";
-import { $apiUserAxiosClient } from "@/utils/api/user/axios.user.client";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { Card, CardHeader } from "@mui/material";
 import { ImageDto } from "@myorg/shared/dto";
@@ -35,7 +34,7 @@ export const ImageControl = ({ image }: { image: ImageDto }) => {
             setLoadingDelete(true);
             await imageS.delete(image.id);
             queryClient.invalidateQueries({ queryKey: imageKeys.lists() });
-            snackbarSuccess(t("image.control.deleteSuccess"));
+            snackbarSuccess(t("pages.admin.blog.feedback.mediaImage.deleteSuccess"));
         } catch (error) {
             errorHandler({ error, t });
         } finally {

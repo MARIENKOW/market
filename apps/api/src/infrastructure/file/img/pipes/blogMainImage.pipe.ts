@@ -6,23 +6,28 @@ import { ValidationException } from "@/common/exception/validation.exception";
 
 @Injectable()
 export class blogMainImageValidationPipe implements PipeTransform {
-    constructor() {}
+    private required: boolean;
+    constructor({ required = true }: { required?: boolean }) {
+        this.required = required;
+    }
 
     async transform(
         file: Express.Multer.File | undefined,
-    ): Promise<Express.Multer.File> {
+    ): Promise<Express.Multer.File | null> {
         return this.validateOne(file);
     }
 
     private async validateOne(
         file: Express.Multer.File | undefined,
-    ): Promise<Express.Multer.File> {
+    ): Promise<Express.Multer.File | null> {
         if (!file) {
-            throw new ValidationException<BlogOutput>({
-                fields: {
-                    image: ["form.required"],
-                },
-            });
+            if (this.required)
+                throw new ValidationException<BlogOutput>({
+                    fields: {
+                        image: ["form.required"],
+                    },
+                });
+            return null;
         }
 
         // Проверка реального типа по magic bytes — не доверяем заголовку

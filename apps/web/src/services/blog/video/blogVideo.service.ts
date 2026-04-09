@@ -17,7 +17,7 @@ export default class BlogVideoService {
         page: number;
         limit?: number;
     }) => Promise<AxiosResponse<PagedResult<VideoDto>>>;
-    deleteAll: () => Promise<AxiosResponse<void>>;
+    deleteAll: () => Promise<AxiosResponse<{ skipped: number }>>;
     constructor(api: AxiosInstance) {
         this.upload = async (body, options) => {
             const { data } = await api.get<{ uploadToken: string }>(
@@ -47,7 +47,7 @@ export default class BlogVideoService {
             return res;
         };
         this.deleteAll = async () => {
-            return await api.delete<void>(path);
+            return await api.delete<{ skipped: number }>(path);
         };
     }
 }

@@ -13,8 +13,7 @@ model Video {
     image   Image?          @relation(fields: [imageId], references: [id])
     createdAt  DateTime      @default(now())
 
-    // Обратные связи — добавить по мере необходимости:
-    // post Post?
+    blogBody Blog[] @relation("BlogBodyVideos")
 
     @@index([entityType])
 }

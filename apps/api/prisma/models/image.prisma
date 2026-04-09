@@ -8,7 +8,8 @@ model Image {
     width      Int
     user User? // обратная связь — без неё Prisma не скомпилирует
     admin Admin? // обратная связь — без неё Prisma не скомпилирует
-    blog Blog? // обратная связь — без неё Prisma не скомпилирует
+    blog     Blog?   @relation("BlogMainImage")
+    blogBody Blog[]  @relation("BlogBodyImages")
     video Video? // обратная связь — без неё Prisma не скомпилирует
     height     Int
     size       Int             // байты

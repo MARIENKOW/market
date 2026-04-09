@@ -6,6 +6,8 @@ import { useConfirm } from "@/hooks/useConfirm";
 import { videoKeys } from "@/lib/tanstack/keys";
 import BlogVideoService from "@/services/blog/video/blogVideo.service";
 import { $apiAdminAxiosClient } from "@/utils/api/admin/axios.admin.client";
+import { snackbarInfo } from "@/utils/snackbar/snackbar.info";
+import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -22,8 +24,13 @@ export default function DeleteAllVideoBlog() {
         try {
             const isConfirm = await confirm(t("video.control.deleteAllConfirm"));
             if (!isConfirm) return;
-            await deleteAll();
+            const { data } = await deleteAll();
             queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
+            if (data.skipped > 0) {
+                snackbarInfo(t("pages.admin.blog.feedback.mediaVideo.deleteAllSkipped", { count: data.skipped }));
+            } else {
+                snackbarSuccess(t("pages.admin.blog.feedback.mediaVideo.deleteAllSuccess"));
+            }
         } catch (error) {
             errorHandler({ error, t });
         } finally {

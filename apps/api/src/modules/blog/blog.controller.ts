@@ -1,7 +1,6 @@
 import { Auth } from "@/modules/auth/decorators/auth.decorator";
 import { BlogDto, PagedResult } from "@myorg/shared/dto";
 import { ENDPOINT, FULL_PATH_ENDPOINT } from "@myorg/shared/endpoints";
-import { BlogImageValidationPipe } from "@/infrastructure/file/img/pipes/blogImage.pipe";
 import {
     Body,
     Controller,
@@ -12,6 +11,7 @@ import {
     ParseIntPipe,
     Patch,
     Post,
+    Put,
     Query,
     UploadedFile,
     UseInterceptors,
@@ -31,9 +31,7 @@ const { path } = FULL_PATH_ENDPOINT.blog;
 
 @Controller(path)
 export class BlogController {
-    constructor(
-        private blog: BlogService,
-    ) {}
+    constructor(private blog: BlogService) {}
 
     @Post()
     @Auth("ADMIN")
@@ -41,12 +39,24 @@ export class BlogController {
     async create(
         @Body(new ZodValidationPipe(BlogSchemaWithoutImage))
         body: BlogWithoutImageOutput,
-        @UploadedFile(new blogMainImageValidationPipe())
+        @UploadedFile(new blogMainImageValidationPipe({ required: true }))
         file: Express.Multer.File,
     ): Promise<BlogDto> {
         return this.blog.create(body, file);
     }
-    
+
+    @Put(":id")
+    @Auth("ADMIN")
+    @UseInterceptors(FileInterceptor("image", { storage: memoryStorage() }))
+    async update(
+        @Body(new ZodValidationPipe(BlogSchemaWithoutImage))
+        data: BlogWithoutImageOutput & { image: string | null },
+        @UploadedFile(new blogMainImageValidationPipe({ required: false }))
+        file: Express.Multer.File | null,
+        @Param("id") id: string,
+    ): Promise<BlogDto> {
+        return this.blog.update({ id, data, image: file });
+    }
 
     @Get()
     @Auth("ADMIN")

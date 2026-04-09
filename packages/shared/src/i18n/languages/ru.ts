@@ -141,6 +141,7 @@ export const ru = {
                 },
                 feedback: {
                     create: "Запись успешно создана",
+                    update: "Запись успешно обновлена",
                     delete: "Запись успешно удалена",
                     deleteAll: "Все записи удалены",
                     setMain: "Блог назначен главным",
@@ -149,6 +150,20 @@ export const ru = {
                     unsetImportant: "Блог снят с важных",
                     setShort: "Блог помечен как короткий",
                     unsetShort: "Блог снят с коротких",
+                    mediaImage: {
+                        notFound: "{count} изображений не найдено или уже удалены",
+                        linkedToBlog: "Изображение используется в блоге и не может быть удалено",
+                        deleteAllSkipped: "{count} изображений не удалено — используются в блогах",
+                        deleteSuccess: "Изображение удалено",
+                        deleteAllSuccess: "Все изображения удалены",
+                    },
+                    mediaVideo: {
+                        notFound: "{count} видео не найдено или уже удалены",
+                        linkedToBlog: "Видео используется в блоге и не может быть удалено",
+                        deleteAllSkipped: "{count} видео не удалено — используются в блогах",
+                        deleteSuccess: "Видео удалено",
+                        deleteAllSuccess: "Все видео удалены",
+                    },
                 },
             },
             settings: {

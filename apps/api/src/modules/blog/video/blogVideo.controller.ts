@@ -17,7 +17,7 @@ import {
     UploadedFile,
     UseInterceptors,
 } from "@nestjs/common";
-import { UserActor } from "@/modules/auth/auth.type";
+import { AdminActor } from "@/modules/auth/auth.type";
 import { FileInterceptor } from "@nestjs/platform-express";
 import multer from "multer";
 import { BlogVideoService } from "@/modules/blog/video/blogVideo.service";
@@ -42,8 +42,8 @@ export class BlogVideoController {
 
     @Get(upload.path)
     @Auth("ADMIN")
-    authorize(@CurrentActor() actor: UserActor): { uploadToken: string } {
-        return { uploadToken: signUploadToken(actor.user.id) };
+    authorize(@CurrentActor() actor: AdminActor): { uploadToken: string } {
+        return { uploadToken: signUploadToken(actor.admin.id) };
     }
 
     // ── 2. Загрузка — токен проверяется в fileFilter ──────────────
@@ -87,7 +87,7 @@ export class BlogVideoController {
     }
     @Delete()
     @Auth("ADMIN")
-    async deleteAll(): Promise<void> {
+    async deleteAll(): Promise<{ skipped: number }> {
         return this.blogVideo.deleteAll();
     }
     @Delete(":id")

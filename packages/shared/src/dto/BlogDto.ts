@@ -11,6 +11,8 @@ export interface BlogDto {
     isImportant: boolean;
     isShort: boolean;
     image: ImageDto;
+    bodyImagesId: string[];
+    bodyVideosId: string[];
     createdAt: string;
     updatedAt: string;
 }

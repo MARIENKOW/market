@@ -12,9 +12,9 @@ model Blog {
     updatedAt   DateTime    @updatedAt      
 
     imageId     String     @unique
-    image       Image      @relation(fields: [imageId], references: [id], onDelete:Restrict, onUpdate: Cascade)
-
-    // videos      BlogVideo[]
+    image       Image      @relation("BlogMainImage", fields: [imageId], references: [id], onDelete:Restrict, onUpdate: Cascade)
+    bodyImages  Image[]    @relation("BlogBodyImages")
+    bodyVideos  Video[]    @relation("BlogBodyVideos")
 
     @@index([isMain])
     @@index([isImportant])

@@ -11,11 +11,13 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
-const { create } = new BlogService($apiAdminClient);
+const { update } = new BlogService($apiAdminClient);
 
 export default function BlogUpdateForm({
     initialData,
+    id,
 }: {
+    id: string;
     initialData: BlogDto;
 }) {
     const router = useRouter();
@@ -24,9 +26,9 @@ export default function BlogUpdateForm({
     return (
         <BlogForm
             initData={initialData}
-            onRequest={async (value) => {
-                await create(value);
-                snackbarSuccess(t("pages.admin.blog.feedback.create"));
+            onRequest={async (body) => {
+                await update({ body, id });
+                snackbarSuccess(t("pages.admin.blog.feedback.update"));
                 queryClient.invalidateQueries({ queryKey: blogKeys.all });
                 router.push(FULL_PATH_ROUTE.admin.blog.path);
             }}
