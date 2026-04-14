@@ -25,16 +25,17 @@ export default function InvitationComponent() {
             <Box
                 display="flex"
                 justifyContent="space-between"
-                alignItems="center"
+                alignItems={{ xs: "initial", sm: "center" }}
                 mb={2}
+                flexDirection={{ xs: "column", sm: "row" }}
                 flexWrap="wrap"
                 gap={1}
             >
-                <StyledTypography variant="h5" fontWeight={700}>
-                    {t("pages.admin.invitation.name")}
-                    {data?.meta.total ? ` · ${data.meta.total}` : ""}
-                </StyledTypography>
-                <Box display="flex" alignItems="center" gap={1}>
+                <Box display={"flex"} alignItems={"center"} gap={1}>
+                    <StyledTypography variant="h5" fontWeight={700}>
+                        {t("pages.admin.invitation.name")}
+                        {data?.meta.total ? ` · ${data.meta.total}` : ""}
+                    </StyledTypography>
                     <StyledTooltip title={t("common.refresh")} placement="top">
                         <span>
                             <StyledIconButton
@@ -45,7 +46,10 @@ export default function InvitationComponent() {
                             </StyledIconButton>
                         </span>
                     </StyledTooltip>
+                </Box>
+                <Box display="flex" alignItems="center" gap={1}>
                     <StyledButton
+                        fullWidth
                         variant="contained"
                         onClick={() => setCreateOpen(true)}
                     >

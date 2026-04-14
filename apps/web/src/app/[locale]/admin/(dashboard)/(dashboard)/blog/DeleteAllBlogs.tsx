@@ -34,7 +34,9 @@ export default function DeleteAllBlogs() {
         <>
             {confirmDialog}
             <StyledButton
+                fullWidth
                 color="error"
+                variant="outlined"
                 onClick={handleDelete}
                 loading={loading}
             >
