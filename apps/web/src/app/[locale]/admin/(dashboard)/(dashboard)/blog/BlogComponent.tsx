@@ -27,7 +27,6 @@ export default function BlogComponent() {
                 flexDirection={{ xs: "column", sm: "row" }}
                 gap={1}
                 mb={2}
-                flexWrap="wrap"
             >
                 <Box display={"flex"} alignItems={"center"} gap={1}>
                     <StyledTypography variant="h5" fontWeight={700}>

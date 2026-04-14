@@ -28,7 +28,6 @@ export default function InvitationComponent() {
                 alignItems={{ xs: "initial", sm: "center" }}
                 mb={2}
                 flexDirection={{ xs: "column", sm: "row" }}
-                flexWrap="wrap"
                 gap={1}
             >
                 <Box display={"flex"} alignItems={"center"} gap={1}>
