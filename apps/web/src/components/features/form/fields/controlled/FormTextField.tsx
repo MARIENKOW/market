@@ -22,7 +22,6 @@ export default function FormTextField<T extends FieldValues>({
     const {
         fields: { variant: configVariant },
     } = useFormConfig();
-    console.log(configVariant);
 
     return (
         <FieldControll name={name}>

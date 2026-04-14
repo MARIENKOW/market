@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Box, CircularProgress, LinearProgress } from "@mui/material";
+import { Box, DialogContent, DialogTitle, LinearProgress } from "@mui/material";
 import { useTranslations } from "next-intl";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { StyledTooltip } from "@/components/ui/StyledTooltip";
+import { StyledDialog } from "@/components/ui/StyledDialog";
 import { useAdminInvitations } from "@/hooks/tanstack/useAdminInvitations";
 import AdminInvitationCreateForm from "@/components/form/AdminInvitationCreateForm";
 import { InvitationList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationList";
@@ -35,12 +36,14 @@ export default function InvitationComponent() {
                 </StyledTypography>
                 <Box display="flex" alignItems="center" gap={1}>
                     <StyledTooltip title={t("common.refresh")} placement="top">
-                        <StyledIconButton
-                            onClick={() => refetch()}
-                            loading={isFetching}
-                        >
-                            <RefreshIcon />
-                        </StyledIconButton>
+                        <span>
+                            <StyledIconButton
+                                onClick={() => refetch()}
+                                loading={isFetching}
+                            >
+                                <RefreshIcon />
+                            </StyledIconButton>
+                        </span>
                     </StyledTooltip>
                     <StyledButton
                         variant="contained"
@@ -78,10 +81,21 @@ export default function InvitationComponent() {
                 />
             </Box>
 
-            <AdminInvitationCreateForm
+            <StyledDialog
                 open={createOpen}
                 onClose={() => setCreateOpen(false)}
-            />
+                fullWidth
+                slotProps={{ paper: { sx: { p: { xs: 0, sm: 1 } } } }}
+            >
+                <DialogTitle sx={{ pb: 1 }}>
+                    {t("pages.admin.invitation.form.title")}
+                </DialogTitle>
+                <DialogContent sx={{ pt: 1 }}>
+                    <AdminInvitationCreateForm
+                        onCancel={() => setCreateOpen(false)}
+                    />
+                </DialogContent>
+            </StyledDialog>
         </Box>
     );
 }

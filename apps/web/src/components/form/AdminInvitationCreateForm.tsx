@@ -1,8 +1,6 @@
 "use client";
 
-import { Box, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { useState } from "react";
-import { StyledDialog } from "@/components/ui/StyledDialog";
+import { Box } from "@mui/material";
 import { StyledButton } from "@/components/ui/StyledButton";
 import FormProvider from "@/components/wrappers/form/FormProvider";
 import Form, { CustomSubmitHandler } from "@/components/wrappers/form/Form";
@@ -28,11 +26,10 @@ import { useTranslations } from "next-intl";
 const { create } = new AdminInvitationService($apiAdminClient);
 
 interface Props {
-    open: boolean;
-    onClose: () => void;
+    onCancel: () => void;
 }
 
-export default function AdminInvitationCreateForm({ open, onClose }: Props) {
+export default function AdminInvitationCreateForm({ onCancel }: Props) {
     const t = useTranslations();
     const queryClient = useQueryClient();
 
@@ -57,7 +54,7 @@ export default function AdminInvitationCreateForm({ open, onClose }: Props) {
             );
             queryClient.invalidateQueries({ queryKey: invitationKeys.all });
             form.reset();
-            onClose();
+            onCancel();
         } catch (error) {
             errorFormHandlerWithAlert({
                 error,
@@ -69,72 +66,55 @@ export default function AdminInvitationCreateForm({ open, onClose }: Props) {
     };
 
     return (
-        <StyledDialog
-            open={open}
-            onClose={onClose}
-            fullWidth
-            slotProps={{ paper: { sx: { p: { xs: 0, sm: 1 } } } }}
+        <FormConfigProvider
+            value={{
+                fields: { variant: "outlined" },
+                submit: {
+                    variant: "contained",
+                    text: "pages.admin.invitation.actions.create",
+                },
+            }}
         >
-            <DialogTitle sx={{ pb: 1 }}>
-                {t("pages.admin.invitation.form.title")}
-            </DialogTitle>
-
-            <FormConfigProvider
-                value={{
-                    fields: { variant: "outlined" },
-                    submit: {
-                        variant: "contained",
-                        text: "pages.admin.invitation.actions.create",
-                    },
-                }}
-            >
-                <FormProvider form={form}>
-                    <Form<
-                        CreateAdminInvitationDtoInput,
-                        CreateAdminInvitationDtoOutput
-                    >
-                        onSubmit={handleSubmit}
-                        form={form}
-                    >
-                        <DialogContent sx={{ pt: 1 }}>
-                            <Box display="flex" flexDirection="column" gap={2}>
-                                <FormTextField<CreateAdminInvitationDtoInput>
-                                    name="email"
-                                    label="form.email.label"
-                                    type="email"
-                                    autoComplete="off"
-                                />
-                                <FormTextField<CreateAdminInvitationDtoInput>
-                                    name="note"
-                                    label="pages.admin.invitation.form.note"
-                                    multiline
-                                    helperText={t("form.optional")}
-                                    rows={2}
-                                />
-                                <FormAlert />
-                            </Box>
-                        </DialogContent>
-                        <DialogActions
-                            sx={{
-                                px: 3,
-                                pb: 2,
-                                gap: 1,
-                                display: "flex",
-                                flexDirection: { xs: "column", sm: "row" },
-                            }}
+            <FormProvider form={form}>
+                <Form<
+                    CreateAdminInvitationDtoInput,
+                    CreateAdminInvitationDtoOutput
+                >
+                    onSubmit={handleSubmit}
+                    form={form}
+                >
+                    <Box display="flex" flexDirection="column" gap={2}>
+                        <FormTextField<CreateAdminInvitationDtoInput>
+                            name="email"
+                            label="form.email.label"
+                            type="email"
+                            autoComplete="off"
+                        />
+                        <FormTextField<CreateAdminInvitationDtoInput>
+                            name="note"
+                            label="pages.admin.invitation.form.note"
+                            multiline
+                            helperText={t("form.optional")}
+                            rows={2}
+                        />
+                        <FormAlert />
+                        <Box
+                            display="flex"
+                            flexDirection={{ xs: "column", sm: "row" }}
+                            gap={1}
                         >
                             <StyledButton
                                 fullWidth
                                 variant="outlined"
-                                onClick={onClose}
+                                onClick={onCancel}
                             >
                                 {t("common.cancel")}
                             </StyledButton>
                             <SubmitButton />
-                        </DialogActions>
-                    </Form>
-                </FormProvider>
-            </FormConfigProvider>
-        </StyledDialog>
+                        </Box>
+                    </Box>
+                </Form>
+            </FormProvider>
+        </FormConfigProvider>
     );
 }

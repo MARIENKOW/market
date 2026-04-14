@@ -19,8 +19,12 @@ export const NAV_GROUPS: (role: AdminDto["role"]) => NavGroup[] = (role) => [
                 },
                 icon: <NewspaperIcon />,
             },
-            ...(role === "SUPERADMIN"
-                ? [
+        ],
+    },
+    ...(role === "SUPERADMIN"
+        ? [
+              {
+                  items: [
                       {
                           label: "pages.admin.invitation.name",
                           href: FULL_PATH_ROUTE.admin.invitation.path,
@@ -29,8 +33,8 @@ export const NAV_GROUPS: (role: AdminDto["role"]) => NavGroup[] = (role) => [
                           },
                           icon: <MailOutlineIcon />,
                       },
-                  ]
-                : []),
-        ],
-    },
+                  ],
+              },
+          ]
+        : []),
 ];

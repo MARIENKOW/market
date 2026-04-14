@@ -35,7 +35,6 @@ export class ZodValidationPipe<S extends ZodType> implements PipeTransform {
     constructor(private schema: S) {}
 
     transform(value: unknown) {
-        console.log(value);
         const result = this.schema.safeParse(value);
         if (!result.success) {
             throw new ValidationException(zodIssuesToFieldErrors(result.error));
