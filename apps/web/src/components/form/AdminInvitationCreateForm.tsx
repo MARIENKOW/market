@@ -73,7 +73,7 @@ export default function AdminInvitationCreateForm({ open, onClose }: Props) {
             open={open}
             onClose={onClose}
             fullWidth
-            slotProps={{ paper: { sx: { p: 1 } } }}
+            slotProps={{ paper: { sx: { p: { xs: 0, sm: 1 } } } }}
         >
             <DialogTitle sx={{ pb: 1 }}>
                 {t("pages.admin.invitation.form.title")}
@@ -114,8 +114,20 @@ export default function AdminInvitationCreateForm({ open, onClose }: Props) {
                                 <FormAlert />
                             </Box>
                         </DialogContent>
-                        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
-                            <StyledButton variant="outlined" onClick={onClose}>
+                        <DialogActions
+                            sx={{
+                                px: 3,
+                                pb: 2,
+                                gap: 1,
+                                display: "flex",
+                                flexDirection: { xs: "column", sm: "row" },
+                            }}
+                        >
+                            <StyledButton
+                                fullWidth
+                                variant="outlined"
+                                onClick={onClose}
+                            >
                                 {t("common.cancel")}
                             </StyledButton>
                             <SubmitButton />
