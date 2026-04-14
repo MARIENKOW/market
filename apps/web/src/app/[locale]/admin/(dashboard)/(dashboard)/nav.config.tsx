@@ -1,8 +1,10 @@
 import { NavGroup } from "@/components/layout/navigation/types";
-import { AllPathsFromRoute, FULL_PATH_ROUTE } from "@myorg/shared/route";
+import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import { AdminDto } from "@myorg/shared/dto";
 
-export const NAV_GROUPS: NavGroup[] = [
+export const NAV_GROUPS: (role: AdminDto["role"]) => NavGroup[] = (role) => [
     {
         items: [
             {
@@ -17,8 +19,18 @@ export const NAV_GROUPS: NavGroup[] = [
                 },
                 icon: <NewspaperIcon />,
             },
+            ...(role === "SUPERADMIN"
+                ? [
+                      {
+                          label: "pages.admin.invitation.name",
+                          href: FULL_PATH_ROUTE.admin.invitation.path,
+                          activeLink: {
+                              safe: [FULL_PATH_ROUTE.admin.invitation.path],
+                          },
+                          icon: <MailOutlineIcon />,
+                      },
+                  ]
+                : []),
         ],
     },
 ];
-
-export const ALL_ITEMS = NAV_GROUPS.flatMap((g) => g.items);

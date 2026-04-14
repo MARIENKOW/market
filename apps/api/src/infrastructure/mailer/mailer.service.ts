@@ -86,6 +86,33 @@ export class MailerService implements OnModuleInit {
             text: `${this.i18n.t("mail.activate.button")}: ${url}`,
         });
     }
+    async sendAdminInvitation({
+        to,
+        url,
+        expires,
+    }: SendForgotPasswordOptions) {
+        const html = `
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"></head>
+            <body style="font-family: Arial;">
+            <h2>${this.i18n.t("mail.adminInvitation.title")}</h2>
+            <p>${this.i18n.t("mail.adminInvitation.description")}</p>
+            <p><a href="${url}" style="background:#007bff;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">${this.i18n.t("mail.adminInvitation.button")}</a></p>
+            <hr>
+            <p>${this.i18n.t("mail.adminInvitation.expires", { args: { time: i18nFormatDuration(expires) } })}</p>
+            <p style="color:#888;font-size:12px;">${this.i18n.t("mail.adminInvitation.ignore")}</p>
+            </body>
+            </html>`;
+        await this.transporter.sendMail({
+            from: env.SMTP_USER,
+            to,
+            subject: this.i18n.t("mail.adminInvitation.subject"),
+            html,
+            text: `${this.i18n.t("mail.adminInvitation.button")}: ${url}`,
+        });
+    }
+
     async sendChangePasswordCode({
         to,
         code,

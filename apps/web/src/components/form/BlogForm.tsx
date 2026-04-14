@@ -128,9 +128,7 @@ const BlogForm = ({
                                 />
                                 <FormTextField<BlogInput>
                                     name="subtitle"
-                                    helperText={t(
-                                        "form.blog.subtitle.helperText",
-                                    )}
+                                    helperText={t("form.optional")}
                                     label="form.blog.subtitle.label"
                                 />
                             </Grid>

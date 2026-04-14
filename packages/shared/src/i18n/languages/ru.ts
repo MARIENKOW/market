@@ -12,6 +12,7 @@ import {
     BLOG_SUBTITLE_MIN_LENGTH,
     BLOG_BODY_MAX_LENGTH,
     BLOG_BODY_MIN_LENGTH,
+    INVITATION_NOTE_MAX_LENGTH,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -70,6 +71,11 @@ export const ru = {
             dropActive: "Отпустите файл",
             dropIdle: "Перетащите файл или нажмите",
         },
+        invitation: {
+            note: {
+                max: `максимум ${INVITATION_NOTE_MAX_LENGTH} символов`,
+            },
+        },
         blog: {
             body: {
                 min: `минимум ${BLOG_BODY_MIN_LENGTH} символов`,
@@ -84,9 +90,9 @@ export const ru = {
                 label: "Подзаголовок",
                 min: `минимум ${BLOG_SUBTITLE_MIN_LENGTH} символов`,
                 max: `максимум ${BLOG_SUBTITLE_MAX_LENGTH} символов`,
-                helperText: `*необязательное поле`,
             },
         },
+        optional: `*необязательное поле`,
         required: "обязательное поле",
         submit: "Подтвердить",
     },
@@ -151,16 +157,21 @@ export const ru = {
                     setShort: "Блог помечен как короткий",
                     unsetShort: "Блог снят с коротких",
                     mediaImage: {
-                        notFound: "{count} изображений не найдено или уже удалены",
-                        linkedToBlog: "Изображение используется в блоге и не может быть удалено",
-                        deleteAllSkipped: "{count} изображений не удалено — используются в блогах",
+                        notFound:
+                            "{count} изображений не найдено или уже удалены",
+                        linkedToBlog:
+                            "Изображение используется в блоге и не может быть удалено",
+                        deleteAllSkipped:
+                            "{count} изображений не удалено — используются в блогах",
                         deleteSuccess: "Изображение удалено",
                         deleteAllSuccess: "Все изображения удалены",
                     },
                     mediaVideo: {
                         notFound: "{count} видео не найдено или уже удалены",
-                        linkedToBlog: "Видео используется в блоге и не может быть удалено",
-                        deleteAllSkipped: "{count} видео не удалено — используются в блогах",
+                        linkedToBlog:
+                            "Видео используется в блоге и не может быть удалено",
+                        deleteAllSkipped:
+                            "{count} видео не удалено — используются в блогах",
                         deleteSuccess: "Видео удалено",
                         deleteAllSuccess: "Все видео удалены",
                     },
@@ -181,6 +192,51 @@ export const ru = {
                 },
                 sessions: {
                     name: "Сессии",
+                },
+            },
+            invitation: {
+                name: "Приглашения",
+                actions: {
+                    create: "Создать приглашение",
+                    delete: "Удалить",
+                    revoke: "Отозвать",
+                    unrevoke: "Восстановить",
+                    resend: "Отправить повторно",
+                    updateNote: "Сохранить заметку",
+                    addNote: "Добавить заметку",
+                },
+                status: {
+                    active: "Активно",
+                    expired: "Истекло",
+                    revoked: "Отозвано",
+                },
+                linkCopied: "Ссылка скопирована",
+                linkLabel: "Ссылка приглашения",
+                noteLabel: "Заметка",
+                notePlaceholder: "Например, кому и зачем выдано",
+                expiresAt: "Истекает через {time}",
+                expiredAt: "Истекло {time}",
+                revokedAt: "Отозвано {time}",
+                empty: "Приглашений пока нет",
+                form: {
+                    title: "Новое приглашение",
+                    email: "Email администратора",
+                    note: "Заметка",
+                },
+                feedback: {
+                    created: "Приглашение отправлено на {email}",
+                    deleted: "Приглашение удалено",
+                    revoked: "Приглашение отозвано",
+                    resent: "Приглашение повторно отправлено на {email}",
+                    noteUpdated: "Заметка обновлена",
+                    alreadyExists: "Приглашение для этого email уже существует",
+                    adminAlreadyExists:
+                        "Администратор с таким email уже существует",
+                    alreadyRevoked: "Приглашение уже отозвано",
+                    notRevoked: "Приглашение не отозвано",
+                    isRevoked:
+                        "Приглашение отозвано и не может быть отправлено повторно",
+                    unrevoked: "Приглашение восстановлено",
                 },
             },
             login: {
@@ -406,6 +462,15 @@ export const ru = {
             expires: "Код действителен: {time}",
             ignore: "Если вы не запрашивали смену пароля — проигнорируйте это письмо.",
         },
+        adminInvitation: {
+            subject: "Приглашение администратора",
+            title: "Вас приглашают стать администратором",
+            description:
+                "Нажмите на кнопку ниже, чтобы принять приглашение и создать учётную запись:",
+            button: "Принять приглашение",
+            expires: "Ссылка действительна: {time}",
+            ignore: "Если вы не ожидали этого приглашения — проигнорируйте это письмо.",
+        },
     },
     components: {
         sessionList: {
@@ -426,6 +491,7 @@ export const ru = {
         delete: "Удалить",
         deleteAll: "Удалить все",
         confirm: "Подтвердить",
+        refresh: "Обновить",
     },
     uploader: {
         openQueue: "Открыть очередь загрузки",

@@ -7,6 +7,7 @@ import {
     BLOG_TITLE_MAX_LENGTH,
     BLOG_TITLE_MIN_LENGTH,
     EMAIL_MAX_LENGTH,
+    INVITATION_NOTE_MAX_LENGTH,
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
 } from "./constants";
@@ -54,10 +55,26 @@ export const BlogSubtitle = z
     )
     .optional();
 
-const stripHtml = (html: string) => html.replace(/<[^>]*>/g, "").replace(/&[a-z]+;/gi, " ").trim();
+export const InvitationNote = z
+    .string()
+    .trim()
+    .max(INVITATION_NOTE_MAX_LENGTH, getMessageKey("form.invitation.note.max"))
+    .optional();
+
+const stripHtml = (html: string) =>
+    html
+        .replace(/<[^>]*>/g, "")
+        .replace(/&[a-z]+;/gi, " ")
+        .trim();
 
 export const BlogBody = z
     .string()
     .nonempty(getMessageKey("form.required"))
-    .refine((v) => stripHtml(v).length >= BLOG_BODY_MIN_LENGTH, getMessageKey("form.blog.body.min"))
-    .refine((v) => stripHtml(v).length <= BLOG_BODY_MAX_LENGTH, getMessageKey("form.blog.body.max"));
+    .refine(
+        (v) => stripHtml(v).length >= BLOG_BODY_MIN_LENGTH,
+        getMessageKey("form.blog.body.min"),
+    )
+    .refine(
+        (v) => stripHtml(v).length <= BLOG_BODY_MAX_LENGTH,
+        getMessageKey("form.blog.body.max"),
+    );

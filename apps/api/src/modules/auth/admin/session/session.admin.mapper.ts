@@ -1,5 +1,6 @@
 import { SessionAdmin } from "@/generated/prisma";
 import i18nRelativeTime from "@/lib/i18n/i18nRelativeTime";
+import i18nSmartDate from "@/lib/i18n/i18nSmartDate";
 import { SessionAdminDto, SessionAdminViewDto } from "@myorg/shared/dto";
 import * as geoip from "geoip-lite";
 import { UAParser } from "ua-parser-js";
@@ -74,6 +75,6 @@ export const mapSessionAdminView = (
         location,
         createdAt: session.createdAt.toISOString(),
         lastUsedAt: session.lastUsedAt.toISOString(),
-        lastUsedAtFM: i18nRelativeTime(session.lastUsedAt),
+        lastUsedAtFM: i18nSmartDate(session.lastUsedAt),
     };
 };

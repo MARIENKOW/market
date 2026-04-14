@@ -10,6 +10,7 @@ export const BLOG_TITLE_MIN_LENGTH = 5;
 export const BLOG_TITLE_MAX_LENGTH = 75;
 export const BLOG_SUBTITLE_MIN_LENGTH = 5;
 export const BLOG_SUBTITLE_MAX_LENGTH = 75;
+export const INVITATION_NOTE_MAX_LENGTH = 100;
 export const ALLOWED_IMAGE_MIME_TYPES = [
     // Основные — поддерживаются всеми браузерами
     "image/jpeg",

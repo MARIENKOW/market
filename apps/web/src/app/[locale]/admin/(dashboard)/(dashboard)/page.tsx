@@ -1,12 +1,12 @@
 import BlogPage from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/BlogPage";
 import { NAV_GROUPS } from "@/app/[locale]/admin/(dashboard)/(dashboard)/nav.config";
-import { NAV_GROUPS as NAV_GROUPS_SETTINGS } from "@/app/[locale]/admin/(dashboard)/settings/nav.config";
-import SettingsPage from "@/app/[locale]/admin/(dashboard)/settings/SettingsPage";
+import AuthErrorElement from "@/components/feedback/error/AuthErrorElement";
 import MobileNavigation from "@/components/layout/navigation/MobileNavigation";
-import Sidebar from "@/components/layout/navigation/Sidebar";
+import { getAdminAuth } from "@/utils/cache/admin.cache.me";
 import { Box } from "@mui/material";
 
-export default function AdminHome() {
+export default async function AdminHome() {
+    const { admin } = await getAdminAuth();
     return (
         <>
             <Box
@@ -22,10 +22,11 @@ export default function AdminHome() {
                 flexDirection={"column"}
                 sx={{ display: { xs: "flex", md: "none" } }}
             >
-                <MobileNavigation
-                    // label="pages.admin.settings.name"
-                    config={NAV_GROUPS}
-                />
+                {admin ? (
+                    <MobileNavigation config={NAV_GROUPS(admin.role)} />
+                ) : (
+                    <AuthErrorElement />
+                )}
             </Box>
         </>
     );

@@ -1,5 +1,6 @@
 import { mapImage } from "@/infrastructure/file/img/image.mapper";
 import i18nRelativeTime from "@/lib/i18n/i18nRelativeTime";
+import i18nSmartDate from "@/lib/i18n/i18nSmartDate";
 import { BlogWithImage } from "@/modules/blog/blog.types";
 import { BlogDto } from "@myorg/shared/dto";
 
@@ -16,6 +17,6 @@ export const mapBlog = (blog: BlogWithImage): BlogDto => ({
     image: mapImage(blog.image),
     bodyImagesId: blog.bodyImages.map((i) => i.id),
     bodyVideosId: blog.bodyVideos.map((v) => v.id),
-    createdAt: i18nRelativeTime(blog.createdAt),
+    createdAt: i18nSmartDate(blog.createdAt),
     updatedAt: blog.updatedAt.toISOString(),
 });

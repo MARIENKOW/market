@@ -15,6 +15,7 @@ import { BlogModule } from "@/modules/blog/blog.module";
 import { BlogImageModule } from "@/modules/blog/image/blogImage.module";
 import { BlogVideoModule } from "@/modules/blog/video/blogVideo.module";
 import { FileModule } from "@/infrastructure/file/file.module";
+import { AdminInvitationModule } from "@/modules/admin/invitation/adminInvitation.module";
 @Module({
     imports: [
         CoreModule,
@@ -24,6 +25,7 @@ import { FileModule } from "@/infrastructure/file/file.module";
         ChangePasswordAdminModule,
         RequestContextModule,
         FileModule,
+        AdminInvitationModule,
         BlogImageModule,
         BlogVideoModule,
         BlogModule,

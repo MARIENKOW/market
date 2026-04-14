@@ -114,6 +114,13 @@ export const ENDPOINT = {
                 path: "cancel",
             },
         },
+        invitation: {
+            path: "invitation",
+            revoke: { path: "revoke" },
+            unrevoke: { path: "unrevoke" },
+            resend: { path: "resend" },
+            note: { path: "note" },
+        },
     },
     blog: {
         path: "blog",

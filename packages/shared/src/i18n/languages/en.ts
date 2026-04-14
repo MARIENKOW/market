@@ -13,6 +13,7 @@ import {
     BLOG_SUBTITLE_MAX_LENGTH,
     BLOG_BODY_MIN_LENGTH,
     BLOG_BODY_MAX_LENGTH,
+    INVITATION_NOTE_MAX_LENGTH,
 } from "../../form/constants";
 import { formatBytes } from "../../utils";
 
@@ -71,6 +72,11 @@ export const en: MessageStructure = {
             dropActive: "Drop the file",
             dropIdle: "Drag file here or click",
         },
+        invitation: {
+            note: {
+                max: `maximum ${INVITATION_NOTE_MAX_LENGTH} characters`,
+            },
+        },
         blog: {
             body: {
                 min: `minimum ${BLOG_BODY_MIN_LENGTH} characters`,
@@ -85,9 +91,9 @@ export const en: MessageStructure = {
                 label: "Subtitle",
                 min: `minimum ${BLOG_SUBTITLE_MIN_LENGTH} characters`,
                 max: `maximum ${BLOG_SUBTITLE_MAX_LENGTH} characters`,
-                helperText: `*optional`,
             },
         },
+        optional:`*optional`,
         required: "Required field",
         submit: "Submit",
     },
@@ -181,6 +187,49 @@ export const en: MessageStructure = {
                 },
                 sessions: {
                     name: "Sessions",
+                },
+            },
+            invitation: {
+                name: "Invitations",
+                actions: {
+                    create: "Create invitation",
+                    delete: "Delete",
+                    revoke: "Revoke",
+                    unrevoke: "Restore",
+                    resend: "Resend",
+                    updateNote: "Save note",
+                    addNote: "Add note",
+                },
+                status: {
+                    active: "Active",
+                    expired: "Expired",
+                    revoked: "Revoked",
+                },
+                linkCopied: "Link copied",
+                linkLabel: "Invitation link",
+                noteLabel: "Note",
+                notePlaceholder: "E.g. who and why",
+                expiresAt: "Expires in {time}",
+                expiredAt: "Expired {time}",
+                revokedAt: "Revoked {time}",
+                empty: "No invitations yet",
+                form: {
+                    title: "New invitation",
+                    email: "Administrator email",
+                    note: "Note",
+                },
+                feedback: {
+                    created: "Invitation sent to {email}",
+                    deleted: "Invitation deleted",
+                    revoked: "Invitation revoked",
+                    resent: "Invitation resent to {email}",
+                    noteUpdated: "Note updated",
+                    alreadyExists: "An invitation for this email already exists",
+                    adminAlreadyExists: "An administrator with this email already exists",
+                    alreadyRevoked: "Invitation is already revoked",
+                    notRevoked: "Invitation is not revoked",
+                    isRevoked: "Invitation is revoked and cannot be resent",
+                    unrevoked: "Invitation restored",
                 },
             },
             login: {
@@ -395,6 +444,14 @@ export const en: MessageStructure = {
             expires: "Code valid for: {time}",
             ignore: "If you did not request a password change, ignore this email.",
         },
+        adminInvitation: {
+            subject: "Admin Invitation",
+            title: "You've been invited to become an administrator",
+            description: "Click the button below to accept the invitation and create your account:",
+            button: "Accept Invitation",
+            expires: "Link valid for: {time}",
+            ignore: "If you did not expect this invitation, please ignore this email.",
+        },
     },
     components: {
         sessionList: {
@@ -415,6 +472,7 @@ export const en: MessageStructure = {
         delete: "Delete",
         deleteAll: "Delete all",
         confirm: "Confirm",
+        refresh: "Refresh",
     },
     uploader: {
         openQueue: "Open upload queue",

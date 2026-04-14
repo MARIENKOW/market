@@ -8,3 +8,4 @@ export * from "./ChangePasswordDto";
 export * from "./ImageDto";
 export * from "./VideoDto";
 export * from "./BlogDto";
+export * from "./AdminInvitationDto";

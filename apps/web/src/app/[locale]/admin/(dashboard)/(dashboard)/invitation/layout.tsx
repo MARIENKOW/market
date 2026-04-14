@@ -7,9 +7,6 @@ export default async function Layout({
     children: React.ReactNode;
 }) {
     return (
-        <AdminPrivateWrapper>
-            <HeaderAdmin />
-            {children}
-        </AdminPrivateWrapper>
+        <AdminPrivateWrapper role="SUPERADMIN">{children}</AdminPrivateWrapper>
     );
 }

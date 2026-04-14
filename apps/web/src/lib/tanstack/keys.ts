@@ -36,6 +36,12 @@ export const blogKeys = {
     detail: (id: string) => [...blogKeys.details(), id] as const,
 };
 
+export const invitationKeys = {
+    all: ["admin-invitations"] as const,
+    lists: () => [...invitationKeys.all, "list"] as const,
+    list: (filters: { page?: number }) => [...invitationKeys.lists(), filters] as const,
+};
+
 // Типы
 interface VideoFilters {
     page?: number;
