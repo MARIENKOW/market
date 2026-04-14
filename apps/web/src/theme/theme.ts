@@ -7,6 +7,17 @@ const THEME_CONFIG: ThemeOptions = {
         colorSchemeSelector: "class",
         disableCssColorScheme: true,
     },
+    components: {
+        MuiOutlinedInput: {
+            styleOverrides: {
+                notchedOutline: {
+                    "& legend": {
+                        transition: "none",
+                    },
+                },
+            },
+        },
+    },
     typography: {
         fontFamily: "Roboto, Arial, sans-serif",
         fontSize: 13,
