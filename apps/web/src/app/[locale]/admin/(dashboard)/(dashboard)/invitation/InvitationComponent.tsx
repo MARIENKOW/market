@@ -9,15 +9,26 @@ import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { StyledTooltip } from "@/components/ui/StyledTooltip";
 import { StyledDialog } from "@/components/ui/StyledDialog";
-import { useAdminInvitations } from "@/hooks/tanstack/useAdminInvitations";
+import {
+    useAdminInvitations,
+    defaultInvitationParams,
+} from "@/hooks/tanstack/useAdminInvitations";
+import { useLocalListState } from "@/hooks/tanstack/listState";
+import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
 import AdminInvitationCreateForm from "@/components/form/AdminInvitationCreateForm";
 import { InvitationList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 
 export default function InvitationComponent() {
     const t = useTranslations();
-    const { data, isFetching, error, page, setPage, refetch } =
-        useAdminInvitations();
+    const { page, setPage, filters } = useLocalListState(
+        defaultInvitationParams,
+    );
+    const { data, isFetching, error, refetch } = useAdminInvitations({
+        page,
+        ...filters,
+    });
+    usePageClamp(page, data?.meta.pageCount, setPage);
     const [createOpen, setCreateOpen] = useState(false);
 
     return (

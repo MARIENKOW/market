@@ -4,11 +4,12 @@ import { BlogList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/Blog
 import DeleteAllBlogs from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/DeleteAllBlogs";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { StyledButton } from "@/components/ui/StyledButton";
-import { StyledDivider } from "@/components/ui/StyledDivider";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledTooltip } from "@/components/ui/StyledTooltip";
 import { StyledTypography } from "@/components/ui/StyledTypography";
-import { useBlogs } from "@/hooks/tanstack/useBlog";
+import { useBlogs, defaultBlogParams } from "@/hooks/tanstack/useBlog";
+import { useUrlListState } from "@/hooks/tanstack/useUrlListState";
+import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
 import { Link } from "@/i18n/navigation";
 import { Box, LinearProgress } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
@@ -17,7 +18,10 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 
 export default function BlogComponent() {
     const t = useTranslations();
-    const { data, isFetching, error, page, setPage, refetch } = useBlogs();
+    const { page, setPage, filters } = useUrlListState(defaultBlogParams);
+    const { data, isFetching, error, refetch } = useBlogs({ page, ...filters });
+    usePageClamp(page, data?.meta.pageCount, setPage);
+
     return (
         <Box display="flex" flexDirection="column" flex={1} height="100%">
             <Box

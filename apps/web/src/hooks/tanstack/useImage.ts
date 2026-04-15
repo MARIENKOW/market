@@ -1,39 +1,17 @@
-// hooks/useImages.ts
-import { usePaginatedQuery } from "@/hooks/tanstack/usePaginatedQuery";
+import { useQuery } from "@tanstack/react-query";
 import { imageKeys } from "@/lib/tanstack/keys";
+import { ImageParams, defaultImageParams } from "@/lib/tanstack/listDefaults";
 import BlogImageService from "@/services/blog/image/blogImage.service";
 import { $apiAdminAxiosClient } from "@/utils/api/admin/axios.admin.client";
 
+export { defaultImageParams };
+
 const { getAll } = new BlogImageService($apiAdminAxiosClient);
 
-export function useImages() {
-    return usePaginatedQuery(
-        (page) => imageKeys.list({ page }),
-        (page) => getAll({ page }).then((r) => r.data),
-    );
+export function useImages(params: ImageParams) {
+    return useQuery({
+        queryKey: imageKeys.list(params),
+        queryFn: () => getAll(params).then((r) => r.data),
+        placeholderData: (prev) => prev,
+    });
 }
-
-// export function useVideo(id: string) {
-//     return useQuery({
-//         queryKey: videoKeys.detail(id),
-//         queryFn: () => fetchVideo(id),
-//         enabled: Boolean(id),
-//     });
-// }
-
-// export function useUpdateVideo() {
-//     const queryClient = useQueryClient();
-
-//     return useMutation({
-//         mutationFn: updateVideo,
-//         onSuccess: (updatedVideo) => {
-//             // Обновляем кеш точечно — не инвалидируем всё
-//             queryClient.setQueryData(
-//                 videoKeys.detail(updatedVideo.id),
-//                 updatedVideo,
-//             );
-//             // Инвалидируем список — пусть перезапросит
-//             queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
-//         },
-//     });
-// }

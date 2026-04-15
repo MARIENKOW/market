@@ -5,11 +5,15 @@ import { ImageList } from "@/components/TextEditor/components/image/ImageList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { BlogImageUploader } from "@/components/features/Uploader/BlogImageUploader";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import { useImages } from "@/hooks/tanstack/useImage";
+import { useImages, defaultImageParams } from "@/hooks/tanstack/useImage";
+import { useLocalListState } from "@/hooks/tanstack/listState";
+import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
 import { Box, LinearProgress } from "@mui/material";
 
 export default function ImageComponentBlog() {
-    const { data, error, isFetching, page, setPage } = useImages();
+    const { page, setPage } = useLocalListState(defaultImageParams);
+    const { data, error, isFetching } = useImages({ page });
+    usePageClamp(page, data?.meta.pageCount, setPage);
 
     return (
         <Box display="flex" flexDirection="column" flex={1} height="100%">

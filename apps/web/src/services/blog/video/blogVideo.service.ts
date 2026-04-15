@@ -12,10 +12,8 @@ export default class BlogVideoService {
     delete: (id: string) => Promise<AxiosResponse<void>>;
     getAll: ({
         page,
-        limit,
     }: {
         page: number;
-        limit?: number;
     }) => Promise<AxiosResponse<PagedResult<VideoDto>>>;
     deleteAll: () => Promise<AxiosResponse<{ skipped: number }>>;
     constructor(api: AxiosInstance) {

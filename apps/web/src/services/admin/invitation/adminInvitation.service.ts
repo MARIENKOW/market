@@ -5,6 +5,8 @@ import {
     CreateAdminInvitationDtoOutput,
     UpdateNoteAdminInvitationDtoOutput,
 } from "@myorg/shared/form";
+import { InvitationParams } from "@/lib/tanstack/listDefaults";
+import { toSearchParams } from "@/utils/toSearchParams";
 
 const { revoke, unrevoke, resend, note } = ENDPOINT.admin.invitation;
 const { path } = FULL_PATH_ENDPOINT.admin.invitation;
@@ -12,10 +14,9 @@ const { path } = FULL_PATH_ENDPOINT.admin.invitation;
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 export default class AdminInvitationService {
-    getAll: (params: {
-        page: number;
-        limit?: number;
-    }) => FetchCustomReturn<PagedResult<AdminInvitationDto>>;
+    getAll: (
+        params: InvitationParams,
+    ) => FetchCustomReturn<PagedResult<AdminInvitationDto>>;
     create: (
         body: CreateAdminInvitationDtoOutput,
     ) => FetchCustomReturn<AdminInvitationDto>;
@@ -29,10 +30,8 @@ export default class AdminInvitationService {
     ) => FetchCustomReturn<AdminInvitationDto>;
 
     constructor(api: FetchCustom) {
-        this.getAll = ({ page, limit }) => {
-            const query = new URLSearchParams();
-            query.set("page", String(page));
-            if (limit !== undefined) query.set("limit", String(limit));
+        this.getAll = (params) => {
+            const query = toSearchParams(params);
             return api<PagedResult<AdminInvitationDto>>(`${path}?${query}`, {
                 method: "GET",
             });

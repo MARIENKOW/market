@@ -5,7 +5,11 @@ import MobileNavigation from "@/components/layout/navigation/MobileNavigation";
 import { getAdminAuth } from "@/utils/cache/admin.cache.me";
 import { Box } from "@mui/material";
 
-export default async function AdminHome() {
+interface Props {
+    searchParams: Promise<unknown>;
+}
+
+export default async function AdminHome({ searchParams }: Props) {
     const { admin } = await getAdminAuth();
     return (
         <>
@@ -14,7 +18,7 @@ export default async function AdminHome() {
                 flexDirection={"column"}
                 sx={{ display: { xs: "none", md: "flex" } }}
             >
-                <BlogPage />
+                <BlogPage searchParams={searchParams} />
             </Box>
 
             <Box

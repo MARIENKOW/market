@@ -10,6 +10,7 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 import * as uuid from "uuid";
 import InvitationComponent from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationComponent";
+import { defaultInvitationParams } from "@/lib/tanstack/listDefaults";
 
 const { getAll } = new AdminInvitationService($apiAdminServer);
 
@@ -17,8 +18,8 @@ export default async function InvitationPage() {
     const queryClient = getQueryClient();
     try {
         await queryClient.prefetchQuery({
-            queryKey: invitationKeys.list({ page: 1 }),
-            queryFn: async () => (await getAll({ page: 1 })).data,
+            queryKey: invitationKeys.list(defaultInvitationParams),
+            queryFn: async () => (await getAll(defaultInvitationParams)).data,
         });
     } catch {}
 

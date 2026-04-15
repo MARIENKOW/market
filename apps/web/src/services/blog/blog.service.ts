@@ -4,6 +4,7 @@ import { FetchCustom, FetchCustomReturn } from "@/utils/api";
 import { BlogOutput } from "@myorg/shared/form";
 import { toFormData } from "@/utils/toFormData";
 import { toSearchParams } from "@/utils/toSearchParams";
+import { BlogParams } from "@/lib/tanstack/listDefaults";
 
 const { path } = FULL_PATH_ENDPOINT.blog;
 
@@ -16,10 +17,7 @@ export default class BlogService {
         body: BlogOutput;
         id: string;
     }) => FetchCustomReturn<BlogDto>;
-    getAll: (params: {
-        page: number;
-        limit?: number;
-    }) => FetchCustomReturn<PagedResult<BlogDto>>;
+    getAll: (params: BlogParams) => FetchCustomReturn<PagedResult<BlogDto>>;
     delete: (id: string) => FetchCustomReturn<void>;
     deleteAll: () => FetchCustomReturn<void>;
     get: (id: string) => FetchCustomReturn<BlogDto>;

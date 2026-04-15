@@ -5,11 +5,15 @@ import { VideoList } from "@/components/TextEditor/components/video/VideoList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { BlogVideoUploader } from "@/components/features/Uploader/BlogVideoUploader";
 import { StyledDivider } from "@/components/ui/StyledDivider";
-import { useVideos } from "@/hooks/tanstack/useVideo";
+import { useVideos, defaultVideoParams } from "@/hooks/tanstack/useVideo";
+import { useLocalListState } from "@/hooks/tanstack/listState";
+import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
 import { Box, LinearProgress } from "@mui/material";
 
 export default function VideoComponentBlog() {
-    const { data, error, isFetching, page, setPage } = useVideos();
+    const { page, setPage } = useLocalListState(defaultVideoParams);
+    const { data, error, isFetching } = useVideos({ page });
+    usePageClamp(page, data?.meta.pageCount, setPage);
 
     return (
         <Box display="flex" flexDirection="column" flex={1} height="100%">
