@@ -14,7 +14,6 @@ import {
     UpdateNoteAdminInvitationDtoOutput,
 } from "@myorg/shared/form";
 import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
-import i18nSmartDate from "@/lib/i18n/i18nSmartDate";
 
 const TTL = 60 * 60 * 1000; // 7 дней
 
@@ -38,15 +37,6 @@ export class AdminInvitationService {
         const isRevoked = !!inv.revokedAt;
         const isExpired = !isRevoked && Date.now() > expiresAt.getTime();
 
-        let timeLabel: string;
-        if (isRevoked) {
-            timeLabel = i18nSmartDate(inv.revokedAt!);
-        } else if (isExpired) {
-            timeLabel = i18nSmartDate(expiresAt);
-        } else {
-            timeLabel = i18nFormatDuration(expiresAt.getTime() - Date.now());
-        }
-
         return {
             id: inv.id,
             email: inv.email,
@@ -55,7 +45,11 @@ export class AdminInvitationService {
             url: this.buildUrl(inv.token),
             isExpired,
             isRevoked,
-            timeLabel,
+            expiresAt: expiresAt.toISOString(),
+            revokedAt: inv.revokedAt ? inv.revokedAt.toISOString() : null,
+            durationLabel: !isRevoked && !isExpired
+                ? i18nFormatDuration(expiresAt.getTime() - Date.now())
+                : null,
         };
     }
 

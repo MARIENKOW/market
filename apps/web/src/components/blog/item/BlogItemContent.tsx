@@ -4,6 +4,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Box from "@mui/material/Box";
 import { BlogDto } from "@myorg/shared/dto";
 import { StyledTypography } from "@/components/ui/StyledTypography";
+import { ClientDate } from "@/components/common/ClientDate";
 
 export const BlogItemContent = ({ blog }: { blog: BlogDto }) => {
     return (
@@ -54,14 +55,16 @@ export const BlogItemContent = ({ blog }: { blog: BlogDto }) => {
                     {blog.title}
                 </StyledTypography>
 
-                <StyledTypography
-                    variant="caption"
-                    color="text.disabled"
-                    sx={{ display: "block" }}
-                >
-                    {blog.publishedAtHumanize}
-                </StyledTypography>
-
+                <Box>
+                    <ClientDate
+                        variant="caption"
+                        color="text.disabled"
+                        component={"span"}
+                        sx={{ cursor: "default" }}
+                        tooltipProps={{ placement: "bottom", arrow: true }}
+                        date={blog.publishedAt}
+                    />
+                </Box>
                 <Box
                     component="div"
                     className={style.subtitle}

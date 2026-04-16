@@ -13,6 +13,8 @@ import { UnrevokeInvitationButton } from "@/components/invitation/actions/Unrevo
 import { DeleteInvitationButton } from "@/components/invitation/actions/DeleteInvitationButton";
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { StyledChip } from "@/components/ui/StyledChip";
+import { ClientDate } from "@/components/common/ClientDate";
+import { smartDate } from "@myorg/shared/utils";
 
 function StatusChip({ inv }: { inv: AdminInvitationDto }) {
     const t = useTranslations();
@@ -46,18 +48,38 @@ function StatusChip({ inv }: { inv: AdminInvitationDto }) {
 
 function ExpiryLabel({ inv }: { inv: AdminInvitationDto }) {
     const t = useTranslations();
-    const key = inv.isRevoked
-        ? "pages.admin.invitation.revokedAt"
-        : inv.isExpired
-          ? "pages.admin.invitation.expiredAt"
-          : "pages.admin.invitation.expiresAt";
+
+    if (inv.isRevoked)
+        return (
+            <ClientDate
+                date={inv.revokedAt!}
+                variant="caption"
+                color="text.disabled"
+                format={(d, locale) =>
+                    t("pages.admin.invitation.revokedAt", {
+                        time: smartDate({ date: d, locale }),
+                    })
+                }
+            />
+        );
+
+    if (inv.isExpired)
+        return (
+            <ClientDate
+                date={inv.expiresAt}
+                variant="caption"
+                color="warning.main"
+                format={(d, locale) =>
+                    t("pages.admin.invitation.expiredAt", {
+                        time: smartDate({ date: d, locale }),
+                    })
+                }
+            />
+        );
 
     return (
-        <StyledTypography
-            variant="caption"
-            color={inv.isExpired ? "warning.main" : "text.disabled"}
-        >
-            {t(key, { time: inv.timeLabel })}
+        <StyledTypography variant="caption" color="text.disabled">
+            {t("pages.admin.invitation.expiresAt", { time: inv.durationLabel! })}
         </StyledTypography>
     );
 }

@@ -100,7 +100,7 @@ export default function Tiptap({
                 flex: 1,
             }}
         >
-            {editor  ? (
+            {editor ? (
                 <TiptapWrapper editor={editor}>
                     {/* ── Toolbar ─────────────────────────────────────── */}
                     <Box

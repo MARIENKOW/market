@@ -6,5 +6,7 @@ export type AdminInvitationDto = {
     url: string;
     isExpired: boolean;
     isRevoked: boolean;
-    timeLabel: string;
+    expiresAt: string;
+    revokedAt: string | null;
+    durationLabel: string | null;
 };

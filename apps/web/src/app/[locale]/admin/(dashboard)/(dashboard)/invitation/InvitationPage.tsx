@@ -1,36 +1,12 @@
 import BreadcrumbsComponent from "@/components/features/Breadcrumbs/BreadcrumbsComponent";
 import { ContainerComponent } from "@/components/ui/Container";
-import { Hydrate } from "@/lib/tanstack/Hydrate";
-import { invitationKeys } from "@/lib/tanstack/keys";
-import { getQueryClient } from "@/lib/tanstack/queryClient";
-import AdminInvitationService from "@/services/admin/invitation/adminInvitation.service";
-import { $apiAdminServer } from "@/utils/api/admin/fetch.admin.server";
 import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 import * as uuid from "uuid";
 import InvitationComponent from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationComponent";
-import { parseListParams } from "@/lib/tanstack/parseListParams";
-import { defaultInvitationParams } from "@/lib/tanstack/listDefaults";
 
-const { getAll } = new AdminInvitationService($apiAdminServer);
-
-export default async function InvitationPage({
-    searchParams,
-}: {
-    searchParams: Promise<unknown>;
-}) {
-    const params = await searchParams;
-    const parsed = parseListParams(params, defaultInvitationParams);
-    const queryKey = invitationKeys.list(parsed);
-    const queryClient = getQueryClient();
-    try {
-        await queryClient.prefetchQuery({
-            queryKey,
-            queryFn: async () => (await getAll(parsed)).data,
-        });
-    } catch {}
-
+export default async function InvitationPage({}: {}) {
     const t = await getTranslations();
     return (
         <ContainerComponent maxWidth={false} marging={false}>
@@ -50,9 +26,7 @@ export default async function InvitationPage({
                     ]}
                 />
             </Box>
-            <Hydrate>
-                <InvitationComponent />
-            </Hydrate>
+            <InvitationComponent />
         </ContainerComponent>
     );
 }

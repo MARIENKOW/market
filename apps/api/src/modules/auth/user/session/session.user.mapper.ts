@@ -2,9 +2,6 @@ import * as geoip from "geoip-lite";
 import { SessionUser } from "@/generated/prisma";
 import { SessionUserDto, SessionUserViewDto } from "@myorg/shared/dto";
 import { UAParser } from "ua-parser-js";
-import { AvailableLanguage } from "@myorg/shared/i18n";
-import i18nRelativeTime from "@/lib/i18n/i18nRelativeTime";
-import i18nSmartDate from "@/lib/i18n/i18nSmartDate";
 
 export const mapSessionUser = (SessionUser: SessionUser): SessionUserDto => ({
     id: SessionUser.id,
@@ -74,6 +71,5 @@ export const mapSessionUserView = (
         location,
         createdAt: session.createdAt.toISOString(),
         lastUsedAt: session.lastUsedAt.toISOString(),
-        lastUsedAtFM: i18nSmartDate(session.lastUsedAt),
     };
 };

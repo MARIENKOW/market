@@ -6,7 +6,6 @@ export interface BlogDto {
     subtitle: string | null;
     body: string;
     publishedAt: string;
-    publishedAtHumanize: string;
     isMain: boolean;
     isImportant: boolean;
     isShort: boolean;

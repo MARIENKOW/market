@@ -1,15 +1,16 @@
 "use client";
-import { Box, Typography, Chip, Tooltip, useTheme } from "@mui/material";
+import { Box, Typography, Chip, useTheme } from "@mui/material";
 import { AccessTime, Shield } from "@mui/icons-material";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { StyledTypography } from "@/components/ui/StyledTypography";
-
 import { RevokeSessionButton } from "@/components/features/auth/session/RevokeSessionButton";
 import { Window, Apple, Android, HelpOutline } from "@mui/icons-material";
 import { LaptopMac, PhoneIphone, TabletMac } from "@mui/icons-material";
 import { SvgIconProps } from "@mui/material";
 import { SessionUserViewDto, SessionViewDto } from "@myorg/shared/dto";
 import { FetchCustomReturn } from "@/utils/api";
+import { StyledChip } from "@/components/ui/StyledChip";
+import { ClientDate } from "@/components/common/ClientDate";
 
 interface DeviceIconProps extends SvgIconProps {
     type: SessionUserViewDto["device"]["type"];
@@ -59,9 +60,7 @@ export const SessionCard = <T extends SessionViewDto>({
     const theme = useTheme();
     const v = theme.vars!;
     const t = useTranslations("components.sessionList");
-    const { device, location, isCurrent, lastUsedAt, id, lastUsedAtFM } =
-        session;
-
+    const { device, location, isCurrent, lastUsedAt, id } = session;
     return (
         <Box
             sx={{
@@ -115,7 +114,7 @@ export const SessionCard = <T extends SessionViewDto>({
                     }}
                 >
                     {isCurrent && (
-                        <Chip
+                        <StyledChip
                             icon={
                                 <Shield sx={{ fontSize: "12px !important" }} />
                             }
@@ -168,7 +167,7 @@ export const SessionCard = <T extends SessionViewDto>({
                         </Box>
                     </Box>
                     {isCurrent && (
-                        <Chip
+                        <StyledChip
                             icon={
                                 <Shield sx={{ fontSize: "12px !important" }} />
                             }
@@ -224,19 +223,13 @@ export const SessionCard = <T extends SessionViewDto>({
                         }}
                     >
                         <AccessTime sx={{ fontSize: 12 }} />
-                        <Tooltip
-                            title={new Date(lastUsedAt).toLocaleString()}
-                            placement="top"
-                            arrow
-                        >
-                            <Typography
-                                component="span"
-                                variant="caption"
-                                sx={{ cursor: "default" }}
-                            >
-                                {lastUsedAtFM}
-                            </Typography>
-                        </Tooltip>
+                        <ClientDate
+                            date={lastUsedAt}
+                            component="span"
+                            variant="caption"
+                            sx={{ cursor: "default" }}
+                            tooltipProps={{ placement: "top", arrow: true }}
+                        />
                     </Box>
                 </Box>
             </Box>

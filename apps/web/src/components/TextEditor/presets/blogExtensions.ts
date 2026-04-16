@@ -26,13 +26,15 @@ import { EmbedCode } from "@/components/TextEditor/extensions/EmbedCode";
 
 // ─── Styled Extensions ────────────────────────────────────────────────────────
 
+const WB = "word-break:break-word;overflow-wrap:break-word;";
+
 const StyledParagraph = Paragraph.extend({
     renderHTML({ HTMLAttributes }) {
         return [
             "p",
             {
                 ...HTMLAttributes,
-                style: `font-size: 1rem; font-weight: 400; margin: 0.25rem 0; ${HTMLAttributes.style ?? ""}`,
+                style: `font-size:1rem;font-weight:400;margin:0.25rem 0;${WB}${HTMLAttributes.style ?? ""}`,
             },
             0,
         ];
@@ -45,7 +47,7 @@ const StyledBulletList = BulletList.extend({
             "ul",
             {
                 ...HTMLAttributes,
-                style: `list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0; ${HTMLAttributes.style ?? ""}`,
+                style: `list-style-type:disc;padding-left:1.5rem;margin:0.5rem 0;${WB}${HTMLAttributes.style ?? ""}`,
             },
             0,
         ];
@@ -58,7 +60,7 @@ const StyledOrderedList = OrderedList.extend({
             "ol",
             {
                 ...HTMLAttributes,
-                style: `list-style-type: decimal; padding-left: 1.5rem; margin: 0.5rem 0; ${HTMLAttributes.style ?? ""}`,
+                style: `list-style-type:decimal;padding-left:1.5rem;margin:0.5rem 0;${WB}${HTMLAttributes.style ?? ""}`,
             },
             0,
         ];
@@ -71,7 +73,7 @@ const StyledListItem = ListItem.extend({
             "li",
             {
                 ...HTMLAttributes,
-                style: `display: list-item; ${HTMLAttributes.style ?? ""}`,
+                style: `display:list-item;${WB}${HTMLAttributes.style ?? ""}`,
             },
             0,
         ];
@@ -94,7 +96,7 @@ const StyledHeading = Heading.extend({
             `h${level}`,
             {
                 ...HTMLAttributes,
-                style: `font-size: ${HEADING_SIZES[level] ?? "1rem"}; font-weight: bold; margin: 0.5rem 0; ${HTMLAttributes.style ?? ""}`,
+                style: `font-size:${HEADING_SIZES[level] ?? "1rem"};font-weight:bold;margin:0.5rem 0;${WB}${HTMLAttributes.style ?? ""}`,
             },
             0,
         ];
@@ -107,7 +109,7 @@ const StyledBlockquote = Blockquote.extend({
             "blockquote",
             {
                 ...HTMLAttributes,
-                style: `border-left: 4px solid #ccc; padding-left: 1rem; margin: 0.5rem 0; color: #666; font-style: italic; ${HTMLAttributes.style ?? ""}`,
+                style: `border-left:4px solid #ccc;padding-left:1rem;margin:0.5rem 0;color:#666;font-style:italic;${WB}${HTMLAttributes.style ?? ""}`,
             },
             0,
         ];
@@ -120,11 +122,11 @@ const StyledCodeBlock = CodeBlock.extend({
             "pre",
             {
                 ...HTMLAttributes,
-                style: `background: #f4f4f4; padding: 1rem; border-radius: 4px; margin: 0.5rem 0; overflow-x: auto; ${HTMLAttributes.style ?? ""}`,
+                style: `background:#f4f4f4;padding:1rem;border-radius:4px;margin:0.5rem 0;overflow-x:auto;${WB}${HTMLAttributes.style ?? ""}`,
             },
             [
                 "code",
-                { style: "font-family: monospace; white-space: pre-wrap;" },
+                { style: `font-family:monospace;white-space:pre-wrap;${WB}` },
                 0,
             ],
         ];

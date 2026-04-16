@@ -25,7 +25,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
 import { BlogDto } from "@myorg/shared/dto";
-import { DateTimePickerComponent } from "@/components/features/form/fields/uncontrolled/DateTimePickerComponent";
 import FormDateTimePicker from "@/components/features/form/fields/controlled/FormDateTimePicker";
 
 const BlogForm = ({
@@ -47,14 +46,19 @@ const BlogForm = ({
             title: initData?.title || "",
             subtitle: initData?.subtitle || "",
             body: initData?.body || "",
-            publishedAt: initData?.publishedAt
-                ? new Date(initData.publishedAt)
-                : new Date(),
+            publishedAt: null,
             videosId: [],
             imagesId: [],
         },
     });
-    const { control } = form;
+
+    const { control, setValue } = form;
+    useEffect(() => {
+        setValue(
+            "publishedAt",
+            initData?.publishedAt ? new Date(initData.publishedAt) : new Date(),
+        );
+    }, [setValue]);
 
     const image = useWatch<BlogInput>({
         name: "image",
