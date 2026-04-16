@@ -6,6 +6,7 @@ import { BlogBody, BlogSubtitle, BlogTitle } from "../../fields";
 const BlogBaseSchema = z.object({
     title: BlogTitle,
     subtitle: BlogSubtitle,
+    publishedAt: z.coerce.date({ message: getMessageKey("form.required") }),
     imagesId: z.array(z.string()).optional(),
     videosId: z.array(z.string()).optional(),
     body: BlogBody,

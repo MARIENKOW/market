@@ -120,6 +120,7 @@ export class BlogService {
             title,
             subtitle,
             body,
+            publishedAt,
             imagesId = [],
             videosId = [],
         }: BlogWithoutImageOutput,
@@ -139,8 +140,7 @@ export class BlogService {
                     title,
                     subtitle,
                     body,
-                    date: new Date(),
-                    time: new Date(),
+                    publishedAt,
                     imageId,
                     bodyImages: { connect: imagesId.map((id) => ({ id })) },
                     bodyVideos: { connect: videosId.map((id) => ({ id })) },
@@ -181,7 +181,7 @@ export class BlogService {
         });
         if (!blog) throw new NotFoundException();
 
-        const { title, subtitle, body, imagesId = [], videosId = [] } = data;
+        const { title, subtitle, body, publishedAt, imagesId = [], videosId = [] } = data;
 
         await this.validateBodyMedia(imagesId, videosId);
 
@@ -208,8 +208,7 @@ export class BlogService {
             title,
             subtitle,
             body,
-            date: new Date(),
-            time: new Date(),
+            publishedAt,
             ...(newMainImageId && { imageId: newMainImageId }),
             bodyImages: {
                 disconnect: removedImageIds.map((i) => ({ id: i })),
@@ -275,7 +274,7 @@ export class BlogService {
             this.prisma.blog.count(),
             this.prisma.blog.findMany({
                 include: BLOG_INCLUDE,
-                orderBy: [{ isMain: "desc" }, { createdAt: "desc" }],
+                orderBy: [{ isMain: "desc" }, { publishedAt: "desc" }],
                 skip: (page - 1) * limit,
                 take: limit,
             }),

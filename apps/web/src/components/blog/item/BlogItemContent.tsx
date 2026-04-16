@@ -2,8 +2,8 @@ import style from "./BlogItem.module.css";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { BlogDto } from "@myorg/shared/dto";
+import { StyledTypography } from "@/components/ui/StyledTypography";
 
 export const BlogItemContent = ({ blog }: { blog: BlogDto }) => {
     return (
@@ -37,7 +37,7 @@ export const BlogItemContent = ({ blog }: { blog: BlogDto }) => {
                     minWidth: 0,
                 }}
             >
-                <Typography
+                <StyledTypography
                     variant="h6"
                     fontWeight={700}
                     sx={{
@@ -52,17 +52,15 @@ export const BlogItemContent = ({ blog }: { blog: BlogDto }) => {
                     }}
                 >
                     {blog.title}
-                </Typography>
+                </StyledTypography>
 
-                <Typography
+                <StyledTypography
                     variant="caption"
                     color="text.disabled"
                     sx={{ display: "block" }}
                 >
-                    {/* {blog.date}
-                    {blog.time ? ` · ${blog.time}` : ""} */}
-                    {blog.createdAt}
-                </Typography>
+                    {blog.publishedAtHumanize}
+                </StyledTypography>
 
                 <Box
                     component="div"

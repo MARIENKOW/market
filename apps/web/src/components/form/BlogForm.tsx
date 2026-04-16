@@ -47,6 +47,9 @@ const BlogForm = ({
             title: initData?.title || "",
             subtitle: initData?.subtitle || "",
             body: initData?.body || "",
+            publishedAt: initData?.publishedAt
+                ? new Date(initData.publishedAt)
+                : new Date(),
             videosId: [],
             imagesId: [],
         },
@@ -133,7 +136,7 @@ const BlogForm = ({
                                     helperText={t("form.optional")}
                                     label="form.blog.subtitle.label"
                                 />
-                                <FormDateTimePicker />
+                                <FormDateTimePicker<BlogInput> name="publishedAt" />
                             </Grid>
                         </Grid>
                         <Box
