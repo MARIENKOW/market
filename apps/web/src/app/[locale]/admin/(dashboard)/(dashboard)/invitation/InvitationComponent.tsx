@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { useTranslations } from "next-intl";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { StyledIconButton } from "@/components/ui/StyledIconButton";
 import { StyledTypography } from "@/components/ui/StyledTypography";
@@ -85,20 +87,34 @@ export default function InvitationComponent() {
                 alignItems={{ xs: "initial", sm: "center" }}
                 gap={1}
             >
-                <ToggleButtonGroup
-                    value={filters.status}
-                    exclusive
-                    onChange={(_, v) => {
-                        if (v !== null) setFilter("status", v);
-                    }}
-                    size="small"
-                >
-                    {STATUS_OPTIONS.map(({ value, color }) => (
-                        <ToggleButton key={value} value={value} color={color}>
-                            {t(`pages.admin.invitation.status.${value}`)}
-                        </ToggleButton>
-                    ))}
-                </ToggleButtonGroup>
+                <Box display="flex" alignItems="center" gap={1}>
+                    <ToggleButtonGroup
+                        value={filters.status}
+                        exclusive
+                        onChange={(_, v) => {
+                            if (v !== null) setFilter("status", v);
+                        }}
+                        size="small"
+                    >
+                        {STATUS_OPTIONS.map(({ value, color }) => (
+                            <ToggleButton key={value} value={value} color={color}>
+                                {t(`pages.admin.invitation.status.${value}`)}
+                            </ToggleButton>
+                        ))}
+                    </ToggleButtonGroup>
+                    <StyledTooltip
+                        title={t(filters.order === "desc" ? "common.sortNewest" : "common.sortOldest")}
+                        placement="top"
+                    >
+                        <span>
+                            <StyledIconButton
+                                onClick={() => setFilter("order", filters.order === "desc" ? "asc" : "desc")}
+                            >
+                                {filters.order === "desc" ? <ArrowDownwardIcon fontSize="small" /> : <ArrowUpwardIcon fontSize="small" />}
+                            </StyledIconButton>
+                        </span>
+                    </StyledTooltip>
+                </Box>
                 <Box>
                     <StyledButton
                         fullWidth

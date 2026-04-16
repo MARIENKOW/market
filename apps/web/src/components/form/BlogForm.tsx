@@ -25,6 +25,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
 import { BlogDto } from "@myorg/shared/dto";
+import { DateTimePickerComponent } from "@/components/features/form/fields/uncontrolled/DateTimePickerComponent";
+import FormDateTimePicker from "@/components/features/form/fields/controlled/FormDateTimePicker";
 
 const BlogForm = ({
     onRequest,
@@ -131,6 +133,7 @@ const BlogForm = ({
                                     helperText={t("form.optional")}
                                     label="form.blog.subtitle.label"
                                 />
+                                <FormDateTimePicker />
                             </Grid>
                         </Grid>
                         <Box

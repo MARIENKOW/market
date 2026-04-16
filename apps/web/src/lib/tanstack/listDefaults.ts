@@ -15,11 +15,13 @@ export const defaultBlogParams: BlogParams = {
 // --- Invitation ---
 type InvitationFilters = {
     status: "all" | "active" | "expired" | "revoked";
+    order: "desc" | "asc";
 };
 export type InvitationParams = Pagination & InvitationFilters;
 export const defaultInvitationParams: InvitationParams = {
     page: 1,
     status: "all",
+    order: "desc",
 };
 
 // --- Video ---

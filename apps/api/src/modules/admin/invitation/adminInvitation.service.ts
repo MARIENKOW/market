@@ -63,6 +63,7 @@ export class AdminInvitationService {
         page: number,
         limit: number,
         status: string = "all",
+        order: string = "desc",
     ): Promise<PagedResult<AdminInvitationDto>> {
         const expiryBoundary = new Date(Date.now() - this.ttl);
         const where =
@@ -77,7 +78,7 @@ export class AdminInvitationService {
         const [invitations, total] = await Promise.all([
             this.prisma.adminInvitation.findMany({
                 where,
-                orderBy: { createdAt: "desc" },
+                orderBy: { createdAt: order === "asc" ? "asc" : "desc" },
                 skip: (page - 1) * limit,
                 take: limit,
             }),

@@ -474,6 +474,8 @@ export const en: MessageStructure = {
         deleteAll: "Delete all",
         confirm: "Confirm",
         refresh: "Refresh",
+        sortNewest: "Newest first",
+        sortOldest: "Oldest first",
     },
     uploader: {
         openQueue: "Open upload queue",

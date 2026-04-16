@@ -16,6 +16,7 @@
     "@mui/lab": "^7.0.1-beta.19",
     "@mui/material": "^7.3.5",
     "@mui/material-nextjs": "^7.3.5",
+    "@mui/x-date-pickers": "^9.0.2",
     "@myorg/shared": "1.0.0",
     "@react-oauth/google": "^0.13.4",
     "@tanstack/react-query": "^5.96.1",

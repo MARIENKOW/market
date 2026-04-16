@@ -493,6 +493,8 @@ export const ru = {
         deleteAll: "Удалить все",
         confirm: "Подтвердить",
         refresh: "Обновить",
+        sortNewest: "Сначала новые",
+        sortOldest: "Сначала старые",
     },
     uploader: {
         openQueue: "Открыть очередь загрузки",
