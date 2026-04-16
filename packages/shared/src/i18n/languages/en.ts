@@ -480,6 +480,7 @@ export const en: MessageStructure = {
         deleteAll: "Delete all",
         confirm: "Confirm",
         refresh: "Refresh",
+        search: "Search",
         filters: "Filters",
         resetFilters: "Reset filters",
         sortNewest: "Newest first",

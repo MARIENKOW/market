@@ -2,6 +2,7 @@
 
 import { BlogList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/BlogList";
 import { BlogFiltersDrawer } from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/BlogFiltersDrawer";
+import { SearchField } from "@/components/common/SearchField";
 import DeleteAllBlogs from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/DeleteAllBlogs";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { StyledButton } from "@/components/ui/StyledButton";
@@ -12,7 +13,7 @@ import { useBlogs, defaultBlogParams } from "@/hooks/tanstack/useBlog";
 import { useUrlListState } from "@/hooks/tanstack/useUrlListState";
 import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
 import { Link } from "@/i18n/navigation";
-import { Badge, Box, IconButton, LinearProgress } from "@mui/material";
+import { Badge, Box, LinearProgress } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { useTranslations } from "next-intl";
 import { useState, useMemo } from "react";
@@ -28,6 +29,7 @@ function countActiveFilters(filters: Omit<BlogParams, "page">): number {
     if (filters.dateTo !== "") count++;
     return count;
 }
+
 
 export default function BlogComponent() {
     const t = useTranslations();
@@ -97,6 +99,11 @@ export default function BlogComponent() {
                     </Box>
                 </Box>
             </Box>
+
+            <SearchField
+                value={filters.query}
+                onChange={(v) => setFilter("query", v)}
+            />
 
             <BlogFiltersDrawer
                 open={drawerOpen}

@@ -68,8 +68,9 @@ export class BlogController {
         @Query("important") important: string = "all",
         @Query("dateFrom") dateFrom: string = "",
         @Query("dateTo") dateTo: string = "",
+        @Query("query") query: string = "",
     ): Promise<PagedResult<BlogDto>> {
-        return this.blog.getAll(page, limit, order, short, important, dateFrom, dateTo);
+        return this.blog.getAll(page, limit, order, short, important, dateFrom, dateTo, query);
     }
     @Get(":id")
     @Auth("ADMIN")

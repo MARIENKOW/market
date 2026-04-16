@@ -28,6 +28,7 @@ import { InvitationParams } from "@/lib/tanstack/listDefaults";
 import AdminInvitationCreateForm from "@/components/form/AdminInvitationCreateForm";
 import { InvitationList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
+import { SearchField } from "@/components/common/SearchField";
 import { useUrlListState } from "@/hooks/tanstack/useUrlListState";
 
 const STATUS_OPTIONS: {
@@ -79,6 +80,13 @@ export default function InvitationComponent() {
                     </StyledTooltip>
                 </Box>
             </Box>
+            <Box mb={2}>
+                <SearchField
+                    value={filters.query}
+                    onChange={(v) => setFilter("query", v)}
+                />
+            </Box>
+
             <Box
                 mb={2}
                 display="flex"

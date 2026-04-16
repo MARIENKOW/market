@@ -277,10 +277,17 @@ export class BlogService {
         important: string = "all",
         dateFrom: string = "",
         dateTo: string = "",
+        query: string = "",
     ): Promise<PagedResult<BlogDto>> {
         const ord = order === "asc" ? "asc" : "desc";
         const from = dateFrom ? new Date(dateFrom) : undefined;
         const to = dateTo ? new Date(dateTo) : undefined;
+        const q = query.trim();
+
+        if (q) {
+            return this.getAllWithSearch(page, limit, ord, short, important, from, to, q);
+        }
+
         const where = {
             ...(short !== "all" && { isShort: short === "yes" }),
             ...(important !== "all" && { isImportant: important === "yes" }),
@@ -301,6 +308,92 @@ export class BlogService {
                 take: limit,
             }),
         ]);
+
+        return {
+            data: blogs.map(mapBlog),
+            meta: { page, limit, total, pageCount: Math.ceil(total / limit) },
+        };
+    }
+
+    private async getAllWithSearch(
+        page: number,
+        limit: number,
+        ord: "asc" | "desc",
+        short: string,
+        important: string,
+        from: Date | undefined,
+        to: Date | undefined,
+        q: string,
+    ): Promise<PagedResult<BlogDto>> {
+        const offset = (page - 1) * limit;
+
+        const shortFilter =
+            short !== "all"
+                ? Prisma.sql`AND "isShort" = ${short === "yes"}`
+                : Prisma.empty;
+        const importantFilter =
+            important !== "all"
+                ? Prisma.sql`AND "isImportant" = ${important === "yes"}`
+                : Prisma.empty;
+        const fromFilter = from
+            ? Prisma.sql`AND "publishedAt" >= ${from}`
+            : Prisma.empty;
+        const toFilter = to
+            ? Prisma.sql`AND "publishedAt" <= ${to}`
+            : Prisma.empty;
+
+        const searchCondition = Prisma.sql`
+            (
+                search_vector @@ websearch_to_tsquery('simple', ${q})
+                OR title % ${q}
+                OR subtitle % ${q}
+            )
+        `;
+
+        const [countResult, ranked] = await Promise.all([
+            this.prisma.$queryRaw<{ count: bigint }[]>`
+                SELECT COUNT(*) AS count
+                FROM blogs
+                WHERE ${searchCondition}
+                ${shortFilter}
+                ${importantFilter}
+                ${fromFilter}
+                ${toFilter}
+            `,
+            this.prisma.$queryRaw<{ id: string }[]>`
+                SELECT id,
+                    (
+                        ts_rank(search_vector, websearch_to_tsquery('simple', ${q})) * 0.7 +
+                        greatest(
+                            similarity(title, ${q}),
+                            coalesce(similarity(subtitle, ${q}), 0)
+                        ) * 0.3
+                    ) AS rank
+                FROM blogs
+                WHERE ${searchCondition}
+                ${shortFilter}
+                ${importantFilter}
+                ${fromFilter}
+                ${toFilter}
+                ORDER BY rank DESC, "isMain" DESC, "publishedAt" ${ord === "asc" ? Prisma.sql`ASC` : Prisma.sql`DESC`}
+                LIMIT ${limit} OFFSET ${offset}
+            `,
+        ]);
+
+        const total = Number(countResult[0]?.count ?? 0);
+        const ids = ranked.map((r) => r.id);
+
+        if (ids.length === 0) {
+            return { data: [], meta: { page, limit, total, pageCount: Math.ceil(total / limit) } };
+        }
+
+        const blogs = await this.prisma.blog.findMany({
+            where: { id: { in: ids } },
+            include: BLOG_INCLUDE,
+        });
+
+        const orderMap = new Map(ids.map((id, i) => [id, i]));
+        blogs.sort((a, b) => (orderMap.get(a.id) ?? 0) - (orderMap.get(b.id) ?? 0));
 
         return {
             data: blogs.map(mapBlog),

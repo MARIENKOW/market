@@ -13,6 +13,7 @@ export type BlogParams = Pagination & {
     important: "all" | "yes" | "no";
     dateFrom: string;
     dateTo: string;
+    query: string;
 };
 export const defaultBlogParams: BlogParams = {
     page: 1,
@@ -21,18 +22,21 @@ export const defaultBlogParams: BlogParams = {
     important: "all",
     dateFrom: "",
     dateTo: "",
+    query: "",
 };
 
 // --- Invitation ---
 type InvitationFilters = {
     status: "all" | "active" | "expired" | "revoked";
     order: "desc" | "asc";
+    query: string;
 };
 export type InvitationParams = Pagination & InvitationFilters;
 export const defaultInvitationParams: InvitationParams = {
     page: 1,
     status: "all",
     order: "desc",
+    query: "",
 };
 
 // --- Video ---

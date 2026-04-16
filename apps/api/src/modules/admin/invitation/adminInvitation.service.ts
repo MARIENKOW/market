@@ -58,9 +58,12 @@ export class AdminInvitationService {
         limit: number,
         status: string = "all",
         order: string = "desc",
+        query: string = "",
     ): Promise<PagedResult<AdminInvitationDto>> {
         const expiryBoundary = new Date(Date.now() - this.ttl);
-        const where =
+        const q = query.trim();
+
+        const statusWhere =
             status === "revoked"
                 ? { revokedAt: { not: null } }
                 : status === "active"
@@ -68,6 +71,16 @@ export class AdminInvitationService {
                   : status === "expired"
                     ? { revokedAt: null, createdAt: { lte: expiryBoundary } }
                     : {};
+
+        const where = {
+            ...statusWhere,
+            ...(q && {
+                OR: [
+                    { email: { contains: q, mode: "insensitive" as const } },
+                    { note: { contains: q, mode: "insensitive" as const } },
+                ],
+            }),
+        };
 
         const [invitations, total] = await Promise.all([
             this.prisma.adminInvitation.findMany({

@@ -499,6 +499,7 @@ export const ru = {
         deleteAll: "Удалить все",
         confirm: "Подтвердить",
         refresh: "Обновить",
+        search: "Поиск",
         filters: "Фильтры",
         resetFilters: "Сбросить фильтры",
         sortNewest: "Сначала новые",
