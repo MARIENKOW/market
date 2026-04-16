@@ -34,8 +34,9 @@ export class AdminInvitationController {
     getAll(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(6), ParseIntPipe) limit: number,
+        @Query("status", new DefaultValuePipe("all")) status: string,
     ): Promise<PagedResult<AdminInvitationDto>> {
-        return this.service.getAll(page, limit);
+        return this.service.getAll(page, limit, status);
     }
 
     @Post()

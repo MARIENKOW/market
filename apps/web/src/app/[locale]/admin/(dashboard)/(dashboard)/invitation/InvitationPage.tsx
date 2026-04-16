@@ -10,16 +10,24 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 import * as uuid from "uuid";
 import InvitationComponent from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationComponent";
+import { parseListParams } from "@/lib/tanstack/parseListParams";
 import { defaultInvitationParams } from "@/lib/tanstack/listDefaults";
 
 const { getAll } = new AdminInvitationService($apiAdminServer);
 
-export default async function InvitationPage() {
+export default async function InvitationPage({
+    searchParams,
+}: {
+    searchParams: Promise<unknown>;
+}) {
+    const params = await searchParams;
+    const parsed = parseListParams(params, defaultInvitationParams);
+    const queryKey = invitationKeys.list(parsed);
     const queryClient = getQueryClient();
     try {
         await queryClient.prefetchQuery({
-            queryKey: invitationKeys.list(defaultInvitationParams),
-            queryFn: async () => (await getAll(defaultInvitationParams)).data,
+            queryKey,
+            queryFn: async () => (await getAll(parsed)).data,
         });
     } catch {}
 

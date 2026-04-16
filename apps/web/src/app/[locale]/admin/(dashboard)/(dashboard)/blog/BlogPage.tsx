@@ -21,10 +21,9 @@ interface Props {
 }
 
 export default async function BlogPage({ searchParams }: Props) {
-    const params = (await searchParams) ?? {};
+    const params = await searchParams;
     const parsed = parseListParams(params, defaultBlogParams);
     const queryKey = blogKeys.list(parsed);
-
     const queryClient = getQueryClient();
     try {
         await queryClient.prefetchQuery({

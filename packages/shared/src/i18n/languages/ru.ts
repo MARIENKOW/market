@@ -206,6 +206,7 @@ export const ru = {
                     addNote: "Добавить заметку",
                 },
                 status: {
+                    all: "Все",
                     active: "Активно",
                     expired: "Истекло",
                     revoked: "Отозвано",

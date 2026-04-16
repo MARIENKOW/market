@@ -201,6 +201,7 @@ export const en: MessageStructure = {
                     addNote: "Add note",
                 },
                 status: {
+                    all: "All",
                     active: "Active",
                     expired: "Expired",
                     revoked: "Revoked",

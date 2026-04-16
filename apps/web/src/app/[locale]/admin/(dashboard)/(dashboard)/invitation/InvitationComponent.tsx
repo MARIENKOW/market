@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Box, DialogContent, DialogTitle, LinearProgress } from "@mui/material";
+import {
+    Box,
+    DialogContent,
+    DialogTitle,
+    LinearProgress,
+    ToggleButton,
+    ToggleButtonGroup,
+} from "@mui/material";
 import { useTranslations } from "next-intl";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { StyledButton } from "@/components/ui/StyledButton";
@@ -15,13 +22,25 @@ import {
 } from "@/hooks/tanstack/useAdminInvitations";
 import { useLocalListState } from "@/hooks/tanstack/listState";
 import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
+import { InvitationParams } from "@/lib/tanstack/listDefaults";
 import AdminInvitationCreateForm from "@/components/form/AdminInvitationCreateForm";
 import { InvitationList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
+import { useUrlListState } from "@/hooks/tanstack/useUrlListState";
+
+const STATUS_OPTIONS: {
+    value: InvitationParams["status"];
+    color: "standard" | "success" | "warning" | "error";
+}[] = [
+    { value: "all", color: "standard" },
+    { value: "active", color: "success" },
+    { value: "expired", color: "warning" },
+    { value: "revoked", color: "error" },
+];
 
 export default function InvitationComponent() {
     const t = useTranslations();
-    const { page, setPage, filters } = useLocalListState(
+    const { page, setPage, filters, setFilter } = useUrlListState(
         defaultInvitationParams,
     );
     const { data, isFetching, error, refetch } = useAdminInvitations({
@@ -57,7 +76,30 @@ export default function InvitationComponent() {
                         </span>
                     </StyledTooltip>
                 </Box>
-                <Box display="flex" alignItems="center" gap={1}>
+            </Box>
+            <Box
+                mb={2}
+                display="flex"
+                flexDirection={{ xs: "column", sm: "row" }}
+                justifyContent={"space-between"}
+                alignItems={{ xs: "initial", sm: "center" }}
+                gap={1}
+            >
+                <ToggleButtonGroup
+                    value={filters.status}
+                    exclusive
+                    onChange={(_, v) => {
+                        if (v !== null) setFilter("status", v);
+                    }}
+                    size="small"
+                >
+                    {STATUS_OPTIONS.map(({ value, color }) => (
+                        <ToggleButton key={value} value={value} color={color}>
+                            {t(`pages.admin.invitation.status.${value}`)}
+                        </ToggleButton>
+                    ))}
+                </ToggleButtonGroup>
+                <Box>
                     <StyledButton
                         fullWidth
                         variant="contained"

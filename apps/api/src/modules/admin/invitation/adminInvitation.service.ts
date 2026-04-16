@@ -62,14 +62,26 @@ export class AdminInvitationService {
     async getAll(
         page: number,
         limit: number,
+        status: string = "all",
     ): Promise<PagedResult<AdminInvitationDto>> {
+        const expiryBoundary = new Date(Date.now() - this.ttl);
+        const where =
+            status === "revoked"
+                ? { revokedAt: { not: null } }
+                : status === "active"
+                  ? { revokedAt: null, createdAt: { gt: expiryBoundary } }
+                  : status === "expired"
+                    ? { revokedAt: null, createdAt: { lte: expiryBoundary } }
+                    : {};
+
         const [invitations, total] = await Promise.all([
             this.prisma.adminInvitation.findMany({
+                where,
                 orderBy: { createdAt: "desc" },
                 skip: (page - 1) * limit,
                 take: limit,
             }),
-            this.prisma.adminInvitation.count(),
+            this.prisma.adminInvitation.count({ where }),
         ]);
         return {
             data: invitations.map((inv) => this.map(inv)),
