@@ -136,6 +136,12 @@ export const en: MessageStructure = {
                     name: "Create",
                 },
                 name: "Blog",
+                filter: {
+                    short: { all: "All", yes: "Short", no: "Not short", label: "Short" },
+                    important: { all: "All", yes: "Important", no: "Not important", label: "Important" },
+                    dateFrom: "Date from",
+                    dateTo: "Date to",
+                },
                 actions: {
                     main: "Main blog",
                     setMain: "Set as main",
@@ -474,6 +480,8 @@ export const en: MessageStructure = {
         deleteAll: "Delete all",
         confirm: "Confirm",
         refresh: "Refresh",
+        filters: "Filters",
+        resetFilters: "Reset filters",
         sortNewest: "Newest first",
         sortOldest: "Oldest first",
     },

@@ -28,7 +28,7 @@ export default async function BlogPage({ searchParams }: Props) {
     try {
         await queryClient.prefetchQuery({
             queryKey,
-            queryFn: async () => (await getAll({ page: parsed.page })).data,
+            queryFn: async () => (await getAll(parsed)).data,
         });
     } catch {}
 

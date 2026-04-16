@@ -1,6 +1,7 @@
 "use client";
 
 import { BlogList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/BlogList";
+import { BlogFiltersDrawer } from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/BlogFiltersDrawer";
 import DeleteAllBlogs from "@/app/[locale]/admin/(dashboard)/(dashboard)/blog/DeleteAllBlogs";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { StyledButton } from "@/components/ui/StyledButton";
@@ -11,16 +12,31 @@ import { useBlogs, defaultBlogParams } from "@/hooks/tanstack/useBlog";
 import { useUrlListState } from "@/hooks/tanstack/useUrlListState";
 import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
 import { Link } from "@/i18n/navigation";
-import { Box, LinearProgress } from "@mui/material";
+import { Badge, Box, IconButton, LinearProgress } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { useTranslations } from "next-intl";
+import { useState, useMemo } from "react";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import { BlogParams } from "@/lib/tanstack/listDefaults";
+
+function countActiveFilters(filters: Omit<BlogParams, "page">): number {
+    let count = 0;
+    if (filters.short !== "all") count++;
+    if (filters.important !== "all") count++;
+    if (filters.dateFrom !== "") count++;
+    if (filters.dateTo !== "") count++;
+    return count;
+}
 
 export default function BlogComponent() {
     const t = useTranslations();
-    const { page, setPage, filters } = useUrlListState(defaultBlogParams);
+    const { page, setPage, filters, setFilter, resetFilters } =
+        useUrlListState(defaultBlogParams);
     const { data, isFetching, error, refetch } = useBlogs({ page, ...filters });
     usePageClamp(page, data?.meta.pageCount, setPage);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const activeCount = useMemo(() => countActiveFilters(filters), [filters]);
 
     return (
         <Box display="flex" flexDirection="column" flex={1} height="100%">
@@ -32,7 +48,7 @@ export default function BlogComponent() {
                 gap={1}
                 mb={2}
             >
-                <Box display={"flex"} alignItems={"center"} gap={1}>
+                <Box display="flex" alignItems="center" gap={1}>
                     <StyledTypography variant="h5" fontWeight={700}>
                         {t("pages.admin.blog.name")}
                         {data?.meta.total ? ` · ${data?.meta.total}` : ""}
@@ -47,14 +63,27 @@ export default function BlogComponent() {
                             </StyledIconButton>
                         </span>
                     </StyledTooltip>
+                    <StyledTooltip title={t("common.filters")} placement="top">
+                        <span>
+                            <StyledIconButton
+                                onClick={() => setDrawerOpen(true)}
+                                size="small"
+                            >
+                                <Badge
+                                    badgeContent={activeCount}
+                                    color="primary"
+                                >
+                                    <FilterListIcon />
+                                </Badge>
+                            </StyledIconButton>
+                        </span>
+                    </StyledTooltip>
                 </Box>
-                <Box gap={1} display={"flex"} alignItems={"center"}>
-                    {data && data.data.length > 0 ? (
+                <Box gap={1} display="flex" alignItems="center">
+                    {data && data.data.length > 0 && (
                         <Box flex={{ xs: "0 1 50%", sm: "auto" }}>
                             <DeleteAllBlogs />
                         </Box>
-                    ) : (
-                        ""
                     )}
                     <Box flex={{ xs: "0 1 50%", sm: "auto" }}>
                         <Link
@@ -68,6 +97,15 @@ export default function BlogComponent() {
                     </Box>
                 </Box>
             </Box>
+
+            <BlogFiltersDrawer
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                filters={filters}
+                setFilter={setFilter}
+                resetFilters={resetFilters}
+            />
+
             <Box
                 flex={1}
                 display="flex"
@@ -86,7 +124,6 @@ export default function BlogComponent() {
                         }}
                     />
                 )}
-
                 <BlogList data={data?.data} error={error} />
                 <PaginationComponent
                     page={page}

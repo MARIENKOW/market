@@ -7,9 +7,20 @@ import { Pagination } from "./pagination";
  */
 
 // --- Blog ---
-export type BlogParams = Pagination;
+export type BlogParams = Pagination & {
+    order: "desc" | "asc";
+    short: "all" | "yes" | "no";
+    important: "all" | "yes" | "no";
+    dateFrom: string;
+    dateTo: string;
+};
 export const defaultBlogParams: BlogParams = {
     page: 1,
+    order: "desc",
+    short: "all",
+    important: "all",
+    dateFrom: "",
+    dateTo: "",
 };
 
 // --- Invitation ---

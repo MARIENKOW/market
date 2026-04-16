@@ -58,7 +58,7 @@ export class BlogVideoService {
                         message: this.i18n.t(
                             "pages.admin.blog.feedback.mediaVideo.linkedToBlog",
                         ),
-                        type: 'info',
+                        type: "info",
                     },
                 ],
             });
@@ -79,6 +79,6 @@ export class BlogVideoService {
 
         await Promise.allSettled(free.map((v) => this.video.delete(v.id)));
 
-        return { skipped };
+        return { skipped: 0 };
     }
 }

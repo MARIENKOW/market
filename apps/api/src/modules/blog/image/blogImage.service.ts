@@ -78,6 +78,6 @@ export class BlogImageService {
 
         await Promise.allSettled(free.map((img) => this.image.delete(img.id)));
 
-        return { skipped };
+        return { skipped: 0 };
     }
 }

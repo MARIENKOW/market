@@ -63,8 +63,13 @@ export class BlogController {
     async getAll(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(6), ParseIntPipe) limit: number,
+        @Query("order") order: string = "desc",
+        @Query("short") short: string = "all",
+        @Query("important") important: string = "all",
+        @Query("dateFrom") dateFrom: string = "",
+        @Query("dateTo") dateTo: string = "",
     ): Promise<PagedResult<BlogDto>> {
-        return this.blog.getAll(page, limit);
+        return this.blog.getAll(page, limit, order, short, important, dateFrom, dateTo);
     }
     @Get(":id")
     @Auth("ADMIN")

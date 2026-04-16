@@ -269,12 +269,34 @@ export class BlogService {
         }
     }
 
-    async getAll(page: number, limit: number): Promise<PagedResult<BlogDto>> {
+    async getAll(
+        page: number,
+        limit: number,
+        order: string = "desc",
+        short: string = "all",
+        important: string = "all",
+        dateFrom: string = "",
+        dateTo: string = "",
+    ): Promise<PagedResult<BlogDto>> {
+        const ord = order === "asc" ? "asc" : "desc";
+        const from = dateFrom ? new Date(dateFrom) : undefined;
+        const to = dateTo ? new Date(dateTo) : undefined;
+        const where = {
+            ...(short !== "all" && { isShort: short === "yes" }),
+            ...(important !== "all" && { isImportant: important === "yes" }),
+            ...((from || to) && {
+                publishedAt: {
+                    ...(from && { gte: from }),
+                    ...(to && { lte: to }),
+                },
+            }),
+        };
         const [total, blogs] = await Promise.all([
-            this.prisma.blog.count(),
+            this.prisma.blog.count({ where }),
             this.prisma.blog.findMany({
+                where,
                 include: BLOG_INCLUDE,
-                orderBy: [{ isMain: "desc" }, { publishedAt: "desc" }],
+                orderBy: [{ isMain: "desc" }, { publishedAt: ord }],
                 skip: (page - 1) * limit,
                 take: limit,
             }),

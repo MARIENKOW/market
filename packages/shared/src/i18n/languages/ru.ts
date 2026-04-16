@@ -136,6 +136,12 @@ export const ru = {
                     name: "Создать",
                 },
                 name: "Блог",
+                filter: {
+                    short: { all: "Все", yes: "Короткие", no: "Не короткие", label: "Короткие" },
+                    important: { all: "Все", yes: "Важные", no: "Не важные", label: "Важные" },
+                    dateFrom: "Дата от",
+                    dateTo: "Дата до",
+                },
                 actions: {
                     main: "Главный блог",
                     setMain: "Сделать главной",
@@ -493,6 +499,8 @@ export const ru = {
         deleteAll: "Удалить все",
         confirm: "Подтвердить",
         refresh: "Обновить",
+        filters: "Фильтры",
+        resetFilters: "Сбросить фильтры",
         sortNewest: "Сначала новые",
         sortOldest: "Сначала старые",
     },
