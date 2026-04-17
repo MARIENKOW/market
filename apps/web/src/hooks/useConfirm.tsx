@@ -11,8 +11,8 @@ export const useConfirm = () => {
     const [resolveFn, setResolveFn] = useState<(value: boolean) => void>();
     const [options, setOptions] = useState<UseConfirmOptions>({});
 
-    const confirm = (description?: string, title?: string) => {
-        setOptions({ title, description });
+    const confirm = (params?: UseConfirmOptions) => {
+        setOptions(params || {});
         setOpen(true);
         return new Promise<boolean>((resolve) => {
             setResolveFn(() => resolve);

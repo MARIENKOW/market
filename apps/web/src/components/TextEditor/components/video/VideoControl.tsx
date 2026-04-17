@@ -29,12 +29,16 @@ export const VideoControl = ({ video }: { video: VideoDto }) => {
 
     const handleDelete = async () => {
         try {
-            const isConfirm = await confirm(t("video.control.deleteConfirm"));
+            const isConfirm = await confirm({
+                title: t("video.control.deleteConfirm"),
+            });
             if (!isConfirm) return;
             setLoadingDelete(true);
             await videoS.delete(video.id);
             queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
-            snackbarSuccess(t("pages.admin.blog.feedback.mediaVideo.deleteSuccess"));
+            snackbarSuccess(
+                t("pages.admin.blog.feedback.mediaVideo.deleteSuccess"),
+            );
         } catch (error) {
             errorHandler({ error, t });
         } finally {

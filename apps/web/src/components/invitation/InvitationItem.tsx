@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Card, CardContent } from "@mui/material";
+import { Box, Card, CardActions, CardContent } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import { AdminInvitationDto } from "@myorg/shared/dto";
 import { useTranslations } from "next-intl";
@@ -79,7 +79,9 @@ function ExpiryLabel({ inv }: { inv: AdminInvitationDto }) {
 
     return (
         <StyledTypography variant="caption" color="text.disabled">
-            {t("pages.admin.invitation.expiresAt", { time: inv.durationLabel! })}
+            {t("pages.admin.invitation.expiresAt", {
+                time: inv.durationLabel!,
+            })}
         </StyledTypography>
     );
 }
@@ -91,6 +93,9 @@ export default function InvitationItem({ inv }: { inv: AdminInvitationDto }) {
         <Card
             variant="outlined"
             sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
                 borderRadius: 2,
                 borderColor: inv.isRevoked
                     ? "error.main"
@@ -101,7 +106,14 @@ export default function InvitationItem({ inv }: { inv: AdminInvitationDto }) {
                 transition: "border-color 0.2s",
             }}
         >
-            <CardContent sx={{ p: "12px 16px !important" }}>
+            <CardContent
+                sx={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    pb: "0px !important",
+                }}
+            >
                 <Box
                     display="flex"
                     alignItems="center"
@@ -133,12 +145,12 @@ export default function InvitationItem({ inv }: { inv: AdminInvitationDto }) {
                     disabled={inv.isRevoked || inv.isExpired}
                 />
 
-                <Box mt={1.5}>
+                <Box flex={1} mt={1.5}>
                     <InvitationNote inv={inv} />
                 </Box>
 
-                <StyledDivider sx={{ mt: 1.5, mb: 0.5 }} />
-                <Box display="flex" justifyContent="flex-end" gap={0.5}>
+                <StyledDivider sx={{ mt: 1.5 }} />
+                <Box py={1}  display="flex" justifyContent="flex-end" gap={0.5}>
                     {!inv.isRevoked && (
                         <ResendInvitationButton invId={inv.id} />
                     )}

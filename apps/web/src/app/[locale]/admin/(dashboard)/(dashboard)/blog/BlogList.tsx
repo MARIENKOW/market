@@ -33,7 +33,7 @@ export function BlogList({
         );
     return (
         <Box display="flex" flexDirection="column" flex={1}>
-            <Grid container spacing={1.5} columns={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid container spacing={1.5} columns={{ xs: 1, md: 2,lg:3 }}>
                 {data?.map((e) => (
                     <Grid size={1} key={e.id}>
                         <BlogItem key={e.id} blog={e} />

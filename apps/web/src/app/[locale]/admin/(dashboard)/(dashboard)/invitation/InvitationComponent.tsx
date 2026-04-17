@@ -105,20 +105,39 @@ export default function InvitationComponent() {
                         size="small"
                     >
                         {STATUS_OPTIONS.map(({ value, color }) => (
-                            <ToggleButton key={value} value={value} color={color}>
+                            <ToggleButton
+                                key={value}
+                                value={value}
+                                color={color}
+                            >
                                 {t(`pages.admin.invitation.status.${value}`)}
                             </ToggleButton>
                         ))}
                     </ToggleButtonGroup>
                     <StyledTooltip
-                        title={t(filters.order === "desc" ? "common.sortNewest" : "common.sortOldest")}
+                        title={t(
+                            filters.order === "desc"
+                                ? "common.sortNewest"
+                                : "common.sortOldest",
+                        )}
                         placement="top"
                     >
                         <span>
                             <StyledIconButton
-                                onClick={() => setFilter("order", filters.order === "desc" ? "asc" : "desc")}
+                                onClick={() =>
+                                    setFilter(
+                                        "order",
+                                        filters.order === "desc"
+                                            ? "asc"
+                                            : "desc",
+                                    )
+                                }
                             >
-                                {filters.order === "desc" ? <ArrowDownwardIcon fontSize="small" /> : <ArrowUpwardIcon fontSize="small" />}
+                                {filters.order === "desc" ? (
+                                    <ArrowDownwardIcon fontSize="small" />
+                                ) : (
+                                    <ArrowUpwardIcon fontSize="small" />
+                                )}
                             </StyledIconButton>
                         </span>
                     </StyledTooltip>
@@ -165,12 +184,12 @@ export default function InvitationComponent() {
                 open={createOpen}
                 onClose={() => setCreateOpen(false)}
                 fullWidth
-                slotProps={{ paper: { sx: { p: { xs: 0, sm: 1 } } } }}
+                // slotProps={{ paper: { sx: { p: { xs: 0, sm: 1 } } } }}
             >
                 <DialogTitle sx={{ pb: 1 }}>
                     {t("pages.admin.invitation.form.title")}
                 </DialogTitle>
-                <DialogContent sx={{ pt: 1 }}>
+                <DialogContent sx={{ pt: "7px !important" }}>
                     <AdminInvitationCreateForm
                         onCancel={() => setCreateOpen(false)}
                     />

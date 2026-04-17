@@ -29,12 +29,16 @@ export const ImageControl = ({ image }: { image: ImageDto }) => {
 
     const handleDelete = async () => {
         try {
-            const isConfirm = await confirm(t("image.control.deleteConfirm"));
+            const isConfirm = await confirm({
+                title: t("image.control.deleteConfirm"),
+            });
             if (!isConfirm) return;
             setLoadingDelete(true);
             await imageS.delete(image.id);
             queryClient.invalidateQueries({ queryKey: imageKeys.lists() });
-            snackbarSuccess(t("pages.admin.blog.feedback.mediaImage.deleteSuccess"));
+            snackbarSuccess(
+                t("pages.admin.blog.feedback.mediaImage.deleteSuccess"),
+            );
         } catch (error) {
             errorHandler({ error, t });
         } finally {

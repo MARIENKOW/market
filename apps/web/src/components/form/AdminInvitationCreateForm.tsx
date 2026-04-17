@@ -12,8 +12,6 @@ import useForm from "@/hooks/useForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { errorFormHandlerWithAlert } from "@/helpers/error/error.handler.helper";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
-import { useQueryClient } from "@tanstack/react-query";
-import { invitationKeys } from "@/lib/tanstack/keys";
 import AdminInvitationService from "@/services/admin/invitation/adminInvitation.service";
 import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
 import {
@@ -22,6 +20,7 @@ import {
     CreateAdminInvitationDtoOutput,
 } from "@myorg/shared/form";
 import { useTranslations } from "next-intl";
+import { useInvitationListCache } from "@/hooks/tanstack/useInvitationMutations";
 
 const { create } = new AdminInvitationService($apiAdminClient);
 
@@ -31,7 +30,7 @@ interface Props {
 
 export default function AdminInvitationCreateForm({ onCancel }: Props) {
     const t = useTranslations();
-    const queryClient = useQueryClient();
+    const { sync } = useInvitationListCache();
 
     const form = useForm<
         CreateAdminInvitationDtoInput,
@@ -52,7 +51,7 @@ export default function AdminInvitationCreateForm({ onCancel }: Props) {
                     email: result.data.email,
                 }),
             );
-            queryClient.invalidateQueries({ queryKey: invitationKeys.all });
+            sync();
             form.reset();
             onCancel();
         } catch (error) {

@@ -12,10 +12,7 @@ import FormTextField from "@/components/features/form/fields/controlled/FormText
 import { StyledButton } from "@/components/ui/StyledButton";
 import AdminInvitationService from "@/services/admin/invitation/adminInvitation.service";
 import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
-import {
-    errorFormHandler,
-    errorHandler,
-} from "@/helpers/error/error.handler.helper";
+import { errorFormHandler } from "@/helpers/error/error.handler.helper";
 import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
 import {
     UpdateNoteAdminInvitationSchema,
@@ -23,8 +20,7 @@ import {
     UpdateNoteAdminInvitationDtoOutput,
 } from "@myorg/shared/form";
 import { AdminInvitationDto } from "@myorg/shared/dto";
-import { useQueryClient } from "@tanstack/react-query";
-import { invitationKeys } from "@/lib/tanstack/keys";
+import { useInvitationListCache } from "@/hooks/tanstack/useInvitationMutations";
 import { useEffect } from "react";
 
 const service = new AdminInvitationService($apiAdminClient);
@@ -36,6 +32,7 @@ interface Props {
 
 export function InvitationNoteForm({ inv, onCancel }: Props) {
     const t = useTranslations();
+    const { update, sync } = useInvitationListCache();
 
     const form = useForm<
         UpdateNoteAdminInvitationDtoInput,
@@ -44,8 +41,6 @@ export function InvitationNoteForm({ inv, onCancel }: Props) {
         resolver: zodResolver(UpdateNoteAdminInvitationSchema),
         defaultValues: { note: inv.note ?? "" },
     });
-    const queryClient = useQueryClient();
-
     const {
         reset,
         formState: { isSubmitting, isDirty },
@@ -60,9 +55,10 @@ export function InvitationNoteForm({ inv, onCancel }: Props) {
         UpdateNoteAdminInvitationDtoOutput
     > = async (values, { setError }) => {
         try {
-            await service.updateNote(inv.id, values);
+            const { data: updated } = await service.updateNote(inv.id, values);
+            update(() => updated, updated.id);
+            sync();
             snackbarSuccess(t("pages.admin.invitation.feedback.noteUpdated"));
-            queryClient.invalidateQueries({ queryKey: invitationKeys.all });
             onCancel();
         } catch (error) {
             errorFormHandler({ error, t, setError, formValues: values });

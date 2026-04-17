@@ -23,14 +23,22 @@ export default function DeleteAllImageBlog() {
     const handleDeleteAll = async () => {
         setLoading(true);
         try {
-            const isConfirm = await confirm(t("image.control.deleteAllConfirm"));
+            const isConfirm = await confirm({
+                title: t("image.control.deleteAllConfirm"),
+            });
             if (!isConfirm) return;
             const { data } = await deleteAll();
             queryClient.invalidateQueries({ queryKey: imageKeys.lists() });
             if (data.skipped > 0) {
-                snackbarInfo(t("pages.admin.blog.feedback.mediaImage.deleteAllSkipped", { count: data.skipped }));
+                snackbarInfo(
+                    t("pages.admin.blog.feedback.mediaImage.deleteAllSkipped", {
+                        count: data.skipped,
+                    }),
+                );
             } else {
-                snackbarSuccess(t("pages.admin.blog.feedback.mediaImage.deleteAllSuccess"));
+                snackbarSuccess(
+                    t("pages.admin.blog.feedback.mediaImage.deleteAllSuccess"),
+                );
             }
         } catch (error) {
             errorHandler({ error, t });

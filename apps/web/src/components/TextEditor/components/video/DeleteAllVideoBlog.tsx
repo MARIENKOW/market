@@ -22,14 +22,22 @@ export default function DeleteAllVideoBlog() {
     const handleDeleteAll = async () => {
         setLoading(true);
         try {
-            const isConfirm = await confirm(t("video.control.deleteAllConfirm"));
+            const isConfirm = await confirm({
+                title: t("video.control.deleteAllConfirm"),
+            });
             if (!isConfirm) return;
             const { data } = await deleteAll();
             queryClient.invalidateQueries({ queryKey: videoKeys.lists() });
             if (data.skipped > 0) {
-                snackbarInfo(t("pages.admin.blog.feedback.mediaVideo.deleteAllSkipped", { count: data.skipped }));
+                snackbarInfo(
+                    t("pages.admin.blog.feedback.mediaVideo.deleteAllSkipped", {
+                        count: data.skipped,
+                    }),
+                );
             } else {
-                snackbarSuccess(t("pages.admin.blog.feedback.mediaVideo.deleteAllSuccess"));
+                snackbarSuccess(
+                    t("pages.admin.blog.feedback.mediaVideo.deleteAllSuccess"),
+                );
             }
         } catch (error) {
             errorHandler({ error, t });
