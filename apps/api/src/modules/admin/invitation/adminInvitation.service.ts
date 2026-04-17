@@ -47,9 +47,10 @@ export class AdminInvitationService {
             isRevoked,
             expiresAt: expiresAt.toISOString(),
             revokedAt: inv.revokedAt ? inv.revokedAt.toISOString() : null,
-            durationLabel: !isRevoked && !isExpired
-                ? i18nFormatDuration(expiresAt.getTime() - Date.now())
-                : null,
+            durationLabel:
+                !isRevoked && !isExpired
+                    ? i18nFormatDuration(expiresAt.getTime() - Date.now())
+                    : null,
         };
     }
 
@@ -247,7 +248,7 @@ export class AdminInvitationService {
         email: string,
         token: string,
     ): Promise<void> {
-        const url = `${this.requestContext.origin}${FULL_PATH_ROUTE.admin.invitation.path}?token=${encodeURIComponent(token)}`;
+        const url = this.buildUrl(token);
         await this.mailer.sendAdminInvitation({
             to: email,
             url,

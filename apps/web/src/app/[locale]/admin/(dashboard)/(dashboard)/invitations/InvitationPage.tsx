@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import { getTranslations } from "next-intl/server";
 import * as uuid from "uuid";
-import InvitationComponent from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationComponent";
+import InvitationComponent from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitations/InvitationComponent";
 
 export default async function InvitationPage({}: {}) {
     const t = await getTranslations();
@@ -20,7 +20,7 @@ export default async function InvitationPage({}: {}) {
                         },
                         {
                             name: t("pages.admin.invitation.name"),
-                            href: FULL_PATH_ROUTE.admin.invitation.path,
+                            href: FULL_PATH_ROUTE.admin.invitations.path,
                             key: uuid.v4(),
                         },
                     ]}

@@ -27,9 +27,9 @@ export const NAV_GROUPS: (role: AdminDto["role"]) => NavGroup[] = (role) => [
                   items: [
                       {
                           label: "pages.admin.invitation.name",
-                          href: FULL_PATH_ROUTE.admin.invitation.path,
+                          href: FULL_PATH_ROUTE.admin.invitations.path,
                           activeLink: {
-                              safe: [FULL_PATH_ROUTE.admin.invitation.path],
+                              safe: [FULL_PATH_ROUTE.admin.invitations.path],
                           },
                           icon: <MailOutlineIcon />,
                       },

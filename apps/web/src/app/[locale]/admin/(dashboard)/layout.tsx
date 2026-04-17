@@ -1,5 +1,4 @@
 import HeaderAdmin from "@/components/layout/header/admin/HeaderAdmin";
-import AdminPrivateWrapper from "@/components/wrappers/auth/AdminPrivateWrapper";
 
 export default async function Layout({
     children,
@@ -7,9 +6,9 @@ export default async function Layout({
     children: React.ReactNode;
 }) {
     return (
-        <AdminPrivateWrapper>
+        <>
             <HeaderAdmin />
             {children}
-        </AdminPrivateWrapper>
+        </>
     );
 }

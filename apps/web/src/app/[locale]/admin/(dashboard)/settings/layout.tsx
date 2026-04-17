@@ -1,5 +1,6 @@
 import { NAV_GROUPS } from "@/app/[locale]/admin/(dashboard)/settings/nav.config";
 import Sidebar from "@/components/layout/navigation/Sidebar";
+import AdminPrivateWrapper from "@/components/wrappers/auth/AdminPrivateWrapper";
 import { Box } from "@mui/material";
 
 export default async function SettingsLayout({
@@ -8,27 +9,29 @@ export default async function SettingsLayout({
     children: React.ReactNode;
 }) {
     return (
-        <Box
-            sx={{
-                display: "flex",
-                flex: 1,
-            }}
-        >
+        <AdminPrivateWrapper>
             <Box
                 sx={{
-                    display: { xs: "none", md: "flex" },
-                    borderRight: "1px solid",
-                    borderColor: "divider",
+                    display: "flex",
+                    flex: 1,
                 }}
             >
-                <Sidebar
-                    label="pages.admin.settings.name"
-                    config={NAV_GROUPS}
-                />
+                <Box
+                    sx={{
+                        display: { xs: "none", md: "flex" },
+                        borderRight: "1px solid",
+                        borderColor: "divider",
+                    }}
+                >
+                    <Sidebar
+                        label="pages.admin.settings.name"
+                        config={NAV_GROUPS}
+                    />
+                </Box>
+                <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                    {children}
+                </Box>
             </Box>
-            <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                {children}
-            </Box>
-        </Box>
+        </AdminPrivateWrapper>
     );
 }

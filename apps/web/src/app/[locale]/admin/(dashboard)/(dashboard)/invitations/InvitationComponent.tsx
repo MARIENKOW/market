@@ -22,11 +22,10 @@ import {
     useAdminInvitations,
     defaultInvitationParams,
 } from "@/hooks/tanstack/useAdminInvitations";
-import { useLocalListState } from "@/hooks/tanstack/listState";
 import { usePageClamp } from "@/hooks/tanstack/usePageClamp";
 import { InvitationParams } from "@/lib/tanstack/listDefaults";
 import AdminInvitationCreateForm from "@/components/form/AdminInvitationCreateForm";
-import { InvitationList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitation/InvitationList";
+import { InvitationList } from "@/app/[locale]/admin/(dashboard)/(dashboard)/invitations/InvitationList";
 import { PaginationComponent } from "@/components/common/PaginationComponent";
 import { SearchField } from "@/components/common/SearchField";
 import { useUrlListState } from "@/hooks/tanstack/useUrlListState";
