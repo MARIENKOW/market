@@ -16,12 +16,23 @@ type InvitationList = PagedResult<AdminInvitationDto> | undefined;
 export function useInvitationListCache() {
     const queryClient = useQueryClient();
 
+    function cancel() {
+        return queryClient.cancelQueries({ queryKey: invitationKeys.lists() });
+    }
+
+    function sync() {
+        queryClient.invalidateQueries({ queryKey: invitationKeys.lists() });
+    }
+
     function update(updater: (inv: AdminInvitationDto) => AdminInvitationDto, id: string) {
         queryClient.setQueriesData<InvitationList>(
             { queryKey: invitationKeys.lists() },
             (old) => {
                 if (!old) return old;
-                return { ...old, data: old.data.map((inv) => inv.id === id ? updater(inv) : inv) };
+                return {
+                    ...old,
+                    data: old.data.map((inv) => inv.id === id ? updater(inv) : inv),
+                };
             },
         );
     }
@@ -40,49 +51,50 @@ export function useInvitationListCache() {
         );
     }
 
-    function sync() {
-        queryClient.invalidateQueries({ queryKey: invitationKeys.lists() });
-    }
-
-    return { update, remove, sync };
+    return { cancel, sync, update, remove };
 }
 
 export function useRevokeInvitation() {
     const t = useTranslations();
-    const { update, sync } = useInvitationListCache();
+    const { cancel, update, sync } = useInvitationListCache();
 
     return useMutation({
         mutationFn: (invId: string) => service.revoke(invId).then((r) => r.data),
+        onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
             sync();
             snackbarSuccess(t("pages.admin.invitation.feedback.revoked"));
         },
         onError: (error) => errorHandler({ error, t }),
+        onSettled: () => sync(),
     });
 }
 
 export function useUnrevokeInvitation() {
     const t = useTranslations();
-    const { update, sync } = useInvitationListCache();
+    const { cancel, update, sync } = useInvitationListCache();
 
     return useMutation({
         mutationFn: (invId: string) => service.unrevoke(invId).then((r) => r.data),
+        onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
             sync();
             snackbarSuccess(t("pages.admin.invitation.feedback.unrevoked"));
         },
         onError: (error) => errorHandler({ error, t }),
+        onSettled: () => sync(),
     });
 }
 
 export function useResendInvitation() {
     const t = useTranslations();
-    const { update, sync } = useInvitationListCache();
+    const { cancel, update, sync } = useInvitationListCache();
 
     return useMutation({
         mutationFn: (invId: string) => service.resend(invId).then((r) => r.data),
+        onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
             sync();
@@ -91,20 +103,23 @@ export function useResendInvitation() {
             );
         },
         onError: (error) => errorHandler({ error, t }),
+        onSettled: () => sync(),
     });
 }
 
 export function useDeleteInvitation() {
     const t = useTranslations();
-    const { remove, sync } = useInvitationListCache();
+    const { cancel, remove, sync } = useInvitationListCache();
 
     return useMutation({
         mutationFn: (invId: string) => service.delete(invId),
+        onMutate: () => cancel(),
         onSuccess: (_, invId) => {
             remove(invId);
             sync();
             snackbarSuccess(t("pages.admin.invitation.feedback.deleted"));
         },
         onError: (error) => errorHandler({ error, t }),
+        onSettled: () => sync(),
     });
 }

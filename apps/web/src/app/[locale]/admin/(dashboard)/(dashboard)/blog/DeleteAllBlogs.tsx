@@ -1,35 +1,21 @@
-import { StyledButton } from "@/components/ui/StyledButton";
-import { errorHandler } from "@/helpers/error/error.handler.helper";
-import { useConfirm } from "@/hooks/useConfirm";
-import { blogKeys } from "@/lib/tanstack/keys";
-import BlogService from "@/services/blog/blog.service";
-import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
-import { snackbarSuccess } from "@/utils/snackbar/snackbar.success";
-import { useQueryClient } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
+"use client";
 
-const { deleteAll } = new BlogService($apiAdminClient);
+import { StyledButton } from "@/components/ui/StyledButton";
+import { useConfirm } from "@/hooks/useConfirm";
+import { useDeleteAllBlogs } from "@/hooks/tanstack/useBlogMutations";
+import { useTranslations } from "next-intl";
 
 export default function DeleteAllBlogs() {
     const t = useTranslations();
-    const [loading, setLoading] = useState<boolean>(false);
     const { confirm, confirmDialog } = useConfirm();
-    const queryClient = useQueryClient();
-    const handleDelete = async () => {
-        setLoading(true);
-        try {
-            const isConfirm = await confirm();
-            if (!isConfirm) return;
-            await deleteAll();
-            snackbarSuccess(t("pages.admin.blog.feedback.deleteAll"));
-            queryClient.invalidateQueries({ queryKey: blogKeys.all });
-        } catch (error) {
-            errorHandler({ error, t });
-        } finally {
-            setLoading(false);
-        }
+    const { mutate, isPending } = useDeleteAllBlogs();
+
+    const handle = async () => {
+        const ok = await confirm();
+        if (!ok) return;
+        mutate();
     };
+
     return (
         <>
             {confirmDialog}
@@ -37,8 +23,8 @@ export default function DeleteAllBlogs() {
                 fullWidth
                 color="error"
                 variant="outlined"
-                onClick={handleDelete}
-                loading={loading}
+                onClick={handle}
+                loading={isPending}
             >
                 {t("common.deleteAll")}
             </StyledButton>

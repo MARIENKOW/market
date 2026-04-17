@@ -32,7 +32,7 @@ interface Props {
 
 export function InvitationNoteForm({ inv, onCancel }: Props) {
     const t = useTranslations();
-    const { update, sync } = useInvitationListCache();
+    const { cancel, update, sync } = useInvitationListCache();
 
     const form = useForm<
         UpdateNoteAdminInvitationDtoInput,
@@ -55,6 +55,7 @@ export function InvitationNoteForm({ inv, onCancel }: Props) {
         UpdateNoteAdminInvitationDtoOutput
     > = async (values, { setError }) => {
         try {
+            await cancel();
             const { data: updated } = await service.updateNote(inv.id, values);
             update(() => updated, updated.id);
             sync();
