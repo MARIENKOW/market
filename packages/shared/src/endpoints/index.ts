@@ -116,6 +116,7 @@ export const ENDPOINT = {
         },
         invitation: {
             path: "invitation",
+            accept: { path: "accept" },
             revoke: { path: "revoke" },
             unrevoke: { path: "unrevoke" },
             resend: { path: "resend" },

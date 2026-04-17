@@ -197,6 +197,14 @@ export const en: MessageStructure = {
             },
             invitation: {
                 name: "Invitations",
+                register: {
+                    title: "Create your account",
+                    feedback: {
+                        success: "Account created. You can now log in.",
+                        expired: "This invitation link has expired.",
+                        revoked: "This invitation link has been revoked.",
+                    },
+                },
                 actions: {
                     create: "Create invitation",
                     delete: "Delete",

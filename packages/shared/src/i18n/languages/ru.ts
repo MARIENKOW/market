@@ -202,6 +202,14 @@ export const ru = {
             },
             invitation: {
                 name: "Приглашения",
+                register: {
+                    title: "Создание аккаунта",
+                    feedback: {
+                        success: "Аккаунт создан. Можете войти.",
+                        expired: "Ссылка приглашения истекла.",
+                        revoked: "Ссылка приглашения была отозвана.",
+                    },
+                },
                 actions: {
                     create: "Создать приглашение",
                     delete: "Удалить",

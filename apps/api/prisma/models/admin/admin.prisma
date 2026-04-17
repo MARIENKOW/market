@@ -3,6 +3,7 @@ model Admin {
   id            String    @id @default(cuid())
   email         String   @unique
   passwordHash  String?
+  note          String?
 
   theme         String?
   locale        String?

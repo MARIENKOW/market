@@ -7,8 +7,9 @@ model Blog {
     isMain      Boolean     @default(false) 
     isImportant Boolean     @default(false) 
     isShort     Boolean     @default(false) 
-    createdAt   DateTime    @default(now()) 
-    updatedAt   DateTime    @updatedAt      
+    createdAt     DateTime                @default(now())
+    updatedAt     DateTime                @updatedAt
+    search_vector Unsupported("tsvector")? @default(dbgenerated())
 
     imageId     String     @unique
     image       Image      @relation("BlogMainImage", fields: [imageId], references: [id], onDelete:Restrict, onUpdate: Cascade)
