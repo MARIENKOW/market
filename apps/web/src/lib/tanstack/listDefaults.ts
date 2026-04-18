@@ -42,11 +42,15 @@ export const defaultInvitationParams: InvitationParams = {
 // --- Admins ---
 export type AdminParams = Pagination & {
     order: "desc" | "asc";
+    sortBy: "createdAt" | "lastLoginAt" | "lastSeenAt";
+    status: "all" | "active" | "blocked";
     query: string;
 };
 export const defaultAdminParams: AdminParams = {
     page: 1,
     order: "desc",
+    sortBy: "createdAt",
+    status: "all",
     query: "",
 };
 

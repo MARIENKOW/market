@@ -199,14 +199,23 @@ export const en: MessageStructure = {
             admins: {
                 name: "Administrators",
                 status: {
+                    all: "All",
                     active: "Active",
                     blocked: "Blocked",
+                },
+                filter: {
+                    status: "Status",
+                    sortBy: "Sort by",
+                    createdAt: "Registration date",
+                    lastLoginAt: "Login date",
+                    lastSeenAt: "Last activity",
                 },
                 empty: "No administrators yet",
                 noteLabel: "Note",
                 notePlaceholder: "Role, responsibilities...",
                 lastSeen: "Online {time}",
                 lastLogin: "Login {time}",
+                joined: "Joined {time}",
                 noSessions: "No active sessions",
                 actions: {
                     block: "Block",

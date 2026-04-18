@@ -113,40 +113,48 @@ export default function AdminManagementItem({ admin }: { admin: AdminManagementD
                     />
                 </Box>
 
-                {/* Activity row */}
+                {/* Activity */}
                 <Box
                     sx={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 2,
+                        justifyContent: "space-between",
                         px: 2,
                         pb: 1.5,
+                        gap: 1,
                         opacity: isBlocked ? 0.55 : 1,
                         transition: "opacity 0.2s",
                     }}
                 >
-                    <Box display="flex" alignItems="center" gap={0.5} color="text.secondary">
-                        <LoginIcon sx={{ fontSize: 13 }} />
-                        {admin.lastLoginAt ? (
+                    <Box display="flex" flexDirection="column" gap={0.25}>
+                        <Box display="flex" alignItems="center" gap={0.5}>
+                            <LoginIcon sx={{ fontSize: 12, color: "text.disabled" }} />
+                            {admin.lastLoginAt ? (
+                                <ClientDate
+                                    date={admin.lastLoginAt}
+                                    variant="caption"
+                                    color="text.secondary"
+                                    format={(d, locale) =>
+                                        t("pages.admin.admins.lastLogin", { time: smartDate({ date: d, locale }) })
+                                    }
+                                />
+                            ) : (
+                                <StyledTypography variant="caption" color="text.disabled">
+                                    {t("pages.admin.admins.lastLogin", { time: "—" })}
+                                </StyledTypography>
+                            )}
+                        </Box>
+                        <Box display="flex" alignItems="center" gap={0.5}>
+                            <PersonAddAltIcon sx={{ fontSize: 12, color: "text.disabled" }} />
                             <ClientDate
-                                date={admin.lastLoginAt}
+                                date={admin.createdAt}
                                 variant="caption"
-                                color="text.secondary"
-                                format={(d, locale) => smartDate({ date: d, locale })}
+                                color="text.disabled"
+                                format={(d, locale) =>
+                                    t("pages.admin.admins.joined", { time: smartDate({ date: d, locale }) })
+                                }
                             />
-                        ) : (
-                            <StyledTypography variant="caption" color="text.disabled">—</StyledTypography>
-                        )}
-                    </Box>
-
-                    <Box display="flex" alignItems="center" gap={0.5} color="text.secondary">
-                        <PersonAddAltIcon sx={{ fontSize: 13 }} />
-                        <ClientDate
-                            date={admin.createdAt}
-                            variant="caption"
-                            color="text.secondary"
-                            format={(d, locale) => smartDate({ date: d, locale })}
-                        />
+                        </Box>
                     </Box>
 
                     <Box
@@ -158,20 +166,16 @@ export default function AdminManagementItem({ admin }: { admin: AdminManagementD
                             gap: 0.5,
                             p: 0,
                             cursor: "pointer",
-                            color:
-                                admin.activeSessions > 0
-                                    ? "primary.main"
-                                    : "text.disabled",
+                            color: admin.activeSessions > 0 ? "primary.main" : "text.disabled",
                             typography: "caption",
                             fontWeight: admin.activeSessions > 0 ? 600 : 400,
                             "&:hover": { color: "primary.dark" },
                             transition: "color 0.15s",
+                            flexShrink: 0,
                         }}
                     >
                         <DevicesIcon sx={{ fontSize: 13 }} />
-                        {admin.activeSessions > 0
-                            ? `${admin.activeSessions}`
-                            : "0"}
+                        {admin.activeSessions}
                     </Box>
                 </Box>
 

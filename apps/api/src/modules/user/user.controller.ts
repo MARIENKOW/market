@@ -30,7 +30,6 @@ export class UserController {
     @Get(me.path)
     @Auth("USER")
     async me(@CurrentActor() actor: UserActor): Promise<UserDto> {
-        console.log('useruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruseruser');
         return this.user.me(actor.user);
     }
     @Put(theme.path)

@@ -29,7 +29,6 @@ export class AdminController {
     @Get(me.path)
     @Auth("ADMIN")
     async me(@CurrentActor() actor: AdminActor): Promise<AdminDto> {
-        console.log('adminadminadminadminadminadminadminadminadminadminadminadminadmin');
         return this.admin.me(actor.admin);
     }
     @Put(theme.path)

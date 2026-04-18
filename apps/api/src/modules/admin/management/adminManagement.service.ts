@@ -48,11 +48,21 @@ export class AdminManagementService {
         page: number,
         limit: number,
         order: string = "desc",
+        sortBy: string = "createdAt",
+        status: string = "all",
         query: string = "",
     ): Promise<PagedResult<AdminManagementDto>> {
         const q = query.trim();
+        const validSortBy = (["createdAt", "lastLoginAt", "lastSeenAt"] as const).includes(
+            sortBy as "createdAt" | "lastLoginAt" | "lastSeenAt",
+        )
+            ? (sortBy as "createdAt" | "lastLoginAt" | "lastSeenAt")
+            : "createdAt";
+
         const where: Prisma.AdminWhereInput = {
             role: "ADMIN",
+            ...(status === "active" && { status: "ACTIVE" }),
+            ...(status === "blocked" && { status: "BLOCKED" }),
             ...(q && {
                 OR: [
                     { email: { contains: q, mode: "insensitive" } },
@@ -65,7 +75,7 @@ export class AdminManagementService {
             this.prisma.admin.findMany({
                 where,
                 include,
-                orderBy: { createdAt: order === "asc" ? "asc" : "desc" },
+                orderBy: { [validSortBy]: order === "asc" ? "asc" : "desc" },
                 skip: (page - 1) * limit,
                 take: limit,
             }),

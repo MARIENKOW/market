@@ -204,14 +204,23 @@ export const ru = {
             admins: {
                 name: "Администраторы",
                 status: {
+                    all: "Все",
                     active: "Активен",
                     blocked: "Заблокирован",
+                },
+                filter: {
+                    status: "Статус",
+                    sortBy: "Сортировка по",
+                    createdAt: "Дата регистрации",
+                    lastLoginAt: "Дата входа",
+                    lastSeenAt: "Последняя активность",
                 },
                 empty: "Администраторов пока нет",
                 noteLabel: "Заметка",
                 notePlaceholder: "Информация о роли, задачах...",
                 lastSeen: "Онлайн {time}",
                 lastLogin: "Вход {time}",
+                joined: "Зарегистрирован {time}",
                 noSessions: "Нет активных сессий",
                 actions: {
                     block: "Заблокировать",

@@ -32,9 +32,11 @@ export class AdminManagementController {
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(12), ParseIntPipe) limit: number,
         @Query("order", new DefaultValuePipe("desc")) order: string,
+        @Query("sortBy", new DefaultValuePipe("createdAt")) sortBy: string,
+        @Query("status", new DefaultValuePipe("all")) status: string,
         @Query("query", new DefaultValuePipe("")) query: string,
     ): Promise<PagedResult<AdminManagementDto>> {
-        return this.service.getAll(page, limit, order, query);
+        return this.service.getAll(page, limit, order, sortBy, status, query);
     }
 
     @Patch(`:id/${block.path}`)

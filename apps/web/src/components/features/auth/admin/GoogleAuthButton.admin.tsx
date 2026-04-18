@@ -26,12 +26,6 @@ export default function GoogleAuthButtonAdmin({
     redirectTo?: string;
 }) {
     const [loading, setLoading] = useState<boolean>(false);
-    // useGoogleOneTapLogin({
-    //     onSuccess: (r) => {
-    //         console.log(r);  //credenital | clientId = undefined
-    //     },
-    //     onError: () => console.error("failed"),
-    // });
 
     const t = useTranslations();
     const router = useRouter();
