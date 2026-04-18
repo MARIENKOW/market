@@ -39,6 +39,7 @@ export const ROUTE = {
         forgotPasssword: { path: "forgot-password" },
         changePasssword: { path: "change-password" },
         admins: { path: "admins" },
+        users: { path: "users" },
         invitations: { path: "invitations" },
         invitation: { path: "invitation" },
     },

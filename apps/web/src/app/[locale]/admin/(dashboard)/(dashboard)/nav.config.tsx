@@ -3,6 +3,7 @@ import { FULL_PATH_ROUTE } from "@myorg/shared/route";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import PeopleIcon from "@mui/icons-material/People";
+import PersonIcon from "@mui/icons-material/Person";
 import { AdminDto } from "@myorg/shared/dto";
 
 export const NAV_GROUPS: (role: AdminDto["role"]) => NavGroup[] = (role) => [
@@ -22,10 +23,18 @@ export const NAV_GROUPS: (role: AdminDto["role"]) => NavGroup[] = (role) => [
             },
         ],
     },
-    ...(role === "SUPERADMIN"
-        ? [
-              {
-                  items: [
+    {
+        items: [
+            {
+                label: "pages.admin.users.name",
+                href: FULL_PATH_ROUTE.admin.users.path,
+                activeLink: {
+                    safe: [FULL_PATH_ROUTE.admin.users.path],
+                },
+                icon: <PersonIcon />,
+            },
+            ...(role === "SUPERADMIN"
+                ? [
                       {
                           label: "pages.admin.admins.name",
                           href: FULL_PATH_ROUTE.admin.admins.path,
@@ -42,8 +51,8 @@ export const NAV_GROUPS: (role: AdminDto["role"]) => NavGroup[] = (role) => [
                           },
                           icon: <MailOutlineIcon />,
                       },
-                  ],
-              },
-          ]
-        : []),
+                  ]
+                : []),
+        ],
+    },
 ];

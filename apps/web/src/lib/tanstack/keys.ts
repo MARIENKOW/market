@@ -3,6 +3,7 @@ import type {
     BlogParams,
     ImageParams,
     InvitationParams,
+    UserParams,
     VideoParams,
 } from "@/lib/tanstack/listDefaults";
 
@@ -41,4 +42,14 @@ export const adminKeys = {
 
 export const adminSessionKeys = {
     all: (adminId: string) => ["admin-sessions", adminId] as const,
+};
+
+export const userKeys = {
+    all: ["users"] as const,
+    lists: () => [...userKeys.all, "list"] as const,
+    list: (params: UserParams) => [...userKeys.lists(), params] as const,
+};
+
+export const userSessionKeys = {
+    all: (userId: string) => ["user-sessions", userId] as const,
 };

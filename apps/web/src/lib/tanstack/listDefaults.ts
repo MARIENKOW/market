@@ -54,6 +54,21 @@ export const defaultAdminParams: AdminParams = {
     query: "",
 };
 
+// --- Users ---
+export type UserParams = Pagination & {
+    order: "desc" | "asc";
+    sortBy: "createdAt" | "lastLoginAt" | "lastSeenAt";
+    status: "all" | "active" | "noactive" | "blocked";
+    query: string;
+};
+export const defaultUserParams: UserParams = {
+    page: 1,
+    order: "desc",
+    sortBy: "createdAt",
+    status: "all",
+    query: "",
+};
+
 // --- Video ---
 export type VideoParams = Pagination;
 export const defaultVideoParams: VideoParams = { page: 1 };

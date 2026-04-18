@@ -119,6 +119,13 @@ export const ENDPOINT = {
             note: { path: "note" },
             sessions: { path: "sessions" },
         },
+        users: {
+            path: "users",
+            block: { path: "block" },
+            activate: { path: "activate" },
+            note: { path: "note" },
+            sessions: { path: "sessions" },
+        },
         invitation: {
             path: "invitation",
             accept: { path: "accept" },

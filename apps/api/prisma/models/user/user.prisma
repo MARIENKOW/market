@@ -13,6 +13,7 @@ model User {
   passwordChangedAt    DateTime?
   lastSeenAt      DateTime?
   lastLoginAt     DateTime?
+  note            String?
 
   avatarId          String?   @unique 
   avatar Image? @relation(fields: [avatarId], references: [id], onDelete:SetNull)

@@ -11,3 +11,4 @@ export * from "./BlogDto";
 export * from "./AdminInvitationDto";
 export * from "./AdminInvitationAcceptDto";
 export * from "./AdminManagementDto";
+export * from "./UserManagementDto";

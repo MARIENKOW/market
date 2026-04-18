@@ -196,4 +196,17 @@ export class UserService {
     create(data: Prisma.UserCreateInput): Promise<User> {
         return this.prisma.user.create({ data });
     }
+
+    async deleteAccount(id: string): Promise<void> {
+        const user = await this.prisma.user.findUnique({ where: { id } });
+        if (!user) throw new NotFoundException();
+        if (user.avatarId) {
+            await this.image
+                .delete(user.avatarId)
+                .catch((e) =>
+                    this.logger.warn(`Failed to delete avatar on account deletion: ${user.avatarId}`, e),
+                );
+        }
+        await this.prisma.user.delete({ where: { id } });
+    }
 }

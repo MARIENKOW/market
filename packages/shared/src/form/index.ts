@@ -12,6 +12,7 @@ export * from "./schema/admin/ForgotPasswordAdminSchema";
 export * from "./schema/admin/LoginAdminSchema";
 export * from "./schema/admin/AdminInvitationSchema";
 export * from "./schema/admin/AdminManagementSchema";
+export * from "./schema/admin/UserManagementSchema";
 export * from "./schema/admin/RegisterByInvitationAdminSchema";
 export * from "./schema/user/AvatarUserSchema";
 export * from "./schema/admin/AvatarAdminSchema";
