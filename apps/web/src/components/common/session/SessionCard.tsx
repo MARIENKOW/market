@@ -1,16 +1,15 @@
 "use client";
-import { Box, Typography, Chip, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { AccessTime, Shield } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { StyledTypography } from "@/components/ui/StyledTypography";
-import { RevokeSessionButton } from "@/components/features/auth/session/RevokeSessionButton";
 import { Window, Apple, Android, HelpOutline } from "@mui/icons-material";
 import { LaptopMac, PhoneIphone, TabletMac } from "@mui/icons-material";
 import { SvgIconProps } from "@mui/material";
 import { SessionUserViewDto, SessionViewDto } from "@myorg/shared/dto";
-import { FetchCustomReturn } from "@/utils/api";
 import { StyledChip } from "@/components/ui/StyledChip";
 import { ClientDate } from "@/components/common/ClientDate";
+import { ReactNode } from "react";
 
 interface DeviceIconProps extends SvgIconProps {
     type: SessionUserViewDto["device"]["type"];
@@ -50,17 +49,17 @@ export const OsIcon = ({ icon, size = 20 }: OsIconProps) => {
 
 interface SessionCardProps<T extends SessionViewDto> {
     session: T;
-    onRevoke?: (id: string) => FetchCustomReturn<void>;
+    action?: ReactNode;
 }
 
 export const SessionCard = <T extends SessionViewDto>({
     session,
-    onRevoke,
+    action,
 }: SessionCardProps<T>) => {
     const theme = useTheme();
     const v = theme.vars!;
     const t = useTranslations("components.sessionList");
-    const { device, location, isCurrent, lastUsedAt, id } = session;
+    const { device, location, isCurrent, lastUsedAt } = session;
     return (
         <Box
             sx={{
@@ -234,21 +233,7 @@ export const SessionCard = <T extends SessionViewDto>({
                 </Box>
             </Box>
 
-            {!isCurrent && onRevoke && (
-                <>
-                    <RevokeSessionButton
-                        onRevoke={() => onRevoke(id)}
-                        fullWidth
-                        variant="outlined"
-                        sx={{ display: { xs: "flex", sm: "none" } }}
-                    />
-                    <RevokeSessionButton
-                        onRevoke={() => onRevoke(id)}
-                        variant="text"
-                        sx={{ display: { xs: "none", sm: "flex" } }}
-                    />
-                </>
-            )}
+            {!isCurrent && action}
         </Box>
     );
 };

@@ -16,6 +16,7 @@ import { BlogImageModule } from "@/modules/blog/image/blogImage.module";
 import { BlogVideoModule } from "@/modules/blog/video/blogVideo.module";
 import { FileModule } from "@/infrastructure/file/file.module";
 import { AdminInvitationModule } from "@/modules/admin/invitation/adminInvitation.module";
+import { AdminManagementModule } from "@/modules/admin/management/adminManagement.module";
 @Module({
     imports: [
         CoreModule,
@@ -26,6 +27,7 @@ import { AdminInvitationModule } from "@/modules/admin/invitation/adminInvitatio
         RequestContextModule,
         FileModule,
         AdminInvitationModule,
+        AdminManagementModule,
         BlogImageModule,
         BlogVideoModule,
         BlogModule,

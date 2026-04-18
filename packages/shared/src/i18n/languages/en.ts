@@ -195,6 +195,41 @@ export const en: MessageStructure = {
                     name: "Sessions",
                 },
             },
+            admins: {
+                name: "Administrators",
+                status: {
+                    active: "Active",
+                    blocked: "Blocked",
+                },
+                empty: "No administrators yet",
+                noteLabel: "Note",
+                notePlaceholder: "Role, responsibilities...",
+                lastSeen: "Online {time}",
+                noSessions: "No active sessions",
+                actions: {
+                    block: "Block",
+                    unblock: "Unblock",
+                    delete: "Delete",
+                    sessions: "Sessions",
+                    updateNote: "Save note",
+                    addNote: "Add note",
+                    deleteSession: "End session",
+                    deleteAllSessions: "End all sessions",
+                },
+                feedback: {
+                    blocked: "Administrator blocked",
+                    unblocked: "Block removed",
+                    deleted: "Administrator deleted",
+                    noteUpdated: "Note updated",
+                    sessionDeleted: "Session ended",
+                    allSessionsDeleted: "All sessions ended",
+                },
+                sessions: {
+                    title: "Sessions",
+                    empty: "No active sessions",
+                    deleteAll: "End all",
+                },
+            },
             invitation: {
                 name: "Invitations",
                 register: {

@@ -63,7 +63,6 @@ export function useRevokeInvitation() {
         onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
-            sync();
             snackbarSuccess(t("pages.admin.invitation.feedback.revoked"));
         },
         onError: (error) => errorHandler({ error, t }),
@@ -80,7 +79,6 @@ export function useUnrevokeInvitation() {
         onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
-            sync();
             snackbarSuccess(t("pages.admin.invitation.feedback.unrevoked"));
         },
         onError: (error) => errorHandler({ error, t }),
@@ -97,7 +95,6 @@ export function useResendInvitation() {
         onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
-            sync();
             snackbarSuccess(
                 t("pages.admin.invitation.feedback.resent", { email: updated.email }),
             );
@@ -116,7 +113,6 @@ export function useDeleteInvitation() {
         onMutate: () => cancel(),
         onSuccess: (_, invId) => {
             remove(invId);
-            sync();
             snackbarSuccess(t("pages.admin.invitation.feedback.deleted"));
         },
         onError: (error) => errorHandler({ error, t }),

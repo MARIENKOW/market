@@ -200,6 +200,41 @@ export const ru = {
                     name: "Сессии",
                 },
             },
+            admins: {
+                name: "Администраторы",
+                status: {
+                    active: "Активен",
+                    blocked: "Заблокирован",
+                },
+                empty: "Администраторов пока нет",
+                noteLabel: "Заметка",
+                notePlaceholder: "Информация о роли, задачах...",
+                lastSeen: "Онлайн {time}",
+                noSessions: "Нет активных сессий",
+                actions: {
+                    block: "Заблокировать",
+                    unblock: "Разблокировать",
+                    delete: "Удалить",
+                    sessions: "Сессии",
+                    updateNote: "Сохранить заметку",
+                    addNote: "Добавить заметку",
+                    deleteSession: "Завершить сессию",
+                    deleteAllSessions: "Завершить все сессии",
+                },
+                feedback: {
+                    blocked: "Администратор заблокирован",
+                    unblocked: "Блокировка снята",
+                    deleted: "Администратор удалён",
+                    noteUpdated: "Заметка обновлена",
+                    sessionDeleted: "Сессия завершена",
+                    allSessionsDeleted: "Все сессии завершены",
+                },
+                sessions: {
+                    title: "Сессии",
+                    empty: "Активных сессий нет",
+                    deleteAll: "Завершить все",
+                },
+            },
             invitation: {
                 name: "Приглашения",
                 register: {

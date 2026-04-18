@@ -1,5 +1,3 @@
-import { check } from "zod";
-
 // packages/shared/src/routing/routes.ts
 export const ENDPOINT = {
     path: "",
@@ -113,6 +111,13 @@ export const ENDPOINT = {
             cancel: {
                 path: "cancel",
             },
+        },
+        admins: {
+            path: "admins",
+            block: { path: "block" },
+            unblock: { path: "unblock" },
+            note: { path: "note" },
+            sessions: { path: "sessions" },
         },
         invitation: {
             path: "invitation",

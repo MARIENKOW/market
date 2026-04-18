@@ -39,6 +39,17 @@ export const defaultInvitationParams: InvitationParams = {
     query: "",
 };
 
+// --- Admins ---
+export type AdminParams = Pagination & {
+    order: "desc" | "asc";
+    query: string;
+};
+export const defaultAdminParams: AdminParams = {
+    page: 1,
+    order: "desc",
+    query: "",
+};
+
 // --- Video ---
 export type VideoParams = Pagination;
 export const defaultVideoParams: VideoParams = { page: 1 };

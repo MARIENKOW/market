@@ -184,4 +184,15 @@ export class AdminService {
     create(data: Prisma.AdminCreateInput): Promise<Admin> {
         return this.prisma.admin.create({ data });
     }
+
+    async deleteAccount(id: string): Promise<void> {
+        const admin = await this.prisma.admin.findUnique({ where: { id } });
+        if (!admin) throw new NotFoundException();
+        if (admin.avatarId) {
+            await this.image.delete(admin.avatarId).catch((e) =>
+                this.logger.warn(`Failed to delete avatar on account deletion: ${admin.avatarId}`, e),
+            );
+        }
+        await this.prisma.admin.delete({ where: { id } });
+    }
 }

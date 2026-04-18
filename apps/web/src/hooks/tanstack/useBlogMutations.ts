@@ -48,7 +48,6 @@ export function useSetMainBlog() {
         mutationFn: (blogId: string) => service.setMain(blogId).then((r) => r.data),
         onMutate: () => cancel(),
         onSuccess: (updated) => {
-            sync();
             snackbarSuccess(
                 t(updated.isMain
                     ? "pages.admin.blog.feedback.setMain"
@@ -70,7 +69,6 @@ export function useToggleImportantBlog() {
         onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
-            sync();
             snackbarSuccess(
                 t(updated.isImportant
                     ? "pages.admin.blog.feedback.setImportant"
@@ -92,7 +90,6 @@ export function useToggleShortBlog() {
         onMutate: () => cancel(),
         onSuccess: (updated) => {
             update(() => updated, updated.id);
-            sync();
             snackbarSuccess(
                 t(updated.isShort
                     ? "pages.admin.blog.feedback.setShort"
@@ -113,7 +110,6 @@ export function useDeleteBlog() {
         mutationFn: (blogId: string) => service.delete(blogId),
         onMutate: () => cancel(),
         onSuccess: () => {
-            sync();
             snackbarSuccess(t("pages.admin.blog.feedback.delete"));
         },
         onError: (error) => errorHandler({ error, t }),
@@ -129,7 +125,6 @@ export function useDeleteAllBlogs() {
         mutationFn: () => service.deleteAll(),
         onMutate: () => cancel(),
         onSuccess: () => {
-            sync();
             snackbarSuccess(t("pages.admin.blog.feedback.deleteAll"));
         },
         onError: (error) => errorHandler({ error, t }),

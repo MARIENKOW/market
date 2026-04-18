@@ -10,3 +10,4 @@ export * from "./VideoDto";
 export * from "./BlogDto";
 export * from "./AdminInvitationDto";
 export * from "./AdminInvitationAcceptDto";
+export * from "./AdminManagementDto";
