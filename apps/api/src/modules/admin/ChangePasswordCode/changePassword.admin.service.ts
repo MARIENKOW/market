@@ -88,11 +88,10 @@ export class ChangePasswordAdminService {
         );
     }
 
-    private calcPasswordChangeCooldown(admin: Admin): { time: number } | null {
+    private calcPasswordChangeCooldown(admin: Admin): { until: string } | null {
         const availableAt = this.getPasswordChangeAvailableAt(admin);
         if (!availableAt) return null;
-        const remaining = availableAt.getTime() - Date.now();
-        return remaining > 0 ? { time: remaining } : null;
+        return availableAt > new Date() ? { until: availableAt.toISOString() } : null;
     }
 
     private checkPasswordChangeCooldown(admin: Admin): void {
@@ -146,11 +145,7 @@ export class ChangePasswordAdminService {
                 withoutPassword,
                 pending: null,
                 cooldown: null,
-                blocked: {
-                    time:
-                        this.getBlockedUntil(token.blockedAt).getTime() -
-                        Date.now(),
-                },
+                blocked: { until: this.getBlockedUntil(token.blockedAt).toISOString() },
             };
         }
 
@@ -159,8 +154,8 @@ export class ChangePasswordAdminService {
             withoutPassword,
             pending: {
                 email: admin.email,
-                time: token.expiresAt.getTime() - Date.now(),
-                cooldown: this.calcResendCooldown(token),
+                expiresAt: token.expiresAt.toISOString(),
+                cooldownUntil: this.calcResendCooldown(token),
             },
             blocked: null,
             cooldown: null,
@@ -205,11 +200,11 @@ export class ChangePasswordAdminService {
 
         return {
             email: admin.email,
-            time: this.cfg.expires,
-            cooldown:
+            expiresAt: this.makeExpiresAt().toISOString(),
+            cooldownUntil:
                 token.resendCount >= this.cfg.maxResends
-                    ? false
-                    : this.cfg.resendCooldown,
+                    ? null
+                    : new Date(Date.now() + this.cfg.resendCooldown).toISOString(),
         };
     }
 
@@ -234,11 +229,11 @@ export class ChangePasswordAdminService {
 
         return {
             email: admin.email,
-            time: this.cfg.expires,
-            cooldown:
+            expiresAt: this.makeExpiresAt().toISOString(),
+            cooldownUntil:
                 token.resendCount >= this.cfg.maxResends
-                    ? false
-                    : this.cfg.resendCooldown,
+                    ? null
+                    : new Date(Date.now() + this.cfg.resendCooldown).toISOString(),
         };
     }
 
@@ -414,11 +409,11 @@ export class ChangePasswordAdminService {
 
         return {
             email: admin.email,
-            time: this.cfg.expires,
-            cooldown:
+            expiresAt: this.makeExpiresAt().toISOString(),
+            cooldownUntil:
                 token.resendCount + 1 >= this.cfg.maxResends
-                    ? false
-                    : this.cfg.resendCooldown,
+                    ? null
+                    : new Date(Date.now() + this.cfg.resendCooldown).toISOString(),
         };
     }
 
@@ -453,8 +448,8 @@ export class ChangePasswordAdminService {
             return {
                 blocked: null,
                 pending: {
-                    time: token.expiresAt.getTime() - Date.now(),
-                    cooldown: this.calcResendCooldown(token),
+                    expiresAt: token.expiresAt.toISOString(),
+                    cooldownUntil: this.calcResendCooldown(token),
                 },
             };
         }
@@ -464,15 +459,11 @@ export class ChangePasswordAdminService {
 
     // ── Private: токен ────────────────────────────────────────────────────────
 
-    private calcResendCooldown(token: ChangePasswordCodeAdmin): number | false {
-        if (token.resendCount >= this.cfg.maxResends) return false;
+    private calcResendCooldown(token: ChangePasswordCodeAdmin): string | null {
+        if (token.resendCount >= this.cfg.maxResends) return null;
 
-        const remainingMs =
-            (token.lastResendAt?.getTime() ?? 0) +
-            this.cfg.resendCooldown -
-            Date.now();
-
-        return Math.max(0, Math.ceil(remainingMs));
+        const cooldownEnd = (token.lastResendAt?.getTime() ?? 0) + this.cfg.resendCooldown;
+        return cooldownEnd > Date.now() ? new Date(cooldownEnd).toISOString() : null;
     }
 
     private async createToken(

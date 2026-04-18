@@ -1,12 +1,12 @@
 export type MailSendSuccess = {
     email: string;
-    time: number;
-    cooldown: number | false;
+    expiresAt: string;
+    cooldownUntil: string | null;
 };
 
 export type ChangePasswordStatus = {
     withoutPassword: boolean;
     pending: MailSendSuccess | null;
-    blocked: { time: number } | null;
-    cooldown: { time: number } | null;
+    blocked: { until: string } | null;
+    cooldown: { until: string } | null;
 };

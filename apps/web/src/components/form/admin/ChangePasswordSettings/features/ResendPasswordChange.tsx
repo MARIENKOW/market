@@ -1,7 +1,7 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { Dispatch, SetStateAction, useState } from "react";
+import { useTranslations } from "next-intl";
 import { StyledButton } from "@/components/ui/StyledButton";
 import { errorHandler } from "@/helpers/error/error.handler.helper";
 import {
@@ -9,12 +9,12 @@ import {
     ErrorsWithMessages,
     MailSendSuccess,
 } from "@myorg/shared/dto";
-import { formatDuration } from "@myorg/shared/utils";
+import { useCountdown } from "@/hooks/useCountdown";
 import ChangePasswordAdminService from "@/services/admin/changePassword.admin.service";
 import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
 
 interface Props {
-    initialCooldown: number | false;
+    cooldownUntil: string | null;
     onCancel: () => void;
     setMailSendSuccess: Dispatch<SetStateAction<MailSendSuccess>>;
 }
@@ -22,80 +22,57 @@ interface Props {
 const { resend } = new ChangePasswordAdminService($apiAdminClient);
 
 export default function ResendPasswordChange({
-    initialCooldown,
+    cooldownUntil: initialCooldownUntil,
     onCancel,
     setMailSendSuccess,
 }: Props) {
     const t = useTranslations();
-    const [cooldown, setCooldown] = useState<number | false>(initialCooldown);
-    const [resending, setResending] = useState(false);
-    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-    const locale = useLocale();
-
-    const startTimer = (seconds: number | false) => {
-        clearInterval(timerRef.current!);
-        setCooldown(seconds);
-        if (seconds === false || seconds <= 0) return;
-
-        timerRef.current = setInterval(() => {
-            setCooldown((s) => {
-                if (s === false || s <= 1) {
-                    clearInterval(timerRef.current!);
-                    return 0;
-                }
-                return s - 1000;
-            });
-        }, 1000);
-    };
-
-    useEffect(() => {
-        startTimer(cooldown);
-        return () => clearInterval(timerRef.current!);
-    }, []);
+    const [cooldownUntil, setCooldownUntil] = useState<string | null>(
+        initialCooldownUntil,
+    );
+    const [resending, setResending] = useState<boolean>(false);
+    const { remaining, label } = useCountdown(cooldownUntil);
 
     const handleClick = async () => {
         setResending(true);
         try {
             const body = await resend();
             setMailSendSuccess(body.data);
-            startTimer(body.data.cooldown);
+            setCooldownUntil(body.data.cooldownUntil);
+            setResending(false);
         } catch (error) {
             errorHandler({
                 error,
                 t,
                 fallback: {
-                    notfound: {
-                        callback: onCancel,
-                    },
+                    notfound: { callback: onCancel },
                     validation: {
                         callback() {
-                            const { data } = error as ApiErrorResponse; // [!] const
-                            const { root } = data as ErrorsWithMessages; // [!] const
+                            const { data } = error as ApiErrorResponse;
+                            const { root } = data as ErrorsWithMessages;
                             if (root?.[0]?.data?.return) onCancel();
                         },
                     },
                 },
             });
-        } finally {
             setResending(false);
+        } finally {
         }
     };
-
-    if (cooldown === false) return null;
 
     return (
         <StyledButton
             variant="text"
             size="small"
-            disabled={cooldown > 0}
+            disabled={remaining > 0}
             onClick={handleClick}
             loading={resending}
         >
-            {cooldown <= 0
-                ? t("features.changePassword.resend.name")
-                : t("features.changePassword.resend.cooldown", {
-                      time: formatDuration(cooldown, locale),
-                  })}
+            {remaining > 0
+                ? t("features.changePassword.resend.cooldown", {
+                      time: label,
+                  })
+                : t("features.changePassword.resend.name")}
         </StyledButton>
     );
 }

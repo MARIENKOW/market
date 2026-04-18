@@ -23,8 +23,8 @@ export default function ChangePasswordForm({
     const [mailSendSuccess, setMailSendSuccess] = useState<MailSendSuccess>(
         initialMailSendSuccess ?? {
             email: "",
-            time: 0,
-            cooldown: false,
+            expiresAt: new Date(0).toISOString(),
+            cooldownUntil: null,
         },
     );
 

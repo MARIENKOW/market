@@ -20,8 +20,8 @@ import {
     CHANGE_PASSWORD_OTP_LENGTH,
 } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
-import { I18nContext, I18nService } from "nestjs-i18n";
-import { AvailableLanguage, MessageStructure } from "@myorg/shared/i18n";
+import { I18nService } from "nestjs-i18n";
+import { MessageStructure } from "@myorg/shared/i18n";
 import { ChangePasswordStatus, MailSendSuccess } from "@myorg/shared/dto";
 import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
 
@@ -88,11 +88,10 @@ export class ChangePasswordUserService {
         );
     }
 
-    private calcPasswordChangeCooldown(user: User): { time: number } | null {
+    private calcPasswordChangeCooldown(user: User): { until: string } | null {
         const availableAt = this.getPasswordChangeAvailableAt(user);
         if (!availableAt) return null;
-        const remaining = availableAt.getTime() - Date.now();
-        return remaining > 0 ? { time: remaining } : null;
+        return availableAt > new Date() ? { until: availableAt.toISOString() } : null;
     }
 
     private checkPasswordChangeCooldown(user: User): void {
@@ -146,11 +145,7 @@ export class ChangePasswordUserService {
                 withoutPassword,
                 pending: null,
                 cooldown: null,
-                blocked: {
-                    time:
-                        this.getBlockedUntil(token.blockedAt).getTime() -
-                        Date.now(),
-                },
+                blocked: { until: this.getBlockedUntil(token.blockedAt).toISOString() },
             };
         }
 
@@ -159,8 +154,8 @@ export class ChangePasswordUserService {
             withoutPassword,
             pending: {
                 email: user.email,
-                time: token.expiresAt.getTime() - Date.now(),
-                cooldown: this.calcResendCooldown(token),
+                expiresAt: token.expiresAt.toISOString(),
+                cooldownUntil: this.calcResendCooldown(token),
             },
             blocked: null,
             cooldown: null,
@@ -201,11 +196,11 @@ export class ChangePasswordUserService {
 
         return {
             email: user.email,
-            time: this.cfg.expires,
-            cooldown:
+            expiresAt: this.makeExpiresAt().toISOString(),
+            cooldownUntil:
                 token.resendCount >= this.cfg.maxResends
-                    ? false
-                    : this.cfg.resendCooldown,
+                    ? null
+                    : new Date(Date.now() + this.cfg.resendCooldown).toISOString(),
         };
     }
 
@@ -230,11 +225,11 @@ export class ChangePasswordUserService {
 
         return {
             email: user.email,
-            time: this.cfg.expires,
-            cooldown:
+            expiresAt: this.makeExpiresAt().toISOString(),
+            cooldownUntil:
                 token.resendCount >= this.cfg.maxResends
-                    ? false
-                    : this.cfg.resendCooldown,
+                    ? null
+                    : new Date(Date.now() + this.cfg.resendCooldown).toISOString(),
         };
     }
 
@@ -410,11 +405,11 @@ export class ChangePasswordUserService {
 
         return {
             email: user.email,
-            time: this.cfg.expires,
-            cooldown:
+            expiresAt: this.makeExpiresAt().toISOString(),
+            cooldownUntil:
                 token.resendCount + 1 >= this.cfg.maxResends
-                    ? false
-                    : this.cfg.resendCooldown,
+                    ? null
+                    : new Date(Date.now() + this.cfg.resendCooldown).toISOString(),
         };
     }
 
@@ -449,8 +444,8 @@ export class ChangePasswordUserService {
             return {
                 blocked: null,
                 pending: {
-                    time: token.expiresAt.getTime() - Date.now(),
-                    cooldown: this.calcResendCooldown(token),
+                    expiresAt: token.expiresAt.toISOString(),
+                    cooldownUntil: this.calcResendCooldown(token),
                 },
             };
         }
@@ -460,15 +455,11 @@ export class ChangePasswordUserService {
 
     // ── Private: токен ────────────────────────────────────────────────────────
 
-    private calcResendCooldown(token: ChangePasswordCodeUser): number | false {
-        if (token.resendCount >= this.cfg.maxResends) return false;
+    private calcResendCooldown(token: ChangePasswordCodeUser): string | null {
+        if (token.resendCount >= this.cfg.maxResends) return null;
 
-        const remainingMs =
-            (token.lastResendAt?.getTime() ?? 0) +
-            this.cfg.resendCooldown -
-            Date.now();
-
-        return Math.max(0, Math.ceil(remainingMs));
+        const cooldownEnd = (token.lastResendAt?.getTime() ?? 0) + this.cfg.resendCooldown;
+        return cooldownEnd > Date.now() ? new Date(cooldownEnd).toISOString() : null;
     }
 
     private async createToken(

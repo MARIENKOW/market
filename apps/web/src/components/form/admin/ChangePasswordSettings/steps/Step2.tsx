@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
 import { MailOutline } from "@mui/icons-material";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Dispatch, SetStateAction } from "react";
 
 import FormProvider from "@/components/wrappers/form/FormProvider";
@@ -31,7 +31,7 @@ import ChangePasswordAdminService from "@/services/admin/changePassword.admin.se
 import { $apiAdminClient } from "@/utils/api/admin/fetch.admin.client";
 import ResendPasswordChange from "@/components/form/admin/ChangePasswordSettings/features/ResendPasswordChange";
 import CancelPasswordChange from "@/components/form/admin/ChangePasswordSettings/features/CancelPasswordChange";
-import { formatDuration } from "@myorg/shared/utils";
+import { useCountdown } from "@/hooks/useCountdown";
 
 interface Props {
     mailSendSuccess: MailSendSuccess;
@@ -47,8 +47,8 @@ export default function Step2({
     onCancel,
 }: Props) {
     const t = useTranslations();
-    const locale = useLocale();
     const router = useRouter();
+    const { label: expiresLabel } = useCountdown(mailSendSuccess.expiresAt);
 
     const form = useForm<ChangePasswordCodeAdminDtoInput>({
         resolver: zodResolver(ChangePasswordCodeAdminSchema),
@@ -97,7 +97,7 @@ export default function Step2({
                     >
                         {t("features.changePassword.hint", {
                             email: mailSendSuccess.email,
-                            time: formatDuration(mailSendSuccess.time, locale),
+                            time: expiresLabel,
                         })}
                     </StyledAlert>
 
@@ -116,7 +116,7 @@ export default function Step2({
                             gap={1}
                         >
                             <ResendPasswordChange
-                                initialCooldown={mailSendSuccess.cooldown}
+                                cooldownUntil={mailSendSuccess.cooldownUntil}
                                 onCancel={onCancel}
                                 setMailSendSuccess={setMailSendSuccess}
                             />
