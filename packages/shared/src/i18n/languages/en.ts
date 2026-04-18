@@ -120,6 +120,7 @@ export const en: MessageStructure = {
                 },
                 errors: {
                     notActive: "Account is not activated.",
+                    blocked: "Your account has been blocked.",
                     passwordNotFound: `Password not set! Click: "{btn}"`,
                     sendMail: "Account is not activated. Send activation email",
                     expire: "Account is not activated. Activation link expired. Send a new email",
@@ -444,6 +445,7 @@ export const en: MessageStructure = {
             error: {
                 alreadySend: "Activation email already sent. Valid for: {time}",
                 alreadyActive: "User is already activated",
+                blocked: "Your account has been blocked.",
             },
             success: {
                 sendSuccess: "Activation email sent. Valid for: {time}",

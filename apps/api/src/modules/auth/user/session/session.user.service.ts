@@ -101,6 +101,9 @@ export class SessionUserService {
         const sessionData = await this.findById(payload.sessionId);
         if (!sessionData) throw new UnauthorizedException();
 
+        const user = await this.prisma.user.findUnique({ where: { id: sessionData.userId } });
+        if (!user || user.status !== "ACTIVE") throw new UnauthorizedException();
+
         // Проверяем текущий токен
         const isValid = this.hash.verifySha256(
             refreshTokenUser,

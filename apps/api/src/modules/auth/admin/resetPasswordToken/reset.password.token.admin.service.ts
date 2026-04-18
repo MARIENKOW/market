@@ -6,7 +6,6 @@ import { AdminService } from "@/modules/admin/admin.service";
 import { ValidationException } from "@/common/exception/validation.exception";
 import { I18nService } from "nestjs-i18n";
 import { MessageStructure } from "@myorg/shared/i18n";
-import { MailerService } from "@/infrastructure/mailer/mailer.service";
 import { HashService } from "@/infrastructure/hash/hash.service";
 import { JwtService } from "@nestjs/jwt";
 import { env } from "@/config";
@@ -18,7 +17,6 @@ export type RememberPasswordTokenAdminPayload = {
 export class ResetPasswordTokenAdminService {
     constructor(
         private prisma: PrismaService,
-        private mailerService: MailerService,
         private admin: AdminService,
         private hash: HashService,
         private jwt: JwtService,
@@ -72,7 +70,7 @@ export class ResetPasswordTokenAdminService {
             throw new NotFoundException();
         }
         const adminData = await this.admin.findById(payload.adminId);
-        if (!adminData) throw new NotFoundException();
+        if (!adminData || adminData.status === "BLOCKED") throw new NotFoundException();
         const resetPasswordToken = await this.findByAdminId(adminData.id);
         if (!resetPasswordToken) throw new NotFoundException();
         const isValid = this.hash.verifySha256(

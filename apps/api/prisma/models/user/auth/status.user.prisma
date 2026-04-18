@@ -1,4 +1,5 @@
 enum StatusUser {
   ACTIVE
   NOACTIVE
+  BLOCKED
 }

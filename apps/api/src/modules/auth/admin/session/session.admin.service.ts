@@ -103,6 +103,9 @@ export class SessionAdminService {
         const sessionData = await this.findById(payload.sessionId);
         if (!sessionData) throw new UnauthorizedException();
 
+        const admin = await this.prisma.admin.findUnique({ where: { id: sessionData.adminId } });
+        if (!admin || admin.status !== "ACTIVE") throw new UnauthorizedException();
+
         // Проверяем текущий токен
         const isValid = this.hash.verifySha256(
             refreshTokenAdmin,

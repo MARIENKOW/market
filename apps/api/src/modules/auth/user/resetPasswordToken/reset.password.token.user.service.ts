@@ -97,7 +97,7 @@ export class ResetPasswordTokenUserService {
             throw new NotFoundException();
         }
         const userData = await this.user.findById(payload.userId);
-        if (!userData) throw new NotFoundException();
+        if (!userData || userData.status === "BLOCKED") throw new NotFoundException();
         const resetPasswordToken = await this.findByUserId(userData.id);
         if (!resetPasswordToken) throw new NotFoundException();
         const isValid = this.hash.verifySha256(

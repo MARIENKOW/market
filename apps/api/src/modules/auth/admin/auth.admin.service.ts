@@ -80,18 +80,11 @@ export class AuthAdminService {
             });
         }
 
-        // if (admin.status !== "ACTIVE") {
-        //     throw new ValidationException<AdminLoginDtoOutput>({
-        //         root: [
-        //             {
-        //                 message: this.i18n.t(
-        //                     "pages.login.feedback.errors.blocked",
-        //                 ),
-        //                 type: "error",
-        //             },
-        //         ],
-        //     });
-        // }
+        if (admin.status === "BLOCKED") {
+            throw new ValidationException<LoginAdminDtoOutput>({
+                root: [{ message: this.i18n.t("pages.login.feedback.errors.blocked"), type: "error" }],
+            });
+        }
 
         return this.session.create({ adminId: admin.id });
     }
@@ -119,18 +112,12 @@ export class AuthAdminService {
         const admin = await this.admin.findByEmail(payload.email);
         if (!admin) throw new NotFoundException();
 
-        // if (admin.status !== "ACTIVE") {
-        //     throw new ValidationException({
-        //         root: [
-        //             {
-        //                 message: this.i18n.t(
-        //                     "pages.login.feedback.errors.blocked",
-        //                 ),
-        //                 type: "error",
-        //             },
-        //         ],
-        //     });
-        // }
+        if (admin.status === "BLOCKED") {
+            throw new ValidationException({
+                root: [{ message: this.i18n.t("pages.login.feedback.errors.blocked"), type: "error" }],
+            });
+        }
+
         if (payload.picture && !admin.avatarId) {
             await this.admin.saveOauthImage({
                 adminId: admin.id,
@@ -159,6 +146,12 @@ export class AuthAdminService {
         if (!admin) {
             throw new ValidationException<ForgotPasswordAdminDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
+            });
+        }
+
+        if (admin.status === "BLOCKED") {
+            throw new ValidationException<ForgotPasswordAdminDtoOutput>({
+                root: [{ message: this.i18n.t("pages.login.feedback.errors.blocked"), type: "error" }],
             });
         }
 
@@ -219,7 +212,7 @@ export class AuthAdminService {
         }
 
         const admin = await this.admin.findById(payload.adminId);
-        if (!admin) throw new NotFoundException();
+        if (!admin || admin.status === "BLOCKED") throw new NotFoundException();
 
         const tokenData = await this.resetToken.findByAdminId(admin.id);
         if (!tokenData) throw new NotFoundException();

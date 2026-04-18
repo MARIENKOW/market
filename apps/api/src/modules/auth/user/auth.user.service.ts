@@ -112,6 +112,19 @@ export class AuthUserService {
             });
         }
 
+        if (user.status === "BLOCKED") {
+            throw new ValidationException<LoginUserDtoOutput>({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.login.feedback.errors.blocked",
+                        ),
+                        type: "error",
+                    },
+                ],
+            });
+        }
+
         if (user.status === "NOACTIVE") {
             await this.throwActivationError(user.id);
         }
@@ -149,6 +162,19 @@ export class AuthUserService {
             });
         }
 
+        if (user.status === "BLOCKED") {
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t(
+                            "pages.login.feedback.errors.blocked",
+                        ),
+                        type: "error",
+                    },
+                ],
+            });
+        }
+
         if (user.status !== "ACTIVE") {
             await this.user.activate(user.id);
         }
@@ -175,6 +201,17 @@ export class AuthUserService {
 
         const user = await this.user.findByEmail(email);
         if (!user) throw new NotFoundException();
+
+        if (user.status === "BLOCKED") {
+            throw new ValidationException({
+                root: [
+                    {
+                        message: this.i18n.t("features.activate.error.blocked"),
+                        type: "error",
+                    },
+                ],
+            });
+        }
 
         if (user.status === "ACTIVE") {
             throw new ValidationException({
@@ -230,7 +267,7 @@ export class AuthUserService {
         }
 
         const user = await this.user.findById(payload.userId);
-        if (!user || user.status === "ACTIVE") throw new NotFoundException();
+        if (!user || user.status !== "NOACTIVE") throw new NotFoundException();
 
         const tokenData = await this.activateToken.findByUserId(user.id);
         if (!tokenData) throw new NotFoundException();
@@ -264,6 +301,12 @@ export class AuthUserService {
         if (!user) {
             throw new ValidationException<ForgotPasswordUserDtoOutput>({
                 fields: { email: ["form.email.notFound"] },
+            });
+        }
+
+        if (user.status === "BLOCKED") {
+            throw new ValidationException<ForgotPasswordUserDtoOutput>({
+                root: [{ message: this.i18n.t("pages.login.feedback.errors.blocked"), type: "error" }],
             });
         }
 
@@ -324,7 +367,7 @@ export class AuthUserService {
         }
 
         const user = await this.user.findById(payload.userId);
-        if (!user) throw new NotFoundException();
+        if (!user || user.status === "BLOCKED") throw new NotFoundException();
 
         const tokenData = await this.resetToken.findByUserId(user.id);
         if (!tokenData) throw new NotFoundException();
