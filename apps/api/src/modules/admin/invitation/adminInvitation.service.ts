@@ -13,7 +13,6 @@ import {
     CreateAdminInvitationDtoOutput,
     UpdateNoteAdminInvitationDtoOutput,
 } from "@myorg/shared/form";
-import i18nFormatDuration from "@/lib/i18n/i18nFormatDuration";
 
 const TTL = 60 * 60 * 1000; // 7 дней
 
@@ -47,10 +46,6 @@ export class AdminInvitationService {
             isRevoked,
             expiresAt: expiresAt.toISOString(),
             revokedAt: inv.revokedAt ? inv.revokedAt.toISOString() : null,
-            durationLabel:
-                !isRevoked && !isExpired
-                    ? i18nFormatDuration(expiresAt.getTime() - Date.now())
-                    : null,
         };
     }
 

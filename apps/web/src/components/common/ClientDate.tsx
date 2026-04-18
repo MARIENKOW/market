@@ -20,7 +20,22 @@ const defaultFormat = (date: Date, locale: AvailableLanguage) =>
 
 const defaultTooltipFormat = (date: Date) => date.toLocaleString();
 
-const noop = () => () => {};
+const listeners = new Set<() => void>();
+let timer: ReturnType<typeof setInterval> | null = null;
+
+function subscribeTick(cb: () => void) {
+    listeners.add(cb);
+    if (!timer) {
+        timer = setInterval(() => listeners.forEach((l) => l()), 1_000);
+    }
+    return () => {
+        listeners.delete(cb);
+        if (listeners.size === 0 && timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    };
+}
 
 export const ClientDate = ({
     date,
@@ -33,13 +48,13 @@ export const ClientDate = ({
     const d = new Date(date);
 
     const display = useSyncExternalStore(
-        noop,
+        subscribeTick,
         () => format(d, locale),
         () => "",
     );
 
     const tooltip = useSyncExternalStore(
-        noop,
+        subscribeTick,
         () => tooltipFormat(d, locale),
         () => "",
     );

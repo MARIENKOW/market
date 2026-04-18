@@ -7,6 +7,7 @@ export type AdminManagementDto = {
     note: string | null;
     createdAt: string;
     lastSeenAt: string | null;
+    lastLoginAt: string | null;
     activeSessions: number;
     avatar: ImageDto | null;
 };

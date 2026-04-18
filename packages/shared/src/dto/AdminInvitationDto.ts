@@ -8,5 +8,4 @@ export type AdminInvitationDto = {
     isRevoked: boolean;
     expiresAt: string;
     revokedAt: string | null;
-    durationLabel: string | null;
 };

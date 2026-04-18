@@ -11,6 +11,8 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   passwordChangedAt    DateTime?
+  lastSeenAt      DateTime?
+  lastLoginAt     DateTime?
 
   avatarId          String?   @unique 
   avatar Image? @relation(fields: [avatarId], references: [id], onDelete:SetNull)

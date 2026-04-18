@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Card, CardActions, CardContent } from "@mui/material";
+import { Box, Card, CardContent } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import { AdminInvitationDto } from "@myorg/shared/dto";
 import { useTranslations } from "next-intl";
@@ -14,6 +14,7 @@ import { DeleteInvitationButton } from "@/components/invitation/actions/DeleteIn
 import { StyledTypography } from "@/components/ui/StyledTypography";
 import { StyledChip } from "@/components/ui/StyledChip";
 import { ClientDate } from "@/components/common/ClientDate";
+import { ClientCountdown } from "@/components/common/ClientCountdown";
 import { smartDate } from "@myorg/shared/utils";
 
 function StatusChip({ inv }: { inv: AdminInvitationDto }) {
@@ -78,11 +79,12 @@ function ExpiryLabel({ inv }: { inv: AdminInvitationDto }) {
         );
 
     return (
-        <StyledTypography variant="caption" color="text.disabled">
-            {t("pages.admin.invitation.expiresAt", {
-                time: inv.durationLabel!,
-            })}
-        </StyledTypography>
+        <ClientCountdown
+            expiresAt={inv.expiresAt}
+            variant="caption"
+            color="text.disabled"
+            formatLabel={(time) => t("pages.admin.invitation.expiresAt", { time })}
+        />
     );
 }
 

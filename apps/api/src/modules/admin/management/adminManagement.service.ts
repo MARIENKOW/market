@@ -9,11 +9,6 @@ import { UpdateNoteAdminManagementDtoOutput } from "@myorg/shared/form";
 
 const include = {
     avatar: true,
-    sessions: {
-        select: { lastUsedAt: true },
-        orderBy: { lastUsedAt: "desc" as const },
-        take: 1,
-    },
     _count: { select: { sessions: true } },
 } satisfies Prisma.AdminInclude;
 
@@ -33,7 +28,8 @@ export class AdminManagementService {
             status: admin.status,
             note: admin.note ?? null,
             createdAt: admin.createdAt.toISOString(),
-            lastSeenAt: admin.sessions[0]?.lastUsedAt.toISOString() ?? null,
+            lastSeenAt: admin.lastSeenAt?.toISOString() ?? null,
+            lastLoginAt: admin.lastLoginAt?.toISOString() ?? null,
             activeSessions: admin._count.sessions,
             avatar: admin.avatar ? mapImage(admin.avatar) : null,
         };

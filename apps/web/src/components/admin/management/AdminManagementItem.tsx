@@ -3,6 +3,8 @@
 import { Box } from "@mui/material";
 import DevicesIcon from "@mui/icons-material/Devices";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { AdminManagementDto } from "@myorg/shared/dto";
@@ -83,14 +85,21 @@ export default function AdminManagementItem({ admin }: { admin: AdminManagementD
                         >
                             {admin.email}
                         </StyledTypography>
-                        <ClientDate
-                            date={admin.createdAt}
-                            variant="caption"
-                            color="text.disabled"
-                            format={(d, locale) =>
-                                smartDate({ date: d, locale })
-                            }
-                        />
+                        <Box display="flex" alignItems="center" gap={0.5} color="text.disabled">
+                            <AccessTimeIcon sx={{ fontSize: 12 }} />
+                            {admin.lastSeenAt ? (
+                                <ClientDate
+                                    date={admin.lastSeenAt}
+                                    variant="caption"
+                                    color="text.disabled"
+                                    format={(d, locale) => smartDate({ date: d, locale })}
+                                />
+                            ) : (
+                                <StyledTypography variant="caption" color="text.disabled">
+                                    —
+                                </StyledTypography>
+                            )}
+                        </Box>
                     </Box>
 
                     <StyledChip
@@ -116,30 +125,28 @@ export default function AdminManagementItem({ admin }: { admin: AdminManagementD
                         transition: "opacity 0.2s",
                     }}
                 >
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                        gap={0.5}
-                        color="text.secondary"
-                    >
-                        <AccessTimeIcon sx={{ fontSize: 13 }} />
-                        {admin.lastSeenAt ? (
+                    <Box display="flex" alignItems="center" gap={0.5} color="text.secondary">
+                        <LoginIcon sx={{ fontSize: 13 }} />
+                        {admin.lastLoginAt ? (
                             <ClientDate
-                                date={admin.lastSeenAt}
+                                date={admin.lastLoginAt}
                                 variant="caption"
                                 color="text.secondary"
-                                format={(d, locale) =>
-                                    smartDate({ date: d, locale })
-                                }
+                                format={(d, locale) => smartDate({ date: d, locale })}
                             />
                         ) : (
-                            <StyledTypography
-                                variant="caption"
-                                color="text.disabled"
-                            >
-                                —
-                            </StyledTypography>
+                            <StyledTypography variant="caption" color="text.disabled">—</StyledTypography>
                         )}
+                    </Box>
+
+                    <Box display="flex" alignItems="center" gap={0.5} color="text.secondary">
+                        <PersonAddAltIcon sx={{ fontSize: 13 }} />
+                        <ClientDate
+                            date={admin.createdAt}
+                            variant="caption"
+                            color="text.secondary"
+                            format={(d, locale) => smartDate({ date: d, locale })}
+                        />
                     </Box>
 
                     <Box

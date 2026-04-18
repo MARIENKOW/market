@@ -206,6 +206,7 @@ export const en: MessageStructure = {
                 noteLabel: "Note",
                 notePlaceholder: "Role, responsibilities...",
                 lastSeen: "Online {time}",
+                lastLogin: "Login {time}",
                 noSessions: "No active sessions",
                 actions: {
                     block: "Block",

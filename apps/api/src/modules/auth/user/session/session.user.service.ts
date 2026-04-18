@@ -50,9 +50,13 @@ export class SessionUserService {
     }
     async touch(id: string): Promise<Date> {
         const lastUsedAt = new Date();
-        await this.prisma.sessionUser.update({
+        const session = await this.prisma.sessionUser.update({
             where: { id },
             data: { lastUsedAt },
+        });
+        await this.prisma.user.update({
+            where: { id: session.userId },
+            data: { lastSeenAt: lastUsedAt },
         });
         return lastUsedAt;
     }
@@ -162,18 +166,21 @@ export class SessionUserService {
         });
         const refreshTokenHash = this.hash.sha256(refreshToken);
 
+        const now = new Date();
         await this.prisma.sessionUser.create({
             data: {
                 userId,
                 id,
-                expiresAt: new Date(
-                    Date.now() + this.REFRESH_TOKEN_EXPIRES * 1000,
-                ),
+                expiresAt: new Date(Date.now() + this.REFRESH_TOKEN_EXPIRES * 1000),
                 refreshTokenHash,
                 ip: this.requestContext.ip,
                 userAgent: this.requestContext.userAgent,
-                lastUsedAt: new Date(),
+                lastUsedAt: now,
             },
+        });
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { lastLoginAt: now, lastSeenAt: now },
         });
 
         const accessToken = this.generateAccessToken({

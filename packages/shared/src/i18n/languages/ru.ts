@@ -211,6 +211,7 @@ export const ru = {
                 noteLabel: "Заметка",
                 notePlaceholder: "Информация о роли, задачах...",
                 lastSeen: "Онлайн {time}",
+                lastLogin: "Вход {time}",
                 noSessions: "Нет активных сессий",
                 actions: {
                     block: "Заблокировать",
