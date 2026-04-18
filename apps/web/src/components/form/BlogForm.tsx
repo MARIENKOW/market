@@ -161,7 +161,7 @@ const BlogForm = ({
                         </Box>
                     </Box>
                     <FormAlert />
-                    <SubmitButton />
+                    <SubmitButton  />
                 </Form>
             </FormProvider>
         </FormConfigProvider>

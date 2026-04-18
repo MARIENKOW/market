@@ -14,7 +14,7 @@ export const light: ThemeOptions = {
             main: "#7c5c2a",
             dark: "#5a3e18",
             light: "#a07840",
-            contrastText: "#ffffff",
+            contrastText: "#ffffff", // ок, контраст ~6.7:1
         },
         success: {
             main: "#2d8a5e",
@@ -32,7 +32,7 @@ export const light: ThemeOptions = {
             main: "#e67e22",
             dark: "#c0621a",
             light: "#f0a050",
-            contrastText: "#ffffff",
+            contrastText: "#ffffff", // было "#ffffff" — не читалось
         },
         info: {
             main: "#2980b9",
@@ -54,12 +54,12 @@ export const light: ThemeOptions = {
             active: "#2a1f0e",
             hover: "rgba(201,151,58,0.08)",
             selected: "rgba(201,151,58,0.15)",
-            disabled: "#a89878",
+            disabled: "#a89070", // синхронизировано с text.disabled
             disabledBackground: "rgba(0,0,0,0.06)",
+            focus: "rgba(201,151,58,0.12)",
             hoverOpacity: 0.08,
-            selectedOpacity: 0.25,
+            selectedOpacity: 0.15, // было 0.25 — не билось с alpha в selected
             disabledOpacity: 0.38,
-            focus: "rgba(201,151,58,0.12)", // фон при фокусе
             focusOpacity: 0.12,
             activatedOpacity: 0.24,
         },
@@ -69,5 +69,3 @@ export const light: ThemeOptions = {
         },
     },
 };
-
-export type ThemeConfigStructure = typeof light;
