@@ -60,6 +60,7 @@ export class AuthUserController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
+        console.log('userrefreshuserrefreshuserrefreshuserrefreshuserrefreshuserrefreshuserrefreshuserrefreshuserrefreshuserrefresh');
         const accessToken = req.cookies["accessTokenUser"];
         if (!accessToken) throw new UnauthorizedException();
         const refreshToken = req.cookies["refreshTokenUser"];

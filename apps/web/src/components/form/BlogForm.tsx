@@ -47,8 +47,8 @@ const BlogForm = ({
             subtitle: initData?.subtitle || "",
             body: initData?.body || "",
             publishedAt: null,
-            videosId: [],
-            imagesId: [],
+            videosId: initData?.bodyVideosId || [],
+            imagesId: initData?.bodyImagesId || [],
         },
     });
 

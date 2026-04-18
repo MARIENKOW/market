@@ -90,7 +90,7 @@ export default function AdminInvitationRegisterForm({ email }: Props) {
                         label={t("form.email.label")}
                         value={email}
                         disabled
-                        variant="outlined"
+                        variant='filled'
                         fullWidth
                     />
                     <FormPassword<RegisterByInvitationAdminDtoInput>

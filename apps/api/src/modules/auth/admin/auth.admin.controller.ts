@@ -48,6 +48,7 @@ export class AuthAdminController {
         @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ): Promise<true> {
+        console.log('adminrefreshadminrefreshadminrefreshadminrefreshadminrefreshadminrefreshadminrefresh');
         const accessToken = req.cookies["accessTokenAdmin"];
         if (!accessToken) throw new UnauthorizedException();
         const refreshToken = req.cookies["refreshTokenAdmin"];
