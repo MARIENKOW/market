@@ -1,5 +1,5 @@
 import { dark } from "@/theme/dark";
-import { light, ThemeConfigStructure } from "@/theme/light";
+import { light } from "@/theme/light";
 import { createTheme, ThemeOptions } from "@mui/material";
 
 const THEME_CONFIG: ThemeOptions = {
