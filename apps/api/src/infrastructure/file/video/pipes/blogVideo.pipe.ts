@@ -1,5 +1,4 @@
 import { PipeTransform, Injectable } from "@nestjs/common";
-import { fromBuffer } from "file-type";
 import * as fs from "fs/promises";
 import {
     ALLOWED_VIDEO_MIME_TYPES,
@@ -43,7 +42,8 @@ export class BlogVideoValidationPipe implements PipeTransform {
                     MAGIC_BYTES_SIZE,
                     0,
                 );
-                const result = await fromBuffer(buf.subarray(0, bytesRead));
+                const { fileTypeFromBuffer } = await import("file-type");
+                const result = await fileTypeFromBuffer(buf.subarray(0, bytesRead));
                 detectedMime = result?.mime;
             } finally {
                 await handle.close();

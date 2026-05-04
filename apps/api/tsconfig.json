@@ -20,8 +20,6 @@
         "baseUrl": "./",
         "paths": {
             "@/*": ["src/*"]
-            //   "@myorg/shared": ["../../packages/shared/src"]
-            //   "@myorg/shared/*": ["../../packages/shared/src/*"]
         },
 
         "incremental": true,

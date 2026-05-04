@@ -1,5 +1,4 @@
 import { PipeTransform, Injectable } from "@nestjs/common";
-import { fromBuffer } from "file-type";
 import { AllowedImageMimeType } from "../image.config";
 import { BLOG_IMAGE_CONFIG, BlogOutput } from "@myorg/shared/form";
 import { ValidationException } from "@/common/exception/validation.exception";
@@ -31,7 +30,8 @@ export class blogMainImageValidationPipe implements PipeTransform {
         }
 
         // Проверка реального типа по magic bytes — не доверяем заголовку
-        const detected = await fromBuffer(file.buffer);
+        const { fileTypeFromBuffer } = await import("file-type");
+        const detected = await fileTypeFromBuffer(file.buffer);
 
         if (
             !detected ||

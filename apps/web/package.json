@@ -17,7 +17,7 @@
     "@mui/material": "^7.3.5",
     "@mui/material-nextjs": "^7.3.5",
     "@mui/x-date-pickers": "^9.0.2",
-    "@myorg/shared": "1.0.0",
+    "@myorg/shared": "workspace:*",
     "@react-oauth/google": "^0.13.4",
     "@tanstack/react-query": "^5.96.1",
     "@tanstack/react-query-devtools": "^5.96.1",
@@ -57,7 +57,7 @@
     "react-hook-form": "^7.66.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
-    "uuid": "^13.0.0",
+    "uuid": "^14.0.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {

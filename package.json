@@ -1,11 +1,7 @@
 {
     "name": "market",
     "private": true,
-    "packageManager": "npm@11.6.2",
-    "workspaces": [
-        "apps/*",
-        "packages/*"
-    ],
+    "packageManager": "pnpm@10.33.2",
     "scripts": {
         "build:shared": "turbo run build --filter=@myorg/shared",
         "dev": "turbo run dev",
@@ -20,5 +16,28 @@
         "i18next": "^25.6.3",
         "i18next-fs-backend": "^2.6.1",
         "react-i18next": "^16.3.5"
+    },
+    "pnpm": {
+        "overrides": {
+            "picomatch": "4.0.4",
+            "@hono/node-server": ">=1.19.13",
+            "ajv": ">=8.17.2",
+            "hono": "^4.12.7",
+            "effect": "^3.20.0",
+            "uuid": ">=14.0.0",
+            "postcss": ">=8.5.10"
+        },
+        "onlyBuiltDependencies": [
+            "@apollo/protobufjs",
+            "@nestjs/core",
+            "@parcel/watcher",
+            "@prisma/engines",
+            "@swc/core",
+            "bcrypt",
+            "esbuild",
+            "prisma",
+            "sharp",
+            "unrs-resolver"
+        ]
     }
 }
