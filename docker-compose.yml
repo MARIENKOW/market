@@ -110,7 +110,6 @@ services:
     nginx:
         image: nginx:alpine
         restart: unless-stopped
-        entrypoint: ["/bin/sh", "-c", "export DOMAIN_PRIMARY=$$(echo $$DOMAIN | cut -d' ' -f1) && exec /docker-entrypoint.sh nginx -g 'daemon off;'"]
         ports:
             - "80:80"
             - "443:443"

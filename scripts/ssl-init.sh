@@ -14,5 +14,6 @@ echo "Requesting certificate for: $DOMAIN"
 
 docker compose run --rm --entrypoint certbot certbot certonly --webroot \
     -w /var/www/certbot \
+    --cert-name app \
     $DOMAIN_ARGS \
     --agree-tos --register-unsafely-without-email --expand
