@@ -1,60 +1,71 @@
+import { AvailableMode } from "@/theme/theme";
 import { ThemeOptions } from "@mui/material";
 
 export const light: ThemeOptions = {
     palette: {
-        mode: "light",
+        mode: "light" as AvailableMode,
         primary: {
-            main: "#2563eb",
-            dark: "#1d4ed8",
-            light: "#60a5fa",
+            main: "#c9973a",
+            dark: "#a87828",
+            light: "#e0b860",
             contrastText: "#ffffff",
         },
         secondary: {
-            main: "#0891b2",
-            dark: "#0e7490",
-            light: "#22d3ee",
-            contrastText: "#ffffff",
+            main: "#7c5c2a",
+            dark: "#5a3e18",
+            light: "#a07840",
+            contrastText: "#ffffff", // ок, контраст ~6.7:1
         },
         success: {
-            main: "#059669",
-            dark: "#047857",
-            light: "#34d399",
+            main: "#2d8a5e",
+            dark: "#1a6040",
+            light: "#4aad80",
             contrastText: "#ffffff",
         },
         error: {
-            main: "#dc2626",
-            dark: "#b91c1c",
-            light: "#f87171",
+            main: "#c0392b",
+            dark: "#992d22",
+            light: "#e05a4e",
             contrastText: "#ffffff",
         },
         warning: {
-            main: "#d97706",
-            dark: "#b45309",
-            light: "#fbbf24",
-            contrastText: "#ffffff",
+            main: "#e67e22",
+            dark: "#c0621a",
+            light: "#f0a050",
+            contrastText: "#ffffff", // было "#ffffff" — не читалось
         },
         info: {
-            main: "#0284c7",
-            dark: "#0369a1",
-            light: "#38bdf8",
+            main: "#2980b9",
+            dark: "#1a6090",
+            light: "#4a9ed0",
             contrastText: "#ffffff",
         },
-        background: { default: "#f8fafc", paper: "#ffffff" },
-        text: { primary: "#0f172a", secondary: "#475569", disabled: "#94a3b8" },
-        divider: "#e2e8f0",
+        background: {
+            default: "#ffffff",
+            paper: "#f8f4ec",
+        },
+        text: {
+            primary: "#2a1f0e",
+            secondary: "#7a6848",
+            disabled: "#a89070",
+        },
+        divider: "#d8ccb0",
         action: {
-            active: "#0f172a",
-            hover: "rgba(37,99,235,0.08)",
-            selected: "rgba(37,99,235,0.16)",
-            disabled: "#cbd5e1",
+            active: "#2a1f0e",
+            hover: "rgba(201,151,58,0.08)",
+            selected: "rgba(201,151,58,0.15)",
+            disabled: "#a89070", // синхронизировано с text.disabled
             disabledBackground: "rgba(0,0,0,0.06)",
-            focus: "rgba(37,99,235,0.16)",
+            focus: "rgba(201,151,58,0.12)",
             hoverOpacity: 0.08,
-            selectedOpacity: 0.16,
+            selectedOpacity: 0.15, // было 0.25 — не билось с alpha в selected
             disabledOpacity: 0.38,
-            focusOpacity: 0.16,
+            focusOpacity: 0.12,
             activatedOpacity: 0.24,
         },
-        common: { black: "#0f172a", white: "#ffffff" },
+        common: {
+            black: "#2a1f0e",
+            white: "#f8f4ec",
+        },
     },
 };
