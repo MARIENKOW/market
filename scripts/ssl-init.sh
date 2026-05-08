@@ -12,7 +12,7 @@ DOMAIN_ARGS=$(echo "$DOMAIN" | tr ' ' '\n' | sed 's/^/-d /' | tr '\n' ' ')
 
 echo "Requesting certificate for: $DOMAIN"
 
-docker compose run --rm certbot certonly --webroot \
+docker compose run --rm --entrypoint certbot certbot certonly --webroot \
     -w /var/www/certbot \
     $DOMAIN_ARGS \
     --agree-tos --register-unsafely-without-email --expand
