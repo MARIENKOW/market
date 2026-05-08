@@ -40,8 +40,11 @@ server {
     proxy_next_upstream_tries   2;
     proxy_next_upstream_timeout 5s;
 
+    resolver 127.0.0.11 valid=10s;
+
     location / {
-        proxy_pass         http://web:3000;
+        set $upstream_web web;
+        proxy_pass         http://$upstream_web:3000;
         proxy_http_version 1.1;
         proxy_set_header   Upgrade    $http_upgrade;
         proxy_set_header   Connection 'upgrade';
@@ -55,7 +58,8 @@ server {
     }
 
     location /${NEXT_PUBLIC_API_GLOBAL_PREFIX} {
-        proxy_pass         http://api:${SERVER_PORT};
+        set $upstream_api api;
+        proxy_pass         http://$upstream_api:${SERVER_PORT};
         proxy_http_version 1.1;
         proxy_set_header   X-Real-IP       $remote_addr;
         proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
