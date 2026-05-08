@@ -15,7 +15,8 @@
         "nginx:test": "docker compose exec nginx nginx -t",
         "nginx:restart": "docker compose restart nginx",
         "ssl:up": "docker compose --profile ssl up -d",
-        "ssl:init": "docker compose run --rm certbot certonly --webroot -w /var/www/certbot $(printf ' -d %s' $DOMAIN) --agree-tos --register-unsafely-without-email --expand"
+        "ssl:init": "docker compose run --rm certbot certonly --webroot -w /var/www/certbot $(printf ' -d %s' $DOMAIN) --agree-tos --register-unsafely-without-email --expand",
+        "docker:seed": "docker compose exec api node_modules/.bin/tsx prisma/seed.ts"
     },
     "devDependencies": {
         "turbo": "^2.8.17",

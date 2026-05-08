@@ -56,7 +56,8 @@ COPY --from=builder /app/apps/api/prisma ./prisma
 
 # prisma.config.ts imports ./src/config which Prisma transpiles internally via esbuild
 COPY --from=builder /app/apps/api/prisma.config.ts ./prisma.config.ts
-COPY --from=builder /app/apps/api/src/config.ts    ./src/config.ts
+COPY --from=builder /app/apps/api/src/config.ts                           ./src/config.ts
+COPY --from=builder /app/apps/api/src/infrastructure/hash/hash.service.ts ./src/infrastructure/hash/hash.service.ts
 
 COPY --from=builder /app/apps/api/package.json ./package.json
 
