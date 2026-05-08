@@ -7,6 +7,9 @@
         "build": "tsc -b --force",
         "dev": "tsc -b --force && tsc -b --watch"
     },
+    "devDependencies": {
+        "@types/humanize-duration": "^3.27.4"
+    },
     "dependencies": {
         "date-fns": "^4.1.0",
         "humanize-duration": "^3.33.2",

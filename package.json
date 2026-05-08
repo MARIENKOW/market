@@ -1,12 +1,21 @@
 {
     "name": "market",
     "private": true,
-    "packageManager": "pnpm@10.33.2",
+    "packageManager": "pnpm@11.0.8+sha512.4c4097e1dd2d42372c4e7fa5a791ff28fc75a484c7ac192e64b1df0fdef17594ba982f9b4fed9adfb3c757846f565b799b2763fb3733d1de1bcb82cf46684912",
     "scripts": {
         "build:shared": "turbo run build --filter=@myorg/shared",
         "dev": "turbo run dev",
         "start": "turbo run start --filter=api --filter=web",
-        "build": "turbo run build"
+        "build": "turbo run build",
+        "docker:up": "docker compose up -d",
+        "docker:down": "docker compose down",
+        "docker:build": "docker compose build",
+        "docker:logs": "docker compose logs -f",
+        "nginx:reload": "docker compose exec nginx nginx -s reload",
+        "nginx:test": "docker compose exec nginx nginx -t",
+        "nginx:restart": "docker compose restart nginx",
+        "ssl:up": "docker compose --profile ssl up -d",
+        "ssl:init": "docker compose run --rm certbot certonly --webroot -w /var/www/certbot $(printf ' -d %s' $DOMAIN) --agree-tos --register-unsafely-without-email --expand"
     },
     "devDependencies": {
         "turbo": "^2.8.17",
@@ -26,18 +35,6 @@
             "effect": "^3.20.0",
             "uuid": ">=14.0.0",
             "postcss": ">=8.5.10"
-        },
-        "onlyBuiltDependencies": [
-            "@apollo/protobufjs",
-            "@nestjs/core",
-            "@parcel/watcher",
-            "@prisma/engines",
-            "@swc/core",
-            "bcrypt",
-            "esbuild",
-            "prisma",
-            "sharp",
-            "unrs-resolver"
-        ]
+        }
     }
 }

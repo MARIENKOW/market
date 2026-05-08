@@ -1,0 +1,54 @@
+server {
+    listen 80;
+    server_name ${DOMAIN};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name ${DOMAIN};
+
+    ssl_certificate     /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+
+    client_max_body_size 1500M;
+
+    proxy_connect_timeout       5s;
+    proxy_read_timeout          60s;
+    proxy_next_upstream         error timeout http_502 http_503 http_504;
+    proxy_next_upstream_tries   2;
+    proxy_next_upstream_timeout 5s;
+
+    location / {
+        proxy_pass         http://web:3000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade    $http_upgrade;
+        proxy_set_header   Connection 'upgrade';
+        proxy_set_header   Host       $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_buffer_size       128k;
+        proxy_buffers           8 128k;
+        proxy_busy_buffers_size 256k;
+        proxy_buffering         off;
+        proxy_redirect          off;
+    }
+
+    location /${NEXT_PUBLIC_API_GLOBAL_PREFIX} {
+        proxy_pass         http://api:${SERVER_PORT};
+        proxy_http_version 1.1;
+        proxy_set_header   X-Real-IP       $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   Host            $host;
+        proxy_set_header   Origin          $http_origin;
+        proxy_set_header   Upgrade         $http_upgrade;
+        proxy_set_header   Connection      'upgrade';
+        proxy_cache_bypass $http_upgrade;
+    }
+}
