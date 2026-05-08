@@ -132,7 +132,6 @@ services:
     # ── Certbot (только для SSL) ───────────────────────────────────────────────
     certbot:
         image: certbot/certbot
-        profiles: [ssl]
         volumes:
             - certbot-certs:/etc/letsencrypt
             - certbot-webroot:/var/www/certbot

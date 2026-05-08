@@ -14,7 +14,6 @@
         "nginx:reload": "docker compose exec nginx nginx -s reload",
         "nginx:test": "docker compose exec nginx nginx -t",
         "nginx:restart": "docker compose restart nginx",
-        "ssl:up": "docker compose --profile ssl up -d",
         "ssl:init": "sh scripts/ssl-init.sh",
         "docker:seed": "docker compose exec api node_modules/.bin/tsx prisma/seed.ts"
     },
