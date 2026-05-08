@@ -15,6 +15,8 @@
         "nginx:test": "docker compose exec nginx nginx -t",
         "nginx:restart": "docker compose restart nginx",
         "ssl:init": "sh scripts/ssl-init.sh",
+        "kuma:up": "docker compose --profile kuma up -d uptime-kuma",
+        "kuma:down": "docker compose stop uptime-kuma",
         "docker:seed": "docker compose exec api node_modules/.bin/tsx prisma/seed.ts"
     },
     "devDependencies": {

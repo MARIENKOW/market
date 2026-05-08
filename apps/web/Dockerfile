@@ -27,6 +27,9 @@ RUN pnpm --filter=@myorg/shared run build
 RUN --mount=type=secret,id=env,target=/app/.env \
     pnpm --filter=web run build
 
+# Ensure public/ exists so the runner COPY never fails on empty/missing folder
+RUN mkdir -p /app/apps/web/public
+
 # Production deploy: prod deps only, @myorg/shared dist is inlined by pnpm
 RUN pnpm deploy --filter=web --prod /prod/web
 
@@ -46,6 +49,8 @@ COPY --from=builder /app/apps/web/.next ./.next
 
 # next.config.ts is evaluated by `next start` — Next.js handles TS natively
 COPY --from=builder /app/apps/web/next.config.ts ./next.config.ts
+
+COPY --from=builder /app/apps/web/public ./public
 
 COPY --from=builder /app/apps/web/package.json ./package.json
 

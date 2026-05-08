@@ -28,8 +28,6 @@ services:
     # ── PostgreSQL 16 ──────────────────────────────────────────────────────────
     postgres:
         image: postgres:16
-        ports:
-            - "${DB_PORT:-5432}:${DB_PORT:-5432}"
         restart: unless-stopped
         environment:
             POSTGRES_USER: ${DB_USER}
@@ -132,6 +130,7 @@ services:
     # ── Certbot (только для SSL) ───────────────────────────────────────────────
     certbot:
         image: certbot/certbot
+        restart: unless-stopped
         volumes:
             - certbot-certs:/etc/letsencrypt
             - certbot-webroot:/var/www/certbot
@@ -166,6 +165,7 @@ services:
     # Telegram notifications: Settings → Notifications → Telegram.
     uptime-kuma:
         image: louislam/uptime-kuma:1
+        profiles: [kuma]
         restart: unless-stopped
         ports:
             - "3001:3001"
