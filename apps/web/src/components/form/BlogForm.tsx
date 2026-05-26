@@ -26,6 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box } from "@mui/material";
 import { BlogDto } from "@myorg/shared/dto";
 import FormDateTimePicker from "@/components/features/form/fields/controlled/FormDateTimePicker";
+import FormImageField from "@/components/features/form/fields/controlled/FormImageField";
 
 const BlogForm = ({
     onRequest,
@@ -108,22 +109,11 @@ const BlogForm = ({
                                 }}
                                 size={{ xs: 10, md: 5 }}
                             >
-                                {preview && (
-                                    <ImagePreview
-                                        src={preview}
-                                        onDelete={() =>
-                                            form.setValue("image", null)
-                                        }
-                                    />
-                                )}
-                                {!preview && (
-                                    <FormDropZone
-                                        accept={
-                                            BLOG_IMAGE_CONFIG.allowedMimeTypes
-                                        }
-                                        name="image"
-                                    />
-                                )}
+                                <FormImageField<BlogInput>
+                                    name="image"
+                                    accept={BLOG_IMAGE_CONFIG.allowedMimeTypes}
+                                    schema={BlogSchema.shape.image}
+                                />
                             </Grid>
                             <Grid
                                 display="flex"
@@ -161,7 +151,7 @@ const BlogForm = ({
                         </Box>
                     </Box>
                     <FormAlert />
-                    <SubmitButton  />
+                    <SubmitButton />
                 </Form>
             </FormProvider>
         </FormConfigProvider>
